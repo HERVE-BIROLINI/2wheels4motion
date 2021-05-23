@@ -1,4 +1,12 @@
 {
+    "name": "herve-birolini/2wheels4motion",
+    "description": "Centrale d'appels taxi-moto ind\u0000pendants",
+    "authors": [
+        {
+            "name": "Birolini Hervé",
+            "email": "Birolini.Herve@gmail.com"
+        }
+    ],
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "dev",
@@ -38,6 +46,7 @@
         "symfony/twig-bundle": "^5.2",
         "symfony/validator": "5.2.*",
         "symfony/web-link": "5.2.*",
+        "symfony/webpack-encore-bundle": "^1.11",
         "symfony/yaml": "5.2.*",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"

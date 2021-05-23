@@ -1,0 +1,106 @@
+@import url(https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900display=swap%27);
+*{
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background-color: lightgray;
+    /**/
+    margin:0;
+    padding:0;
+    /**/
+}
+/* */
+header{
+    /* border:2px solid red; */
+    /* background-color: white; */
+    /**/
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    /**/
+    background: linear-gradient(to top right,blue, 8%, white, 90%, red);
+}
+.container--nav{
+    /* border:3px solid yellow; */
+    /**/
+    width:100%;
+}
+/**/
+#nav--brand{
+    /* border:3px solid green; */
+    /**/
+    display:flex;
+    flex-direction: row;
+}
+.nav--logo{
+    /* background-color:white; */
+    margin:10px;
+    min-width:110px;
+    max-height:75px;
+}
+#nav--words{
+    /* border:3px solid blue; */
+    /**/
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    /**/
+    margin-left:15%;
+    align-items:center;
+    justify-content: space-evenly;
+}
+/**/
+.nav--bar{
+    /* border:3px solid magenta; */
+    /**/
+    display: flex;
+    flex-direction: row;
+}
+.navbar-toggler{
+    border:5px solid black;
+}
+/* */
+.nav--menu{
+    /* border:3px solid black; */
+    /**/
+    display:flex;
+    flex-direction: row;
+    /**/
+    justify-content: flex-end;
+}
+.nav--menu>ul>li{
+    margin-top:2.5px;
+    margin-right:10px;
+    margin-left:5px;
+    /**/
+    font-weight: bold;
+}
+/* *** */
+@media screen and (max-width: 991px)
+{
+    .nav--menu{
+        justify-content: flex-start;
+    }
+}
+
+
+/* ************ */
+#section--banner{
+    display: flex;
+    /**/
+    background-image:url('../images/honda_gl1800_2018_deux_models-750x410.jpg') ;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /**/
+    min-height: 350px;
+    /**/
+    justify-content: center;
+    align-items: center;
+}
+#section--banner>div>h1{
+    color:white;
+    font-weight: bolder;
+    text-shadow: 5px 5px 0.25em BLUE;
+}

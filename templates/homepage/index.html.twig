@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% set Title="Titre Homepage" %}
+
+{% block title %}{{ Title }} - {{ parent() }}{% endblock %}
+
+{% block body %}
+{% for flashError in app.flashes('adding_to_cart') %}
+    <div class="alert alert-success" role="alert">{{ flashError }}</div>
+{% endfor %}
+{% for flashError in app.flashes('register-success') %}
+    <div class="alert alert-success" role="alert">{{ flashError }}</div>
+{% endfor %}
+
+    
+
+{% endblock %}

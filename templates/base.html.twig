@@ -1,19 +1,81 @@
+
+{% set AssetsImg="build/images/" %}
+{% set Favicon=AssetsImg ~ "favicon.ico" %}
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" type="image/png" href="{{ asset(Favicon) }}"/>
+        <title>{% block title %}2 Wheels 4 Motion{% endblock %}</title>
         {# Run `composer require symfony/webpack-encore-bundle`
-           and uncomment the following Encore helpers to start using Symfony UX #}
+            and uncomment the following Encore helpers to start using Symfony UX
+        #}
         {% block stylesheets %}
-            {#{{ encore_entry_link_tags('app') }}#}
+            {{ encore_entry_link_tags('app') }}
         {% endblock %}
 
-        {% block javascripts %}
-            {#{{ encore_entry_script_tags('app') }}#}
-        {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        
+        <header>
+            <!-- Container nécessaire pour occuper 100% de la largeur du Header -->
+            <div class="container--nav">
+                <!-- DEBUT Logo & Marque -->
+                <div id="nav--brand">
+                    <img class="nav--logo" src="{{ asset(Favicon) }}" alt="logo centrale d'appels"></img>
+                    <div id="nav--words">
+                        <h2 class="nav--words-h2 m-2">2Wheels4Motion:</h2>
+                        <h4 class="nav--words-h4 m-2">"Les transferts qui rassurent"</h4>
+                    </div>
+                </div>
+                <!-- DEBUT Menu de navigation -->
+                <div class="nav--bar navbar navbar-expand-lg navbar-light"><!--  bg-dark"> -->
+                    <!-- DEBUT bouton "Burger" -->
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="navbar-toggler-icon">
+                            <!-- <img class="nav--logo" src="{{ asset(Favicon) }}" alt="logo centrale d'appels"></img> -->
+                        </span>
+                    </button>
+                    <!-- FIN bouton "Burger" -->
+                    <div class="collapse navbar-collapse nav--menu">
+                        <ul class="navbar-nav">
+                            <li class="nav-item dropdown">
+                                Le Taxi-moto
+                            </li>
+                            <li class="nav-item dropdown">
+                                Confort & sécurité
+                            </li>
+                            <li class="nav-item dropdown">
+                                Tarification
+                            </li>
+                            <li class="nav-item dropdown">
+                                Commander une course
+                            </li>
+                            <li class="nav-item dropdown">
+                                Espace pilotes
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section id="section--banner">
+            <div>
+                <H1>L'ANNUAIRE DES TAXIS-MOTO FRANÇAIS</H1>
+            </div>
+        </section>
+
+
+        {% block body %}
+        
+        {% endblock %}
+
+
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
     </body>
 </html>

@@ -1,16 +1,109 @@
 {% extends 'base.html.twig' %}
-{% set Title="Titre Homepage" %}
+{% set Title="Accueil" %}
+{% set sImgPath="build/images/" %}
 
 {% block title %}{{ Title }} - {{ parent() }}{% endblock %}
 
 {% block body %}
-{% for flashError in app.flashes('adding_to_cart') %}
-    <div class="alert alert-success" role="alert">{{ flashError }}</div>
-{% endfor %}
-{% for flashError in app.flashes('register-success') %}
-    <div class="alert alert-success" role="alert">{{ flashError }}</div>
-{% endfor %}
+    {% for flashError in app.flashes('adding_to_cart') %}
+        <div class="alert alert-success" role="alert">{{ flashError }}</div>
+    {% endfor %}
+    {% for flashError in app.flashes('register-success') %}
+        <div class="alert alert-success" role="alert">{{ flashError }}</div>
+    {% endfor %}
 
-    
+    <!-- Homepage banner -->
+    <section id="homepage--banner">
+        <H1>L'ANNUAIRE DES TAXIS-MOTO DE FRANCE</H1>
+        <!-- <div class="btn btn--ordering">
+            <a href="#services">Commander une course</a>
+        </div> -->
+        <button class="btn btn--ordering">Commander une course</button>
+        <!-- internal page menu, to navigate to ID -->
+        <div id="nav--inpage">
+            <div class="nav--inpage-item">
+                <a href="#section--services">A votre service</a>
+            </div>
+            <div class="nav--inpage-item">
+                <a href="#section--pro">Professionnalisme</a>
+            </div>
+            <div class="nav--inpage-item">
+                <a href="#section--equipments">Les équipements passager</a>
+            </div>
+            <div class="nav--inpage-item">
+                <a href="#section--bikes">Les motos</a>
+            </div>
+        </div>
+        
+    </section>
+
+    <!-- Job description & Professionnals listing presentation -->
+    <!----------------------------------------------------------->
+    <section class="paragraph--large" id="section--services">
+        <h2 class="title--h2" id="services--title">Vous servir...</h2>
+        <div class="card--3D-horizontal">
+            <p class="card--paragraph col-md-12 col-lg-8" id="services--p">
+                Vous avez besoin d'effectuer des transferts, sans risquer d'être en retard ? Votre temps est précieux et vous voudriez optimiser vos temps de trajets ?
+                Assurez-vous les services d'un professionnel pour tous vos déplacements, et passé au moto-taxi...
+                <br>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Hic, dolor expedita consequatur quisquam totam molestias sunt ab est nemo deserunt voluptates libero? Quo voluptas magni, id ipsa soluta laborum rem?
+                Totam sunt rerum blanditiis debitis facere! Ex autem quam similique corrupti temporibus vero quae qui repudiandae, nobis distinctio, delectus minima laborum tempora nostrum neque molestiae modi ullam, dolores asperiores id!
+            </p>
+            <img class="card--imgsquare" src="{{ asset(sImgPath ~'embouteillage.jpg') }}" alt="Photo d'un embouteillage">
+        </div>
+    </section>
+    <!-- -->
+    <section class="paragraph--large" id="section--pro">
+        <h2 class="title--h2" id="pro--title">Des professionnels sur qui compter...</h2>
+        <div class="card--3D-horizontal">
+            <img class="card--imgsquare" src="{{ asset(sImgPath ~'Vignette-VMDTR.png') }}" alt="Photo d'une vignette VMDTR">
+            <p class="card--paragraph col-md-12 col-lg-8" id="pro--p">
+                Tous les pilotes référencés sont des auto-entrepreneurs, réunissant toutes les conditions d'exercice de la profession de transport de personne.
+                Cela signifie que tous ont suivi la formation VMDTR, et ont justifié la détention et la validité des documents ci-dessous :
+                <br>- carte pro
+                <br>- visite médicale
+                <br>- une assurance spécifique transport de personnes à titre onéreux est obligatoire
+                
+            </p>
+        </div>
+    </section>
+    <!-- -->
+    <section class="paragraph--large" id="section--equipments">
+        <h2 class="title--h2" id="equipments--title">Les équipements indispensables...</h2>
+        <div class="card--3D-horizontal" style="justify-content: center;">
+            <p class="card--paragraph" id="equipments--p">
+                <br>- Charlotte
+                <br>- casque
+                <br>- gants
+                <br>- veste avec airbag...
+                Pour vous garantir une totale protection contre la COVID-19, tous les équipements sont désinfectés 
+                après chaque utilisation.
+            </p>
+            <div class="card--horizontal">
+                <img class="card--imgsquare" src="{{ asset(sImgPath ~'charlotte.jpg') }}" alt="Photo d'une charlotte">
+                <img class="card--imgsquare" src="{{ asset(sImgPath ~'casque.jpg') }}" alt="Photo d'un casque">
+                <img class="card--imgsquare" src="{{ asset(sImgPath ~'gants.jpg') }}" alt="Photo de gants">
+                <img class="card--imgsquare" src="{{ asset(sImgPath ~'veste-airbag.jpg') }}" alt="Photo d'une veste">
+            </div>
+        </div>
+    </section>
+    <!-- -->
+    <section class="paragraph--large" id="section--bikes">
+        <h2 class="title--h2" id="bikes--title">Les motos</h2>
+        <div class="card--3D-horizontal" style="justify-content: center;">
+            <p class="card--paragraph" id="bikes--p">
+                La profession impose une catégorie de moto. De plus, celles-ci doivent avoir moins de 5 ans.
+                <br>- Honda Goldwing
+                <br>- BMW K1600B
+                <br>
+                Toutes les machines proposent une jupes de protection en cas de pluie, et d'un porte-paquet
+            </p>
+            <div class="card--horizontal">
+                <img class="card--imgrectangular" style="width:340px;" src="{{ asset(sImgPath ~'honda_gl1800_topbox_dct_studio-750x410_grey.jpg') }}" alt="Photo Honda Goldwing">
+                <img class="card--imgrectangular" style="width:275px;" src="{{ asset(sImgPath ~'BMW K1600GTL Exclusive.png') }}" alt="Photo d'un embouteillage">
+            </div>
+        </div>
+    </section>
+
 
 {% endblock %}

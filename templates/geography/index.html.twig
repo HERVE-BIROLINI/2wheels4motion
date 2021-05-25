@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+{% set Title="Geography" %}
+{% set sImgPath="build/images/" %}
+
+{% block title %}{{ Title }} - {{ parent() }}{% endblock %}
+
+{% block body %}
+    {% for flashError in app.flashes('adding_to_cart') %}
+        <div class="alert alert-success" role="alert">{{ flashError }}</div>
+    {% endfor %}
+    {% for flashError in app.flashes('register-success') %}
+        <div class="alert alert-success" role="alert">{{ flashError }}</div>
+    {% endfor %}
+
+    <!-- <textarea id="story" cols="25">
+        {{ getregionbyslug("mayotte").id }}
+        {{ getregionbyslug("mayotte").code }}
+        {{ getregionbyslug("mayotte").name }}
+    </textarea> -->
+
+    <!-- <br>
+    {% for item in getregions() %}
+    <textarea id="story" cols="25">
+        {{ getregionbyslug(item.slug).name }}
+        {{ getregionbyslug(item.slug).id }}
+        {{ getregionbyslug(item.slug).code }}
+    </textarea>
+    {% endfor %} -->
+
+    <!-- <br>
+    {% for item in getregions() %}
+    {{ dump(item) }}
+    <textarea id="story" cols="25">
+        {{ item.name }}
+        {{ item.id }}
+        {{ item.code }}
+    </textarea>
+    {% endfor %} -->
+
+    <!-- <br>
+    {% for item in getregions() %}
+    <textarea id="story" cols="25">
+        {% for field in item|cast_to_array %}
+            {{ field[0] }} => {{ field[1] }}
+        {% endfor %}
+    </textarea>
+    {% endfor %} -->
+
+
+{% endblock %}

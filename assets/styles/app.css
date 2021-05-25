@@ -3,9 +3,13 @@
     font-family: "Poppins", sans-serif;
 }
 
+/**
+ *   Base TWIG file stylesheet
+*/
 body {
     background-color: lightgray;
     /**/
+    position: relative;
     margin:0;
     padding:0;
     /**/
@@ -26,7 +30,7 @@ header{
     /**/
     width:100%;
 }
-/**/
+/* */
 #nav--brand{
     /* border:3px solid green; */
     /**/
@@ -50,7 +54,7 @@ header{
     align-items:center;
     justify-content: space-evenly;
 }
-/**/
+/* */
 .nav--bar{
     /* border:3px solid magenta; */
     /**/
@@ -62,8 +66,6 @@ header{
 }
 /* */
 .nav--menu{
-    /* border:3px solid black; */
-    /**/
     display:flex;
     flex-direction: row;
     /**/
@@ -85,22 +87,198 @@ header{
 }
 
 
-/* ************ */
-#section--banner{
+
+/**
+ *   Homepage TWIG file stylesheet
+ */
+#homepage--banner{
+    position: relative;
+    /**/
     display: flex;
+    flex-direction: column;
     /**/
     background-image:url('../images/honda_gl1800_2018_deux_models-750x410.jpg') ;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
     /**/
-    min-height: 350px;
+    min-height: 400px;
     /**/
     justify-content: center;
     align-items: center;
 }
-#section--banner>div>h1{
+#homepage--banner>h1{
     color:white;
     font-weight: bolder;
-    text-shadow: 5px 5px 0.25em BLUE;
+    text-shadow: 5px 5px 0.25em blue;
+    justify-self: center;
+}
+/* */
+#nav--inpage{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    /**/
+    position: absolute;
+    bottom:0px;
+}
+.nav--inpage-item{
+    margin-bottom:0.75em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    padding: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+    font-size: 0.75em;
+    /**/
+    color:blue;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.55);
+    box-shadow: 2px 2px 0.25em red;
+    border-radius: 10px;
+    /**/
+}
+
+
+
+
+
+
+
+
+
+
+
+/**
+ *   ALL pages TWIG files stylesheet
+ *   shared elements control
+*/
+.btn--ordering{
+    /**/
+    position: absolute;
+    bottom:100px;
+    /**/
+    color:white;
+    font-weight: bold;
+    background-color: rgba(255, 0, 0, 0.55);
+    box-shadow: 2px 2px 0.25em blue;
+    /* background-color: rgba(0, 89, 255, 0.65);
+    box-shadow: 2px 2px 0.25em red; */
+    border-radius: 10px;
+}
+/* */
+.paragraph--large{
+    margin:2.5em;
+}
+.title--h2{
+    font-weight: bold;
+    font-style: oblique;
+    padding-left:2em;
+}
+/* */
+.card--3D-horizontal{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    /* */
+    padding: 20px;
+    box-shadow: inset 
+    0 -3em 3em rgba(0,0,0,0.1),
+    0 0  0 2px rgb(255,255,255),
+    0.3em 0.3em 1em rgba(0,0,0,0.3);
+    border-radius: 3px;
+}
+/* */
+/* .card--paragraph{ */
+/* } */
+.card--horizontal{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+    /**/
+    justify-self: center;
+    align-self: center;
+}
+.card--vertical{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    /**/
+    justify-self: center;
+    align-self: center;
+}
+.card--imgsquare{
+    width:200px;
+    height:200px;
+    margin:1em;
+    /**/
+    box-shadow: 2px 2px 2px 2px 10px black;
+    /**/
+    justify-self: center;
+    align-self: center;
+}
+.card--imgrectangular{
+    width:300px;
+    height:200px;
+    margin:1em;
+    /**/
+    box-shadow: 2px 2px 2px 2px 10px black;
+    /**/
+    justify-self: center;
+    align-self: center;
+}
+
+/* */
+#uptotop{
+    display: flex;
+    flex-direction: row;
+    width: 2em;
+    height: 2em;
+    justify-content: center;
+    align-items: center;
+    /**/
+    position: fixed;
+    bottom:2em;
+    right:2em;
+    /**/
+    color:blue;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.55);
+    box-shadow: 2px 2px 0.25em red;
+    border-radius: 50%;
+}
+
+
+/* *** */
+@media screen and (max-width: 990px)
+{
+    .card--3D-horizontal{
+        justify-content: center;
+    }
+}
+@media screen and (max-width: 700px)
+{
+    .btn--ordering{
+        left: 38%;
+    }
+}
+@media screen and (max-width: 650px)
+{
+    .btn--ordering{
+        left: 30%;
+    }
+}
+@media screen and (max-width: 600px)
+{
+    .btn--ordering{
+        left: 25%;
+    }
 }

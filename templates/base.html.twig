@@ -1,12 +1,12 @@
-
-{% set AssetsImg="build/images/" %}
-{% set Favicon=AssetsImg ~ "favicon.ico" %}
+<!-- settings variables for Icon managing -->
+{% set sImgPath="build/images/" %}
+{% set sFaviconFullname=sImgPath ~ "favicon.png" %}
 
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
-        <link rel="icon" type="image/png" href="{{ asset(Favicon) }}"/>
+        <link rel="icon" type="image/png" href="{{ asset(sFaviconFullname) }}"/>
         <title>{% block title %}2 Wheels 4 Motion{% endblock %}</title>
         {# Run `composer require symfony/webpack-encore-bundle`
             and uncomment the following Encore helpers to start using Symfony UX
@@ -18,12 +18,12 @@
     </head>
     <body>
         
-        <header>
+        <header id="header--header">
             <!-- Container nécessaire pour occuper 100% de la largeur du Header -->
             <div class="container--nav">
                 <!-- DEBUT Logo & Marque -->
                 <div id="nav--brand">
-                    <img class="nav--logo" src="{{ asset(Favicon) }}" alt="logo centrale d'appels"></img>
+                    <img class="nav--logo" src="{{ asset(sFaviconFullname) }}" alt="logo centrale d'appels"></img>
                     <div id="nav--words">
                         <h2 class="nav--words-h2 m-2">2Wheels4Motion:</h2>
                         <h4 class="nav--words-h4 m-2">"Les transferts qui rassurent"</h4>
@@ -34,7 +34,7 @@
                     <!-- DEBUT bouton "Burger" -->
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse">
                         <span class="navbar-toggler-icon">
-                            <!-- <img class="nav--logo" src="{{ asset(Favicon) }}" alt="logo centrale d'appels"></img> -->
+                            <!-- <img class="nav--logo" src="{{ asset(sFaviconFullname) }}" alt="logo centrale d'appels"></img> -->
                         </span>
                     </button>
                     <!-- FIN bouton "Burger" -->
@@ -43,9 +43,9 @@
                             <li class="nav-item dropdown">
                                 Le Taxi-moto
                             </li>
-                            <li class="nav-item dropdown">
+                            <!-- <li class="nav-item dropdown">
                                 Confort & sécurité
-                            </li>
+                            </li> -->
                             <li class="nav-item dropdown">
                                 Tarification
                             </li>
@@ -61,18 +61,12 @@
             </div>
         </header>
 
-        <section id="section--banner">
-            <div>
-                <H1>L'ANNUAIRE DES TAXIS-MOTO FRANÇAIS</H1>
-            </div>
-        </section>
-
 
         {% block body %}
         
         {% endblock %}
 
-
+        <div id="uptotop"><a href="#"><i class="ri-arrow-up-line"></i></a></div>
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}

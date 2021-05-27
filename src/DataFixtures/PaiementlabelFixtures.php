@@ -2,44 +2,45 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Tva;
+use App\Entity\Paiementlabel;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 
-class TvaFixtures
+class PaiementlabelFixtures
     // extends Fixture implements OrderedFixtureInterface
 {
     
-    const TVA = [
-        ['value'    => 0,   'comment' => "Non soumis à la TVA, selon Art, 293B du Code Général des Impôts."],
-        ['value'    => 10,  'comment' => "Taux normal sur forfait, ou si destination déterminée à l'avance."],
-        ['value'    => 20,  'comment' => "Taux normal."]
+    const PAIEMANTLABEL = [
+        ['label'    => "Espèces"],
+        ['label'    => "CB"],
+        ['label'    => "Chèque"],
+        ['label'    => "Paypal"],
+        ['label'    => "Autre..."],
         // ....
     ];
-    
+
+
     public function no_load(ObjectManager $manager)
     {
 
         ////---------------------------
-        foreach (self::TVA as $tva) {
-            $obTva = new Tva();
-            $obTva->setValue($tva['value']);
-            $obTva->setComment($tva['comment']);
+        foreach (self::PAIEMANTLABEL as $Paiementlabel) {
+            $obPaiementlabel = new Paiementlabel();
+            $obPaiementlabel->setLabel($Paiementlabel['label']);
 
             // utiliser AVANT Persist le setReference, 
             // afin de stocker en mémoire les instances des objets 
             // qui dans un second temps (chargement de Article),
             // récupèrera la donnée...
-            // $this->setReference($tva['label'],$obTva);
-            // $this->setReference($tva['key'],$obTva);
+            // $this->setReference($Paiementlabel['label'],$obPaiementlabel);
+            // $this->setReference($Paiementlabel['key'],$obPaiementlabel);
 
-            $manager->persist($obTva);
+            $manager->persist($obPaiementlabel);
         }
         //
         $manager->flush();
         ////----------------------------
-
 
         // $product = new Product();
         // $manager->persist($product);

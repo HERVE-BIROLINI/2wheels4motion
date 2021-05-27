@@ -35,12 +35,22 @@ class Driver
     /**
      * @ORM\Column(type="boolean")
      */
-    private $agreeterms;
+    private $hasagreeterms;
 
     /**
      * @ORM\Column(type="date", nullable=true)
      */
     private $subscription_validity;
+
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=0)
+     */
+    private $phone;
+
+    /**
+     * @ORM\Column(type="string", length=64)
+     */
+    private $motomodel;
 
     public function getId(): ?int
     {
@@ -83,14 +93,14 @@ class Driver
         return $this;
     }
 
-    public function getAgreeterms(): ?bool
+    public function gethasagreeterms(): ?bool
     {
-        return $this->agreeterms;
+        return $this->hasagreeterms;
     }
 
-    public function setAgreeterms(bool $agreeterms): self
+    public function sethasagreeterms(bool $hasagreeterms): self
     {
-        $this->agreeterms = $agreeterms;
+        $this->hasagreeterms = $hasagreeterms;
 
         return $this;
     }
@@ -103,6 +113,30 @@ class Driver
     public function setSubscriptionValidity(?\DateTimeInterface $subscription_validity): self
     {
         $this->subscription_validity = $subscription_validity;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getMotomodel(): ?string
+    {
+        return $this->motomodel;
+    }
+
+    public function setMotomodel(string $motomodel): self
+    {
+        $this->motomodel = $motomodel;
 
         return $this;
     }

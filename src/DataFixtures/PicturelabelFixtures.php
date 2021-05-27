@@ -7,33 +7,34 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class PicturelabelFixtures extends Fixture
-    implements OrderedFixtureInterface
+class PicturelabelFixtures 
+    // extends Fixture implements OrderedFixtureInterface
 {
     
-    const PICTURES = [
+    const PICTURELABELS = [
         ['label'    => "Carte pro. VMDTR - Face"],
         ['label'    => "Carte pro. VMDTR - Dos"],
         ['label'    => "Visite médicale"],
+        ['label'    => "Autre..."],
         // ....
     ];
     
-    public function load(ObjectManager $manager)
+    public function no_load(ObjectManager $manager)
     {
 
         ////---------------------------
-        foreach (self::PICTURES as $Picture) {
-            $obCategory = new Picturelabel();
-            $obCategory->setLabel($Picture['label']);
+        foreach (self::PICTURELABELS as $Picturelabel) {
+            $obPicturelabel = new Picturelabel();
+            $obPicturelabel->setLabel($Picturelabel['label']);
 
             // utiliser AVANT Persist le setReference, 
             // afin de stocker en mémoire les instances des objets 
             // qui dans un second temps (chargement de Article),
             // récupèrera la donnée...
-            // $this->setReference($Picture['label'],$obCategory);
-            // $this->setReference($Picture['key'],$obCategory);
+            // $this->setReference($Picturelabel['label'],$obPicturelabel);
+            // $this->setReference($Picturelabel['key'],$obPicturelabel);
 
-            $manager->persist($obCategory);
+            $manager->persist($obPicturelabel);
         }
         //
         $manager->flush();
@@ -51,7 +52,7 @@ class PicturelabelFixtures extends Fixture
      *
      * @return integer
      */
-    public function getOrder(): int{
-        return 1;
-    }
+    // public function getOrder(): int{
+    //     return 1;
+    // }
 }

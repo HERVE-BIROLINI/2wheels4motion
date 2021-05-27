@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello DriverController!{% endblock %}
+
+{% block body %}
+
+<!-- Drivers Presentation banner -->
+<section id="driverspresentation--banner">
+    <H1>L'ESPACE DES PILOTES</H1>
+    <!-- <div class="btn btn--ordering">
+        <a href="#services">Commander une course</a>
+    </div> -->
+    <button class="btn btn--ordering">Commander une course</button>
+    <!-- internal page menu, to navigate to ID -->
+    <!-- <div id="nav--inpage">
+        <div class="nav--inpage-item">
+            <a href="#section--services">A votre service</a>
+        </div>
+        <div class="nav--inpage-item">
+            <a href="#section--pro">Professionnalisme</a>
+        </div>
+        <div class="nav--inpage-item">
+            <a href="#section--equipments">Les équipements passager</a>
+        </div>
+        <div class="nav--inpage-item">
+            <a href="#section--bikes">Les motos</a>
+        </div>
+    </div> -->
+    
+</section>
+
+
+<section class="paragraph--large" id="section--invitation">
+    <p>
+        Si vous êtes vous-même détenteur de la carte professionnelle de conducteur VMDTR,
+        que vous êtes immatriculé au répertoire des métiers, et disposez de votre propre véhicule,
+        inscrivez-vous ici afin d'être référencé et de profiter d'une plus large visibilité.
+        Vous recevrez des demandes de courses par courriel, ou pourrez même être directement contacté
+        par toute personne consultant cet annuaire dans le but de trouver un taxi-moto.
+    </p>
+    <p>
+        (pour vous renseigner à propos de l'immatriculation au répertoire des métiers,
+        rendez-vous sur le site des 
+        <a href="https://www.service-public.fr/professionnels-entreprises/vosdroits/F23264" target="_blanck">
+            services publics
+        </a>
+        )
+    </p>
+</section>
+
+
+<section class="paragraph--large" id="section--presentation">
+    <h2 class="title--h2" id="services--title">Les pilotes...</h2>
+    <div class="card--3D-horizontal">
+        <p>
+            Actuellement, 
+            {% if drivers|length == 0 %}
+                aucun pilote ne s'est encore inscrit
+            {% else %}
+                {{ drivers|length }} pilotes se sont déjà inscrits
+            {% endif %}
+            dans cet annuaire.
+        </p>
+
+        {% if drivers|length > 0 %}
+            {#{% %}#}
+            <table class="table table-striped table--txtlight">
+                <thead class="thead--light">
+                    <tr>
+                        <th>Prénom</th>
+                        <th>Dépt.</th>
+                        <th>Région</th>
+                        <th>Moto</th>
+                        <th>Nb. de courses</th>
+                        <th>Appréciation</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#{% la boucle sur les drivers %}#}
+                        {#{% set oUser=getuser(oDriver.user_id) %}#}
+                    <tr>
+                        <th>{#{% oUser.firstname %}#}</th>
+                        <th>Dépt.</th>
+                        <th>Région</th>
+                        <th>Moto</th>
+                        <th>
+                            <a href="{#{% 'mailto:' ~ oUser.email %}#}" title="Lui envoyer un courriel">
+                                <i class="ri-mail-send-line"></i>
+                            </a>
+                            <a href="{#{% 'tel:' ~ oUser.phone %}#}" title="Lui téléphoner" class="ml-4">
+                                <i class="ri-phone-line"></i>
+                            </a>
+                        </th>
+                    </tr>
+                    {#{% endfor %}#}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

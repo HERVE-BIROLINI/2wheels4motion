@@ -37,6 +37,15 @@ class FrenchGeography extends AbstractExtension
 
     // ***************************************************************
 
+    // public function isUsedCategory($category): bool{
+    //     $obPDO = new DBTools;
+    //     $obPDO->init();
+    //     $articles=$obPDO->execSqlQuery("select * from article where category_id=".$category);
+    //     if(count($articles)>0){
+    //         return true;
+    //     }
+    //     else{return false;}
+    // }
     // ** Les méthodes liées aux extensions de fonctions **
 
     //

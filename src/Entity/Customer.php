@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\CompanyRepository;
+use App\Repository\CustomerRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=CompanyRepository::class)
+ * @ORM\Entity(repositoryClass=CustomerRepository::class)
  */
-class Company
+class Customer
 {
     /**
      * @ORM\Id
@@ -18,19 +18,14 @@ class Company
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=128)
+     * @ORM\Column(type="date")
      */
-    private $name;
+    private $registration_date;
 
     /**
-     * @ORM\Column(type="decimal", precision=9, scale=0)
+     * @ORM\Column(type="decimal", precision=10, scale=0)
      */
-    private $siren;
-
-    /**
-     * @ORM\Column(type="decimal", precision=5, scale=0, nullable=true)
-     */
-    private $nic;
+    private $phone;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -47,43 +42,36 @@ class Company
      */
     private $city;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $hasagreeterms;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getRegistrationDate(): ?\DateTimeInterface
     {
-        return $this->name;
+        return $this->registration_date;
     }
 
-    public function setName(string $name): self
+    public function setRegistrationDate(\DateTimeInterface $registration_date): self
     {
-        $this->name = $name;
+        $this->registration_date = $registration_date;
 
         return $this;
     }
 
-    public function getSiren(): ?string
+    public function getPhone(): ?string
     {
-        return $this->siren;
+        return $this->phone;
     }
 
-    public function setSiren(string $siren): self
+    public function setPhone(string $phone): self
     {
-        $this->siren = $siren;
-
-        return $this;
-    }
-
-    public function getNic(): ?string
-    {
-        return $this->nic;
-    }
-
-    public function setNic(string $nic): self
-    {
-        $this->nic = $nic;
+        $this->phone = $phone;
 
         return $this;
     }
@@ -120,6 +108,18 @@ class Company
     public function setCity(string $city): self
     {
         $this->city = $city;
+
+        return $this;
+    }
+
+    public function getHasagreeterms(): ?bool
+    {
+        return $this->hasagreeterms;
+    }
+
+    public function setHasagreeterms(bool $hasagreeterms): self
+    {
+        $this->hasagreeterms = $hasagreeterms;
 
         return $this;
     }

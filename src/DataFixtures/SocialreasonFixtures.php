@@ -7,8 +7,8 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class SocialreasonFixtures extends Fixture
-    implements OrderedFixtureInterface
+class SocialreasonFixtures
+    // extends Fixture implements OrderedFixtureInterface
 {
     const REASONS = [
         ['label'    => "SARL"],
@@ -20,22 +20,22 @@ class SocialreasonFixtures extends Fixture
         ['label'    => "EIRL"],
         // ....
     ];
-    public function load(ObjectManager $manager)
+    public function no_load(ObjectManager $manager)
     {
         
         ////---------------------------
         foreach (self::REASONS as $reason) {
-            $obCategory = new Socialreason();
-            $obCategory->setLabel($reason['label']);
+            $obReason = new Socialreason();
+            $obReason->setLabel($reason['label']);
 
             // utiliser AVANT Persist le setReference, 
             // afin de stocker en mémoire les instances des objets 
             // qui dans un second temps (chargement de Article),
             // récupèrera la donnée...
-            // $this->setReference($reason['label'],$obCategory);
-            // $this->setReference($reason['key'],$obCategory);
+            // $this->setReference($reason['label'],$obReason);
+            // $this->setReference($reason['key'],$obReason);
 
-            $manager->persist($obCategory);
+            $manager->persist($obReason);
         }
         //
         $manager->flush();
@@ -52,7 +52,7 @@ class SocialreasonFixtures extends Fixture
      *
      * @return integer
      */
-    public function getOrder(): int{
-        return 1;
-    }
+    // public function getOrder(): int{
+    //     return 1;
+    // }
 }

@@ -33,11 +33,6 @@ class Driver
     private $vmdtr_number;
 
     /**
-     * @ORM\Column(type="boolean")
-     */
-    private $hasagreeterms;
-
-    /**
      * @ORM\Column(type="date", nullable=true)
      */
     private $subscription_validity;
@@ -89,18 +84,6 @@ class Driver
     public function setVmdtrNumber(string $vmdtr_number): self
     {
         $this->vmdtr_number = $vmdtr_number;
-
-        return $this;
-    }
-
-    public function gethasagreeterms(): ?bool
-    {
-        return $this->hasagreeterms;
-    }
-
-    public function sethasagreeterms(bool $hasagreeterms): self
-    {
-        $this->hasagreeterms = $hasagreeterms;
 
         return $this;
     }

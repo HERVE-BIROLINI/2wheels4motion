@@ -42,11 +42,6 @@ class Customer
      */
     private $city;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $hasagreeterms;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -108,18 +103,6 @@ class Customer
     public function setCity(string $city): self
     {
         $this->city = $city;
-
-        return $this;
-    }
-
-    public function getHasagreeterms(): ?bool
-    {
-        return $this->hasagreeterms;
-    }
-
-    public function setHasagreeterms(bool $hasagreeterms): self
-    {
-        $this->hasagreeterms = $hasagreeterms;
 
         return $this;
     }

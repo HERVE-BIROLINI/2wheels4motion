@@ -10,36 +10,34 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MailerController extends AbstractController
 {
-    // /**
-    //  * @Route("/mailer", name="mailer")
-    //  */
-    // public function index(): Response
-    // {
-    //     return $this->render('mailer/index.html.twig', [
-    //         'controller_name' => 'MailerController',
-    //     ]);
-
-// }
-// En cochant cette case, j'accepte et je reconnais avoir pris connaissance des CONDITIONS GÉNÉRALES DE VENTE et de LA NOTICE DONNÉES PERSONNELLES
     /**
-     * @Route("/email")
+     * @Route("/mailer", name="mailer")
      */
-    public function sendEmail(MailerInterface $mailer): Response
+    public function index(): Response
     {
-        $message = (new Email())
-        ->From('groupe3wf3@outlook.fr')
-        ->to('birolini.herve@gmail.com')
-        ->subject('sujet')
-        ->text('text')
-        ->html('<h1>html</h1>')
-        // you can remove the following code if you don't define a text version for your emails
-        ;
-
-    $mailer->send($message);
-
-        // ...
         return $this->render('mailer/index.html.twig', [
             'controller_name' => 'MailerController',
         ]);
     }
+// En cochant cette case, j'accepte et je reconnais avoir pris connaissance des CONDITIONS GÉNÉRALES DE VENTE et de LA NOTICE DONNÉES PERSONNELLES
+    
+    // /**
+    //  * @Route("/email")
+    //  */
+    // public function sendEmail(MailerInterface $mailer): Response
+    // {
+    //     $message = (new Email())
+    //     ->From('zooby@zobby.fr')
+    //     ->to('birolini.herve@gmail.com')
+    //     ->subject('sujet')
+    //     ->text('text')
+    //     ->html('<h1>Titre</h1>')
+    //     // you can remove the following code if you don't define a text version for your emails
+    //     ;
+    //     $mailer->send($message);
+    //     // ...
+    //     return $this->render('mailer/index.html.twig', [
+    //         'controller_name' => 'MailerController',
+    //     ]);
+    // }
 }

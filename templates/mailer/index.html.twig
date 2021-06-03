@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MailerController!{% endblock %}
+{% block title %}Bonjour MailerController!{% endblock %}
 
 {% block body %}
 <!-- <style>
@@ -8,7 +8,21 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style> -->
 
-<div class="example-wrapper">
-   <h1> Email envoyé, consultez vos SPAMS</h1>
+<div class="modal--big">
+    <!-- <div class="modal--content"> -->
+<!-- <div class="container example-wrapper mt-5"> -->
+        <h1> Courriel de validation de votre compte envoyé.</h1>
+        <br><br>
+        <h4>Merci de confirmer votre inscription en utilisant le lien contenu dans cet email.
+            <br>
+            Ce lien expirera dans 1 heure, vérifiez qu'il n'ait pas été dérouté vers vos SPAMS...
+        </h4>
+        <br>
+        <a href="{{ path('app_logout') }}" class="btn btn-sm btn--blue">
+            <i class="ri-home-2-line"></i>
+            <p>&ensp;</p>
+            Retour à l'accueil
+        </a>
+    <!-- </div> -->
 </div>
 {% endblock %}

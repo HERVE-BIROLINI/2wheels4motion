@@ -17,13 +17,18 @@
 
     </head>
     <body>
-        
+        {# ["ROLE_ADMIN"] #}
         <header id="header--header">
+            {% if app.user %}
+            <div class="align-self-end mt-2 mr-3">
+                <b>Bonjour {{ app.user.firstname }}</b>
+            </div>
+            {% endif %}
             <!-- Container nécessaire pour occuper 100% de la largeur du Header -->
             <div class="container--nav">
                 <!-- DEBUT Logo & Marque -->
                 <div id="nav--brand">
-                    <img class="nav--logo" src="{{ asset(sFaviconFullname) }}" alt="logo centrale d'appels"></img>
+                    <a href="{{ path('homepage') }}"><img class="nav--logo ml-3" src="{{ asset(sFaviconFullname) }}" alt="logo centrale d'appels"></img></a>
                     <div id="nav--words">
                         <h2 class="nav--words-h2 m-2">2Wheels4Motion:</h2>
                         <h4 class="nav--words-h4 m-2">"Les transferts qui (r)assurent"</h4>
@@ -53,14 +58,66 @@
                                 <a class="nav-link" href="">Commander une course</a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link" href="{{ path('driver_presentation') }}">Espace pilotes</a>
+                                <a class="nav-link" href="{{ path('driver_presentation') }}">
+                                    Les pilotes
+                                </a>
                             </li>
                         </ul>
+                        {# Si l'utilisateur EST DEJA identifié #}
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <!-- {#{% if app.user %}#} -->
+                        <ul class="navbar-nav ml-0">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{#{{ path('app_account', {'id': app.user.id}) }}#}">
+                                    <i class="ri-profile-line"></i>
+                                    <!-- &nbsp; -->
+                                    {{ app.user.firstname }} {{ app.user.lastname }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_logout') }}">
+                                    <i class="ri-logout-circle-r-line"></i>
+                                    <!-- &nbsp; -->
+                                    Déconnexion
+                                </a>
+                                <!-- <a class="nav-link" href="{#{{ path('app_logout') }}#}">Déconnexion</a> -->
+                            </li>
+                            {% if is_granted("ROLE_ADMIN") %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="ri-admin-line"></i>
+                                    <!-- &nbsp; -->
+                                    Administration
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{#{{ path('...') }}#}">...</a>
+                                    <a class="dropdown-item" href="{#{{ path('...') }}#}">...</a>
+                                </div>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        {# Si l'utilisateur N'est PAS encore identifié #}
+                        {% else %}
+                        <ul class="navbar-nav ml-0">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_login') }}">
+                                    <i class="ri-login-box-line"></i>
+                                    <!-- &nbsp; -->
+                                    Connexion
+                                </a>
+                            </li>
+                        </ul>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </header>
 
+<!-- <p>
+    alors? -->
+    {% dump(is_granted('IS_AUTHENTICATED_FULLY')) %}
+
+<!-- </p> -->
 
         {% block body %}
         

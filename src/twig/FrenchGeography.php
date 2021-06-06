@@ -1,9 +1,8 @@
 <?php
 
-namespace App\twig;
+namespace App\Twig;
 
 use App\Tools\DBTools;
-// use App\Entity\Category;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;

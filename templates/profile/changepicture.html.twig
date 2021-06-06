@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+{% set Title="Modification Avatar" %}
+{% block title %}{{ parent() }} - {{ Title }}{% endblock %}
+
+{% block body %}
+
+    {{ include('profile/banner.html.twig') }}
+    <form class="modal--big container-fluid mt-5" method="post" enctype="multipart/form-data">
+        <h1 class="h3 mb-3 font-weight-normal">Choississez votre photo de profil :</h1>
+        
+{#{{ dump(form) }}
+{{ dump(uploadroot) }}
+{{ form_start(form) }}
+{{ form_widget(form) }}
+<!-- <button class="btn">{{ button_label|default('Save') }}</button> -->
+{{ form_end(form) }}
+#}
+
+        <div class="d-flex flex-row">
+            <div class="card--profile m-2">
+                <label for="avatar1">
+                    <img class="img--profile" for="avatar1" src="{{ asset(sImgPath ~'Avatar/Avatar-WB.png') }}" alt="Photo de profil">
+                </label>
+                <input type="radio" id="avatar1" name="avatar" value="Avatar-WB.png">
+            </div>
+            <div class="card--profile m-2">
+                <label for="avatar2">
+                    <img class="img--profile" src="{{ asset(sImgPath ~'Avatar/Avatar-WW.png') }}" alt="Photo de profil">
+                </label>
+                <input type="radio" id="avatar2" name="avatar" value="Avatar-WW.png">
+            </div>
+            <div class="card--profile m-2">
+                <label for="avatar3">
+                    <img class="img--profile" src="{{ asset(sImgPath ~'Avatar/Avatar-MW.png') }}" alt="Photo de profil">
+                </label>
+                <input type="radio" id="avatar3" name="avatar" value="Avatar-MW.png">
+            </div>
+            <div class="card--profile m-2">
+                <label for="avatar4">
+                    <img class="img--profile" src="{{ asset(sImgPath ~'Avatar/Avatar-MB.png') }}" alt="Photo de profil">
+                </label>
+                <input type="radio" id="avatar4" name="avatar" value="Avatar-MB.png">
+            </div>
+        </div>
+        <hr ><!-- style="width:50%", size="3", color=black> -->
+        <div class="d-flex flex-row align-items-center">
+        <div class="card--profile m-2">
+            <label for="avatarfile">
+                {% if picture.pathname %}
+                <img class="img--profile" src="{{ asset(picture.pathname) }}" alt="Photo de profil">
+                {% endif %}
+            </label>
+            <input type="radio" id="avatarfile" name="avatar" value="FILE" for="browse"
+                {% if picture.pathname %}checked{% endif %}
+            >
+        </div>
+            <input type="file" name="file" id="browse" value={{ picture.pathname }} accept=".jpg, .jpeg, .png">
+        </div>
+        <br>
+        <div class="btns--row">
+            <button class="btn btn-sm btn--blue" type="submit">Sélectionner</button>
+            <a class="btn btn-sm btn-secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">Annuler</a>
+        </div>
+    </form>
+<!-- </div> -->
+{% endblock %}

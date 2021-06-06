@@ -12,7 +12,7 @@
 {% endfor %}
 
     {% if app.user %}
-{% dump(app.user) %}
+<!-- {{ dump(app.user) }} -->
         <div class="p-3 mb-2 bg-success text-white">
             Vous êtes connecté en tant que ' {{ app.user.firstname }} {{ app.user.lastname }} ',
             avec l'adresse électronique ' {{ app.user.username }} '. <a href="{{ path('app_logout') }}" class="text-danger">- Logout -</a>
@@ -55,7 +55,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 Pas encore de compte ?
                 &ensp;
-                <a class="btn btn-bg btn-secondary" href="{{ path('app_register') }}">
+                <a class="btn btn-bg btn-secondary" href="{{ path('registration_user') }}">
                     <i class="ri-record-circle-line"></i>
                     Créer un compte
                 </a>

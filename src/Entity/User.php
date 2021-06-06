@@ -56,6 +56,22 @@ class User implements UserInterface
      */
     private $hasagreetoterms;
 
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $registration_date;
+
+    /**
+     * @ORM\Column(type="string", length=10)
+     */
+    private $phone;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Picture::class, inversedBy="users",cascade={"persist"})
+     */
+    private $picture;
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -181,6 +197,42 @@ class User implements UserInterface
     public function setHasagreetoterms(bool $hasagreetoterms): self
     {
         $this->hasagreetoterms = $hasagreetoterms;
+
+        return $this;
+    }
+
+    public function getRegistrationDate(): ?\DateTimeInterface
+    {
+        return $this->registration_date;
+    }
+
+    public function setRegistrationDate(\DateTimeInterface $registration_date): self
+    {
+        $this->registration_date = $registration_date;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getPicture(): ?picture
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(?picture $picture): self
+    {
+        $this->picture = $picture;
 
         return $this;
     }

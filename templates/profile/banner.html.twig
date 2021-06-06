@@ -1,0 +1,24 @@
+<!-- DEBUT Profile banner -->
+<section id="profile--banner" style="background-image:url({{ asset(sImgPath ~'banner/Profile.png') }});">
+    <H1>TABLEAU DE BORD DE L'UTILISATEUR</H1>
+    
+    <a class="btn btn--ordering" href="{{ path('registration_driver') }}">Commander une course</a>
+    
+    <!-- internal page menu, to navigate to ID -->
+    {% if app.user %}
+    <div id="nav--inpage">
+        {% if "ROLE_USER" in app.user.roles %}
+        <a class="btn nav--inpage-btn-bgb" href="{{ path('profile_user', {'id': app.user.id}) }}">L'utilisateur</a>
+        {% endif %}
+        {% if "ROLE_CUSTOMER" in app.user.roles %}
+        <a class="btn nav--inpage-btn-bgb" href="{{ path('profile_customer') }}">Le client</a>
+        {% endif %}
+        {% if "ROLE_DRIVER" in app.user.roles %}
+        <a class="btn nav--inpage-btn-bgb" href="{{ path('profile_driver') }}">Le professionnel</a>
+        {% else %}
+        <a class="btn nav--inpage-btn-important" href="{{ path('registration_driver') }}">Enregistrer un compte pilote VMDTR</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+<!-- FIN Profile banner -->

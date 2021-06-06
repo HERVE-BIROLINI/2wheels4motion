@@ -6,8 +6,10 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Email;
@@ -21,6 +23,33 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            // 
+            ->add('firstname',TextType::class,[
+                'label'         =>  "Votre prénom :",
+                'attr'          =>  ['placeholder'=>"ex: John"],
+                'required'      =>  true,
+                'constraints'   =>  [
+                    new NotBlank(['message'=>"Le prénom est obligatoire"]),
+                    new Regex([
+                        'pattern'   => "@^[a-zA-Z \-]+@i",
+                        'message'   => "Ne doit contenir que des caractères alphabétiques, un espace ou un '-'",
+                    ]),
+                ],
+            ])
+            // 
+            ->add('lastname',TextType::class,[
+                'label'         =>  "Votre nom de famille :",
+                'attr'          =>  ['placeholder'=>"ex: Doe"],
+                'required'      =>  true,
+                'constraints'   =>  [
+                    new NotBlank(['message'=>"Le nom est obligatoire"]),
+                    new Regex([
+                        'pattern'   => "@^[a-zA-Z \-]+@i",
+                        'message'   => "Ne doit contenir que des caractères alphabétiques, un espace ou un '-'",
+                    ]),
+                ],
+            ])
+            //
             ->add('email',EmailType::class,[
                 'label' =>  "Votre adresse eMail :",
                 'attr'  =>  ['placeholder'=>"ex: mon@email.fr"],
@@ -32,6 +61,29 @@ class RegistrationFormType extends AbstractType
                     new NotBlank(['message' =>  "L'adresse eMail est obligatoire"]),
                     new Email   (['message' =>  "L'adresse eMail n'est pas valide"]),
                     // new Unique  (['message' =>  "Un compte utilisant cet email existe déjà"]),
+                    new Regex([
+                        'pattern'   => "@^[A-Za-z]{1}+[0-9A-Za-z\-\_\.]+\@{1}[0-9A-Za-z\-\_\.]+\.{1}+[A-Za-z]{2}+@i",
+                        'message'   => "Ne doit contenir que des caractères alphanumériques, un '@' et un '.' quelque chose",
+                    ])
+                ],
+            ])
+            //
+            ->add('phone',TextType::class,[
+                'label' =>  "Votre numéro de téléphone :",
+                'attr'  =>  ['placeholder'=>"ex: 0123456789"],
+                'required'      =>  true,
+                'constraints'   =>  [
+                    new NotBlank(['message' =>  "Le numéro de téléphone obligatoire"]),
+                    new Regex([
+                        'pattern'   => "@^0+[0-9]{9}+@i",
+                        'message'   => "Doit comporter 10 chiffres et commencer par un 0",
+                    ]),
+                    new Length([
+                        'min'           => 10,
+                        'max'           => 10,
+                        'minMessage'    => 'Votre numéro de téléphone doit comporter {{ limit }} chiffres',
+                        'maxMessage'    => 'Votre numéro de téléphone doit comporter {{ limit }} chiffres',
+                    ]),
                 ],
             ])
             // ->add('plainPassword', PasswordType::class, [
@@ -69,9 +121,9 @@ class RegistrationFormType extends AbstractType
                             'max'           => 4096,
                         ]),
                         new Regex([
-                            'pattern'   => "@^[a-z0-9]+@i",
+                            'pattern'   => "@^[a-zA-Z0-9\@\$\£]+@i",
                             'message'   => "Doit contenir des caractères alphanumériques",
-                        ])
+                        ]),
                     ],
                 ],
                 'second_options' => [

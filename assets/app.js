@@ -45,6 +45,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
         // else{}
     };
     // *** Pose de l'espion du mouvement de scrolling ***
-    window.addEventListener('scroll',scrollActing);
+    // window.addEventListener('scroll',scrollActing);
 
 });

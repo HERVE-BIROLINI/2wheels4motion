@@ -4,6 +4,17 @@
 }
 
 /**
+ * Astuce pour renommer le bouton de l'élément Bootstrap FileType,
+ * à la condition que dans FormType, soit précisé : 'attr'=>['lang'=>"fr"],
+*/
+.custom-file-label::after{
+    content: "Parcourir...";
+}
+.custom-file-label::before{
+    content: ".custom-file-label::before{content:'Texte à afficher';}";
+}
+
+/**
  *   Base TWIG file stylesheet
 */
 body {
@@ -106,7 +117,7 @@ body {
     display: flex;
     flex-direction: column;
     /**/
-    background-image:url('../images/honda_gl1800_2018_deux_models-750x410.jpg') ;
+    /* background-image:url('../images/banner/honda_gl1800_2018_deux_models-750x410.jpg') ; */
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -133,7 +144,7 @@ body {
     position: absolute;
     bottom:0px;
 }
-.nav--inpage-item{
+.nav--inpage-btn-bgw{
     margin-bottom:0.75em;
     margin-left: 0.5em;
     margin-right: 0.5em;
@@ -141,13 +152,45 @@ body {
     padding-left: 1em;
     padding-right: 1em;
     font-size: 0.75em;
+    font-weight: bold;
     /**/
     color:blue;
-    font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.55);
+    background-color: rgba(255, 255, 255, 0.65);
     box-shadow: 2px 2px 0.25em red;
-    border-radius: 10px;
     /**/
+    border-radius: 10px;
+}
+.nav--inpage-btn-bgb{
+    margin-bottom:0.75em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    padding: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+    font-size: 0.75em;
+    font-weight: bold;
+    /**/
+    color:white;
+    background-color: rgba(0, 89, 255, 0.4);
+    box-shadow: 2px 2px 0.25em red;
+    /**/
+    border-radius: 10px;
+}
+.nav--inpage-btn-important{
+    margin-bottom:0.75em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    padding: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+    font-size: 0.75em;
+    font-weight: bold;
+    /**/
+    color:white;
+    background-color: rgba(255, 0, 0, 0.55);
+    box-shadow: 2px 2px 0.25em blue;
+    /**/
+    border-radius: 10px;
 }
 
 
@@ -244,6 +287,8 @@ body {
     0 0  0 1px rgb(255,255,255),
     0.3em 0.3em 1em rgba(0,0,0,0.3);
     border-radius: 3px;
+    
+    margin:2.5em;
 }
 /* */
 /* .card--paragraph{ */
@@ -321,7 +366,7 @@ body {
     display: flex;
     flex-direction: column;
     /**/
-    background-image:url('../images/pilotes-motogp-2020.png') ;
+    /* background-image:url('../images/banner/pilotes-motogp-2020.png') ; */
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -334,7 +379,7 @@ body {
 #driverspresentation--banner>h1{
     color:white;
     font-weight: bolder;
-    text-shadow: 5px 5px 0.25em blue;
+    text-shadow: 5px 5px 0.25em red;
     justify-self: center;
 }
 
@@ -376,6 +421,51 @@ body {
     overflow: auto;
     padding:5%;
 } */
+
+
+/**
+ *   Profile TWIG file stylesheet
+ */
+#profile--banner{
+    position: relative;
+    /**/
+    display: flex;
+    flex-direction: column;
+    /**/
+    /* background-image:url('../images/banner/profile.png') ; */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /**/
+    min-height: 400px;
+    /**/
+    justify-content: center;
+    align-items: center;
+}
+#profile--banner>h1{
+    color:blue;
+    font-weight: bolder;
+    text-shadow: 5px 5px 0.25em red;
+    justify-self: center;
+}
+/**/
+.card--profile{
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+}
+.img--profile{
+    border:2px solid black;
+    height:100px;
+}
+.btns--row{
+    /* border:2px solid black; */
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+}
 
 
 

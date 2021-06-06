@@ -1,11 +1,19 @@
 <!-- settings variables for Icon managing -->
 {% set sImgPath="build/images/" %}
-{% set sFaviconFullname=sImgPath ~ "favicon.png" %}
+{% set sFaviconFullname=sImgPath ~ "banner/favicon.png" %}
 
 <!DOCTYPE html>
+<html lang="fr">
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- -->
+        <meta http-equiv="Content-Type" content="text/html/php/twig"/>
+        <meta name="description" content="Annuaire moto-taxi taxi-moto toute la France"/>
+        <meta name="author" content="BIROLINI Herve"/>
+        
         <link rel="icon" type="image/png" href="{{ asset(sFaviconFullname) }}"/>
         <title>{% block title %}2 Wheels 4 Motion{% endblock %}</title>
         {# Run `composer require symfony/webpack-encore-bundle`
@@ -17,7 +25,7 @@
 
     </head>
     <body>
-        {# ["ROLE_ADMIN"] #}
+        <!-- {# ["ROLE_ADMIN"] #} -->
         <header id="header--header">
             {% if app.user %}
             <div class="align-self-end mt-2 mr-3">
@@ -28,7 +36,7 @@
             <div class="container--nav">
                 <!-- DEBUT Logo & Marque -->
                 <div id="nav--brand">
-                    <a href="{{ path('homepage') }}"><img class="nav--logo ml-3" src="{{ asset(sFaviconFullname) }}" alt="logo centrale d'appels"></img></a>
+                    <a href="{{ path('homepage') }}"><img class="nav--logo ml-3" src="{{ asset(sFaviconFullname) }}" alt="logo annuaire moto-taxi"></img></a>
                     <div id="nav--words">
                         <h2 class="nav--words-h2 m-2">2Wheels4Motion:</h2>
                         <h4 class="nav--words-h4 m-2">"Les transferts qui (r)assurent"</h4>
@@ -68,7 +76,10 @@
                         <!-- {#{% if app.user %}#} -->
                         <ul class="navbar-nav ml-0">
                             <li class="nav-item">
-                                <a class="nav-link" href="{#{{ path('app_account', {'id': app.user.id}) }}#}">
+
+                                <!-- <a class="nav-link" href="{#{{ path('profile_user') }}#}"> -->
+                                <a class="nav-link" href="{{ path('profile_user', {'id': app.user.id}) }}">
+                                    
                                     <i class="ri-profile-line"></i>
                                     <!-- &nbsp; -->
                                     {{ app.user.firstname }} {{ app.user.lastname }}
@@ -113,11 +124,9 @@
             </div>
         </header>
 
-<!-- <p>
-    alors? -->
-    {% dump(is_granted('IS_AUTHENTICATED_FULLY')) %}
+    <!-- IS_AUTHENTICATED_FULLY ? -->
+    <!-- {#{{ dump(is_granted('IS_AUTHENTICATED_FULLY')) }}#} -->
 
-<!-- </p> -->
 
         {% block body %}
         

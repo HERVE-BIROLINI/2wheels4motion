@@ -1,0 +1,14 @@
+
+{% extends 'base.html.twig' %}
+{% set Title="... du client" %}
+{% block title %}{{ parent() }} - {{ Title }}{% endblock %}
+
+{% block body %}
+
+    {{ include('profile/banner.html.twig') }}
+    
+    {% if app.user %}
+
+    {% endif %}
+
+{% endblock %}

@@ -12,10 +12,11 @@ class PicturelabelFixtures
 {
     
     const PICTURELABELS = [
+        ['label'    => "Avatar"],
         ['label'    => "Carte pro. VMDTR - Face"],
         ['label'    => "Carte pro. VMDTR - Dos"],
         ['label'    => "Visite médicale"],
-        ['label'    => "Autre..."],
+        ['label'    => "Autre"],
         // ....
     ];
     

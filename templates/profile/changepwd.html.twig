@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+{% set Title="Modification Mot de Passe" %}
+{% block title %}{{ parent() }} - {{ Title }}{% endblock %}
+
+{% block body %}
+
+    {{ include('profile/banner.html.twig') }}
+	
+    <form class="modal--big container-fluid mt-5" method="post" enctype="multipart/form-data">
+		{{ form_start(changePwdForm) }}
+        <h1 class="h3 mb-3 font-weight-normal">Modifiez votre mot de passe :</h1>
+        <br>
+
+{#{{ dump(form) }}
+{{ dump(uploadroot) }}
+{{ form_start(form) }}
+{{ form_widget(form) }}
+<!-- <button class="btn">{{ button_label|default('Save') }}</button> -->
+{{ form_end(form) }}
+#}
+
+		<div>
+			<label for="inputPassword">Saisir votre mot de passe actuel :</label>
+			<input type="password" id="inputPassword"
+				placeholder="Mot de passe actuel..."
+				name="password-old" required
+			>
+			{% if verify_password_error %}
+			<span class="d-block">
+				<span class="form-error-icon badge badge-danger text-uppercase">Error</span>
+				<span class="form-error-message">... mot de passe erroné.</span>
+			</span>
+			{% endif %}
+			{#{{ form_help(changePwdForm.email)}}#}
+			{#{{ form_errors(changePwdForm.email)}}#}
+			<hr>
+			<label for="access_form_plainPassword_first">Définir un nouveau mot de passe :</label>
+			{{ form_widget(changePwdForm.plainPassword
+							,{ label: 'Password' }
+						)
+			}}
+		</div>
+		<span>A l'issue de la redéfinition de votre mot de passe, il vous faudra vous reconnecter...</span>
+		<br>
+		<div class="btns--row">
+			<button class="btn btn-sm btn--blue" type="submit">Soumettre</button>
+			<a class="btn btn-sm btn-secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">Annuler</a>
+		</div>
+		{{ form_end(changePwdForm) }}
+    </form>
+{% endblock %}

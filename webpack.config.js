@@ -56,7 +56,9 @@ Encore
     })
 
     // enables Sass/SCSS support
-    //.enableSassLoader()
+    
+    // Décommenté pour pouvoir enrichir et surcharger les variables Bootstrap
+    // .enableSassLoader()
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
@@ -72,7 +74,7 @@ Encore
     //.autoProvidejQuery()
 
     
-    // Ajouté suite à installation du file-loader...
+    // BIROLNI Ajouté suite à installation du file-loader...
     .copyFiles({
         from: './assets/images',
         to: 'images/[path][name].[ext]',

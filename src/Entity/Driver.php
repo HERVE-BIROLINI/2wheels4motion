@@ -17,10 +17,10 @@ class Driver
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="date")
-     */
-    private $registration_date;
+    // /**
+    //  * @ORM\Column(type="date")
+    //  */
+    // private $registration_date;
 
     /**
      * @ORM\Column(type="date")
@@ -37,10 +37,10 @@ class Driver
      */
     private $subscription_validity;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=0)
-     */
-    private $phone;
+    // /**
+    //  * @ORM\Column(type="decimal", precision=10, scale=0)
+    //  */
+    // private $phone;
 
     /**
      * @ORM\Column(type="string", length=64)
@@ -52,17 +52,17 @@ class Driver
         return $this->id;
     }
 
-    public function getRegistrationDate(): ?\DateTimeInterface
-    {
-        return $this->registration_date;
-    }
+    // public function getRegistrationDate(): ?\DateTimeInterface
+    // {
+    //     return $this->registration_date;
+    // }
 
-    public function setRegistrationDate(\DateTimeInterface $registration_date): self
-    {
-        $this->registration_date = $registration_date;
+    // public function setRegistrationDate(\DateTimeInterface $registration_date): self
+    // {
+    //     $this->registration_date = $registration_date;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getVmdtrValidity(): ?\DateTimeInterface
     {
@@ -100,17 +100,17 @@ class Driver
         return $this;
     }
 
-    public function getPhone(): ?string
-    {
-        return $this->phone;
-    }
+    // public function getPhone(): ?string
+    // {
+    //     return $this->phone;
+    // }
 
-    public function setPhone(string $phone): self
-    {
-        $this->phone = $phone;
+    // public function setPhone(string $phone): self
+    // {
+    //     $this->phone = $phone;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getMotomodel(): ?string
     {

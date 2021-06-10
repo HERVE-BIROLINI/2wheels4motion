@@ -30,7 +30,7 @@ class SecurityController extends AbstractController
         if ($user) {
             // ... pour un compte qui n'a pas été vérifié, renvoi un email
             if ($user->isVerified()==null) {
-
+dd('RE-envoie un email à partir de la page LOGIN...');
         // generate a signed url and email it to the user
         $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
             (new TemplatedEmail())

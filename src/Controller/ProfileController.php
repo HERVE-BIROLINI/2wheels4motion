@@ -21,20 +21,21 @@ class ProfileController extends AbstractController
 {
 
     /**
-     * @Route("/{id}", name="user")
+     * @Route("/{id}", name="user", methods={"GET","POST"})
      */
-    public function profileuser(User $user): Response{
+    public function profileuser(User $user): Response
+    {
+        // test si l'utilisateur N'est PAS encore identifié
+        if(!$this->getUser()){
+            return $this->redirectToRoute('app_login');
+        }
+
         $error_firstname=false;
         $error_lastname=false;
         $error_phone=false;
         // $entityManager = $this->getDoctrine()->getManager();
 
         if(isset($_POST['firstname'])){
-            //
-            // if(!$user){
-            //     $user = $userRepository->findOneBy(['email'=>$_POST['email']]);
-            // }
-            // dd($user);
             // test de la validité des nouvelles entrées
             if($_POST['firstname']!=$user->getFirstname()){
                 if(!preg_match('@^[a-zA-Z \-]+@iD',$_POST['firstname'])){
@@ -76,6 +77,11 @@ class ProfileController extends AbstractController
                                 , PicturelabelRepository $picturelabelRepository
                                 ): Response
     {
+        // test si l'utilisateur N'est PAS encore identifié
+        if(!$this->getUser()){
+            return $this->redirectToRoute('app_login');
+        }
+
         // recherche une éventuelle Picture déjà associée à User
         // sinon, instancie un nouvel objet
         if(!$picture=$user->getPicture()){
@@ -120,7 +126,7 @@ class ProfileController extends AbstractController
                 // ... vérifie que le type de fichier est autorisé (extension)
                 $arExtensions=array('jpg','jpeg','png');
                 // ... ... si le fichier est mauvais, lève le drapeau d'erreur
-                if(!in_array($sFileExtension, $arExtensions)){
+                if(!in_array(strtolower ($sFileExtension), $arExtensions)){
                     $bError=true;
                 }
                 // ... ... si le fichier est bon, lève le drapeau de copie
@@ -203,6 +209,11 @@ class ProfileController extends AbstractController
                             // , AuthenticationUtils $authenticationUtils
                             ): Response{
 
+        // test si l'utilisateur N'est PAS encore identifié
+        if(!$this->getUser()){
+            return $this->redirectToRoute('app_login');
+        }
+
         $user = $this->getDoctrine()->getRepository(User::class);
         $user = $repository->find($id);
 
@@ -253,6 +264,11 @@ class ProfileController extends AbstractController
             dd(isset($_POST));
         }
 
+        // test si l'utilisateur N'est PAS encore identifié
+        if(!$this->getUser()){
+            return $this->redirectToRoute('app_login');
+        }
+
         // au 1er passage, affiche la page du Profil et son formulaire
         return $this->render('profile/customer.html.twig', [
             'controller_name' => 'ProfileController',
@@ -265,6 +281,11 @@ class ProfileController extends AbstractController
      */
     public function profiledriver(): Response
     {
+
+        // test si l'utilisateur N'est PAS encore identifié
+        if(!$this->getUser()){
+            return $this->redirectToRoute('app_login');
+        }
 
         return $this->render('profile/driver.html.twig', [
             'controller_name' => 'ProfileController',
@@ -284,21 +305,21 @@ class ProfileController extends AbstractController
 
 
 
-    /**
-     * @Route("/index", name="index")
-     */
-    public function index(
-                        // User $id
-                        // , UserRepository $repository
-                        ): Response
-    {
-// dd($id);
-// $user = $this->getDoctrine()->getRepository(User::class);
-// $user = $repository->find($id);
+//     /**
+//      * @Route("/index", name="index")
+//      */
+//     public function index(
+//                         // User $id
+//                         // , UserRepository $repository
+//                         ): Response
+//     {
+// // dd($id);
+// // $user = $this->getDoctrine()->getRepository(User::class);
+// // $user = $repository->find($id);
 
-        return $this->render('profile/index.html.twig', [
-            'controller_name' => 'ProfileController',
+//         return $this->render('profile/index.html.twig', [
+//             'controller_name' => 'ProfileController',
 
-        ]);
-    }
+//         ]);
+//     }
 }

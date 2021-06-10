@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\CompanyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -46,6 +45,15 @@ class Company
      * @ORM\Column(type="string", length=128)
      */
     private $city;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isconfirmed;
+
+    public function __construct()
+    {
+    }
 
     public function getId(): ?int
     {
@@ -120,6 +128,18 @@ class Company
     public function setCity(string $city): self
     {
         $this->city = $city;
+
+        return $this;
+    }
+
+    public function getIsconfirmed(): ?bool
+    {
+        return $this->isconfirmed;
+    }
+
+    public function setIsconfirmed(?bool $isconfirmed): self
+    {
+        $this->isconfirmed = $isconfirmed;
 
         return $this;
     }

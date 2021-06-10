@@ -136,7 +136,8 @@ class RegistrationFormType extends AbstractType
             ])
             //
             ->add('hasagreetoterms', CheckboxType::class, [
-                'label' => "Accepter les conditions d'utilisation de l'Annuaire",
+                // 'label' => "Accepter les conditions d'utilisation de l'Annuaire",
+                'label' => "En cochant cette case, j'accepte et je reconnais avoir pris connaissance des CONDITIONS GÉNÉRALES DE VENTE et de LA NOTICE DONNÉES PERSONNELLES",
                 // 'mapped' => false,
                 'constraints' => [
                     new IsTrue([

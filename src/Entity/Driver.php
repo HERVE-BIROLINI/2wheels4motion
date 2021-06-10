@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\DriverRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -47,22 +46,20 @@ class Driver
      */
     private $motomodel;
 
+    /**
+     * @ORM\OneToOne(targetEntity=User::class, mappedBy="Driver", cascade={"persist", "remove"})
+     */
+    private $user;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $hasconfirmedgoodstanding;
+
     public function getId(): ?int
     {
         return $this->id;
     }
-
-    // public function getRegistrationDate(): ?\DateTimeInterface
-    // {
-    //     return $this->registration_date;
-    // }
-
-    // public function setRegistrationDate(\DateTimeInterface $registration_date): self
-    // {
-    //     $this->registration_date = $registration_date;
-
-    //     return $this;
-    // }
 
     public function getVmdtrValidity(): ?\DateTimeInterface
     {
@@ -100,18 +97,6 @@ class Driver
         return $this;
     }
 
-    // public function getPhone(): ?string
-    // {
-    //     return $this->phone;
-    // }
-
-    // public function setPhone(string $phone): self
-    // {
-    //     $this->phone = $phone;
-
-    //     return $this;
-    // }
-
     public function getMotomodel(): ?string
     {
         return $this->motomodel;
@@ -120,6 +105,40 @@ class Driver
     public function setMotomodel(string $motomodel): self
     {
         $this->motomodel = $motomodel;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($user === null && $this->user !== null) {
+            $this->user->setDriver(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($user !== null && $user->getDriver() !== $this) {
+            $user->setDriver($this);
+        }
+
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getHasconfirmedgoodstanding(): ?bool
+    {
+        return $this->hasconfirmedgoodstanding;
+    }
+
+    public function setHasconfirmedgoodstanding(bool $hasconfirmedgoodstanding): self
+    {
+        $this->hasconfirmedgoodstanding = $hasconfirmedgoodstanding;
 
         return $this;
     }

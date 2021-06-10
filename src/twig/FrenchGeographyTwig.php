@@ -7,7 +7,7 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
-class FrenchGeography extends AbstractExtension
+class FrenchGeographyTwig extends AbstractExtension
 {
 
     // Déclaration des extensions de functions TWIG

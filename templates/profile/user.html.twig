@@ -11,7 +11,7 @@
     <div class="paragraph--large">
         <form class="card--3D-vertical" method="post">
             <!-- Rangée titre + photo Avatar-->
-            <div class="d-flex flew-row justify-content-between align-items-center">
+            <div class="d-flex flew-row flex-wrap justify-content-between align-items-center">
                 <div>
                     <h2 class="h3 mb-3 font-weight-normal">Données personnelles</h2>
                     <p>Inscrit depuis le {{ app.user.registrationdate|date('d-m-Y') }}</p>
@@ -26,13 +26,13 @@
                         {% endif %}
                     </a>
                     <!-- <br> -->
-                    <a class="btn btn-sm btn-secondary w-100" href="{{ path('profile_changepicture', {'id': app.user.id }) }}">Modifier</a>
+                    <a class="btn btn-sm btn-secondary w-100 rounded-0" href="{{ path('profile_changepicture', {'id': app.user.id }) }}">Modifier</a>
                 </div>
             </div>
             <!-- Rangée de case d'édition -->
             <div class="d-flex flew-row flex-wrap">
                 <div class="col-12 col-md-6 mb-2">
-                    <label for="inputLastname">Nom :</label>
+                    <label class="required" for="inputLastname">Nom :</label>
                     <input type="text" value={{ app.user.lastname }} name="lastname" id="inputLastname" class="form-control" autocomplete="lastname" required ><!-- autofocus> -->
                     {% if error_lastname %}
                     <span class="d-block">
@@ -42,7 +42,7 @@
                     {% endif %}
                 </div>
                 <div class="col-12 col-md-6 mb-2">
-                    <label for="inputFirstname">Prénom :</label>
+                    <label class="required" for="inputFirstname">Prénom :</label>
                     <input type="text" value={{ app.user.firstname }} name="firstname" id="inputFirstname" class="form-control" autocomplete="firstname" required ><!-- autofocus> -->
                     {% if error_firstname %}
                     <span class="d-block">
@@ -52,12 +52,12 @@
                     {% endif %}
                 </div>
                 <div class="col-12 col-md-6 mb-2">
-                    <label for="inputEmail">Adresse électronique :</label>
+                    <label class="required" for="inputEmail">Adresse électronique :</label>
                     <input type="email" value="{{ app.user.email }}" class="form-control" disabled>
                     <input type="hidden" value="{{ app.user.email }}" name="email" id="inputEmail">
                 </div>
                 <div class="col-12 col-md-6 mb-2">
-                    <label for="inputPhone">Téléphone :</label>
+                    <label class="required" for="inputPhone">Téléphone :</label>
                     <input type="text" value="{{ app.user.phone }}" name="phone" id="inputPhone" class="form-control" autocomplete="phone" pattern="@^0+[0-9]{9}+@i" required ><!-- autofocus> -->
                     {% if error_phone %}
                     <span class="d-block">
@@ -71,8 +71,16 @@
 
             <!-- rangée de boutons : Mise à jour / Modification MdP / Création compte Driver -->
             <div class="btns--row">
-                <button class="btn btn-sm btn--blue" type="submit">Enregistrer les modifications</button>
-                <a class="btn btn-sm btn--blue" href="{{ path('profile_pwd', {'id': app.user.id}) }}">Modifier le mot de passe</a>
+                <button class="btn btn-sm btn--blue" type="submit">
+                    <i class="ri-record-circle-line"></i>
+                    <p>&ensp;</p>
+                    Enregistrer les modifications
+                </button>
+                <a class="btn btn-bg btn--blue" href="{{ path('profile_pwd', {'id': app.user.id}) }}">
+                    <i class="ri-find-replace-line"></i>
+                    &ensp;
+                    Modifier le mot de passe
+                </a>
             </div>
 
         </form>

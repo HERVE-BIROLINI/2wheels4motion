@@ -10,22 +10,12 @@ use App\Entity\Picturelabel;
 use App\Repository\PicturelabelRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class PicturelabelTwig extends AbstractExtension
+class PictureTwig extends AbstractExtension
 {
 
     // Déclaration des extensions de functions TWIG
     public function getFunctions(){
         return [
-            // new TwigFunction('getregions', [$this, 'getAllPicturelabels']),
-            // new TwigFunction('getregionbyslug', [$this, 'getRegionBySlug']),
-            // //
-            // new TwigFunction('getdepts', [$this, 'getAllDepts']),
-            // new TwigFunction('getdeptbyslug', [$this, 'getDeptBySlug']),
-            // //
-            // new TwigFunction('getcities', [$this, 'getAllCities']),
-            // new TwigFunction('getcitybyslug', [$this, 'getCityBySlug']),
-            // new TwigFunction('getcitybyzip', [$this, 'getCityByZip']),
-            //
             // new TwigFunction('getimages', [$this, 'getImages']),
         ];
     }

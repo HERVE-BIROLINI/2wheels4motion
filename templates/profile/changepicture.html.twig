@@ -58,8 +58,15 @@
         </div>
         <br>
         <div class="btns--row">
-            <button class="btn btn-sm btn--blue" type="submit">Sélectionner</button>
-            <a class="btn btn-sm btn-secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">Annuler</a>
+            <button class="btn btn-sm btn--blue" type="submit">
+                <i class="ri-cursor-line"></i>
+                <p>&ensp;</p>
+                Sélectionner
+            </button>
+            <a class="btn btn-bg btn-secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">
+                <i class="ri-close-fill"></i>
+                Annuler
+            </a>
         </div>
     </form>
 <!-- </div> -->

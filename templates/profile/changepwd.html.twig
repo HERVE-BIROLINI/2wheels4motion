@@ -20,10 +20,9 @@
 #}
 
 		<div>
-			<label for="inputPassword">Saisir votre mot de passe actuel :</label>
+			<label class="required" for="inputPassword">Saisir votre mot de passe actuel :</label>
 			<input type="password" id="inputPassword"
-				placeholder="Mot de passe actuel..."
-				name="password-old" required
+				placeholder="Mot de passe actuel..." name="password-old" required
 			>
 			{% if verify_password_error %}
 			<span class="d-block">

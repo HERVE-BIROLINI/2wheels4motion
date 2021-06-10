@@ -22,6 +22,8 @@
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
+        <!-- LINK nécessaire pour bénéficier de la balise I, de CDN Font Awesome -->
+        <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 
     </head>
     <body>
@@ -37,7 +39,7 @@
                 <!-- DEBUT Logo & Marque -->
                 <div id="nav--brand">
                     <a href="{{ path('homepage') }}"><img class="nav--logo ml-3" src="{{ asset(sFaviconFullname) }}" alt="logo annuaire moto-taxi"></img></a>
-                    <div id="nav--words">
+                    <div class="nav--words">
                         <h2 class="nav--words-h2 m-2">2Wheels4Motion:</h2>
                         <h4 class="nav--words-h4 m-2">"Les transferts qui (r)assurent"</h4>
                     </div>
@@ -60,11 +62,11 @@
                                 Confort & sécurité
                             </li> -->
                             <li class="nav-item dropdown">
-                                <a class="nav-link" href="">Tarification</a>
+                                <a class="nav-link" href="">Tarification/Paiement</a>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link" href="">Commander une course</a>
-                            </li>
+                            <!-- <li class="nav-item dropdown">
+                                <a class="nav-link" href=""><i class="fas fa-motorcycle"></i>&nbsp;Commander une course</a>
+                            </li> -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link" href="{{ path('driver_presentation') }}">
                                     Les pilotes
@@ -135,5 +137,7 @@
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
+
+        <div id="uptotop"><a href="#"><i class="ri-arrow-up-line"></i></a></div>
     </body>
 </html>

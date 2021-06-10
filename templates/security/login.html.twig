@@ -23,10 +23,10 @@
     <div class="card--3D-vertical">
         <h1 class="h3 mb-3 font-weight-normal">Identifiez-vous :</h1>
 
-        <label for="inputEmail">Adresse électronique :</label>
+        <label class="required" for="inputEmail">Adresse électronique :</label>
         <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" placholder="ex: mon@email.fr" required autofocus>
         <br>
-        <label for="inputPassword">Mot de passe :</label>
+        <label class="required" for="inputPassword">Mot de passe :</label>
         <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" placholder="Saisir votre mot de passe" required>
         <br>
         <input type="hidden" name="_csrf_token"

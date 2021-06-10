@@ -19,7 +19,7 @@ class MailerController extends AbstractController
             'controller_name' => 'MailerController',
         ]);
     }
-// En cochant cette case, j'accepte et je reconnais avoir pris connaissance des CONDITIONS GÉNÉRALES DE VENTE et de LA NOTICE DONNÉES PERSONNELLES
+
     
     // /**
     //  * @Route("/email")

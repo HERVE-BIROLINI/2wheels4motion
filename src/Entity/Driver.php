@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\DriverRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -45,11 +46,6 @@ class Driver
      * @ORM\Column(type="string", length=64)
      */
     private $motomodel;
-
-    /**
-     * @ORM\OneToOne(targetEntity=User::class, mappedBy="Driver", cascade={"persist", "remove"})
-     */
-    private $user;
 
     /**
      * @ORM\Column(type="boolean")
@@ -105,28 +101,6 @@ class Driver
     public function setMotomodel(string $motomodel): self
     {
         $this->motomodel = $motomodel;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        // unset the owning side of the relation if necessary
-        if ($user === null && $this->user !== null) {
-            $this->user->setDriver(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($user !== null && $user->getDriver() !== $this) {
-            $user->setDriver($this);
-        }
-
-        $this->user = $user;
 
         return $this;
     }

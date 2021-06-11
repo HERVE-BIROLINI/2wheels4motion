@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Enregistrement{% endblock %}
+{% block title %}Enregistrement d'un nouveau pilote{% endblock %}
 
 {% block body %}
     {% for flashError in app.flashes('verify_email_error') %}
@@ -13,7 +13,10 @@
 
     {#{% set allcompaniesknown=getallcompanies() %}#}
     {% if allcompaniesknown is defined %}
+    {{ dump('paramètre :') }}
     {{ dump('Nb de compagnies connues : '~allcompaniesknown|length) }}
+    {{ dump('twig :') }}
+    {{ dump('Nb de compagnies connues : '~getknowncompanies()|length) }}
     {% endif %}
     <form method="post" enctype="multipart/form-data">
         <div class="card--3D-vertical mt-5">

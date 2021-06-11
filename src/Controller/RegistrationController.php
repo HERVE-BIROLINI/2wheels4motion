@@ -225,7 +225,7 @@ class RegistrationController extends AbstractController
                 ->to($user->getEmail())
                 ->subject("Bienvenue parmi la flotte de pilotes de l'Annuaire 2Wheels4Motion")
                 // ->text('text') ou htmlTemplate au choix !!
-                ->htmlTemplate('registration/newdriver.html.twig')
+                ->htmlTemplate('registration/newdriver_email.html.twig')
             ;
             $mailer->send($email);
 
@@ -276,7 +276,7 @@ class RegistrationController extends AbstractController
             'city'          => $city,
             'hasconfirmedgoodstanding'=>$hasconfirmedgoodstanding,
             //
-            'allcompaniesknown'=>$companies->findAll(['isconfirmed'=>1]),
+'allcompaniesknown'=>$companies->findBy(['isconfirmed'=>true]),
         ]);
     }
 

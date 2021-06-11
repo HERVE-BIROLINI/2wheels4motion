@@ -21,7 +21,7 @@
 
 <form class="container mt-5" method="post">
     <div class="card--3D-vertical">
-        <h1 class="h3 mb-3 font-weight-normal">Identifiez-vous :</h1>
+        <h1 class="h3 mb-3 font-weight-normal">Identifiez-vous : <small style="color:red;font-size:0.5em;">(* champs obligatoire)</small></h1>
 
         <label class="required" for="inputEmail">Adresse électronique :</label>
         <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" placholder="ex: mon@email.fr" required autofocus>

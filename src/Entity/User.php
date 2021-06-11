@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+// use App\Entity\Driver;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -70,16 +71,6 @@ class User implements UserInterface
      * @ORM\ManyToOne(targetEntity=Picture::class, inversedBy="users",cascade={"persist"})
      */
     private $picture;
-
-    /**
-     * @ORM\OneToOne(targetEntity=Driver::class, inversedBy="user", cascade={"persist", "remove"})
-     */
-    private $driver;
-
-    /**
-     * @ORM\OneToOne(targetEntity=Customer::class, inversedBy="user", cascade={"persist", "remove"})
-     */
-    private $customer;
 
 
     public function getId(): ?int
@@ -243,30 +234,6 @@ class User implements UserInterface
     public function setPicture(?picture $picture): self
     {
         $this->picture = $picture;
-
-        return $this;
-    }
-
-    public function getDriver(): ?Driver
-    {
-        return $this->driver;
-    }
-
-    public function setDriver(?Driver $driver): self
-    {
-        $this->driver = $driver;
-
-        return $this;
-    }
-
-    public function getCustomer(): ?Customer
-    {
-        return $this->customer;
-    }
-
-    public function setCustomer(?Customer $customer): self
-    {
-        $this->customer = $customer;
 
         return $this;
     }

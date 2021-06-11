@@ -87,14 +87,6 @@
                                     {{ app.user.firstname }} {{ app.user.lastname }}
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_logout') }}">
-                                    <i class="ri-logout-circle-r-line"></i>
-                                    <!-- &nbsp; -->
-                                    Déconnexion
-                                </a>
-                                <!-- <a class="nav-link" href="{#{{ path('app_logout') }}#}">Déconnexion</a> -->
-                            </li>
                             {% if is_granted("ROLE_ADMIN") %}
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -108,6 +100,14 @@
                                 </div>
                             </li>
                             {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_logout') }}">
+                                    <i class="ri-logout-circle-r-line"></i>
+                                    <!-- &nbsp; -->
+                                    Déconnexion
+                                </a>
+                                <!-- <a class="nav-link" href="{#{{ path('app_logout') }}#}">Déconnexion</a> -->
+                            </li>
                         </ul>
                         {# Si l'utilisateur N'est PAS encore identifié #}
                         {% else %}

@@ -4,9 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Picture;
 use App\Entity\User;
+use App\Entity\Driver;
+use App\Entity\Company;
 use App\Form\ChangePwdFormType;
 use App\Repository\PicturelabelRepository;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +24,7 @@ class ProfileController extends AbstractController
 {
 
     /**
-     * @Route("/{id}", name="user", methods={"GET","POST"})
+     * @Route("/{id}", name="user", methods={"GET","POST"}, requirements={"id":"\d+"})
      */
     public function profileuser(User $user): Response
     {
@@ -71,7 +74,7 @@ class ProfileController extends AbstractController
     }
     
     /**
-     * @Route("/changepicture/{id}", name="changepicture", methods={"GET","POST"})
+     * @Route("/changepicture/{id}", name="changepicture", methods={"GET","POST"}, requirements={"id":"\d+"})
      */
     public function changepicture(User $user
                                 , PicturelabelRepository $picturelabelRepository
@@ -198,7 +201,7 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @Route("/pwd/{id}", name="pwd", methods={"GET","POST"})
+     * @Route("/pwd/{id}", name="pwd", methods={"GET","POST"}, requirements={"id":"\d+"})
      */
     public function changePwd(Request $request
                             , User $id
@@ -254,6 +257,26 @@ class ProfileController extends AbstractController
     }
 
     /**
+     * @Route("/driver", name="driver")
+     */
+    public function profiledriver(EntityManagerInterface $entityManager
+    ): Response
+    {
+
+        // test si l'utilisateur N'est PAS encore identifié
+        // if(!$this->getUser()){
+        //     return $this->redirectToRoute('app_login');
+        // }
+
+        return $this->render('profile/driver.html.twig', [
+            'controller_name' => 'ProfileController',
+            'driver'=>$entityManager->getRepository(Driver::class)->findOneBy(['id'=>1]),
+            'company'=>$entityManager->getRepository(Company::class)->findOneBy(['id'=>1]),
+
+        ]);
+    }
+
+    /**
      * @Route("/customer", name="customer")
      */
     public function profilecustomer(): Response
@@ -271,23 +294,6 @@ class ProfileController extends AbstractController
 
         // au 1er passage, affiche la page du Profil et son formulaire
         return $this->render('profile/customer.html.twig', [
-            'controller_name' => 'ProfileController',
-
-        ]);
-    }
-
-    /**
-     * @Route("/driver", name="driver")
-     */
-    public function profiledriver(): Response
-    {
-
-        // test si l'utilisateur N'est PAS encore identifié
-        if(!$this->getUser()){
-            return $this->redirectToRoute('app_login');
-        }
-
-        return $this->render('profile/driver.html.twig', [
             'controller_name' => 'ProfileController',
 
         ]);

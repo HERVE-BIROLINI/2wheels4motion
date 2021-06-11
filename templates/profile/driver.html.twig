@@ -7,6 +7,44 @@
 
     {{ include('profile/banner.html.twig') }}
     
+    Tentative d'ajout de l'objet Company dans le champs dédié de l'objet Driver
+
+    <!-- CA MARCHE !!!... -->
+    {#
+        #}
+        {{ dump('app.user (Current = 30 ?) :') }}
+        {{ dump(app.user) }}
+
+    <!-- CA MARCHE !!!... -->
+    {#
+        #}
+        {{ dump('app.user.picture (Current = 6 ?) :') }}
+        {{ dump(app.user.picture) }}
+        {{ dump('app.user.picture.pathname : '~app.user.picture.pathname) }}
+        {{ dump('app.user.picture.picturelabel.label : '~app.user.picture.picturelabel.label) }}
+
+    
+    <!-- NE FONCTIONNE PLUS SANS LIAISON-->
+    {#
+        {{ dump('app.user.driver (User(30) => Driver(1) ?) :') }}
+        {{ dump(app.user.driver) }}
+        #}
+    <!-- LES 2, CA MARCHE SI PAS DE LIAISON !!! -->
+    {#
+        #}
+        {{ dump('Driver (TWIG ! getdriverbyid(1)) :') }}
+        {{ dump(getdriverbyid(1)) }}
+        {{ dump('Driver (variable driver) :') }}
+        {{ dump(driver) }}
+
+    <!-- LES 2, CA MARCHE SI PAS DE LIAISON !!! -->
+    {#
+        #}
+        {{ dump('Company(TWIG ! getcompanybyid(1)) :') }}
+        {{ dump(getcompanybyid(1)) }}
+        {{ dump('Company(variable company) :') }}
+        {{ dump(company) }}
+
     {% if app.user %}
 
     {% endif %}

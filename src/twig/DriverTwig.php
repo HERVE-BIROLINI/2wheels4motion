@@ -2,61 +2,101 @@
 
 namespace App\Twig;
 
-use App\Tools\DBTools;
+use App\Entity\Driver;
+use App\Entity\Company;
+// use App\Tools\DBTools;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
-use App\Repository\DriverRepository;
-use App\Repository\CompanyRepository;
-use App\Repository\PicturelabelRepository;
-use Doctrine\Persistence\ManagerRegistry;
+// use App\Repository\DriverRepository;
+// use App\Repository\CompanyRepository;
+// use App\Repository\PicturelabelRepository;
+// use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+// use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+// use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+// use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class DriverTwig extends AbstractExtension
 {
 
-    private $drivers;
-    private $companies;
-    public function __construct(DriverRepository $drivers
-                                , CompanyRepository $companies
+    private $entityManager;
+    // private $urlGenerator;
+    // private $passwordEncoder;
+    // private $csrfTokenManager;
+
+    public function __construct(EntityManagerInterface $entityManager
+                                // , UrlGeneratorInterface $urlGenerator
+                                // , UserPasswordEncoderInterface $passwordEncoder
+                                // , CsrfTokenManagerInterface $csrfTokenManager
                                 )
     {
-        $this->drivers=$drivers;
-        $this->companies=$companies;
+        // $this->csrfTokenManager = $csrfTokenManager;
+        // $this->urlGenerator = $urlGenerator;
+        // $this->passwordEncoder = $passwordEncoder;
+        $this->entityManager = $entityManager;
+    // // private $drivers;
+    // // private $companies;
+    // // public function __construct(DriverRepository $drivers
+    // //                             , CompanyRepository $companies
+    // //                             )
+    // // {
+    // //     $this->drivers=$drivers;
+    // //     $this->companies=$companies;
     }
 
     // Déclaration des extensions de functions TWIG
     public function getFunctions(){
         return [
-            // new TwigFunction('getallcompanies', [$this, 'getAllCompanies']),
+            // fonctions de manipulations de l'objet Driver
+            new TwigFunction('getdriverbyid', [$this, 'getDriverById']),
+            // fonctions de manipulations de l'objet Company
+            new TwigFunction('getallcompanies', [$this, 'getAllCompanies']),
+            new TwigFunction('getcompanybyid', [$this, 'getCompanyById']),
+            new TwigFunction('getknowncompanies', [$this, 'getKnownCompanies']),
         ];
     }
 
     // Déclaration des filters TWIG
-    public function getFilters(){
-        return [
-            // new TwigFilter('cast_to_array', array($this, 'castClassToArray')),
-        ];
-    }
+    // public function getFilters(){
+    //     return [
+    //         new TwigFilter('cast_to_array', array($this, 'castClassToArray')),
+    //     ];
+    // }
 
     // *************************************************************
 
     // ** Les méthodes liées aux extensions de fonctions **
-    //
+    // fonctions de manipulations de l'objet Driver
+    public function getDriverById($id){
+        return $this->entityManager->getRepository(Driver::class)->findOneBy(['id'=>$id]);
+        // return $this->drivers->findOneBy(['id'=>$id]);
+    }
+    // fonctions de manipulations de l'objet Company
     public function getAllCompanies(){
-        return $this->companies->findAll();
+        return $this->entityManager->getRepository(Company::class)->findAll();
+        // return $this->companies->findAll();
+    }
+    public function getCompanyById($id){
+        return $this->entityManager->getRepository(Company::class)->findOneBy(['id'=>$id]);
+        // return $this->companies->findOneBy(['id'=>$id]);
+    }
+    public function getKnownCompanies(){
+        return $this->entityManager->getRepository(Company::class)->findOneBy(['isconfirmed'=>true]);
+        // return $this->companies->findBy(['isconfirmed'=>true]);
     }
 
     // *************************************************************
 
     // ** Les méthodes liées aux filtres **
     //
-    public function castClassToArray($stdClassObject) {
-        $response = array();
-        foreach ($stdClassObject as $key => $value) {
-            $response[] = array($key, $value);
-        }
-        return $response;
-    }
+    // public function castClassToArray($stdClassObject) {
+    //     $response = array();
+    //     foreach ($stdClassObject as $key => $value) {
+    //         $response[] = array($key, $value);
+    //     }
+    //     return $response;
+    // }
 
 
 

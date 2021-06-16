@@ -218,6 +218,16 @@ body{
 /**/
 
 
+/**
+* register Driver
+*/
+#blk--companies2choice{
+    display:none;
+}
+#btn--associate-company{
+    pointer-events:none;
+    opacity:0.2;
+}
 
 
 
@@ -482,8 +492,9 @@ body{
     align-items: center;
     /**/
     overflow: auto;
-    padding: 5%;
-    padding-top: 10%;
+    /* padding: 5%; */
+    /* padding-top: 10%; */
+    /* padding-top: 5%; */
 }
 /* .modal--content{
     border:2px solid red;

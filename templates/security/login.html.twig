@@ -21,7 +21,22 @@
 
 <form class="container mt-5" method="post">
     <div class="card--3D-vertical">
-        <h1 class="h3 mb-3 font-weight-normal">Identifiez-vous : <small style="color:red;font-size:0.5em;">(* champs obligatoire)</small></h1>
+
+        <div class="d-flex flex-row justify-content-between">
+
+            <h1 class="h3 mb-3 font-weight-normal">Identifiez-vous : <small style="color:red;font-size:0.5em;">(* champs obligatoire)</small></h1>
+
+            {% if app.user is null %}
+            <div class="d-flex justify-content-between align-items-center">
+                Mot de passe oublié ?
+                &ensp;
+                <a class="btn btn-bg btn-secondary" href="{#{{ path('profile_pwd') }}#}">
+                    <i class="ri-key-2-line"></i>
+                    Reinitialiser le mot de passe (RESTE A DEVELOPPER)
+                </a>
+            </div>
+            {% endif %}
+        </div>
 
         <label class="required" for="inputEmail">Adresse électronique :</label>
         <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" placholder="ex: mon@email.fr" required autofocus>

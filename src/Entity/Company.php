@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CompanyRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -52,8 +54,14 @@ class Company
      */
     private $isconfirmed;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Driver::class, mappedBy="company")
+     */
+    private $drivers;
+
     public function __construct()
     {
+        $this->drivers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -141,6 +149,36 @@ class Company
     public function setIsconfirmed(?bool $isconfirmed): self
     {
         $this->isconfirmed = $isconfirmed;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Driver[]
+     */
+    public function getDrivers(): Collection
+    {
+        return $this->drivers;
+    }
+
+    public function addDriver(Driver $driver): self
+    {
+        if (!$this->drivers->contains($driver)) {
+            $this->drivers[] = $driver;
+            $driver->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDriver(Driver $driver): self
+    {
+        if ($this->drivers->removeElement($driver)) {
+            // set the owning side to null (unless already changed)
+            if ($driver->getCompany() === $this) {
+                $driver->setCompany(null);
+            }
+        }
 
         return $this;
     }

@@ -22,6 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 /**
@@ -106,11 +107,12 @@ class RegistrationController extends AbstractController
                                 , CompanyRepository $companies
                                 , User $user
                                 , MailerInterface $mailer
+                                , ValidatorInterface $validator
     ): Response
     {
 
         // test si l'utilisateur N'est PAS encore identifié
-        if(!$this->getUser()){
+        if(!$this->getUser() or $this->getUser()!==$user){
             return $this->redirectToRoute('app_login');
         }
         // test si l'utilisateur aurait déjà fait une demande
@@ -121,7 +123,7 @@ class RegistrationController extends AbstractController
 
         $obFrenchGeographyTwig=new FrenchGeographyTwig;
         $error_files=null;
-        // $error_files=null;
+        $driver_exist=null;
         // Définition des variables, nécessaire si 1er passage...
         $vmdtr_number=null;
         $vmdtr_validity=null;
@@ -166,6 +168,7 @@ class RegistrationController extends AbstractController
 
         if(isset($_POST['hasconfirmedgoodstanding'])
             and isset($_FILES) and $_FILES['file']['error']==0
+            and $vmdtr_number!==null and !$driver_exist=$drivers->findBy(['vmdtr_number'=>$vmdtr_number])
         ){
             // Pour les enregistrements dans la BdD
             $entityManager = $this->getDoctrine()->getManager();
@@ -177,24 +180,34 @@ class RegistrationController extends AbstractController
             // - ajouter le rôle Driver à User
             // - ajouter le Driver à User
             //
-            $company=new Company;
-            $company->setName($name);
-            $company->setSiren($siren);
-            if($nic != ''){
-                $company->setNic($nic);
+            if(!$company=$companies->findOneBy(['siren'=>$siren])){
+                $company=new Company;
+                $company->setName($name);
+                $company->setSiren($siren);
+                if($nic != ''){
+                    $company->setNic($nic);
+                }
+                $company->setRoad($road);
+                $company->setZip($zip);
+                $company->setCity($city);
+                //
+                // $error = $validator->validate($user);
+                // if(count($error)){
+                    // Do stuff
+                // }else{
+                    $entityManager->persist($company);
+                    $entityManager->flush();
+                // }
+                echo('Company existante...');
             }
-            $company->setRoad($road);
-            $company->setZip($zip);
-            $company->setCity($city);
-            $entityManager->persist($company);
-            $entityManager->flush();
+
             //
             $driver=new Driver;
             $driver->setVmdtrNumber($vmdtr_number);
             $driver->setVmdtrValidity(new \DateTime($vmdtr_validity));
             $driver->setMotomodel($motomodel);
             $driver->setHasconfirmedgoodstanding($hasconfirmedgoodstanding);
-            // $driver->setCompany($company);
+            $driver->setCompany($company);
             $entityManager->persist($driver);
             $entityManager->flush();
             //
@@ -244,7 +257,12 @@ class RegistrationController extends AbstractController
                 'error_firstname'   => false,
                 'error_lastname'    => false,
                 'error_phone'       => false,
+                //
+                'msg_info'   => "Votre demande a été signifiée à l'administrateur par courriel",
             ]);
+        }
+        elseif(!is_null($driver_exist)){
+            $driver_exist="Un pilote utilise déjà ce numéro de carte professionnelle VMDTR.";
         }
         elseif(isset($_POST['hasconfirmedgoodstanding'])
                 and isset($_FILES) and $_FILES['file']['error']==4
@@ -256,14 +274,22 @@ class RegistrationController extends AbstractController
         ){
             $error_files="Le fichier image choisi dépasse la limite autorisée de 2Mo.";
         }
-        else{
-            // dd($_FILES);
-            $error_files="ENTREE ! 1er passage...";
+
+        // Choix d'une Company "référencée"
+        elseif(isset($_POST['companychoosen'])){
+            $company=$companies->findOneBy(['id'=>$_POST['companychoosen']]);
+            $name=$company->getName();
+            $siren=$company->getSiren();
+            $nic=$company->getNic();
+            $road=$company->getRoad();
+            $zip=$company->getZip();
+            $city=$company->getCity();
         }
 
         // 1er passage, ou retour après erreur de saisie
         return $this->render('registration/driver.html.twig', [
             'error_files'   => $error_files,
+            'driver_exist'  => $driver_exist,
             //
             'vmdtr_number'  => $vmdtr_number,
             'vmdtr_validity'=> $vmdtr_validity,

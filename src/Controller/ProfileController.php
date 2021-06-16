@@ -6,9 +6,11 @@ use App\Entity\Picture;
 use App\Entity\User;
 use App\Entity\Driver;
 use App\Entity\Company;
+use App\Entity\Picturelabel;
 use App\Form\ChangePwdFormType;
 use App\Repository\PicturelabelRepository;
 use App\Repository\UserRepository;
+use App\Twig\PictureTwig;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,12 +26,14 @@ class ProfileController extends AbstractController
 {
 
     /**
-     * @Route("/{id}", name="user", methods={"GET","POST"}, requirements={"id":"\d+"})
+     * @Route("{id}", name="user", methods={"GET","POST"}, requirements={"id":"\d+"})
      */
-    public function profileuser(User $user): Response
+    public function profileuser(User $user
+                            // , EntityManagerInterface $entityManager
+    ): Response
     {
         // test si l'utilisateur N'est PAS encore identifié
-        if(!$this->getUser()){
+        if(!$this->getUser() or $this->getUser()!==$user){
             return $this->redirectToRoute('app_login');
         }
 
@@ -37,6 +41,7 @@ class ProfileController extends AbstractController
         $error_lastname=false;
         $error_phone=false;
         // $entityManager = $this->getDoctrine()->getManager();
+        $msg_info=false;
 
         if(isset($_POST['firstname'])){
             // test de la validité des nouvelles entrées
@@ -64,147 +69,166 @@ class ProfileController extends AbstractController
             // $user->setPhone($_POST['phone']);
             // dd($user);
         }
-
+        
+        // $obPictureLabel_Portrait=$entityManager->getRepository(Picturelabel::class)->findOneBy(['label'=>'Avatar']);
+        
         return $this->render('profile/user.html.twig', [
+            // 'picture_portrait'  => $entityManager->getRepository(Picture::class)->findOneBy(['picturelabel'=>$obPictureLabel_Portrait,'user'=>$user]),
             // 'controller_name'   => 'ProfileController',
             'error_firstname'   => $error_firstname,
             'error_lastname'    => $error_lastname,
             'error_phone'       => $error_phone,
+            //
+            'msg_info'  => $msg_info,
         ]);
     }
     
     /**
-     * @Route("/changepicture/{id}", name="changepicture", methods={"GET","POST"}, requirements={"id":"\d+"})
+     * @Route("{id}/changepicture", name="changepicture", methods={"GET","POST"}, requirements={"id":"\d+"})
      */
     public function changepicture(User $user
-                                , PicturelabelRepository $picturelabelRepository
-                                ): Response
+                                // , PicturelabelRepository $picturelabelRepository
+                                // , EntityManagerInterface $entityManager
+                                // , EntityManagerInterface $entityManagerInterface
+    ): Response
     {
-        // test si l'utilisateur N'est PAS encore identifié
-        if(!$this->getUser()){
+        // test si l'utilisateur N'est PAS encore identifié,
+        // et s'il n'y a pas d'erreur de Route dans la barre d'adresse (tricheur !)...
+        if(!$this->getUser() or $this->getUser()!==$user){
             return $this->redirectToRoute('app_login');
         }
 
-        // recherche une éventuelle Picture déjà associée à User
-        // sinon, instancie un nouvel objet
-        if(!$picture=$user->getPicture()){
-            $picture = new Picture;
+        $msg_info='';
+        // 'drapeau' de levée d'actions, selon l'analyse
+        $bError=false;
+        $bReturn2Profile=false;
+        $bDeletePreviousFileIfExist=false;
+
+        // instanciation du Manager de BdD
+        $entityManager = $this->getDoctrine()->getManager();
+        // recherche l'objet Picturelabel correspondant à l' "Avatar"
+        $obPicturelabel_Portrait = $entityManager->getRepository(Picturelabel::class)->findOneBy(['label'=>'avatar']);
+        // recherche une éventuelle Picture déjà associée à User...
+        if(!$obPicture=$entityManager->getRepository(Picture::class)
+                ->findOneBy(['picturelabel'=>$obPicturelabel_Portrait,'user'=>$user])
+        ){
+            // ... sinon, instancie un nouvel objet
+            $obPicture = new Picture;
         }
-
-        // Si RETOUR de la page, avec un choix effectif d'image pour son Avatar
+        
+        // *** Si RETOUR dans le formulaire... ***
         if(isset($_POST['avatar'])){
-            // 'drapeau' de levée d'erreur
-            $bError=false;
-            $bFile2Save=false;
-            // instanciation du Manager de BdD
-            $entityManager = $this->getDoctrine()->getManager();
-            // ... recherche l'objet Picturelabel 'Avatar'
-            $obPicturelabel = $picturelabelRepository->findOneBy(['label'=>'avatar']);
-
-            // déclaration/création du dossier destination
+            // ** déclaration/création du dossier destination **
             $sDestinationFolder='';
-            $arFolder=[$this->getParameter('asset_path'),'images/','uploads/','user/',$user->getId()];
-            foreach ($arFolder as $sFolder){
+            // ----------v- A analyser lors de la publication -v----------
+            $arFolder=[$this->getParameter('asset_path_dev'),'images/','uploads/','user/',$user->getId()];
+            // $arFolder=[$this->getParameter('asset_path_prod'),'images/','uploads/','user/',$user->getId()];
+            // ----------^- A analyser lors de la publication -^----------
+            foreach($arFolder as $sFolder){
                 $sDestinationFolder.=$sFolder;
                 // ... si le dossier n'existe pas => le créer
-                if(!file_exists($sDestinationFolder)) {
+                if(!file_exists($sDestinationFolder)){
                     mkdir($sDestinationFolder);
                 }
             }
-            
-            //  * File *
-            // ... si le choix est un 'nouveau' fichier, défini
+
+            //  ** File => un fichier choisi **
             if($_POST["avatar"]=="FILE" and $_FILES['file']['error']==0){
-                // récupère les informations sur le fichier...
+                // dd('oui');
+                // * récupère les informations sur le fichier *
                 // ... le nom (sans le chemin) de l'image dans la super globale
                 $sFilePathInfo=pathinfo($_FILES['file']['name']);
-                // ... ... en déduit le nom (sans l'extension)
-                $sFileName=$sFilePathInfo['filename'];
-                // ... ... en déduit son extension
+                // // ... en déduit le nom (sans l'extension)
+                // $sFileName=$sFilePathInfo['filename'];
+                // ... en déduit son extension
                 $sFileExtension=strtolower($sFilePathInfo['extension']);
                 // ... parce que l'outil AURA DEJA copié le fichier dans une zone tampon...
                 // ... ... récupère le chemin de cette zone tampon
                 $sFileTmp=$_FILES['file']['tmp_name'];
-                
                 // ... vérifie que le type de fichier est autorisé (extension)
                 $arExtensions=array('jpg','jpeg','png');
-                // ... ... si le fichier est mauvais, lève le drapeau d'erreur
-                if(!in_array(strtolower ($sFileExtension), $arExtensions)){
+                // * si le fichier est bon, effectue la "copie" *
+                // BIZARRE !!!!!!!!
+                echo('<br> $sFileExtension = '.$sFileExtension);
+                // dd($arExtensions);
+                if(in_array($sFileExtension, $arExtensions)){
+                    // Déplace le fichier de la zone tampon vers le chemin destination...
+                    $sFileFullDestination=$sDestinationFolder.'/Avatar.'.$sFileExtension;
+                    // Déplace le fichier...
+                    if(move_uploaded_file($sFileTmp,$sFileFullDestination)){
+                        // ... si le déplacement s'est bien dérouler...
+                        $picture_PathName='build/'.strstr($sFileFullDestination,'images/');
+                        // $obPicture->setPathname('build/'.strstr($sFileFullDestination,'images/'));
+                        // ... demande la suppression de l'ancien fichier si existait
+                        $bDeletePreviousFileIfExist=true;
+                    }
+                    else{
+                        $bError=true;
+                    }
+                }
+                // ... si le fichier est mauvais, lève le drapeau d'erreur
+                else{
                     $bError=true;
                 }
-                // ... ... si le fichier est bon, lève le drapeau de copie
-                else{
-                    $bFile2Save=true;
-                }
             }
-            // ... si le choix est un avatar prédéfini...
+            // ** Input => Choix d'un avatar prédéfini **
             elseif($_POST["avatar"]!=="FILE"){
+                // demande la suppression de l'ancien fichier si existait
+                $bDeletePreviousFileIfExist=true;
+                // Change le chemin de l'objet picture
+                $picture_PathName='build/images/avatar/'.$_POST['avatar'];
+                // $obPicture->setPathname('build/images/avatar/'.$_POST['avatar']);
+            }
+
+            // ... si validation de l'image affichée, sans en avoir changé...
+            if($_POST["avatar"]=="FILE" and $_FILES['file']['error']==4){
+                // ... Retour au Profil, mais ne fait rien...
+                $bReturn2Profile=true;
+            }
+
+            // Quelque soit le choix d'avatar, si pas de problème => effectue les traitements déduits par l'analyse
+            // (met à jour les Tables de la BdD, supprime l'ancien fichier... puis retourne sur la page Profile...)
+            if(!$bError and !$bReturn2Profile){
+                
                 // supprime l'ancien fichier si existait
-                if($picture->getPathname()
-                    and str_contains($picture->getPathname(),'user')
-                    and file_exists($picture->getPathname())
+                // /!\ A faire avant de modifier le chemin mémorisé dans l'objet...
+                if($bDeletePreviousFileIfExist
+                    and $obPicture->getPathname()
+                    and str_contains($obPicture->getPathname(),'user')
+                    and file_exists($obPicture->getPathname())
                 ){
-                    unlink($picture->getPathname());
+                    unlink($obPicture->getPathname());
                 }
                 
-                // Change le chemin de l'objet picture
-                $picture->setPathname('build/images/avatar/'.$_POST['avatar']);
-            }
-
-            // **** TOUTES LES INFORMATIONS PARAISSENT CORRECTES ****
-            // ** Déplace le fichier de la zone tampon vers le chemin destination **
-            // dd($bError);
-            if(!$bError and $bFile2Save){
-                // supprime l'ancien fichier si existait
-                if($picture->getPathname() 
-                    and str_contains($picture->getPathname(),'user')
-                    and file_exists($picture->getPathname())
-                ){
-                    unlink($picture->getPathname());
-                }
-                // 'force' un nom unique pour toutes les images utilisées comme Avatar
-                $sFileName = 'Avatar';
-                $sFileFullDestination=$sDestinationFolder.'/'.$sFileName.'.'.$sFileExtension;
-                // Déplace le fichier...
-                if(move_uploaded_file($sFileTmp,$sFileFullDestination)){
-                    // ... si le déplacement s'est bien dérouler...
-                    // ... défini l'objet Picture à sauver dans la BdD
-                    $picture->setPathname(strstr($sFileFullDestination,'build/images/'));
-                }
-            }
-
-            // Quelque soit le choix d'avatar, si pas de problème
-            //  => met à jour les Tables de la BdD, puis retournesur la page Profile...
-            if(!$bError){
-                $picture->setPicturelabel($obPicturelabel);
+                //
+                $obPicture->setPathname($picture_PathName);
+                $obPicture->setPicturelabel($obPicturelabel_Portrait);
                 $entityManager->persist($user);
-                $user->setPicture($picture);
-
+                //
+                $user->addPicture($obPicture);
                 //  => écrit dans la Table User (et par 'cascade', Picture)
                 $entityManager->flush();
+                $bReturn2Profile=true;
+            }
 
-                // Si tout s'est bien passé, retourne à la fiche User
-                
-                return $this->render('profile/user.html.twig', [
-                    'error_firstname'   => false,
-                    'error_lastname'    => false,
-                    'error_phone'       => false,
-                ]);
-                // return $this->redirectToRoute('profile_user');
+            // Si tout s'est bien passé, retourne à la page Profile_User
+            if($bReturn2Profile=true){
+                return $this->redirectToRoute('profile_user',['id'=>$user->getId()]);
             }
         }
-
+        
+        // *** Si ARRIVEE dans le formulaire, ou RETOUR suite erreur...
         return $this->render('profile/changepicture.html.twig', [
-            'picture'   => $picture,
+            'msg_info'  => $msg_info,
             // 'controller_name' => 'ProfileController',
         ]);
     }
 
     /**
-     * @Route("/pwd/{id}", name="pwd", methods={"GET","POST"}, requirements={"id":"\d+"})
+     * @Route("{id}/pwd", name="pwd", methods={"GET","POST"}, requirements={"id":"\d+"})
      */
     public function changePwd(Request $request
-                            , User $id
+                            , User $user
                             , UserRepository $repository
                             // , GuardAuthenticatorHandler $guardHandler
                             // , LoginFormAuthenticator $authenticator
@@ -213,12 +237,12 @@ class ProfileController extends AbstractController
                             ): Response{
 
         // test si l'utilisateur N'est PAS encore identifié
-        if(!$this->getUser()){
+        if(!$this->getUser() or $this->getUser()!==$user){
             return $this->redirectToRoute('app_login');
         }
 
         $user = $this->getDoctrine()->getRepository(User::class);
-        $user = $repository->find($id);
+        $user = $repository->find($user);
 
         $form = $this->createForm(ChangePwdFormType::class, $user);
         $form->handleRequest($request);
@@ -262,16 +286,16 @@ class ProfileController extends AbstractController
     public function profiledriver(EntityManagerInterface $entityManager
     ): Response
     {
-
+        
         // test si l'utilisateur N'est PAS encore identifié
-        // if(!$this->getUser()){
-        //     return $this->redirectToRoute('app_login');
-        // }
+        if(!$this->getUser()){
+            return $this->redirectToRoute('app_login');
+        }
 
         return $this->render('profile/driver.html.twig', [
             'controller_name' => 'ProfileController',
-            'driver'=>$entityManager->getRepository(Driver::class)->findOneBy(['id'=>1]),
-            'company'=>$entityManager->getRepository(Company::class)->findOneBy(['id'=>1]),
+            'driver'=>$entityManager->getRepository(Driver::class)->findOneBy(['id'=>3]),
+            'company'=>$entityManager->getRepository(Company::class)->findOneBy(['id'=>3]),
 
         ]);
     }
@@ -281,15 +305,14 @@ class ProfileController extends AbstractController
      */
     public function profilecustomer(): Response
     {
-
-        dd(isset($_POST));
-        if(isset($_POST)){
-            dd(isset($_POST));
-        }
-
+        
         // test si l'utilisateur N'est PAS encore identifié
         if(!$this->getUser()){
             return $this->redirectToRoute('app_login');
+        }
+        // test si l'utilisateur a déjà un compte client
+        if($this->getUser()){
+            dd('tester que User a bien un compte Customer, sinon renvoi vers Register Customer');
         }
 
         // au 1er passage, affiche la page du Profil et son formulaire

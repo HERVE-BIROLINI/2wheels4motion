@@ -1,4 +1,4 @@
-<!-- DEBUT Profile banner -->
+<!-- DEBUT Profile Controller TEMPLATES banner -->
 <section id="profile--banner" style="background-image:url({{ asset(sImgPath ~ 'banner/Profile.png') }});">
     <H1>TABLEAU DE BORD</H1>
     
@@ -18,20 +18,18 @@
         <a class="btn nav--inpage-btn-bgb" href="{{ path('profile_customer') }}">Le client</a>
         {% endif %}
         <div>
-        {#{{ dump('app.user : ') }}#}
-        {#{{ dump(app.user) }}#}
-    </div>
-    <div>
-        {#{{ dump('app.user.driver : ') }}#}
-        {#{{ dump(app.user.driver) }}#}
-    </div>
-    <div>
-        {#{{ dump('app.user.driver.company : ') }}#}
-        {#{{ dump(app.user.driver.company) }}#}
-    </div>
-        {% if "ROLE_DRIVER" in app.user.roles %}
+            {{ dump('app.user : ') }}
+            {{ dump(app.user) }}
+            {#{{ dump('app.user.driver : ') }}#}
+            {#{{ dump(app.user.driver) }}#}
+            {#{{ dump('app.user.driver.company : ') }}#}
+            {#{{ dump(app.user.driver.company) }}#}
+        </div>
+        {% if app.user.driver %}
+        {#{% if "ROLE_DRIVER" in app.user.roles %}#}
         <a class="btn nav--inpage-btn-bgb" href="{{ path('profile_driver') }}">Le professionnel</a>
-        {% elseif not app.user.driver %}
+        {% else %}
+        {#{% elseif not app.user.driver %}#}
         <a class="btn nav--inpage-btn-important" href="{{ path('registration_driver', {'id': app.user.id}) }}">Créer un compte pilote VMDTR</a>
         {% endif %}
     </div>

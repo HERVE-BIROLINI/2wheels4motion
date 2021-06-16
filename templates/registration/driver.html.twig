@@ -10,23 +10,102 @@
     {% if error_files %}
     <div class="alert alert-danger" role="alert">{{ error_files }}</div>
     {% endif %}
-
-    {#{% set allcompaniesknown=getallcompanies() %}#}
-    {% if allcompaniesknown is defined %}
-    {{ dump('paramètre :') }}
-    {{ dump('Nb de compagnies connues : '~allcompaniesknown|length) }}
-    {{ dump('twig :') }}
-    {{ dump('Nb de compagnies connues : '~getknowncompanies()|length) }}
+    {% if driver_exist %}
+    <div class="alert alert-danger" role="alert">{{ driver_exist }}</div>
     {% endif %}
-    <form method="post" enctype="multipart/form-data">
-        <div class="card--3D-vertical mt-5">
+
+{#
+    {{ dump('Nb de compagnies connues (paramètre) : '~allcompaniesknown|length) }}
+    {{ dump(allcompaniesknown[0].drivers[0]) }}
+    {% set allcompaniesknown=getallcompanies() %}
+    {% if allcompaniesknown is defined %}
+    {{ dump('Nb de compagnies connues (twig) : '~getknowncompanies()|length) }}
+    {{ dump(allcompaniesknown[0].drivers[0]) }}
+    {% endif %}
+#}
+
+    <div class="card--3D-vertical mt-5">
+
+        <!-- -->
+        <script type="text/javascript">
+            document.addEventListener("DOMContentLoaded", function(event) {
+                // action sur le bouton de choix d'une entreprise existante
+                //----------------------------------------------------------
+                const btnCompanies2Choice = document.querySelector('#btn--companies2choice');
+                btnCompanies2Choice.addEventListener('click', showKnownCompanies);
+                function showKnownCompanies(){
+                    document.getElementById('blk--company2create').style.display = 'none';
+                    // document.getElementById('blk--company2create').style.display = 'none';
+                    // document.getElementById('blk--driverdatas').setAttribute('class','col-12');
+                    document.getElementById('blk--companies2choice').style.display = 'block';
+                }
+            });
+            //
+            function showSubmitButton(){
+                document.querySelector('#btn--associate-company').style.pointerEvents="initial";
+                document.querySelector('#btn--associate-company').style.opacity='initial';
+            }
+        </script>
+        <div class="mt-1 mb-2 col12" id="blk--companies2choice">
+            <!-- <div class="mt-1 mb-2 col-lg-12 col-xl-5" id="blk--companies2choice"> -->
+            {% if allcompaniesknown is defined %}
+            <form method="post">
+                <table class="table table-striped table--txtlight">
+                    <thead class="thead--light">
+                        <tr>
+                            <th>Choisir</th>
+                            <th>Nom</th>
+                            <th>SIREN</th>
+                            <th>NIC</th>
+                            <th>Voie</th>
+                            <th>Code postal</th>
+                            <th>Ville</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for companyknown in allcompaniesknown %}
+                    <tr>
+                        <td><input type="radio" class="companyknown" name="companychoosen" onClick="showSubmitButton()" value="{{ companyknown.id }}"></td>
+                        <td>{{ companyknown.name }}</td>
+                        <td>{{ companyknown.siren }}</td>
+                        <td>{{ companyknown.nic }}</td>
+                        <td>{{ companyknown.road }}</td>
+                        <td>{{ companyknown.zip }}</td>
+                        <td>{{ companyknown.city }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7">Aucun article trouvé</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Boutons de sortie -->
+                <div class="btns--row">
+                    <button class="btn btn-sm btn--blue" id='btn--associate-company' type="submit">
+                        <i class="ri-record-circle-line"></i>
+                        <p>&ensp;</p>
+                        Associer la société choisie
+                    </button>
+                    <a class="btn btn-bg btn-secondary btn-return" href="{{ path('registration_driver', {'id': app.user.id}) }}">
+                        <i class="ri-close-fill"></i>
+                        Retourner déclarer une nouvelle société
+                    </a>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+
+        <!-- -->
+        <form id="blk--company2create" method="post" enctype="multipart/form-data">
         
             <h1 class="h3 mb-3 font-weight-normal">Enregistrez-vous : <small style="color:red;font-size:0.5em;">(* champs obligatoire)</small></h1>
             
             <div class="d-flex flex-row flex-wrap justify-content-between">
                 
                 <!-- Block de données propres au pilote -->
-                <div class="mt-1 mb-2 col-lg-12 col-xl-7">
+                <div class="mt-1 mb-2 col-lg-12 col-xl-7" id="blk--driverdatas">
                     <h5>Carte Professionnelle de Conducteur de VMDTR</h5>
                     <!-- Encadrement -->
                     <div class="block--datas-horizontal" id="block--file-VMDTR-card">
@@ -77,11 +156,19 @@
                     <div class="d-flex flex-row justify-content-between align-items-center">
                         <h5>Entreprise affiliée T3P</h5>
                         {% if allcompaniesknown is defined and allcompaniesknown|length > 0 %}
-                        <a class="btn btn-sm btn-secondary">
-                            <i class="ri-search-line" href="{#{{ path('profile_user',{'id': app.user.id}) }}#}"></i>
+                        
+                        <button class="btn btn-sm btn-secondary" type="button" id="btn--companies2choice">
+                        <!-- {#
+                        <a class="btn btn-sm btn-secondary" href="{#{{ path('profile_user',{'id': app.user.id}) }}#}">
+                        #}-->
+                            <i class="ri-search-line"></i>
                             &ensp;
                             Entreprises connues
+                        <!-- {#
                         </a>
+                        #}-->
+                        </button>
+
                         {% endif %}
                     </div>
                     <!-- Encadrement -->
@@ -162,8 +249,8 @@
                         </div>
                         <br>
                     </div>
-
                 </div>
+
             </div>
 
             <!-- Déclaration de véracité des informations -->
@@ -204,6 +291,7 @@
             </div>
             <!-- <a href="https://www.francecompetences.fr/recherche/rs/3864/">Consulter les Conditions Générales d'Utilisation</a> -->
 
-        </div><!-- FIN de la Carte3D -->
-    </form><!-- </div> FIN du Container Bootstrap -->
+        </form><!-- FIN du Container Bootstrap -->
+    </div><!-- FIN de la Carte3D -->
+
 {% endblock %}

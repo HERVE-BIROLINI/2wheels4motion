@@ -1,0 +1,66 @@
+
+{% extends 'base.html.twig' %}
+{% set Title="... du pilote" %}
+{% block title %}{{ parent() }} - {{ Title }}{% endblock %}
+
+{% block body %}
+
+<!-- Driver Controller banner -->
+{{ include('driver/banner.html.twig') }}
+
+
+{% if oDriver is defined %}
+    {% set oUser=oDriver.users[0] %}
+    <div class="card--3D-vertical mt-5">
+
+        <!-- <form id="blk--company2create" method="post" enctype="multipart/form-data"> -->
+        
+            <h1 class="h3 mb-3 font-weight-normal">Fiche chauffeur PRO. :</h1>
+            
+            <div class="d-flex flex-row flex-wrap justify-content-between">
+                <!-- Block de données propres au pilote -->
+                <div class="mt-1 mb-2 col-12" id="blk--driverdatas">
+                    <!-- <div class="mt-1 mb-2 col-lg-12 col-xl-7" id="blk--driverdatas"> -->
+                    <h5>Carte Professionnelle de Conducteur de VMDTR</h5>
+                    <!-- Encadrement -->
+                    <div class="block--datas-vertical">
+                        <div class="d-flex flex-row align-items-center">
+                            {% if oUser.picture %}
+                                <img class="img--profile" src="{{ asset(getuserportrait(oUser).pathname) }}" alt="Photo de profil">
+                            {% else %}                    
+                                <img class="img--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
+                            {% endif %}
+                            <div class="d-flex flex-column col-md-12 col-lg-5">
+                                <label>{{ oUser.firstname~'  '~oUser.lastname }}</label>
+                                <label>{{ oUser.email }}</label>
+                                <label>{{ oUser.phone }}</label>
+                            </div>
+                            {% if oUser.picture %}
+                                <img class="img--profile" src="{{ asset(getuserportrait(oUser).pathname) }}" alt="Photo de profil">
+                            {% else %}                    
+                                <img class="img--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Boutons de sortie -->
+            <div class="btns--row">
+                <button class="btn btn-sm btn--blue" type="submit">
+                    <i class="ri-record-circle-line"></i>
+                    <p>&ensp;</p>
+                    Créer le compte
+                </button>
+                <a class="btn btn-bg btn-secondary btn-return" href="">
+                    <i class="ri-close-fill"></i>
+                    Annuler
+                </a>
+            </div>
+
+        <!--</form> FIN du Container Bootstrap -->
+    </div><!-- FIN de la Carte3D -->
+{% endif %}
+
+{% endblock %}

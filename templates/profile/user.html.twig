@@ -7,6 +7,10 @@
 
     {{ include('profile/banner.html.twig') }}
 
+    {% if msg_info %}
+    <div class="alert alert-info" role="alert">{{ msg_info }}</div>
+    {% endif %}
+
     {% if app.user %}
     <div class="paragraph--large">
         <form class="card--3D-vertical" method="post">
@@ -18,11 +22,10 @@
                 </div>
                 <div class="card--profile">
                     <a href="{{ path('profile_changepicture', {'id': app.user.id }) }}">
-                        {% if app.user.picture %}
-                        {#{{ dump(app.user.picture.pathname) }}#}
-                            <img class="img--profile" src={{ asset(app.user.picture.pathname) }} alt="Photo de profil">
+                        {% if app.user.picture|length > 0 %}
+                        <img class="img--profile" src="{{ asset(getuserportrait(app.user).pathname) }}" alt="Photo de profil">
                         {% else %}                    
-                            <img class="img--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
+                        <img class="img--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
                         {% endif %}
                     </a>
                     <!-- <br> -->
@@ -33,7 +36,7 @@
             <div class="d-flex flew-row flex-wrap">
                 <div class="col-12 col-md-6 mb-2">
                     <label class="required" for="inputLastname">Nom :</label>
-                    <input type="text" value={{ app.user.lastname }} name="lastname" id="inputLastname" class="form-control" autocomplete="lastname" required ><!-- autofocus> -->
+                    <input type="text" value={{ app.user.lastname }} name="lastname" id="inputLastname" class="form-control" required ><!-- autofocus> -->
                     {% if error_lastname %}
                     <span class="d-block">
                         <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
@@ -43,7 +46,7 @@
                 </div>
                 <div class="col-12 col-md-6 mb-2">
                     <label class="required" for="inputFirstname">Prénom :</label>
-                    <input type="text" value={{ app.user.firstname }} name="firstname" id="inputFirstname" class="form-control" autocomplete="firstname" required ><!-- autofocus> -->
+                    <input type="text" value={{ app.user.firstname }} name="firstname" id="inputFirstname" class="form-control" required ><!-- autofocus> -->
                     {% if error_firstname %}
                     <span class="d-block">
                         <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
@@ -53,12 +56,12 @@
                 </div>
                 <div class="col-12 col-md-6 mb-2">
                     <label class="required" for="inputEmail">Adresse électronique :</label>
-                    <input type="email" value="{{ app.user.email }}" class="form-control" disabled>
+                    <input type="email" value="{{ app.user.email }}" class="form-control" disabled />
                     <input type="hidden" value="{{ app.user.email }}" name="email" id="inputEmail">
                 </div>
                 <div class="col-12 col-md-6 mb-2">
                     <label class="required" for="inputPhone">Téléphone :</label>
-                    <input type="text" value="{{ app.user.phone }}" name="phone" id="inputPhone" class="form-control" autocomplete="phone" pattern="@^0+[0-9]{9}+@i" required ><!-- autofocus> -->
+                    <input type="text" value="{{ app.user.phone }}" name="phone" id="inputPhone" class="form-control" pattern="@^0+[0-9]{9}+@i" required ><!-- autofocus> -->
                     {% if error_phone %}
                     <span class="d-block">
                         <span class="form-error-icon badge badge-danger text-uppercase">Error</span>

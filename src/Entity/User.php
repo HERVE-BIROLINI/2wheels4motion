@@ -4,6 +4,8 @@ namespace App\Entity;
 
 // use App\Entity\Driver;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -68,9 +70,19 @@ class User implements UserInterface
     private $phone;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Picture::class, inversedBy="users",cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity=Driver::class)
+     */
+    private $driver;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="user", orphanRemoval=true, cascade={"persist"})
      */
     private $picture;
+
+    public function __construct()
+    {
+        $this->picture = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
@@ -226,14 +238,44 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getPicture(): ?picture
+    public function getDriver(): ?Driver
+    {
+        return $this->driver;
+    }
+
+    public function setDriver(?Driver $driver): self
+    {
+        $this->driver = $driver;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Picture[]
+     */
+    public function getPicture(): Collection
     {
         return $this->picture;
     }
 
-    public function setPicture(?picture $picture): self
+    public function addPicture(Picture $picture): self
     {
-        $this->picture = $picture;
+        if (!$this->picture->contains($picture)) {
+            $this->picture[] = $picture;
+            $picture->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePicture(Picture $picture): self
+    {
+        if ($this->picture->removeElement($picture)) {
+            // set the owning side to null (unless already changed)
+            if ($picture->getUser() === $this) {
+                $picture->setUser(null);
+            }
+        }
 
         return $this;
     }

@@ -14,16 +14,18 @@ class FrenchGeographyTwig extends AbstractExtension
     public function getFunctions(){
         return [
             new TwigFunction('getregions', [$this, 'getAllRegions']),
-            new TwigFunction('getregionbyslug', [$this, 'getRegionBySlug']),
+            // new TwigFunction('getregionbyslug', [$this, 'getRegionBySlug']),
+            new TwigFunction('getregionbycode', [$this, 'getRegionByCode']),
             //
-            new TwigFunction('getdepartments', [$this, 'getAllRegions']),
-            new TwigFunction('getcitybyslug', [$this, 'getCityBySlug']),
+            new TwigFunction('getdepartments', [$this, 'getAllDepartments']),
+            // new TwigFunction('getdepartmentbyslug', [$this, 'getDepartmentBySlug']),
+            new TwigFunction('getdepartmentbycode', [$this, 'getDepartmentByCode']),
             //
             new TwigFunction('getcities', [$this, 'getAllRegions']),
-            new TwigFunction('getcitybyslug', [$this, 'getCityBySlug']),
+            // new TwigFunction('getcitybyslug', [$this, 'getCityBySlug']),
             new TwigFunction('getcitybyzip', [$this, 'getCityByZip']),
             //
-            new TwigFunction('getimages', [$this, 'getImages']),
+            // new TwigFunction('getimages', [$this, 'getImages']),
         ];
     }
 
@@ -55,14 +57,14 @@ class FrenchGeographyTwig extends AbstractExtension
         $regions = file_get_contents("../src/twig/regions.json");
         return(json_decode($regions));
     }
-    public function getRegionBySlug($slug){
-        foreach($this->getAllRegions() as $obRegion){
-            if($slug==$obRegion->slug){
-                $obRegionFounded=$obRegion;
-            }
-        }
-        return $obRegionFounded;
-    }
+    // public function getRegionBySlug($slug){
+    //     foreach($this->getAllRegions() as $obRegion){
+    //         if($slug==$obRegion->slug){
+    //             $obRegionFounded=$obRegion;
+    //         }
+    //     }
+    //     return $obRegionFounded;
+    // }
     public function getRegionByCode($code){
         foreach($this->getAllRegions() as $obRegion){
             if($code==$obRegion->code){
@@ -79,17 +81,18 @@ class FrenchGeographyTwig extends AbstractExtension
         $departments = file_get_contents("../src/twig/departments.json");
         return(json_decode($departments));
     }
-    public function getDepartmentBySlug($slug){
-        foreach($this->getAllRegions() as $obDepartment){
-            if($slug==$obDepartment->slug){
-                $obDepartmentFounded=$obDepartment;
-            }
-        }
-        return $obDepartmentFounded;
-    }
+    // public function getDepartmentBySlug($slug){
+    //     foreach($this->getAllRegions() as $obDepartment){
+    //         if($slug==$obDepartment->slug){
+    //             $obDepartmentFounded=$obDepartment;
+    //         }
+    //     }
+    //     return $obDepartmentFounded;
+    // }
     public function getDepartmentByCode($code){
-        foreach($this->getAllRegions() as $obDepartment){
-            if($code==$obDepartment->code){
+        $obDepartmentFounded=null;
+        foreach($this->getAllDepartments() as $obDepartment){
+            if($code===$obDepartment->code){
                 $obDepartmentFounded=$obDepartment;
             }
         }
@@ -105,52 +108,57 @@ class FrenchGeographyTwig extends AbstractExtension
         $cities = file_get_contents("../src/twig/cities.json");
         return(json_decode($cities));
     }
-    public function getCityBySlug($slug){
-        foreach($this->getAllCities() as $obCity){
-            if($slug==$obCity->slug){
-                $obCityFounded=$obCity;
-            }
-        }
-        return $obCityFounded;
-    }
+    // public function getCityBySlug($slug){
+    //     foreach($this->getAllCities() as $obCity){
+    //         if($slug==$obCity->slug){
+    //             $obCityFounded=$obCity;
+    //         }
+    //     }
+    //     return $obCityFounded;
+    // }
     public function getCityByZip($zip){
+        if($zip=='75000'){$zip='75001';}
+        $obCityFounded=null;
         foreach($this->getAllCities() as $obCity){
             if($zip==$obCity->zip_code){
                 $obCityFounded=$obCity;
             }
         }
-        return $obCityFounded;
+        if(!is_null($obCityFounded)){
+            return $obCityFounded;
+        }
     }
 
 
 
     //
-    public function getImages(string $article){
-        $obPDO = new DBTools;
-        $obPDO->init();
-        $article=intval($article);
-        $regions=$obPDO->execSqlQuery("select pathname from picture where article_id=".$article);
-        //
-        if(!isset($regions[0])){
-            $regions=array(['pathname'=>'no-image.png']);
-        }
-        return $regions;
-    }
+    // public function getImages(string $article){
+    //     $obPDO = new DBTools;
+    //     $obPDO->init();
+    //     $article=intval($article);
+    //     $regions=$obPDO->execSqlQuery("select pathname from picture where article_id=".$article);
+    //     //
+    //     if(!isset($regions[0])){
+    //         $regions=array(['pathname'=>'no-image.png']);
+    //     }
+    //     return $regions;
+    // }
 
     // *************************************************************
 
     // ** Les méthodes liées aux filtres **
-    public function castClassToArray($stdClassObject) {
-        $response = array();
-        foreach ($stdClassObject as $key => $value) {
-            $response[] = array($key, $value);
-        }
-        return $response;
-    }
+    // public function castClassToArray($stdClassObject) {
+    //     $response = array();
+    //     foreach ($stdClassObject as $key => $value) {
+    //         $response[] = array($key, $value);
+    //     }
+    //     return $response;
+    // }
 
 
 
 
 }
+
 
 ?>

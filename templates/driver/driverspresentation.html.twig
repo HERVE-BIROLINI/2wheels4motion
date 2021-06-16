@@ -1,29 +1,68 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DriverController!{% endblock %}
+{% block title %}Présentation des pilotes{% endblock %}
 
 {% block body %}
 
-<!-- Drivers Presentation banner -->
-<section id="driverspresentation--banner" style="background-image:url({{ asset(sImgPath ~'banner/pilotes-motogp-2020.png') }});">
-    <H1>LE PADDOCK</H1>
-    
-    <a class="btn btn--ordering" href="#services">
-        <i class="fas fa-motorcycle"></i>
-        &nbsp;
-        Commander une course
-    </a>
-    
-    <!-- internal page menu, to navigate to ID -->
-    <!-- <div id="nav--inpage">
-        <a href="#section--services">A votre service</a>
-        <a href="#section--pro">Professionnalisme</a>
-        <a href="#section--equipments">Les équipements passager</a>
-        <a href="#section--bikes">Les motos</a>
-    </div> -->
-    
-</section>
+<!-- Driver Controller banner -->
+{{ include('driver/banner.html.twig') }}
 
+<section class="paragraph--large" id="section--presentation">
+    <h2 class="title--h2" id="services--title">Les pilotes...</h2>
+    <div class="card--3D-horizontal">
+        <!-- <p>
+            Actuellement, 
+            {% if drivers is not defined or drivers|length == 0 %}
+                aucun pilote ne s'est encore inscrit
+            {% else %}
+                {{ drivers|length }} pilotes se sont déjà inscrits
+            {% endif %}
+            dans cet annuaire.
+        </p> -->
+        {% if drivers is defined and drivers|length > 0 %}
+        <table class="table table-striped table--txtlight">
+            <thead class="thead--light">
+                <tr>
+                    <th>Prénom Nom</th>
+                    <th>Dépt.</th>
+                    <th>Région</th>
+                    <th>Moto</th>
+                    <th>Nb. de courses effectuées</th>
+                    <th>Appréciations des usagers</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for oDriver in drivers %}
+                {% if oDriver.users[0] is defined %}
+                    {% set oUser=oDriver.users[0] %}
+                    {% set oCompany=oDriver.company %}
+                    <tr>
+                        <th>{{ oUser.firstname~' '~oUser.lastname }}</th>
+                        <th>{{ oCompany.zip|slice(0,2) }}</th>
+                        <th>{{ getregionbycode(getdepartmentbycode(oCompany.zip|slice(0,2)).region_code).name }}</th>
+                        <th>{{ oDriver.motomodel }}</th>
+                        <th>'à développer'</th>
+                        <th>'à développer'</th>
+                        <th>
+                            <a href="{{ path('driver_profile', {'id': oDriver.id}) }}" title="Voir sa fiche" class="mr-2">
+                                <i class="ri-eye-line"></i>
+                            </a>
+                            <a href="{{ 'mailto:' ~ oUser.email }}" title="Lui envoyer un courriel">
+                                <i class="ri-mail-send-line"></i>
+                            </a>
+                            <a href="{{ 'tel:' ~ oUser.phone }}" title="Lui téléphoner" class="ml-2">
+                                <i class="ri-phone-line"></i>
+                            </a>
+                        </th>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+</section>
 
 <section class="paragraph--large" id="section--invitation">
     <p>
@@ -43,58 +82,6 @@
         </a>
         )
     </p>
-</section>
-
-
-<section class="paragraph--large" id="section--presentation">
-    <h2 class="title--h2" id="services--title">Les pilotes...</h2>
-    <div class="card--3D-horizontal">
-        <p>
-            Actuellement, 
-            {% if drivers|length == 0 %}
-                aucun pilote ne s'est encore inscrit
-            {% else %}
-                {{ drivers|length }} pilotes se sont déjà inscrits
-            {% endif %}
-            dans cet annuaire.
-        </p>
-
-        {% if drivers|length > 0 %}
-            {#{% %}#}
-            <table class="table table-striped table--txtlight">
-                <thead class="thead--light">
-                    <tr>
-                        <th>Prénom</th>
-                        <th>Dépt.</th>
-                        <th>Région</th>
-                        <th>Moto</th>
-                        <th>Nb. de courses</th>
-                        <th>Appréciation</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#{% la boucle sur les drivers %}#}
-                        {#{% set oUser=getuser(oDriver.user_id) %}#}
-                    <tr>
-                        <th>{#{% oUser.firstname %}#}</th>
-                        <th>Dépt.</th>
-                        <th>Région</th>
-                        <th>Moto</th>
-                        <th>
-                            <a href="{#{% 'mailto:' ~ oUser.email %}#}" title="Lui envoyer un courriel">
-                                <i class="ri-mail-send-line"></i>
-                            </a>
-                            <a href="{#{% 'tel:' ~ oUser.phone %}#}" title="Lui téléphoner" class="ml-4">
-                                <i class="ri-phone-line"></i>
-                            </a>
-                        </th>
-                    </tr>
-                    {#{% endfor %}#}
-                </tbody>
-            </table>
-        {% endif %}
-    </div>
 </section>
 
 {% endblock %}

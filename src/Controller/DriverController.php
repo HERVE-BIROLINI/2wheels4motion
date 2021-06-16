@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Driver;
+use App\Entity\User;
 use App\Repository\DriverRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,14 +25,32 @@ class DriverController extends AbstractController
         ]);
     }
 
-
     /**
-     * @Route("s", name="index")
+     * @Route("{id}/presentation", name="profile")
      */
-    public function index(DriverRepository $drivers): Response
+    public function profiledriver(Driver $driver = null, DriverRepository $drivers
+    ): Response
     {
-        return $this->render('driver/index.html.twig', [
-            'controller_name' => 'DriverController'
+        // test si l'utilisateur N'est PAS encore identifié
+        if(!$driver ){//or !$obDriver=$drivers->findOneBy(['id'=>$driver])){
+            return $this->redirectToRoute('driver_presentation');
+        }
+        return $this->render('driver/profile.html.twig', [
+            'controller_name' => 'DriverController',
+            //
+            'oDriver' => $driver,
+            // 'oDriver' => $obDriver,
         ]);
     }
+
+
+    // /**
+    //  * @Route("s", name="index")
+    //  */
+    // public function index(DriverRepository $drivers): Response
+    // {
+    //     return $this->render('driver/index.html.twig', [
+    //         'controller_name' => 'DriverController'
+    //     ]);
+    // }
 }

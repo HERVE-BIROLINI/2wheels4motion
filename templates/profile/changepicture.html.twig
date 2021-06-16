@@ -4,18 +4,18 @@
 
 {% block body %}
 
-    {{ include('profile/banner.html.twig') }}
-    <form class="modal--big container-fluid mt-5" method="post" enctype="multipart/form-data">
-        <h1 class="h3 mb-3 font-weight-normal">Choississez votre photo de profil :</h1>
-        
-{#{{ dump(form) }}
-{{ dump(uploadroot) }}
-{{ form_start(form) }}
-{{ form_widget(form) }}
-<!-- <button class="btn">{{ button_label|default('Save') }}</button> -->
-{{ form_end(form) }}
-#}
 
+{#{{ dump(picture) }}#}
+
+    {{ include('profile/banner.html.twig') }}
+    <form class="modal--big container-fluid" method="post" enctype="multipart/form-data">
+        
+{% if msg_info %}
+<div class="alert alert-warning" role="alert" style="width:100%;">{{ msg_info }}</div>
+{% endif %}
+
+        <h1 class="h3 mt-4 mb-3 font-weight-normal">Choississez votre photo de profil :</h1>
+        
         <div class="d-flex flex-row">
             <div class="card--profile m-2">
                 <label for="avatar1">
@@ -44,17 +44,21 @@
         </div>
         <hr ><!-- style="width:50%", size="3", color=black> -->
         <div class="d-flex flex-row align-items-center">
-        <div class="card--profile m-2">
-            <label for="avatarfile">
-                {% if picture.pathname %}
-                <img class="img--profile" src="{{ asset(picture.pathname) }}" alt="Photo de profil">
-                {% endif %}
-            </label>
-            <input type="radio" id="avatarfile" name="avatar" value="FILE" for="browse"
-                {% if picture.pathname %}checked{% endif %}
-            >
-        </div>
-            <input type="file" name="file" id="browse" value={{ picture.pathname }} accept=".jpg, .jpeg, .png">
+            <div class="card--profile m-2">
+                <label for="avatarfile">
+                    {% if getuserportrait(app.user.id) %}
+                    <img class="img--profile" src="{{ asset(getuserportrait(app.user.id).pathname) }}" alt="Photo de profil">
+                    {% else %}                    
+                    <img class="img--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
+                    {% endif %}
+                </label>
+                <input type="radio" id="avatarfile" name="avatar" value="FILE" for="browse"
+                    {#{% if getuserportrait(app.user.id) %}#}
+                    checked
+                    {#{% endif %}#}
+                >
+            </div>
+            <input type="file" name="file" id="browse" value="{#{{ asset(getuserportrait(app.user.id).pathname) }}#}" accept=".jpg, .jpeg, .png">
         </div>
         <br>
         <div class="btns--row">

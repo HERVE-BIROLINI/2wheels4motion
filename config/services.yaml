@@ -6,7 +6,8 @@
 parameters:
     # BIROLINI : Déclaration du chemin complet correspondant à ASSET (Twig)
     # ( appel : $this->getParameter('asset_path') )
-    asset_path: '%kernel.project_dir%/public/build/'
+    asset_path_dev: '%kernel.project_dir%/assets/'
+    asset_path_prod: '%kernel.project_dir%/public/build/'
 
 services:
     # default configuration for services in *this* file

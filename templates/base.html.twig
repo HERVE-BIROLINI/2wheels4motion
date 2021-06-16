@@ -7,10 +7,8 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- -->
-        <meta http-equiv="Content-Type" content="text/html/php/twig"/>
         <meta name="description" content="Annuaire moto-taxi taxi-moto toute la France"/>
         <meta name="author" content="BIROLINI Herve"/>
         
@@ -31,7 +29,7 @@
         <header id="header--header">
             {% if app.user %}
             <div class="align-self-end mt-2 mr-3">
-                <b>Bonjour {{ app.user.firstname }}</b>
+                <b>Bonjour et bienvenue {{ app.user.firstname }}</b>
             </div>
             {% endif %}
             <!-- Container nécessaire pour occuper 100% de la largeur du Header -->
@@ -48,9 +46,7 @@
                 <div class="nav--bar navbar navbar-expand-lg navbar-light"><!--  bg-dark"> -->
                     <!-- DEBUT bouton "Burger" -->
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="navbar-toggler-icon">
-                            <!-- <img class="nav--logo" src="{{ asset(sFaviconFullname) }}" alt="logo centrale d'appels"></img> -->
-                        </span>
+                        <span class="navbar-toggler-icon">-</span>
                     </button>
                     <!-- FIN bouton "Burger" -->
                     <div class="collapse navbar-collapse nav--menu">

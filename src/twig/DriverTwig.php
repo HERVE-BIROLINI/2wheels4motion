@@ -4,7 +4,6 @@ namespace App\Twig;
 
 use App\Entity\Driver;
 use App\Entity\Company;
-// use App\Tools\DBTools;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -70,20 +69,16 @@ class DriverTwig extends AbstractExtension
     // fonctions de manipulations de l'objet Driver
     public function getDriverById($id){
         return $this->entityManager->getRepository(Driver::class)->findOneBy(['id'=>$id]);
-        // return $this->drivers->findOneBy(['id'=>$id]);
     }
     // fonctions de manipulations de l'objet Company
     public function getAllCompanies(){
         return $this->entityManager->getRepository(Company::class)->findAll();
-        // return $this->companies->findAll();
     }
     public function getCompanyById($id){
         return $this->entityManager->getRepository(Company::class)->findOneBy(['id'=>$id]);
-        // return $this->companies->findOneBy(['id'=>$id]);
     }
     public function getKnownCompanies(){
         return $this->entityManager->getRepository(Company::class)->findOneBy(['isconfirmed'=>true]);
-        // return $this->companies->findBy(['isconfirmed'=>true]);
     }
 
     // *************************************************************

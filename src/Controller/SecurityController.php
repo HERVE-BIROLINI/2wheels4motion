@@ -30,19 +30,19 @@ class SecurityController extends AbstractController
         if ($user) {
             // ... pour un compte qui n'a pas été vérifié, renvoi un email
             if ($user->isVerified()==null) {
-dd('RE-envoie un email à partir de la page LOGIN...');
-        // generate a signed url and email it to the user
-        $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-            (new TemplatedEmail())
-                ->from(new Address('twowheelsformotion@gmail.com', 'Annuaire Moto-taxi'))
-                ->to($user->getEmail())
-                ->subject('Merci de confirmer votre adresse électronique.')
-                ->htmlTemplate('registration/confirmation_email.html.twig')
-        );
+        dd('RE-envoie un email à partir de la page LOGIN...');
+                // generate a signed url and email it to the user
+                $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+                    (new TemplatedEmail())
+                        ->from(new Address('twowheelsformotion@gmail.com', 'Annuaire Moto-taxi'))
+                        ->to($user->getEmail())
+                        ->subject('Merci de confirmer votre adresse électronique.')
+                        ->htmlTemplate('registration/confirmation_email.html.twig')
+                );
 
-        // do anything else you need here, like send an email
-        // affiche la page d'information de l'envoi de l'email de confirmation
-        return $this->redirectToRoute('mailer');
+                // do anything else you need here, like send an email
+                // affiche la page d'information de l'envoi de l'email de confirmation
+                return $this->redirectToRoute('mailer');
 
             }
             // ... si au contraire est déjà validé, retourne à l'accueil

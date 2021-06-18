@@ -9,23 +9,59 @@
 
 <section class="paragraph--large" id="section--presentation">
     <h2 class="title--h2" id="services--title">Les pilotes...</h2>
-    <div class="card--3D-horizontal">
-        <!-- <p>
-            Actuellement, 
-            {% if drivers is not defined or drivers|length == 0 %}
-                aucun pilote ne s'est encore inscrit
-            {% else %}
-                {{ drivers|length }} pilotes se sont déjà inscrits
-            {% endif %}
-            dans cet annuaire.
-        </p> -->
-        {% if drivers is defined and drivers|length > 0 %}
+    {% if drivers is defined and drivers|length > 0 %}
+
+        {% set regions=getregions() %}
+        {% set depts=getdepartments() %}
+
+        {% if region is not null %}
+            {% set region=getregionbycode(region) %}
+        {% endif %}
+        {% if dept is not null %}
+            {% set dept=getdepartmentbycode(dept) %}
+        {% endif %}
+
+    <form class="mt-4 mb-4" method="post">
         <table class="table table-striped table--txtlight">
             <thead class="thead--light">
                 <tr>
                     <th>Prénom Nom</th>
-                    <th>Dépt.</th>
-                    <th>Région</th>
+                    <th>
+                        <div class="dropdown dropright" name="region">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuOffset" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Région 
+                                {% if region %}
+                                    {{ ' ('~region.name~')' }}
+                                {% endif %}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
+                                <button class="dropdown-item" type="submit" name="region" value="all">TOUTES</button>
+                                <div class="dropdown-divider"></div>
+                                {% for region in regions %}
+                                <button class="dropdown-item" type="submit" name="region" value="{{ region.code }}">{{ region.name }}</button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="dropdown dropright">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuOffset" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Dépt.
+                                {% if dept %}
+                                    {{ ' ('~dept.name~')' }}
+                                {% endif %}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
+                                <button class="dropdown-item" type="submit" name="dept" value="all">TOUS</button>
+                                <div class="dropdown-divider"></div>
+                                {% for dept in depts %}
+                                    {% if region is null or dept.region_code==region.code %}
+                                <button class="dropdown-item" type="submit" name="dept" value="{{ dept.code }}">{{ dept.name~' ('~dept.code~')' }}</button>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </th>
                     <th>Moto</th>
                     <th>Nb. de courses effectuées</th>
                     <th>Appréciations des usagers</th>
@@ -34,34 +70,46 @@
             </thead>
             <tbody>
             {% for oDriver in drivers %}
-                {% if oDriver.users[0] is defined %}
-                    {% set oUser=oDriver.users[0] %}
-                    {% set oCompany=oDriver.company %}
-                    <tr>
-                        <th>{{ oUser.firstname~' '~oUser.lastname }}</th>
-                        <th>{{ oCompany.zip|slice(0,2) }}</th>
-                        <th>{{ getregionbycode(getdepartmentbycode(oCompany.zip|slice(0,2)).region_code).name }}</th>
-                        <th>{{ oDriver.motomodel }}</th>
-                        <th>'à développer'</th>
-                        <th>'à développer'</th>
-                        <th>
-                            <a href="{{ path('driver_profile', {'id': oDriver.id}) }}" title="Voir sa fiche" class="mr-2">
-                                <i class="ri-eye-line"></i>
-                            </a>
-                            <a href="{{ 'mailto:' ~ oUser.email }}" title="Lui envoyer un courriel">
-                                <i class="ri-mail-send-line"></i>
-                            </a>
-                            <a href="{{ 'tel:' ~ oUser.phone }}" title="Lui téléphoner" class="ml-2">
-                                <i class="ri-phone-line"></i>
-                            </a>
-                        </th>
-                    </tr>
+            
+                {% set oUser=oDriver.users[0] %}
+                {% set oCompany=oDriver.company %}
+                {% set oDept=getdepartmentbycode(oCompany.zip|slice(0,2)) %}
+                {% set oRegion=getregionbycode(oDept.region_code) %}
+
+                {% if oCompany.isconfirmed 
+                    and (region is null or region.code==oDept.region_code)
+                    and (dept is null or dept is not defined or dept.code==oCompany.zip|slice(0,2))
+                %}
+                <tr>
+                    <td>{{ oUser.firstname~' '~oUser.lastname }}</td>
+                    <td>{{ oRegion.name }}</td>
+                    <td>{{ oCompany.zip|slice(0,2) }}</td>
+                    <td>{{ oDriver.motomodel }}</td>
+                    <td>'à développer'</td>
+                    <td>'à développer'</td>
+                    <td>
+                        <a href="{{ path('driver_profile', {'id': oDriver.id}) }}" title="Voir sa fiche" class="mr-2">
+                            <i class="ri-eye-line"></i>
+                        </a>
+                        <a href="{{ 'mailto:' ~ oUser.email }}" title="Lui envoyer un courriel">
+                            <i class="ri-mail-send-line"></i>
+                        </a>
+                        <a href="{{ 'tel:' ~ oUser.phone }}" title="Lui téléphoner" class="ml-2">
+                            <i class="ri-phone-line"></i>
+                        </a>
+                    </td>
+                </tr>
                 {% endif %}
             {% endfor %}
             </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="7"></td>
+                </tr>
+            </tfoot>
         </table>
-        {% endif %}
-    </div>
+    </form>
+    {% endif %}
 </section>
 
 <section class="paragraph--large" id="section--invitation">

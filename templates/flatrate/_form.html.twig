@@ -1,0 +1,61 @@
+<section class="paragraph--large" id="section--presentation">
+    <h2 class="title--h2" id="services--title">Mise à jour d'un tarif...</h2>
+    
+        <table class="table table-striped table--txtlight">
+            <thead class="thead--light">
+                <tr>
+                    <th style="width:5%;"></th>
+                    <th><label class="required">Libellé</label></th>
+                    <th><label class="required">Prix</label></th>
+                    <th>Prise en charge incluse (forfait)</th>
+                    <th>Actions
+                        &nbsp;
+                        <a class="btn btn-sm btn-secondary" href="{{ path('flatrate_read') }}">
+                            <i class="ri-file-list-3-line"></i>
+                            Retour à la liste
+                        </a>
+                    </th>
+                    {% if flatrate %}
+                        <th style="width:12%;"></th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <form class="mt-4 mb-4" id="update" method="post">
+                        <td></td>
+                        <td width="20%"><input type="text" value="{% if flatrate %}{{ flatrate.label }}{% endif %}" name="label" size="50" required/></td>
+                        <td><input type="text" value="{% if flatrate %}{{ flatrate.price }}{% endif %}" name="price" size="5" required/></td>
+                        <td>
+                            <div class="d-flex flex-row">
+                                <div class="col-4"></div>
+                                <div>
+                                    <input type="checkbox" name="pickupincluded"
+                                    {% if flatrate and flatrate.pickupincluded %}checked{% endif %}
+                                    />
+                                </div>
+                            </div>
+                        </td>
+                        <td class="d-flex flex-row">
+                            <button class="btn btn-sm btn--blue" type="submit" title="Sauvegarder" class="mr-2"><!--  form="update"> -->
+                                <i class="ri-save-line"></i>
+                                &nbsp;
+                                Sauvegarder
+                            </button>
+                        </td>
+                    </form>
+                    {% if flatrate %}
+                        <td>
+                        {{ include('flatrate/_delete_form.html.twig') }}
+                        </td>
+                    {% endif %}
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4"></td>
+                </tr>
+            </tfoot>
+        </table>
+    
+</section>

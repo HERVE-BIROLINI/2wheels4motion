@@ -65,13 +65,13 @@
                     <tbody>
                     {% for companyknown in allcompaniesknown %}
                     <tr>
-                        <td><input type="radio" class="companyknown" name="companychoosen" onClick="showSubmitButton()" value="{{ companyknown.id }}"></td>
-                        <td>{{ companyknown.name }}</td>
-                        <td>{{ companyknown.siren }}</td>
-                        <td>{{ companyknown.nic }}</td>
-                        <td>{{ companyknown.road }}</td>
-                        <td>{{ companyknown.zip }}</td>
-                        <td>{{ companyknown.city }}</td>
+                        <td><input type="radio" class="companyknown" name="companychoosen" onClick="showSubmitButton()" value="{{ companyknown.id }}" id="{{ companyknown.id }}"></td>
+                        <td><label for="{{ companyknown.id }}">{{ companyknown.name }}</label></td>
+                        <td><label for="{{ companyknown.id }}">{{ companyknown.siren }}</label></td>
+                        <td><label for="{{ companyknown.id }}">{{ companyknown.nic }}</label></td>
+                        <td><label for="{{ companyknown.id }}">{{ companyknown.road }}</label></td>
+                        <td><label for="{{ companyknown.id }}">{{ companyknown.zip }}</label></td>
+                        <td><label for="{{ companyknown.id }}">{{ companyknown.city }}</label></td>
                     </tr>
                     {% else %}
                     <tr>
@@ -98,58 +98,12 @@
         </div>
 
         <!-- -->
+        {% set drivercard=getdrivercard(app.user.id) %}
         <form id="blk--company2create" method="post" enctype="multipart/form-data">
         
             <h1 class="h3 mb-3 font-weight-normal">Enregistrez-vous : <small style="color:red;font-size:0.5em;">(* champs obligatoire)</small></h1>
             
             <div class="d-flex flex-row flex-wrap justify-content-between">
-                
-                <!-- Block de données propres au pilote -->
-                <div class="mt-1 mb-2 col-lg-12 col-xl-7" id="blk--driverdatas">
-                    <h5>Carte Professionnelle de Conducteur de VMDTR</h5>
-                    <!-- Encadrement -->
-                    <div class="block--datas-horizontal" id="block--file-VMDTR-card">
-                        <div class="d-flex flex-column col-md-12 col-lg-5">
-                            <label class="required" for="inputvmdtrnumber">Numéro :</label>
-                            <input type="text" {% if vmdtr_number is not null %}value="{{ vmdtr_number }}"{% endif %} placeholder="11 chiffres..." pattern="[0-9]{11}" name="vmdtr_number" id="inputvmdtrnumber" class="form-control" autocomplete="vmdtr_number" size="11" required ><!-- autofocus> -->
-                            {#{% if error_vmdtrnumber %}#}
-                            <!-- <span class="d-block">
-                                <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
-                                <span class="form-error-message">Le numéro ne peut contenir que des chiffres.</span>
-                            </span> -->
-                            {#{% endif %}#}
-                            <br>
-
-                            <label class="required" for="inputvmdtrvalidity">Date de fin de validité :</label>
-                            <input type="date" {% if vmdtr_validity is not null %}value="{{ vmdtr_validity }}"{% endif %} name="vmdtr_validity" id="inputvmdtrvalidity" class="form-control" autocomplete="vmdtr_validity" required ><!-- autofocus> -->
-                            {#{% if error_vmdtrvalidity %}#}
-                            <!-- <span class="d-block">
-                                <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
-                                <span class="form-error-message">La date ne peut contenir que des chiffres.</span>
-                            </span> -->
-                            {#{% endif %}#}
-                            <br>
-
-                            <label class="required" for="inputmotomodel">Modèle de moto :</label>
-                            <input type="text" {% if motomodel is not null %}value="{{ motomodel }}"{% endif %} placeholder="ex: Honda Goldwing 2021..." name="motomodel" id="inputmotomodel" class="form-control" autocomplete="motomodel" required ><!-- autofocus> -->
-                            {#{% if error_motomodel %}#}
-                            <!-- <span class="d-block">
-                                <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
-                                <span class="form-error-message">La date ne peut contenir que des chiffres.</span>
-                            </span> -->
-                            {#{% endif %}#}
-                            <br>
-                        </div>
-                        <div class="d-flex flex-column col-md-12 col-lg-7 align-items-center justify-content-center">
-                            <label for="browse">
-                                <img class="img--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="">
-                            </label>
-                            <input class="required" type="file" name="file" id="browse" value={#{{ picture.pathname }}#} accept=".jpg, .jpeg, .png">
-                            <br>
-                        </div>
-                    </div>
-                    <br>
-                </div>
 
                 <!-- Block de données de l'entreprise T3P -->
                 <div class="mt-1 mb-2 col-lg-12 col-xl-5">
@@ -249,6 +203,57 @@
                         </div>
                         <br>
                     </div>
+                </div>
+                
+                <!-- Block de données propres au pilote -->
+                <div class="mt-1 mb-2 col-lg-12 col-xl-7" id="blk--driverdatas">
+                    <h5>Carte Professionnelle de Conducteur de VMDTR</h5>
+                    <!-- Encadrement -->
+                    <div class="block--datas-horizontal" id="block--file-VMDTR-card">
+                        <div class="d-flex flex-column col-md-12 col-lg-5">
+                            <label class="required" for="inputvmdtrnumber">Numéro :</label>
+                            <input type="text" {% if vmdtr_number is not null %}value="{{ vmdtr_number }}"{% endif %} placeholder="11 chiffres..." pattern="[0-9]{11}" name="vmdtr_number" id="inputvmdtrnumber" class="form-control" autocomplete="vmdtr_number" size="11" required ><!-- autofocus> -->
+                            {#{% if error_vmdtrnumber %}#}
+                            <!-- <span class="d-block">
+                                <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
+                                <span class="form-error-message">Le numéro ne peut contenir que des chiffres.</span>
+                            </span> -->
+                            {#{% endif %}#}
+                            <br>
+
+                            <label class="required" for="inputvmdtrvalidity">Date de fin de validité :</label>
+                            <input type="date" {% if vmdtr_validity is not null %}value="{{ vmdtr_validity }}"{% endif %} name="vmdtr_validity" id="inputvmdtrvalidity" class="form-control" autocomplete="vmdtr_validity" required ><!-- autofocus> -->
+                            {#{% if error_vmdtrvalidity %}#}
+                            <!-- <span class="d-block">
+                                <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
+                                <span class="form-error-message">La date ne peut contenir que des chiffres.</span>
+                            </span> -->
+                            {#{% endif %}#}
+                            <br>
+
+                            <label class="required" for="inputmotomodel">Modèle de moto :</label>
+                            <input type="text" {% if motomodel is not null %}value="{{ motomodel }}"{% endif %} placeholder="ex: Honda Goldwing 2021..." name="motomodel" id="inputmotomodel" class="form-control" autocomplete="motomodel" required ><!-- autofocus> -->
+                            {#{% if error_motomodel %}#}
+                            <!-- <span class="d-block">
+                                <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
+                                <span class="form-error-message">La date ne peut contenir que des chiffres.</span>
+                            </span> -->
+                            {#{% endif %}#}
+                            <br>
+                        </div>
+                        <div class="d-flex flex-column col-md-12 col-lg-7 align-items-center justify-content-center">
+                            <label for="browse">
+                                <img class="img--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="">
+                            </label>
+                            <input class="required" type="file" name="file" id="browse"
+                                {% if drivercard is not null %}
+                                value="{{ asset(drivercard.pathname) }}"
+                                {% endif %}
+                                accept=".jpg, .jpeg, .png">
+                            <br>
+                        </div>
+                    </div>
+                    <br>
                 </div>
 
             </div>

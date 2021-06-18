@@ -57,11 +57,11 @@ class DriverTwig extends AbstractExtension
     }
 
     // Déclaration des filters TWIG
-    // public function getFilters(){
-    //     return [
-    //         new TwigFilter('cast_to_array', array($this, 'castClassToArray')),
-    //     ];
-    // }
+    public function getFilters(){
+        return [
+            // new TwigFilter('cast_to_array', array($this, 'castClassToArray')),
+        ];
+    }
 
     // *************************************************************
 

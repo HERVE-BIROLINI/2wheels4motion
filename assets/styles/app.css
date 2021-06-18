@@ -282,16 +282,21 @@ body{
 .btn--blue:hover{
     box-shadow:inset 3px 3px 8px black;
 }
-/* .btn--red{
-    display: flex;
+.btn--red{
+    /* display: flex;
     align-items: center;
-    width:fit-content;
+    width:fit-content; */
     color:white;
     font-weight: bold;
-    background-color: rgba(255, 0, 0, 0.75);
+    background-color: rgba(255, 0, 0, 0.55);
     box-shadow: 2px 2px 0.25em blue;
     border-radius: 10px;
-} */
+}
+.btn--red:hover{
+    color:white;
+    background-color: rgba(255, 0, 0, 1);
+    box-shadow:inset 3px 3px 8px black;
+}
 /* */
 .paragraph--large{
     margin:2.5em;

@@ -7,17 +7,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/localisation", name="loc_")
+ * @Route("/", name="admin_")
  */
-class GeographyController extends AbstractController
+class AdminController extends AbstractController
 {
     /**
-     * @Route("_geographic", name="index")
+     * @Route("/admin", name="index")
      */
     public function index(): Response
     {
-        return $this->render('geography/index.html.twig', [
-            'controller_name' => 'GeographyController',
+        return $this->render('admin/index.html.twig', [
+            // 'controller_name' => 'AdminController',
         ]);
     }
 }

@@ -58,7 +58,10 @@
                     {#{% endif %}#}
                 >
             </div>
-            <input type="file" name="file" id="browse" value="{#{{ asset(getuserportrait(app.user.id).pathname) }}#}" accept=".jpg, .jpeg, .png">
+            <input type="file" name="file" id="browse"
+                value="{{ asset(getuserportrait(app.user.id).pathname) }}"
+                accept=".jpg, .jpeg, .png"
+            >
         </div>
         <br>
         <div class="btns--row">

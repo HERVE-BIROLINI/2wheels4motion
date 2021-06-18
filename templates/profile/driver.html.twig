@@ -7,13 +7,16 @@
 
     {{ include('profile/banner.html.twig') }}
     
-    Tentative d'ajout de l'objet Company dans le champs dédié de l'objet Driver
+    <h2>Proposer au Driver de gérer ses demandes de courses (=> envoi de devis)...</h2>
+    <h2> ... de gérer ses commandes en cours (=> contact client / annulation)</h2>
+    <h2> ... de gérer ses courses exécutées (=> contact client / envoi facture)</h2>
+    <h2> ... et évidemment, gestion modification de ses données personnelles et d'entreprise...</h2>
 
     <!-- CA MARCHE !!!... -->
     {#
-        #}
         {{ dump('app.user.picture[0] :') }}
         {{ dump(app.user.picture[0]) }}
+        #}
 
     <!-- CA MARCHE !!!... -->
     {#
@@ -26,27 +29,27 @@
     
     <!-- NE FONCTIONNE PLUS SANS LIAISON-->
     {#
-        #}
         {{ dump('app.user.driver (User('~app.user.id~') => Driver('~app.user.driver.id~') ?) :') }}
         {{ dump(app.user.driver) }}
+        #}
     <!-- LES 2, CA MARCHE SI PAS DE LIAISON !!! -->
     {#
-        #}
         {{ dump('Driver (TWIG ! getdriverbyid('~app.user.driver.id~')) :') }}
         {{ dump(getdriverbyid(app.user.driver.id)) }}
         {{ dump('Driver (variable driver) :') }}
         {{ dump(driver) }}
+        #}
 
     <!-- LES 2, CA MARCHE SI PAS DE LIAISON !!! -->
     {#
-        #}
         {{ dump('app.user.driver.company (User('~app.user.id~') => Driver('~app.user.driver.id~') => Company('~app.user.driver.company.id~') ?) :') }}
         {{ dump(app.user.driver.company) }}
 
         {{ dump('Company(TWIG ! getcompanybyid('~app.user.driver.company.id~')) :') }}
-        {{ dump(getcompanybyid(3)) }}
+        {{ dump(getcompanybyid(app.user.driver.company.id)) }}
         {{ dump('Company(variable company) :') }}
         {{ dump(company) }}
+        #}
 
     {% if app.user %}
 

@@ -8,16 +8,17 @@ use App\Entity\Driver;
 use App\Entity\Company;
 use App\Entity\Picturelabel;
 use App\Form\ChangePwdFormType;
-use App\Repository\PicturelabelRepository;
+// use App\Repository\PicturelabelRepository;
 use App\Repository\UserRepository;
-use App\Twig\PictureTwig;
+use App\Tools\UploadPictureTools;
+// use App\Twig\PictureTwig;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+// use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 /**
  * @Route("/profile", name="profile_")
@@ -118,58 +119,14 @@ class ProfileController extends AbstractController
         
         // *** Si RETOUR dans le formulaire... ***
         if(isset($_POST['avatar'])){
-            // ** déclaration/création du dossier destination **
-            $sDestinationFolder='';
-            // ----------v- A analyser lors de la publication -v----------
-            $arFolder=[$this->getParameter('asset_path_dev'),'images/','uploads/','user/',$user->getId()];
-            // $arFolder=[$this->getParameter('asset_path_prod'),'images/','uploads/','user/',$user->getId()];
-            // ----------^- A analyser lors de la publication -^----------
-            foreach($arFolder as $sFolder){
-                $sDestinationFolder.=$sFolder;
-                // ... si le dossier n'existe pas => le créer
-                if(!file_exists($sDestinationFolder)){
-                    mkdir($sDestinationFolder);
-                }
-            }
+            
+            $obUploadPicture = new UploadPictureTools;
 
             //  ** File => un fichier choisi **
             if($_POST["avatar"]=="FILE" and $_FILES['file']['error']==0){
-                // dd('oui');
-                // * récupère les informations sur le fichier *
-                // ... le nom (sans le chemin) de l'image dans la super globale
-                $sFilePathInfo=pathinfo($_FILES['file']['name']);
-                // // ... en déduit le nom (sans l'extension)
-                // $sFileName=$sFilePathInfo['filename'];
-                // ... en déduit son extension
-                $sFileExtension=strtolower($sFilePathInfo['extension']);
-                // ... parce que l'outil AURA DEJA copié le fichier dans une zone tampon...
-                // ... ... récupère le chemin de cette zone tampon
-                $sFileTmp=$_FILES['file']['tmp_name'];
-                // ... vérifie que le type de fichier est autorisé (extension)
-                $arExtensions=array('jpg','jpeg','png');
-                // * si le fichier est bon, effectue la "copie" *
-                // BIZARRE !!!!!!!!
-                echo('<br> $sFileExtension = '.$sFileExtension);
-                // dd($arExtensions);
-                if(in_array($sFileExtension, $arExtensions)){
-                    // Déplace le fichier de la zone tampon vers le chemin destination...
-                    $sFileFullDestination=$sDestinationFolder.'/Avatar.'.$sFileExtension;
-                    // Déplace le fichier...
-                    if(move_uploaded_file($sFileTmp,$sFileFullDestination)){
-                        // ... si le déplacement s'est bien dérouler...
-                        $picture_PathName='build/'.strstr($sFileFullDestination,'images/');
-                        // $obPicture->setPathname('build/'.strstr($sFileFullDestination,'images/'));
-                        // ... demande la suppression de l'ancien fichier si existait
-                        $bDeletePreviousFileIfExist=true;
-                    }
-                    else{
-                        $bError=true;
-                    }
-                }
-                // ... si le fichier est mauvais, lève le drapeau d'erreur
-                else{
-                    $bError=true;
-                }
+                // ----------v- A analyser lors de la publication -v----------
+                $bError=$obUploadPicture->UploadPicture($user, $obPicturelabel_Portrait, $this->getParameter('asset_path_dev'));
+                // ----------^- A analyser lors de la publication -^----------
             }
             // ** Input => Choix d'un avatar prédéfini **
             elseif($_POST["avatar"]!=="FILE"){
@@ -192,16 +149,24 @@ class ProfileController extends AbstractController
                 
                 // supprime l'ancien fichier si existait
                 // /!\ A faire avant de modifier le chemin mémorisé dans l'objet...
-                if($bDeletePreviousFileIfExist
+                if(($bDeletePreviousFileIfExist 
+                        or (!is_null($obUploadPicture) and $obUploadPicture->getdeletePreviousFile())
+                    )
                     and $obPicture->getPathname()
                     and str_contains($obPicture->getPathname(),'user')
                     and file_exists($obPicture->getPathname())
                 ){
+                    // dd($obPicture->getPathname());
                     unlink($obPicture->getPathname());
                 }
                 
                 //
-                $obPicture->setPathname($picture_PathName);
+                if(isset($picture_PathName)){
+                    $obPicture->setPathname($picture_PathName);
+                }
+                elseif(!is_null($obUploadPicture)){
+                    $obPicture->setPathname($obUploadPicture->getPathName());
+                }
                 $obPicture->setPicturelabel($obPicturelabel_Portrait);
                 $entityManager->persist($user);
                 //
@@ -230,11 +195,12 @@ class ProfileController extends AbstractController
     public function changePwd(Request $request
                             , User $user
                             , UserRepository $repository
+                            , UserPasswordEncoderInterface $passwordEncoder
                             // , GuardAuthenticatorHandler $guardHandler
                             // , LoginFormAuthenticator $authenticator
-                            , UserPasswordEncoderInterface $passwordEncoder
                             // , AuthenticationUtils $authenticationUtils
-                            ): Response{
+    ): Response
+    {
 
         // test si l'utilisateur N'est PAS encore identifié
         if(!$this->getUser() or $this->getUser()!==$user){
@@ -286,7 +252,6 @@ class ProfileController extends AbstractController
     public function profiledriver(EntityManagerInterface $entityManager
     ): Response
     {
-        
         // test si l'utilisateur N'est PAS encore identifié
         if(!$this->getUser()){
             return $this->redirectToRoute('app_login');
@@ -294,8 +259,10 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/driver.html.twig', [
             'controller_name' => 'ProfileController',
-            'driver'=>$entityManager->getRepository(Driver::class)->findOneBy(['id'=>3]),
-            'company'=>$entityManager->getRepository(Company::class)->findOneBy(['id'=>3]),
+            'driver'=>$entityManager->getRepository(Driver::class)
+                ->findOneBy(['id'=>$this->getUser()->getDriver()->getId()]),
+            'company'=>$entityManager->getRepository(Company::class)
+                ->findOneBy(['id'=>$this->getUser()->getDriver()->getCompany()->getId()]),
 
         ]);
     }

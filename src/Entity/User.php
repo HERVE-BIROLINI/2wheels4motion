@@ -79,6 +79,11 @@ class User implements UserInterface
      */
     private $picture;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Customer::class, inversedBy="user", cascade={"persist", "remove"})
+     */
+    private $customer;
+
     public function __construct()
     {
         $this->picture = new ArrayCollection();
@@ -247,6 +252,13 @@ class User implements UserInterface
     {
         $this->driver = $driver;
 
+        if(!in_array("ROLE_DRIVER",$this->roles)){
+            $this->roles[] = "ROLE_DRIVER";
+        }
+        // $roles=$user->getRoles();
+        // $roles[]="ROLE_DRIVER";
+        // $user->setRoles($roles);
+
         return $this;
     }
 
@@ -275,6 +287,22 @@ class User implements UserInterface
             if ($picture->getUser() === $this) {
                 $picture->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function getCustomer(): ?Customer
+    {
+        return $this->customer;
+    }
+
+    public function setCustomer(?Customer $customer): self
+    {
+        $this->customer = $customer;
+
+        if(!in_array("ROLE_CUSTOMER",$this->roles)){
+            $this->roles[] = "ROLE_CUSTOMER";
         }
 
         return $this;

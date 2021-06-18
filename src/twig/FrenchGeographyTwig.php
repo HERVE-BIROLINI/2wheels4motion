@@ -2,7 +2,7 @@
 
 namespace App\Twig;
 
-use App\Tools\DBTools;
+// use App\Tools\DBTools;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;

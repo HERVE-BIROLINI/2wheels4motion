@@ -3,15 +3,15 @@
 namespace App\Twig;
 
 use App\Entity\Picture;
-use App\Entity\User;
-use App\Tools\DBTools;
+// use App\Entity\User;
+// use App\Tools\DBTools;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 use App\Entity\Picturelabel;
-use App\Repository\PicturelabelRepository;
+// use App\Repository\PicturelabelRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
+// use Doctrine\Persistence\ManagerRegistry;
 
 class PictureTwig extends AbstractExtension
 {
@@ -30,6 +30,7 @@ class PictureTwig extends AbstractExtension
         return [
             // new TwigFunction('getimages', [$this, 'getImages']),
             new TwigFunction('getuserportrait', [$this, 'getPictureOfUserProfile']),
+            new TwigFunction('getdrivercard', [$this, 'getPictureOfDriverCard']),
         ];
     }
 
@@ -60,6 +61,12 @@ class PictureTwig extends AbstractExtension
         $obPictureLabel_Portrait=$this->entityManager->getRepository(Picturelabel::class)->findOneBy(['label'=>'Avatar']);
         return $this->entityManager->getRepository(Picture::class)
             ->findOneBy(['picturelabel'=>$obPictureLabel_Portrait,'user'=>$user_id]);
+    }
+
+    public function getPictureOfDriverCard($user_id){
+        $obPictureLabel_VMDTR=$this->entityManager->getRepository(Picturelabel::class)->findOneBy(['label'=>'Carte pro. VMDTR - Face']);
+        return $this->entityManager->getRepository(Picture::class)
+            ->findOneBy(['picturelabel'=>$obPictureLabel_VMDTR,'user'=>$user_id]);
     }
     // public function getAllPicturelabels(){
     //     $obPDO = new DBTools;

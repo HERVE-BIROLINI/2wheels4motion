@@ -11,19 +11,19 @@
     <!-- internal page menu, to navigate to ID -->
     {% if app.user %}
     <div id="nav--inpage">
-        {% if "ROLE_USER" in app.user.roles %}
+        {% if app.user %}
+        {#{% if "ROLE_USER" in app.user.roles %}#}
         <a class="btn nav--inpage-btn-bgb" href="{{ path('profile_user', {'id': app.user.id}) }}">L'utilisateur</a>
         {% endif %}
-        {% if "ROLE_CUSTOMER" in app.user.roles %}
+        <!-- -->
+        {% if app.user.customer %}
+        {#{% if "ROLE_CUSTOMER" in app.user.roles %}#}
         <a class="btn nav--inpage-btn-bgb" href="{{ path('profile_customer') }}">Le client</a>
         {% endif %}
         <div>
-            {{ dump('app.user : ') }}
-            {{ dump(app.user) }}
-            {#{{ dump('app.user.driver : ') }}#}
-            {#{{ dump(app.user.driver) }}#}
-            {#{{ dump('app.user.driver.company : ') }}#}
-            {#{{ dump(app.user.driver.company) }}#}
+            {#{{ dump('app.user : ') }}{{ dump(app.user) }}#}
+            {#{{ dump('app.user.driver : ') }}{{ dump(app.user.driver) }}#}
+            {#{{ dump('app.user.driver.company : ') }}{{ dump(app.user.driver.company) }}#}
         </div>
         {% if app.user.driver %}
         {#{% if "ROLE_DRIVER" in app.user.roles %}#}

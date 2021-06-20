@@ -15,17 +15,18 @@
     <div class="paragraph--large">
         <form class="card--3D-vertical" method="post">
             <!-- Rangée titre + photo Avatar-->
-            <div class="d-flex flew-row flex-wrap justify-content-between align-items-center">
+            <div class="d-flex flew-row flex-wrap justify-content-between align-items-center w-100">
                 <div>
                     <h2 class="h3 mb-3 font-weight-normal">Données personnelles</h2>
                     <p>Inscrit depuis le {{ app.user.registrationdate|date('d-m-Y') }}</p>
                 </div>
+                <!---->
                 <div class="card--profile">
                     <a href="{{ path('profile_changepicture', {'id': app.user.id }) }}">
                         {% if app.user.picture|length > 0 %}
-                        <img class="img--profile" src="{{ asset(getuserportrait(app.user).pathname) }}" alt="Photo de profil">
+                        <img class="imgbtn--profile" src="{{ asset(getuserportrait(app.user).pathname) }}" alt="Photo de profil">
                         {% else %}                    
-                        <img class="img--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
+                        <img class="imgbtn--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
                         {% endif %}
                     </a>
                     <!-- <br> -->

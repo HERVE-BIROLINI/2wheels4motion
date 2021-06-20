@@ -24,7 +24,9 @@ class ChangePwdFormType extends AbstractType
                 //
                 'first_options' => [
                     'label' => false,// 'label' => "Mot de passe",
-                    'attr'  => ['placeholder'   => "Entrez un nouveau mot de passe",],
+                    'attr'  => ['placeholder'   => "Entrez un nouveau mot de passe",
+                                'class'         => "required",
+                                ],
                     'constraints'   => [
                         new NotBlank(['message' => 'Please enter a password',]),
                         new Length([
@@ -42,7 +44,9 @@ class ChangePwdFormType extends AbstractType
                 'second_options' => [
                     // 'label' => "Confirmez le mot de passe :",
                     'label' => false,
-                    'attr'  => ['placeholder'   => "Confirmez ce nouveau mot de passe",],
+                    'attr'  => ['placeholder'   => "Confirmez ce nouveau mot de passe",
+                                'class'         => "required",
+                                ],
                 ],
                 // message si les champs ne correspondent pas
                 'invalid_message'   => "Les mots de passe ne sont pas identiques..."

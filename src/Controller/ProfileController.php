@@ -207,9 +207,6 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $user = $this->getDoctrine()->getRepository(User::class);
-        $user = $repository->find($user);
-
         $form = $this->createForm(ChangePwdFormType::class, $user);
         $form->handleRequest($request);
 
@@ -284,7 +281,7 @@ class ProfileController extends AbstractController
 
         // au 1er passage, affiche la page du Profil et son formulaire
         return $this->render('profile/customer.html.twig', [
-            'controller_name' => 'ProfileController',
+            // 'controller_name' => 'ProfileController',
 
         ]);
     }

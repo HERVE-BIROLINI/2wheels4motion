@@ -70,8 +70,11 @@ class User implements UserInterface
     private $phone;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Driver::class)
+     * @ORM\OneToOne(targetEntity=Driver::class, inversedBy="user", cascade={"persist", "remove"})
      */
+    // /**
+    //  * @ORM\ManyToOne(targetEntity=Driver::class)
+    //  */
     private $driver;
 
     /**
@@ -255,9 +258,6 @@ class User implements UserInterface
         if(!in_array("ROLE_DRIVER",$this->roles)){
             $this->roles[] = "ROLE_DRIVER";
         }
-        // $roles=$user->getRoles();
-        // $roles[]="ROLE_DRIVER";
-        // $user->setRoles($roles);
 
         return $this;
     }

@@ -21,94 +21,143 @@
             {% set dept=getdepartmentbycode(dept) %}
         {% endif %}
 
-    <form class="mt-4 mb-4" method="post">
-        <table class="table table-striped table--txtlight">
-            <thead class="thead--light">
-                <tr>
-                    <th>Prénom Nom</th>
-                    <th>
-                        <div class="dropdown dropright" name="region">
-                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuOffset" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Région 
-                                {% if region %}
-                                    {{ ' ('~region.name~')' }}
-                                {% endif %}
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
-                                <button class="dropdown-item" type="submit" name="region" value="all">TOUTES</button>
-                                <div class="dropdown-divider"></div>
-                                {% for region in regions %}
-                                <button class="dropdown-item" type="submit" name="region" value="{{ region.code }}">{{ region.name }}</button>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </th>
-                    <th>
-                        <div class="dropdown dropright">
-                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuOffset" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Dépt.
-                                {% if dept %}
-                                    {{ ' ('~dept.name~')' }}
-                                {% endif %}
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
-                                <button class="dropdown-item" type="submit" name="dept" value="all">TOUS</button>
-                                <div class="dropdown-divider"></div>
-                                {% for dept in depts %}
-                                    {% if region is null or dept.region_code==region.code %}
-                                <button class="dropdown-item" type="submit" name="dept" value="{{ dept.code }}">{{ dept.name~' ('~dept.code~')' }}</button>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </th>
-                    <th>Moto</th>
-                    <th>Nb. de courses effectuées</th>
-                    <th>Appréciations des usagers</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for oDriver in drivers %}
-            
-                {% set oUser=oDriver.users[0] %}
-                {% set oCompany=oDriver.company %}
-                {% set oDept=getdepartmentbycode(oCompany.zip|slice(0,2)) %}
-                {% set oRegion=getregionbycode(oDept.region_code) %}
+        <form class="d-flex flex-row mt-4 mb-4" method="post">
+            <div class="dropdown dropright" name="region">
+                <button class="btn btn-sm btn-secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Région 
+                    {% if region %}
+                        {{ ' ('~region.name~')' }}
+                    {% endif %}
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
+                    <button class="dropdown-item" type="submit" name="region" value="all">TOUTES</button>
+                    <div class="dropdown-divider"></div>
+                    {% for region in regions %}
+                    <button class="dropdown-item" type="submit" name="region" value="{{ region.code }}">{{ region.name }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="dropdown dropright">
+                <button class="btn btn-sm btn-secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Dépt.
+                    {% if dept %}
+                        {{ ' ('~dept.name~')' }}
+                    {% endif %}
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
+                    <button class="dropdown-item" type="submit" name="dept" value="all">TOUS</button>
+                    <div class="dropdown-divider"></div>
+                    {% for dept in depts %}
+                        {% if region is null or dept.region_code==region.code %}
+                    <button class="dropdown-item" type="submit" name="dept" value="{{ dept.code }}">{{ dept.name~' ('~dept.code~')' }}</button>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </form>
 
-                {% if oCompany.isconfirmed 
-                    and (region is null or region.code==oDept.region_code)
-                    and (dept is null or dept is not defined or dept.code==oCompany.zip|slice(0,2))
-                %}
-                <tr>
-                    <td>{{ oUser.firstname~' '~oUser.lastname }}</td>
-                    <td>{{ oRegion.name }}</td>
-                    <td>{{ oCompany.zip|slice(0,2) }}</td>
-                    <td>{{ oDriver.motomodel }}</td>
-                    <td>'à développer'</td>
-                    <td>'à développer'</td>
-                    <td>
-                        <a href="{{ path('driver_profile', {'id': oDriver.id}) }}" title="Voir sa fiche" class="mr-2">
-                            <i class="ri-eye-line"></i>
-                        </a>
-                        <a href="{{ 'mailto:' ~ oUser.email }}" title="Lui envoyer un courriel">
-                            <i class="ri-mail-send-line"></i>
-                        </a>
-                        <a href="{{ 'tel:' ~ oUser.phone }}" title="Lui téléphoner" class="ml-2">
-                            <i class="ri-phone-line"></i>
-                        </a>
-                    </td>
-                </tr>
-                {% endif %}
-            {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="7"></td>
-                </tr>
-            </tfoot>
-        </table>
-    </form>
+        <div class="d-flex flex-row flex-wrap">
+        <!-- Boucle 1 : boucle d'analyse pour comptage et détermination du comportement WRAP -->
+        {% set counter=0 %}
+        {% for oDriver in drivers %}
+            {% set oUser=oDriver.user %}
+            {% set oCompany=oDriver.company %}
+            {% set oDept=getdepartmentbycode(oCompany.zip|slice(0,2)) %}
+            {% set oRegion=getregionbycode(oDept.region_code) %}
+            {% if oCompany.isconfirmed 
+                and (region is null or region.code==oDept.region_code)
+                and (dept is null or dept is not defined or dept.code==oCompany.zip|slice(0,2))
+            %}
+                {% set counter = counter + 1 %}
+            {% endif %}
+        {% endfor %}
+        <!-- Boucle 2 : boucle "active" -->
+        {% for oDriver in drivers %}
+            {% set oUser=oDriver.user %}
+            {% set oCompany=oDriver.company %}
+            {% set oDept=getdepartmentbycode(oCompany.zip|slice(0,2)) %}
+            {% set oRegion=getregionbycode(oDept.region_code) %}
+
+            {% if oCompany.isconfirmed 
+                and (region is null or region.code==oDept.region_code)
+                and (dept is null or dept is not defined or dept.code==oCompany.zip|slice(0,2))
+            %}
+            {% if counter > 2 %}
+            <div class="card--3D-vertical col-12 col-md-3" style="min-width:18em;max-width:40em;">
+            {% elseif counter == 2 %}
+            <div class="card--3D-vertical col-12 col-md-5" style="min-width:16em;max-width:50em;">
+            {% elseif counter == 1 %}
+            <div class="card--3D-vertical col-12" style="min-width:10em;max-width:40em;">
+            {% endif %}
+                <div class="card--vertical pb-5">
+
+                    <!-- 1ère rangée : chauffeur -->
+                    <div class="d-flex flex-row flex-wrap mb-1"
+                        style="width:95%;justify-content:space-between;"
+                    >
+                        <!-- Bloc image portrait -->
+                        <div class="mr-2">
+                            {% set oPortrait=getuserportrait(oUser) %}
+                            {% if oPortrait %}
+                            <img class="img--profile" src="{{ asset(oPortrait.pathname) }}" alt="Photo de profil">
+                            {% else %}                    
+                            <img class="img--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
+                            {% endif %}
+                        </div>
+                        <!-- Bloc notation + id user -->
+                        <div>
+                            <div class="d-flex flex-row justify-content-start">
+                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                            </div>
+                            <h5 class="mt-1" style='font-weight:bolder;'>{{ oUser.firstname~' '~oUser.lastname }}</h5>
+                            <small>{{ 'Inscrit depuis le '~oUser.registrationdate|date('d-m-Y') }}</small>
+                            <br>
+                            <small>{{ 'Nb de courses effectuées : XXX' }}</small>
+                        </div>
+                    </div>
+
+                    <!-- 2nde rangé : photo carte VMDTR -->
+                    {% set oVMDTR=getdrivercard(oUser) %}
+                    {% if oVMDTR %}
+                    <img style='width:95%;' src="{{ asset(oVMDTR.pathname) }}" alt="Carte VMDTR">
+                    {% else %}                    
+                    <img style='width:95%;' src="{{ asset(sImgPath ~'no-image.png') }}" alt="Carte VMDTR">
+                    {% endif %}
+
+                    <!-- 3ème rangée : Bloc Company -->
+                    <div class="mt-2" style='width:95%;'>
+                        <h5 class="mt-1" style='font-weight:bolder;'>{{ oCompany.name }}</h5>
+                        <h6>{{ 'Région '~oRegion.name }}</h6>
+                        <h6>{{ 'Domiciliation sur '~getcitybyzip(oCompany.zip).name~' ('~oCompany.zip~')' }}</h6>
+                    </div>
+                </div>
+
+                <!-- Footer proposant les liens de contact -->
+                <div class="card--footer-horizontal" style="border-bottom-left-radius:3px;border-bottom-right-radius:3px;">
+                    <!-- class="card--footer-horizontal"> -->
+                    Contacter le pilote :
+                    <!-- &emsp;
+                    <a href="{#{{ path('driver_profile', {'id': oDriver.id}) }}#}" title="Voir sa fiche" class="mr-2">
+                        <i class="ri-eye-line"></i>
+                    </a> -->
+                    &emsp;
+                    <a href="{{ 'mailto:' ~ oUser.email }}" title="Lui envoyer un courriel">
+                        <i class="ri-mail-send-line"></i>
+                    </a>
+                    &ensp;
+                    <a href="{{ 'tel:' ~ oUser.phone }}" title="Lui téléphoner" class="ml-2">
+                        <i class="ri-phone-line"></i>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+
     {% endif %}
 </section>
 
@@ -116,7 +165,7 @@
     <p>
         Si vous êtes vous-même détenteur de la carte professionnelle de conducteur VMDTR,
         que vous êtes immatriculé au répertoire des métiers, et disposez de votre propre véhicule,
-        inscrivez-vous ici afin d'être référencé et de profiter d'une plus large visibilité.
+        enregistrez-vous dans cet annuaire afin d'être référencé et de profiter d'une plus large visibilité.
         Vous recevrez des demandes de courses par courriel, ou pourrez même être directement contacté
         par toute personne consultant cet annuaire dans le but de trouver un taxi-moto.
         <br>

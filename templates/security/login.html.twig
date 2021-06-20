@@ -7,27 +7,26 @@
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
     
-{% for flashError in app.flashes('verify_email_error') %}
-    <div class="alert alert-danger" role="alert">{{ flashError }}</div>
-{% endfor %}
+    {% for flashError in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+    {% endfor %}
 
     {% if app.user %}
-<!-- {{ dump(app.user) }} -->
         <div class="p-3 mb-2 bg-success text-white">
             Vous êtes connecté en tant que ' {{ app.user.firstname }} {{ app.user.lastname }} ',
             avec l'adresse électronique ' {{ app.user.username }} '. <a href="{{ path('app_logout') }}" class="text-danger">- Logout -</a>
         </div>
     {% endif %}
 
-<form class="container mt-5" method="post">
+<form class="container-fluid mt-5 w-75" method="post">
     <div class="card--3D-vertical">
 
-        <div class="d-flex flex-row justify-content-between">
-
+        <div class="d-flex flex-row justify-content-between w-100">
+            <!---->
             <h1 class="h3 mb-3 font-weight-normal">Identifiez-vous : <small style="color:red;font-size:0.5em;">(* champs obligatoire)</small></h1>
-
+            <!---->
             {% if app.user is null %}
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-row justify-content-between align-items-center">
                 Mot de passe oublié ?
                 &ensp;
                 <a class="btn btn-bg btn-secondary" href="{#{{ path('profile_pwd') }}#}">
@@ -59,7 +58,7 @@
             </div>
         #}
         
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between w-100">
             <button class="btn btn-sm btn--blue" type="submit">
             <!-- <button class="btn btn-lg btn-primary" type="submit"> -->
                 <i class="ri-login-box-line"></i>

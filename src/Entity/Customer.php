@@ -17,23 +17,13 @@ class Customer
      */
     private $id;
 
-    // /**
-    //  * @ORM\Column(type="date")
-    //  */
-    // private $registration_date;
-
-    // /**
-    //  * @ORM\Column(type="decimal", precision=10, scale=0)
-    //  */
-    // private $phone;
-
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $road;
 
     /**
-     * @ORM\Column(type="decimal", precision=5, scale=0)
+     * @ORM\Column(type="string", length=5, scale=0)
      */
     private $zip;
 
@@ -51,30 +41,6 @@ class Customer
     {
         return $this->id;
     }
-
-    // public function getRegistrationDate(): ?\DateTimeInterface
-    // {
-    //     return $this->registration_date;
-    // }
-
-    // public function setRegistrationDate(\DateTimeInterface $registration_date): self
-    // {
-    //     $this->registration_date = $registration_date;
-
-    //     return $this;
-    // }
-
-    // public function getPhone(): ?string
-    // {
-    //     return $this->phone;
-    // }
-
-    // public function setPhone(string $phone): self
-    // {
-    //     $this->phone = $phone;
-
-    //     return $this;
-    // }
 
     public function getRoad(): ?string
     {

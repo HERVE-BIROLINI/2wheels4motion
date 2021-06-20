@@ -33,17 +33,17 @@ class Request
     private $from_road;
 
     /**
-     * @ORM\Column(type="decimal", precision=5, scale=0)
+     * @ORM\Column(type="string", string=5)
      */
     private $from_zip;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", string=255)
      */
     private $to_road;
 
     /**
-     * @ORM\Column(type="decimal", precision=5, scale=0)
+     * @ORM\Column(type="string", string=5)
      */
     private $to_zip;
 

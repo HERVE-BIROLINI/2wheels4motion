@@ -30,8 +30,11 @@ class Driver
     private $vmdtr_validity;
 
     /**
-     * @ORM\Column(type="decimal", precision=11, scale=0)
+     * @ORM\Column(type="string", length=11)
      */
+    // /**
+    //  * @ORM\Column(type="decimal", precision=11, scale=0)
+    //  */
     private $vmdtr_number;
 
     /**
@@ -61,9 +64,13 @@ class Driver
     private $company;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="driver")
+     * @ORM\OneToOne(targetEntity=User::class, mappedBy="driver", cascade={"persist", "remove"})
      */
-    private $users;
+    private $user;
+    // /**
+    //  * @ORM\OneToMany(targetEntity=User::class, mappedBy="driver")
+    //  */
+    // private $users;
 
     public function getId(): ?int
     {
@@ -143,33 +150,55 @@ class Driver
     }
 
 
-    /**
-     * @return Collection|User[]
-     */
-    public function getUsers(): Collection
+
+    public function getUser(): ?User
     {
-        return $this->users;
+        return $this->user;
     }
 
-    public function addUser(User $user): self
+    public function setUser(?User $user): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
+        // unset the owning side of the relation if necessary
+        if ($user === null && $this->user !== null) {
+            $this->user->setDriver(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($user !== null && $user->getDriver() !== $this) {
             $user->setDriver($this);
         }
 
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getDriver() === $this) {
-                $user->setDriver(null);
-            }
-        }
+        $this->user = $user;
 
         return $this;
     }
+    // /**
+    //  * @return Collection|User[]
+    //  */
+    // public function getUsers(): Collection
+    // {
+    //     return $this->users;
+    // }
+
+    // public function addUser(User $user): self
+    // {
+    //     if (!$this->users->contains($user)) {
+    //         $this->users[] = $user;
+    //         $user->setDriver($this);
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeUser(User $user): self
+    // {
+    //     if ($this->users->removeElement($user)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($user->getDriver() === $this) {
+    //             $user->setDriver(null);
+    //         }
+    //     }
+
+    //     return $this;
+    // }
 }

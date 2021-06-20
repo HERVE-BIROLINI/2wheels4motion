@@ -215,7 +215,7 @@ class RegistrationController extends AbstractController
             }
             // ... company existante => choisie dans la liste des companies connues
             else{
-                dd("Choix d'une compagnie existante, une erreur ?");
+                // dd("Choix d'une compagnie existante, une erreur ?");
             }
             // ... crée le Driver
             $obDriver=new Driver;

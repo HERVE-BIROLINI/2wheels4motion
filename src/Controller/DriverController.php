@@ -34,7 +34,7 @@ class DriverController extends AbstractController
         else{
             $dept=null;
         }
-
+// dd($drivers);
         return $this->render('driver/driverspresentation.html.twig', [
             'controller_name' => 'DriverController',
             'drivers'   => $drivers->findAll(),
@@ -49,7 +49,7 @@ class DriverController extends AbstractController
     public function profiledriver(Driver $obDriver = null, DriverRepository $drivers
     ): Response
     {
-        dd('Présentation de la fiche DU pilote au Public (DriverController)');
+        dd('NON UTILISE  -  Présentation de la fiche DU pilote au Public (DriverController)');
         // test si l'utilisateur N'est PAS encore identifié
         if(!$obDriver ){//or !$obDriver=$drivers->findOneBy(['id'=>$driver])){
             return $this->redirectToRoute('driver_presentation');

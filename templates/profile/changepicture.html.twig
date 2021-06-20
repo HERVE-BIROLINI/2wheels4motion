@@ -19,25 +19,25 @@
         <div class="d-flex flex-row">
             <div class="card--profile m-2">
                 <label for="avatar1">
-                    <img class="img--profile" for="avatar1" src="{{ asset(sImgPath ~'Avatar/Avatar-WB.png') }}" alt="Photo de profil">
+                    <img class="imgbtn--profile" for="avatar1" src="{{ asset(sImgPath ~'Avatar/Avatar-WB.png') }}" alt="Photo de profil">
                 </label>
                 <input type="radio" id="avatar1" name="avatar" value="Avatar-WB.png">
             </div>
             <div class="card--profile m-2">
                 <label for="avatar2">
-                    <img class="img--profile" src="{{ asset(sImgPath ~'Avatar/Avatar-WW.png') }}" alt="Photo de profil">
+                    <img class="imgbtn--profile" src="{{ asset(sImgPath ~'Avatar/Avatar-WW.png') }}" alt="Photo de profil">
                 </label>
                 <input type="radio" id="avatar2" name="avatar" value="Avatar-WW.png">
             </div>
             <div class="card--profile m-2">
                 <label for="avatar3">
-                    <img class="img--profile" src="{{ asset(sImgPath ~'Avatar/Avatar-MW.png') }}" alt="Photo de profil">
+                    <img class="imgbtn--profile" src="{{ asset(sImgPath ~'Avatar/Avatar-MW.png') }}" alt="Photo de profil">
                 </label>
                 <input type="radio" id="avatar3" name="avatar" value="Avatar-MW.png">
             </div>
             <div class="card--profile m-2">
                 <label for="avatar4">
-                    <img class="img--profile" src="{{ asset(sImgPath ~'Avatar/Avatar-MB.png') }}" alt="Photo de profil">
+                    <img class="imgbtn--profile" src="{{ asset(sImgPath ~'Avatar/Avatar-MB.png') }}" alt="Photo de profil">
                 </label>
                 <input type="radio" id="avatar4" name="avatar" value="Avatar-MB.png">
             </div>
@@ -47,9 +47,9 @@
             <div class="card--profile m-2">
                 <label for="avatarfile">
                     {% if getuserportrait(app.user.id) %}
-                    <img class="img--profile" src="{{ asset(getuserportrait(app.user.id).pathname) }}" alt="Photo de profil">
+                    <img class="imgbtn--profile" src="{{ asset(getuserportrait(app.user.id).pathname) }}" alt="Photo de profil">
                     {% else %}                    
-                    <img class="img--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
+                    <img class="imgbtn--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
                     {% endif %}
                 </label>
                 <input type="radio" id="avatarfile" name="avatar" value="FILE" for="browse"

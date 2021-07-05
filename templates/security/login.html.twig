@@ -23,13 +23,13 @@
 
         <div class="d-flex flex-row justify-content-between w-100">
             <!---->
-            <h1 class="h3 mb-3 font-weight-normal">Identifiez-vous : <small style="color:red;font-size:0.5em;">(* champs obligatoire)</small></h1>
+            <h1 class="h3 mb-3 font-weight-normal">Identifiez-vous : <small style="color:red;font-size:0.35em;">(* champs obligatoire)</small></h1>
             <!---->
             {% if app.user is null %}
             <div class="d-flex flex-row justify-content-between align-items-center">
                 Mot de passe oublié ?
                 &ensp;
-                <a class="btn btn-bg btn-secondary" href="{#{{ path('profile_pwd') }}#}">
+                <a class="btn btn-bg btn--secondary" href="{#{{ path('profile_pwd') }}#}">
                     <i class="ri-key-2-line"></i>
                     Reinitialiser le mot de passe (RESTE A DEVELOPPER)
                 </a>
@@ -38,10 +38,10 @@
         </div>
 
         <label class="required" for="inputEmail">Adresse électronique :</label>
-        <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" placholder="ex: mon@email.fr" required autofocus>
+        <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" placholder="ex: mon@email.fr" required autofocus>
         <br>
         <label class="required" for="inputPassword">Mot de passe :</label>
-        <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" placholder="Saisir votre mot de passe" required>
+        <input type="password" name="password" id="inputPassword" class="form-control" placholder="Saisir votre mot de passe" required>
         <br>
         <input type="hidden" name="_csrf_token"
             value="{{ csrf_token('authenticate') }}"
@@ -62,14 +62,13 @@
             <button class="btn btn-sm btn--blue" type="submit">
             <!-- <button class="btn btn-lg btn-primary" type="submit"> -->
                 <i class="ri-login-box-line"></i>
-                <p>&ensp;</p>
                 Se connecter
             </button>
             {% if app.user is null %}
             <div class="d-flex justify-content-between align-items-center">
                 Pas encore de compte ?
                 &ensp;
-                <a class="btn btn-bg btn-secondary" href="{{ path('registration_user') }}">
+                <a class="btn btn-bg btn--secondary" href="{{ path('registration_user') }}">
                     <i class="ri-record-circle-line"></i>
                     Créer un compte
                 </a>

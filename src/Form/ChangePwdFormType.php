@@ -28,7 +28,7 @@ class ChangePwdFormType extends AbstractType
                                 'class'         => "required",
                                 ],
                     'constraints'   => [
-                        new NotBlank(['message' => 'Please enter a password',]),
+                        new NotBlank(['message' => 'Entrez un mot de passe SVP',]),
                         new Length([
                             'min'           => 6,
                             'minMessage'    => 'Votre mot de passe doit comporter au moins {{ limit }} caractères',

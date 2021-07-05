@@ -35,8 +35,7 @@ class RegistrationController extends AbstractController
 {
     private $emailVerifier;
 
-    public function __construct(EmailVerifier $emailVerifier
-                                )
+    public function __construct(EmailVerifier $emailVerifier)
     {
         $this->emailVerifier = $emailVerifier;
     }
@@ -127,48 +126,59 @@ class RegistrationController extends AbstractController
 
         $obFrenchGeographyTwig=new FrenchGeographyTwig;
         $error_files=null;
+        $error_city=null;
+        $error_siren=null;
         $driver_exist=null;
         $bError=null;
         // Définition des variables, nécessaire si 1er passage...
-        $vmdtr_number=null;
-        $vmdtr_validity=null;
-        $motomodel=null;
-        $name=null;
-        $siren=null;
-        $nic=null;
-        $road=null;
-        $zip=null;
-        $city=null;
-        $hasconfirmedgoodstanding=null;
+        // $city=null;
         // ... mais si 2nd passage, récupère les saisies de l'interface
         if(isset($_POST['vmdtr_number'])){
             $vmdtr_number=$_POST['vmdtr_number'];
         }
+        else{$vmdtr_number=null;
+        }
         if(isset($_POST['vmdtr_validity'])){
             $vmdtr_validity=$_POST['vmdtr_validity'];
         }
+        else{$vmdtr_validity=null;}
         if(isset($_POST['motomodel'])){
             $motomodel=$_POST['motomodel'];
         }
+        else{$motomodel=null;}
         if(isset($_POST['name'])){
             $name=$_POST['name'];
         }
+        else{$name=null;}
         if(isset($_POST['siren'])){
             $siren=$_POST['siren'];
         }
+        else{$siren=null;}
         if(isset($_POST['nic'])){
             $nic=$_POST['nic'];
         }
+        else{$nic=null;}
         if(isset($_POST['road'])){
             $road=$_POST['road'];
         }
-        if(isset($_POST['zip'])){
-            $zip=$_POST['zip'];
+        else{$road=null;}
+        if(isset($_POST['city']) and strlen($_POST['city'])>0){
+            $city=substr($_POST['city'],0,-8);
             //
-            $city=$obFrenchGeographyTwig->getCityByZip($zip)->name;
+            $zip=$obFrenchGeographyTwig->getZipByCity($city)->zip_code;
+        }
+        else{
+            $city=null;
+            $zip=null;
         }
         if(isset($_POST['hasconfirmedgoodstanding'])){
             $hasconfirmedgoodstanding=$_POST['hasconfirmedgoodstanding'];
+        }
+        else{$hasconfirmedgoodstanding=null;}
+        
+        // SIREN => nombre à 9 chiffres
+        if(isset($_POST['hasconfirmedgoodstanding']) and (!is_numeric($siren) || strlen($siren)>9)){
+            $error_siren=true;
         }
 
         //  File => un fichier choisi et upload réussi
@@ -181,11 +191,19 @@ class RegistrationController extends AbstractController
             );
             // ----------^- A analyser lors de la publication -^----------
         }
-
+        
         // Cas de RETOUR dans le formulaire...
-        if($hasconfirmedgoodstanding
+        if(isset($_POST['hasconfirmedgoodstanding'])
+            and isset($_FILES) and $_FILES['file']['error']==4
+            )
+        {
+            $error_files="Vous devez télécharger une copie de votre carte VMDTR.";
+        }
+        elseif($hasconfirmedgoodstanding
+            and !$error_siren
             and (is_null($bError) or !isset($bError) or $bError==false) and !is_null($obUploadPicture)
             and $vmdtr_number!==null and !$driver_exist=$drivers->findBy(['vmdtr_number'=>$vmdtr_number])
+            and preg_match("@^[A-Za-z'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ -]+@i", $city)
         ){
             // Pour les enregistrements dans la BdD
             $entityManager = $this->getDoctrine()->getManager();
@@ -285,7 +303,6 @@ class RegistrationController extends AbstractController
                 'msg_info'   => "Votre demande a été signifiée à l'administrateur par courriel",
             ]);
         }
-
         // ... suite au choix d'une Company déjà "référencée"
         elseif(isset($_POST['companychoosen'])){
             $obCompany=$companies->findOneBy(['id'=>$_POST['companychoosen']]);
@@ -296,25 +313,29 @@ class RegistrationController extends AbstractController
             $zip=$obCompany->getZip();
             $city=$obCompany->getCity();
         }
-
         // ... autres cas, sources de conflit
         elseif(!is_null($driver_exist)){
+            var_dump($driver_exist);
             $driver_exist="Un pilote utilise déjà ce numéro de carte professionnelle VMDTR.";
-        }
-        elseif(isset($_POST['hasconfirmedgoodstanding'])
-                and isset($_FILES) and $_FILES['file']['error']==4
-        ){
-            $error_files="Vous devez télécharger une copie de votre carte VMDTR.";
         }
         elseif(isset($_POST['hasconfirmedgoodstanding'])
                 and isset($_FILES) and $_FILES['file']['error']==1
         ){
             $error_files="Le fichier image choisi dépasse la limite autorisée de 2Mo.";
         }
+        elseif($hasconfirmedgoodstanding
+                and (is_null($bError) or !isset($bError) or $bError==false) and !is_null($obUploadPicture)
+                and $vmdtr_number!==null and !$driver_exist=$drivers->findBy(['vmdtr_number'=>$vmdtr_number])
+                and !preg_match("@^[A-Za-z'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ -]+@i", $city)
+        ){
+            $error_city=true;
+        }
 
         // 1er passage, ou retour après erreur de saisie
         return $this->render('registration/driver.html.twig', [
             'error_files'   => $error_files,
+            'error_city'    => $error_city,
+            'error_siren'   => $error_siren,
             'driver_exist'  => $driver_exist,
             //
             'vmdtr_number'  => $vmdtr_number,

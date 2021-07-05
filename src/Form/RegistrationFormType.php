@@ -58,31 +58,31 @@ class RegistrationFormType extends AbstractType
                 //  2. limiter les aller/retours avec le serveur
                 'required'      =>  true,
                 'constraints'   =>  [
-                    new NotBlank(['message' =>  "L'adresse eMail est obligatoire"]),
-                    new Email   (['message' =>  "L'adresse eMail n'est pas valide"]),
+                    new NotBlank(['message' => "L'adresse eMail est obligatoire"]),
+                    new Email   (['message' => "L'adresse eMail n'est pas valide"]),
                     // new Unique  (['message' =>  "Un compte utilisant cet email existe déjà"]),
                     new Regex([
-                        'pattern'   => "@^[A-Za-z]{1}+[0-9A-Za-z\-\_\.]+\@{1}[0-9A-Za-z\-\_\.]+\.{1}+[A-Za-z]{2}+@i",
-                        'message'   => "Ne doit contenir que des caractères alphanumériques, un '@' et un '.' quelque chose",
+                        'pattern' => "@^[A-Za-z]{1}+[0-9A-Za-z\-\_\.]+\@{1}[0-9A-Za-z\-\_\.]+\.{1}+[A-Za-z]{2}+@i",
+                        'message' => "Ne doit contenir que des caractères alphanumériques, un '@' et un '.' quelque chose",
                     ])
                 ],
             ])
             //
             ->add('phone',TextType::class,[
-                'label' =>  "Votre numéro de téléphone :",
-                'attr'  =>  ['placeholder'=>"ex: 0123456789"],
-                'required'      =>  true,
-                'constraints'   =>  [
+                'label'       =>  "Votre numéro de téléphone :",
+                'attr'        =>  ['placeholder'=>"ex: 0123456789"],
+                'required'    =>  true,
+                'constraints' =>  [
                     new NotBlank(['message' =>  "Le numéro de téléphone obligatoire"]),
                     new Regex([
-                        'pattern'   => "@^0+[0-9]{9}+@i",
-                        'message'   => "Doit comporter 10 chiffres et commencer par un 0",
+                        'pattern' => "@^0+[0-9]{9}@",
+                        'message' => "Doit comporter 10 chiffres et commencer par un 0",
                     ]),
                     new Length([
-                        'min'           => 10,
-                        'max'           => 10,
-                        'minMessage'    => 'Votre numéro de téléphone doit comporter {{ limit }} chiffres',
-                        'maxMessage'    => 'Votre numéro de téléphone doit comporter {{ limit }} chiffres',
+                        'min'        => 10,
+                        'max'        => 10,
+                        'minMessage' => 'Votre numéro de téléphone doit comporter {{ limit }} chiffres',
+                        'maxMessage' => 'Votre numéro de téléphone doit comporter {{ limit }} chiffres',
                     ]),
                 ],
             ])
@@ -90,7 +90,7 @@ class RegistrationFormType extends AbstractType
             //     // instead of being set onto the object directly,
             //     // this is read and encoded in the controller
             //     'mapped' => false,
-            //     'attr' => ['autocomplete' => 'new-password'],
+            //     //'attr' => ['autocomplete' => 'new-password'],
             //     'constraints' => [
             //         new NotBlank([
             //             'message' => 'Please enter a password',
@@ -141,7 +141,7 @@ class RegistrationFormType extends AbstractType
                 // 'mapped' => false,
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'You should agree to our terms.',
+                        'message' => "Vous devez accepter les termes de l'Annuaire.",
                     ]),
                 ],
             ])

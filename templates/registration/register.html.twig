@@ -10,24 +10,23 @@
     
 <form class="container-fluid mt-5 w-75" method="post"> 
     <div class="card--3D-vertical">
-        <h1 class="h3 mb-3 font-weight-normal">Enregistrez-vous : <small style="color:red;font-size:0.5em;">(* champs obligatoire)</small></h1>
+        <h1 class="h3 mb-3 font-weight-normal">Enregistrez-vous : <small style="color:red;font-size:0.35em;">(* champs obligatoire)</small></h1>
 
         {{ form_start(registrationForm) }}
         {{ form_end(registrationForm) }}
-        <a href="">Consulter les Conditions Générales d'Utilisation</a>
+        <a href="CGU">Consulter les Conditions Générales d'Utilisation</a>
         <br>
 
         <div class="d-flex flex-row flex-wrap justify-content-between">
             <button type="submit" class="btn btn-sm btn--blue">
                 <i class="ri-record-circle-line"></i>
-                <p>&ensp;</p>
                 Créer le compte
             </button>
             {% if app.user is null %}
             <div class="d-flex flex-row flex-wrap justify-content-between align-items-center">
                 Vous avez déjà un compte ?
                 &ensp;
-                <a class="btn btn-bg btn-secondary" href="{{ path('app_login') }}">
+                <a class="btn btn-bg btn--secondary" href="{{ path('app_login') }}">
                     <i class="ri-login-box-line"></i>
                     Se connecter
                 </a>

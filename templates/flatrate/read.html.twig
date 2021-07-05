@@ -9,18 +9,19 @@
 {{ include('admin/banner.html.twig') }}
 
 <section class="paragraph--large" id="section--presentation">
-    <h2 class="title--h2" id="services--title">Les tarifs...</h2>
+    <h2 class="title--h2" id="flatrates--title">Les tarifs...</h2>
     {% if flatrates %}
     <table class="table table-striped table--txtlight">
         <thead class="thead--light">
             <tr>
                 <th style="width:5%;"></th>
+                <th>Dépt/Région</th>
                 <th>Libellé</th>
                 <th>Prix</th>
                 <th>Prise en charge incluse (forfait)</th>
                 <th>Actions
                     &nbsp;
-                    <a class="btn btn-sm btn-success" href="{{ path('flatrate_create') }}">
+                    <a class="btn btn-sm btn--green" href="{{ path('flatrate_create') }}">
                         <i class="ri-add-circle-line"></i>
                         Ajouter un nouveau tarif
                     </a>
@@ -31,22 +32,36 @@
             {% for flatrate in flatrates %}
             <tr>
                 <td></td>
+                <td>
+                    {% if flatrate.departmentcode %}
+                        {% set obDepartment=getdepartmentbycode(flatrate.departmentcode) %}
+                        {{ obDepartment.name~' / '~getregionbycode(obDepartment.region_code).name }}
+                    {% else %}
+                    -
+                    {% endif %}
+                </td>
                 <td>{{ flatrate.label }}</td>
                 <td>{{ flatrate.price }}</td>
                 <td>
                     <div class="d-flex flex-row">
                         <div class="col-4"></div>
                         <div>
-                            <input type="checkbox" disabled
+                            <img class="img--boolean"
+                            {% if flatrate.pickupincluded %}
+                            src="{{ asset(sImgPath ~'misc/true.png') }}"
+                            {% else %}
+                            src="{{ asset(sImgPath ~'misc/false.png') }}"
+                            {% endif %}
+                            alt="image pour booléen">
+                            {#<input type="checkbox" name="pickupincluded" disabled
                                 {% if flatrate.pickupincluded %}checked{% endif %}
-                            />
+                            />#}
                         </div>
                     </div>
                 </td>
                 <td class="d-flex flex-row">
                     <a class="btn btn-sm btn--blue" href="{{ path('flatrate_update', {'flatrate': flatrate.id}) }}" title="Modifier" class="mr-2">
                         <i class="ri-edit-2-line"></i>
-                        &nbsp;
                         Modifier
                     </a>
                     &emsp;

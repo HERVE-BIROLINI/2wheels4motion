@@ -30,7 +30,7 @@
                         {% endif %}
                     </a>
                     <!-- <br> -->
-                    <a class="btn btn-sm btn-secondary w-100 rounded-0" href="{{ path('profile_changepicture', {'id': app.user.id }) }}">Modifier</a>
+                    <a class="btn btn-sm btn--secondary w-100 rounded-0" href="{{ path('profile_changepicture', {'id': app.user.id }) }}">Modifier</a>
                 </div>
             </div>
             <!-- Rangée de case d'édition -->
@@ -62,7 +62,7 @@
                 </div>
                 <div class="col-12 col-md-6 mb-2">
                     <label class="required" for="inputPhone">Téléphone :</label>
-                    <input type="text" value="{{ app.user.phone }}" name="phone" id="inputPhone" class="form-control" pattern="@^0+[0-9]{9}+@i" required ><!-- autofocus> -->
+                    <input type="text" value="{{ app.user.phone }}" name="phone" id="inputPhone" class="form-control" pattern="@^0+[0-9]{9}@i" required ><!-- autofocus> -->
                     {% if error_phone %}
                     <span class="d-block">
                         <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
@@ -75,15 +75,15 @@
 
             <!-- rangée de boutons : Mise à jour / Modification MdP / Création compte Driver -->
             <div class="btns--row">
-                <button class="btn btn-sm btn--blue" type="submit">
+                <button class="btn btn-sm btn--blue mb-3" type="submit">
                     <i class="ri-record-circle-line"></i>
-                    <p>&ensp;</p>
                     Enregistrer les modifications
                 </button>
-                <a class="btn btn-bg btn--blue" href="{{ path('profile_pwd', {'id': app.user.id}) }}">
+                <a class="btn btn-lg btn--blue mb-3" href="{{ path('profile_pwd', {'id': app.user.id}) }}">
                     <i class="ri-find-replace-line"></i>
-                    &ensp;
+                    <small>
                     Modifier le mot de passe
+                    </small>
                 </a>
             </div>
 

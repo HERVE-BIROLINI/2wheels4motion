@@ -10,20 +10,27 @@ use Twig\TwigFunction;
 class FrenchGeographyTwig extends AbstractExtension
 {
 
+    // private $rootJSON="build/json/";
+    private $rootJSON="../src/twig/";
+
     // Déclaration des extensions de functions TWIG
     public function getFunctions(){
         return [
             new TwigFunction('getregions', [$this, 'getAllRegions']),
             // new TwigFunction('getregionbyslug', [$this, 'getRegionBySlug']),
             new TwigFunction('getregionbycode', [$this, 'getRegionByCode']),
+            // new TwigFunction('getregionbydeptcode', [$this, 'getRegionByDeptCode']),
             //
             new TwigFunction('getdepartments', [$this, 'getAllDepartments']),
+            new TwigFunction('JSgetdpts', [$this, 'getAllDepartments_4Javascript']),
             // new TwigFunction('getdepartmentbyslug', [$this, 'getDepartmentBySlug']),
             new TwigFunction('getdepartmentbycode', [$this, 'getDepartmentByCode']),
             //
-            new TwigFunction('getcities', [$this, 'getAllRegions']),
+            new TwigFunction('getcities', [$this, 'getAllCities']),
+            new TwigFunction('JSgetcities', [$this, 'getAllCities_4Javascript']),
             // new TwigFunction('getcitybyslug', [$this, 'getCityBySlug']),
             new TwigFunction('getcitybyzip', [$this, 'getCityByZip']),
+            new TwigFunction('getzipbycity', [$this, 'getZipByCity']),
             //
             // new TwigFunction('getimages', [$this, 'getImages']),
         ];
@@ -32,29 +39,20 @@ class FrenchGeographyTwig extends AbstractExtension
     // Déclaration des filters TWIG
     public function getFilters(){
         return [
-            new TwigFilter('cast_to_array', array($this, 'castClassToArray')),
+            // new TwigFilter('cast_to_array', array($this, 'castClassToArray')),
+            // new TwigFilter('cast_to_string', array($this, 'castClassToString')),
+            // new TwigFilter('json_decode', array($this, 'jsonDecode')),
         ];
     }
 
     // ***************************************************************
-
-    // public function isUsedCategory($category): bool{
-    //     $obPDO = new DBTools;
-    //     $obPDO->init();
-    //     $articles=$obPDO->execSqlQuery("select * from article where category_id=".$category);
-    //     if(count($articles)>0){
-    //         return true;
-    //     }
-    //     else{return false;}
-    // }
-    // ** Les méthodes liées aux extensions de fonctions **
 
     //
     // [{"id":1,"code":"01","name":"Guadeloupe","slug":"guadeloupe"},
     //  ...
     // ]
     public function getAllRegions(){
-        $regions = file_get_contents("../src/twig/regions.json");
+        $regions = file_get_contents($this->rootJSON."regions.json");
         return(json_decode($regions));
     }
     // public function getRegionBySlug($slug){
@@ -73,13 +71,29 @@ class FrenchGeographyTwig extends AbstractExtension
         }
         return $obRegionFounded;
     }
+    // public function getRegionByDeptCode($department_code){
+    //     $region_code=$this->getDepartmentByCode($department_code)->region_code;
+    //     foreach($this->getAllRegions() as $obRegion){
+    //         if($region_code==$obRegion->region_code){
+    //             $obRegionFounded=$obRegion;
+    //         }
+    //     }
+    //     return $obRegionFounded;
+    // }
     //
     // [{"id":1,"region_code":"84","code":"01","name":"Ain","slug":"ain"},
     //   ...
     // ]
     public function getAllDepartments(){
-        $departments = file_get_contents("../src/twig/departments.json");
+        $departments = file_get_contents($this->rootJSON."departments.json");
         return(json_decode($departments));
+    }
+    public function getAllDepartments_4Javascript(){
+        $sDepartments='';
+        foreach($this->getAllDepartments() as $obDpt){
+            $sDepartments.='$'.$obDpt->region_code.'/'.$obDpt->code.'#'.$obDpt->name.'';
+        }
+        return substr($sDepartments,1);
     }
     // public function getDepartmentBySlug($slug){
     //     foreach($this->getAllRegions() as $obDepartment){
@@ -105,8 +119,16 @@ class FrenchGeographyTwig extends AbstractExtension
     //   ....
     // ]
     public function getAllCities(){
-        $cities = file_get_contents("../src/twig/cities.json");
+        $cities = file_get_contents($this->rootJSON."cities.json");
         return(json_decode($cities));
+    }
+    public function getAllCities_4Javascript(){
+        $sCities='';
+        foreach($this->getAllCities() as $obCity){
+            $sCities.='$'.$obCity->zip_code.$obCity->name.'';
+        //     $sCities.='${"zip_code":"'.$obCity->zip_code.'","name":"'.$obCity->name.'"}';
+        }
+        return substr($sCities,1);
     }
     // public function getCityBySlug($slug){
     //     foreach($this->getAllCities() as $obCity){
@@ -128,35 +150,38 @@ class FrenchGeographyTwig extends AbstractExtension
             return $obCityFounded;
         }
     }
-
-
-
-    //
-    // public function getImages(string $article){
-    //     $obPDO = new DBTools;
-    //     $obPDO->init();
-    //     $article=intval($article);
-    //     $regions=$obPDO->execSqlQuery("select pathname from picture where article_id=".$article);
-    //     //
-    //     if(!isset($regions[0])){
-    //         $regions=array(['pathname'=>'no-image.png']);
-    //     }
-    //     return $regions;
-    // }
+    public function getZipByCity($city){
+        $obZipFounded=null;
+        foreach($this->getAllCities() as $obCity){
+            if(strtolower($city)==strtolower($obCity->name)){
+                $obZipFounded=$obCity;
+            }
+        }
+        if(!is_null($obZipFounded)){
+            return $obZipFounded;
+        }
+    }
 
     // *************************************************************
 
     // ** Les méthodes liées aux filtres **
-    // public function castClassToArray($stdClassObject) {
+    public function castClassToArray($stdClassObject) {
+        $response = array();
+        foreach ($stdClassObject as $key => $value) {
+            $response[] = array($key, $value);
+        }
+        return $response;
+    }
+    // public function castClassToString($stdClassObject) {
     //     $response = array();
     //     foreach ($stdClassObject as $key => $value) {
     //         $response[] = array($key, $value);
     //     }
     //     return $response;
     // }
-
-
-
+    // public function jsonDecode($str) {
+    //     return json_decode($str);
+    // }
 
 }
 

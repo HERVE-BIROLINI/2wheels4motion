@@ -13,7 +13,7 @@
     {% if driver_exist %}
     <div class="alert alert-danger" role="alert">{{ driver_exist }}</div>
     {% endif %}
-
+    
 {#
     {{ dump('Nb de compagnies connues (paramètre) : '~allcompaniesknown|length) }}
     {{ dump(allcompaniesknown[0].drivers[0]) }}
@@ -23,30 +23,20 @@
     {{ dump(allcompaniesknown[0].drivers[0]) }}
     {% endif %}
 #}
+<!-- <section id="regions.json" hidden></section> -->
+<!-- <section id="departments.json" hidden></section> -->
+<section id="cities_json" hidden><!--hidden>-->
+    {{ JSgetcities() }}
+</section>
 
-    <div class="card--3D-vertical mt-5">
 
-        <!-- -->
-        <script type="text/javascript">
-            document.addEventListener("DOMContentLoaded", function(event) {
-                // action sur le bouton de choix d'une entreprise existante
-                //----------------------------------------------------------
-                const btnCompanies2Choice = document.querySelector('#btn--companies2choice');
-                btnCompanies2Choice.addEventListener('click', showKnownCompanies);
-                function showKnownCompanies(){
-                    document.getElementById('blk--company2create').style.display = 'none';
-                    // document.getElementById('blk--company2create').style.display = 'none';
-                    // document.getElementById('blk--driverdatas').setAttribute('class','col-12');
-                    document.getElementById('blk--companies2choice').style.display = 'block';
-                }
-            });
-            //
-            function showSubmitButton(){
-                document.querySelector('#btn--associate-company').style.pointerEvents="initial";
-                document.querySelector('#btn--associate-company').style.opacity='initial';
-            }
-        </script>
-        <div class="mt-1 mb-2 col12" id="blk--companies2choice">
+<div class="paragraph--large" method="post"> 
+    <h1 class="title--h2">Enregistrez-vous : <small style="color:red;font-size:0.35em;">(* champs obligatoire)</small></h1>
+    <!-- *** DEBUT de la Carte3D *** -->
+    <div class="card--3D-vertical">
+
+        <!-- ** Block de listes des entreprises existantes disponibles à la sélection ** -->
+        <div class="mt-1 mb-2 col-12" id="blk--companies2choice">
             <!-- <div class="mt-1 mb-2 col-lg-12 col-xl-5" id="blk--companies2choice"> -->
             {% if allcompaniesknown is defined %}
             <form method="post">
@@ -65,7 +55,12 @@
                     <tbody>
                     {% for companyknown in allcompaniesknown %}
                     <tr>
-                        <td><input type="radio" class="companyknown" name="companychoosen" onClick="showSubmitButton()" value="{{ companyknown.id }}" id="{{ companyknown.id }}"></td>
+                        {#{{ dump(companyknown) }}#}
+                        <td>&emsp;
+                            <input type="radio" class="companyknown" name="companychoosen" 
+                                value="{{ companyknown.id }}" id="{{ companyknown.id }}"
+                            ><!-- onClick="showSubmitButton()" -->
+                        </td>
                         <td><label for="{{ companyknown.id }}">{{ companyknown.name }}</label></td>
                         <td><label for="{{ companyknown.id }}">{{ companyknown.siren }}</label></td>
                         <td><label for="{{ companyknown.id }}">{{ companyknown.nic }}</label></td>
@@ -85,10 +80,9 @@
                 <div class="btns--row">
                     <button class="btn btn-sm btn--blue" id='btn--associate-company' type="submit">
                         <i class="ri-record-circle-line"></i>
-                        <p>&ensp;</p>
                         Associer la société choisie
                     </button>
-                    <a class="btn btn-bg btn-secondary btn-return" href="{{ path('registration_driver', {'id': app.user.id}) }}">
+                    <a class="btn btn-bg btn--secondary btn-return" href="{{ path('registration_driver', {'id': app.user.id}) }}">
                         <i class="ri-close-fill"></i>
                         Retourner déclarer une nouvelle société
                     </a>
@@ -97,39 +91,36 @@
             {% endif %}
         </div>
 
-        <!-- -->
+        <!-- ** FORMULAIRE PRINCIPAL DE CREATION DU PILOTE AVEC SON ENTREPRISE ** -->
         {% set drivercard=getdrivercard(app.user.id) %}
         <form id="blk--company2create" method="post" enctype="multipart/form-data">
         
-            <h1 class="h3 mb-3 font-weight-normal">Enregistrez-vous : <small style="color:red;font-size:0.5em;">(* champs obligatoire)</small></h1>
-            
+            <!-- BlockS de données de l'entreprise T3P + données propres au pilote -->
             <div class="d-flex flex-row flex-wrap justify-content-between">
 
                 <!-- Block de données de l'entreprise T3P -->
-                <div class="mt-1 mb-2 col-lg-12 col-xl-5">
-                    <div class="d-flex flex-row justify-content-between align-items-center">
+                <div class="mt-1 mb-2 col-12 col-lg-5" id="blk--companydatas">
+                    <!-- Titre + boutons (choix parmi les entreprises référencées) -->
+                    <div class="d-flex flex-row flex-wrap justify-content-between align-items-center">
                         <h5>Entreprise affiliée T3P</h5>
                         {% if allcompaniesknown is defined and allcompaniesknown|length > 0 %}
-                        
-                        <button class="btn btn-sm btn-secondary" type="button" id="btn--companies2choice">
-                        <!-- {#
-                        <a class="btn btn-sm btn-secondary" href="{#{{ path('profile_user',{'id': app.user.id}) }}#}">
-                        #}-->
+                        <button class="btn btn-sm btn--secondary" type="button" id="btn--companies2choice"
+                            style="border-bottom-left-radius:0;border-bottom-right-radius:0;"
+                        >
                             <i class="ri-search-line"></i>
                             &ensp;
-                            Entreprises connues
-                        <!-- {#
-                        </a>
-                        #}-->
+                            Entreprises référencées
                         </button>
-
                         {% endif %}
                     </div>
                     <!-- Encadrement -->
                     <div class="block--datas-vertical" id="block--company-T3P">
-                        <div class="p-3">
+                        <div class="p-3 w-100">
                             <label class="required" for="inputname">Nom :</label>
-                            <input type="text" {% if name is not null %}value="{{ name }}"{% endif %}  name="name" id="inputname" class="form-control" autocomplete="vmdtr_number" required ><!-- autofocus> -->
+                            <input type="text" name="name" id="inputname" class="form-control"
+                                {% if name is not null %}value="{{ name }}"{% endif %}
+                                required
+                            ><!-- autofocus> -->
                             {#{% if error_name %}#}
                             <!-- <span class="d-block">
                                 <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
@@ -138,21 +129,27 @@
                             {#{% endif %}#}
                         </div>
                         <!-- numéro d'enregistrement de l'entreprise -->
-                        <div class="d-flex flex-row">
-                            <div class="col-8">
+                        <div class="d-flex flex-row flex-wrap justify-content-between w-100">
+                            <div class="col-12 col-md-7">
                                 <label class="required" for="inputsiren">SIREN :</label>
-                                <input type="number" {% if siren is not null %}value="{{ siren }}"{% endif %} name="siren" placeholder="9 chiffres..." pattern="[0-9]{9}" id="inputsiren" class="form-control" autocomplete="siren" size="9" required ><!-- autofocus> -->
-                                {#{% if error_siren %}#}
-                                <!-- <span class="d-block">
+                                <input type="number" name="siren" id="inputsiren" class="form-control"
+                                    placeholder="9 chiffres..." pattern="[0-9]{9}" size="9"
+                                    {% if siren is not null %}value="{{ siren }}"{% endif %}
+                                    required
+                                ><!-- autofocus> -->
+                                {% if error_siren %}
+                                <span class="d-block">
                                     <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
-                                    <span class="form-error-message">Le numéro ne peut contenir que des chiffres.</span>
-                                </span> -->
-                                {#{% endif %}#}
+                                    <span class="form-error-message">Le numéro SIREN doit contenir 9 chiffres.</span>
+                                </span>
+                                {% endif %}
                             </div>
-                            <div class="col-4">
+                            &ensp;
+                            <div class="col-12 col-md-4">
                                 <label for="inputnic">NIC :</label>
-                                <input type="number" name="nic" placeholder="5 chiffres..." pattern="[0-9]{5}" id="inputnic" class="form-control"
-                                    {% if nic is not null %}value="{{ nic }}"{% endif %} autocomplete="nic" size="5"
+                                <input type="number" name="nic" id="inputnic" class="form-control"
+                                    placeholder="5 chiffres..." pattern="[0-9]{5}" size="5"
+                                    {% if nic is not null %}value="{{ nic }}"{% endif %} size="5"
                                 ><!-- required autofocus> -->
                                 {#{% if error_nic %}#}
                                 <!-- <span class="d-block">
@@ -163,42 +160,53 @@
                             </div>
                         </div>
                         <!-- adresse de l'entreprise -->
-                        <!-- <hr style="width:50%", size="3", color=black> -->
-                        <br>
-                        Adresse :
-                        <div class="p-3">
-                            <label class="required" for="inputroad">N° et Voie :</label>
-                            <input type="text" {% if road is not null %}value="{{ road }}"{% endif %} name="road" id="inputroad" class="form-control" autocomplete="road" required ><!-- autofocus> -->
-                            {#{% if error_road %}#}
-                            <!-- <span class="d-block">
-                                <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
-                                <span class="form-error-message">Le numéro ne peut contenir que des chiffres.</span>
-                            </span> -->
-                            {#{% endif %}#}
-                        </div>
-                        <div class="d-flex flex-row">
-                            <div class="col-4">
-                                <label class="required" for="inputzip">Code postal :</label>
-                                <input type="text" {% if zip is not null %}value="{{ zip }}"{% endif %} name="zip" id="inputzip" class="form-control" autocomplete="zip" pattern="[0-9]{5}" size="5" required ><!-- autofocus> -->
-                                {#{% if error_zip %}#}
+                        <div class="d-flex flex-column p-3 w-100">
+                            <span>Adresse :</span>
+                            &ensp;
+                            <!-- <div> -->
+                                <label class="required" for="inputroad">N° et Voie :</label>
+                                <input type="text" {% if road is not null %}value="{{ road }}"{% endif %} name="road" id="inputroad" class="form-control" required ><!-- autofocus> -->
+                                {#{% if error_road %}#}
                                 <!-- <span class="d-block">
                                     <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
-                                    <span class="form-error-message">Le numéro ne peut contenir que des chiffres.</span>
+                                    <span class="form-error-message">La voie doit comporter un numéro et un nom.</span>
                                 </span> -->
                                 {#{% endif %}#}
-                            </div>
-                            <div class="col-8">
-                                <label for="inputcity">Commune :</label>
-                                <input type="text" {% if city is not null %}value="{{ city }}"{% endif %}
-                                    name="city" id="inputcity" class="form-control" autocomplete="city"
-                                    disabled
-                                ><!-- required autofocus> -->
-                                {#{% if error_city %}#}
-                                <!-- <span class="d-block">
-                                    <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
-                                    <span class="form-error-message">Le numéro ne peut contenir que des chiffres.</span>
-                                </span> -->
-                                {#{% endif %}#}
+                            <!-- </div> -->
+                            &ensp;
+                            <div class="d-flex flex-row flex-wrap w-100 justify-content-between">
+                                <div class="col-12 col-md-7">
+                                    <label class="required" for="inputcity">Commune :</label>
+                                    <input type="text" class="form-control inputcity required" id="inputcity"
+                                        {% if city is not null %}value="{{ city }}"{% endif %}
+                                        name="city"
+                                    ><!-- pattern="^\s*[^.a-z0-9àáâãäåçèéêëìíîïðòóôõöùúûüýÿ]+\s*$" disabled autofocus> -->
+                                    <select class="form-control cities" id="inputcities"
+                                        name="city"
+                                    >
+                                        <option value="Select your city">Sélectionnez votre commune</option>
+                                    </select>
+                                    {% if error_city %}
+                                    <span class="d-block">
+                                        <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
+                                        <span class="form-error-message">Le nom d'une commune ne peut contenir que des lettres, et lettres accentuées.</span>
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                &ensp;
+                                <div class="col-12 col-md-4">
+                                    <label class="required" for="inputzip">CP :</label>
+                                    <input type="text" {% if zip is not null %}value="{{ zip }}"{% endif %}
+                                        name="zip" id="inputzip" class="form-control inputzip" pattern="[0-9]{5}" size="5"
+                                        disabled
+                                    ><!-- requiredautofocus> -->
+                                    {#{% if error_zip %}#}
+                                    <!-- <span class="d-block">
+                                        <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
+                                        <span class="form-error-message">Le numéro ne peut contenir que des chiffres.</span>
+                                    </span> -->
+                                    {#{% endif %}#}
+                                </div>
                             </div>
                         </div>
                         <br>
@@ -206,13 +214,14 @@
                 </div>
                 
                 <!-- Block de données propres au pilote -->
-                <div class="mt-1 mb-2 col-lg-12 col-xl-7" id="blk--driverdatas">
+                <div class="mt-1 mb-2 col-12 col-lg-7" id="blk--driverdatas">
+                    <!-- Titre -->
                     <h5>Carte Professionnelle de Conducteur de VMDTR</h5>
                     <!-- Encadrement -->
                     <div class="block--datas-horizontal" id="block--file-VMDTR-card">
-                        <div class="d-flex flex-column col-md-12 col-lg-5">
+                        <div class="d-flex flex-column col-12"><!-- col-lg-5 -->
                             <label class="required" for="inputvmdtrnumber">Numéro :</label>
-                            <input type="text" {% if vmdtr_number is not null %}value="{{ vmdtr_number }}"{% endif %} placeholder="11 chiffres..." pattern="[0-9]{11}" name="vmdtr_number" id="inputvmdtrnumber" class="form-control" autocomplete="vmdtr_number" size="11" required ><!-- autofocus> -->
+                            <input type="text" {% if vmdtr_number is not null %}value="{{ vmdtr_number }}"{% endif %} placeholder="11 chiffres..." pattern="[0-9]{11}" name="vmdtr_number" id="inputvmdtrnumber" class="form-control" size="11" required ><!-- autofocus> -->
                             {#{% if error_vmdtrnumber %}#}
                             <!-- <span class="d-block">
                                 <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
@@ -222,7 +231,7 @@
                             <br>
 
                             <label class="required" for="inputvmdtrvalidity">Date de fin de validité :</label>
-                            <input type="date" {% if vmdtr_validity is not null %}value="{{ vmdtr_validity }}"{% endif %} name="vmdtr_validity" id="inputvmdtrvalidity" class="form-control" autocomplete="vmdtr_validity" required ><!-- autofocus> -->
+                            <input type="date" {% if vmdtr_validity is not null %}value="{{ vmdtr_validity }}"{% endif %} name="vmdtr_validity" id="inputvmdtrvalidity" class="form-control" required ><!-- autofocus> -->
                             {#{% if error_vmdtrvalidity %}#}
                             <!-- <span class="d-block">
                                 <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
@@ -232,7 +241,10 @@
                             <br>
 
                             <label class="required" for="inputmotomodel">Modèle de moto :</label>
-                            <input type="text" {% if motomodel is not null %}value="{{ motomodel }}"{% endif %} placeholder="ex: Honda Goldwing 2021..." name="motomodel" id="inputmotomodel" class="form-control" autocomplete="motomodel" required ><!-- autofocus> -->
+                            <input type="text" name="motomodel" id="inputmotomodel" class="form-control"
+                                {% if motomodel is not null %}value="{{ motomodel }}"{% endif %}
+                                placeholder="ex: Honda Goldwing 2021..." required
+                            ><!-- autofocus> -->
                             {#{% if error_motomodel %}#}
                             <!-- <span class="d-block">
                                 <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
@@ -241,7 +253,8 @@
                             {#{% endif %}#}
                             <br>
                         </div>
-                        <div class="d-flex flex-column col-md-12 col-lg-7 align-items-center justify-content-center">
+                        &ensp;
+                        <div class="d-flex flex-column col-12 align-items-center justify-content-center"><!-- col-lg-7 -->
                             <label for="browse">
                                 <img class="imgbtn--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="">
                             </label>
@@ -259,7 +272,7 @@
             </div>
 
             <!-- Déclaration de véracité des informations -->
-            <div class="d-flex flex-row flex-wrap pt-4">
+            <div class="d-flex flex-row flex-wrap ml-4 mb-2">
                 <input type="checkbox" id="hasconfirmedgoodstanding"
                     name="hasconfirmedgoodstanding" required
                     {% if hasconfirmedgoodstanding =='on' %}checked{% endif %}
@@ -283,20 +296,19 @@
             </div>
 
             <!-- Boutons de sortie -->
-            <div class="btns--row">
+            <div class="btns--row mb-2">
                 <button class="btn btn-sm btn--blue" type="submit">
                     <i class="ri-record-circle-line"></i>
-                    <p>&ensp;</p>
                     Créer le compte
                 </button>
-                <a class="btn btn-bg btn-secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">
+                <a class="btn btn-bg btn--secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">
                     <i class="ri-close-fill"></i>
                     Annuler
                 </a>
             </div>
             <!-- <a href="https://www.francecompetences.fr/recherche/rs/3864/">Consulter les Conditions Générales d'Utilisation</a> -->
 
-        </form><!-- FIN du Container Bootstrap -->
+        </form><!-- ** FIN DU FORMULAIRE ** -->
     </div><!-- FIN de la Carte3D -->
-
+</div>
 {% endblock %}

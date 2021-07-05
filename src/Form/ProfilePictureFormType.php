@@ -45,9 +45,9 @@ class ProfilePictureFormType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Picture::class,
             'choices' => [
-                'Standard Shipping' => 'standard',
+                'Standard Shipping'  => 'standard',
                 'Expedited Shipping' => 'expedited',
-                'Priority Shipping' => 'priority',
+                'Priority Shipping'  => 'priority',
             ],
         ]);
     }

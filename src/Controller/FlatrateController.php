@@ -43,6 +43,9 @@ class FlatrateController extends AbstractController
             else{
                 $obFlatrate->setPickupIncluded(false);
             }
+            //
+            $obFlatrate->setDepartmentCode($_POST['department']);
+            
             $entityManager->persist($obFlatrate);
             $entityManager->flush();
             //
@@ -100,6 +103,9 @@ class FlatrateController extends AbstractController
             else{
                 $obFlatrate->setPickupIncluded(false);
             }
+            //
+            $obFlatrate->setDepartmentCode($_POST['department']);
+
             $entityManager->persist($obFlatrate);
             $entityManager->flush();
             //
@@ -139,12 +145,13 @@ class FlatrateController extends AbstractController
     }
 
     /**
-     * @Route("", name="index")
+     * @Route("s", name="index")
      */
-    // public function index(): Response
-    // {
-    //     return $this->render('flatrate/index.html.twig', [
-    //         'controller_name' => 'FlatrateController',
-    //     ]);
-    // }
+    public function index(FlatrateRepository $flatrateRepository): Response
+    {
+        return $this->render('flatrate/index.html.twig', [
+            'controller_name' => 'FlatrateController',
+            'flatrates'  => $flatrateRepository->findAll(),
+        ]);
+    }
 }

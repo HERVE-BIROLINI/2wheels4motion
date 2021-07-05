@@ -24,20 +24,39 @@
 /**
  *
 */
-.nav--inpage-btn-bgb:hover{
-    background-color: rgba(0, 89, 255, 0.75);
+.form-error-message{
+    color:red;
+}
+.img--boolean{
+    height:20px;
+}
+.btn--circle{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    box-shadow:2px 2px 4px black;
+}
+.imgbtn--plus-minus{
+    height: 17px;
+    border-radius: 50%;
+    margin-left: 2px;
+    margin-bottom: 5px;
+}
+.btn--secondary:hover,.imgbtn--profile:hover,.btn--circle:hover{
     box-shadow:inset 3px 3px 6px black;
 }
-.nav--inpage-btn-bgw:hover{
-    background-color: rgba(255, 255, 255, 0.75);
-    box-shadow:inset 3px 3px 6px black;
+/* Permet de définir à la Class Bootstrap une hauteur Max,
+    au-delà de laquelle apparaît le Scroll...
+*/
+.dropdown-menu {         
+    max-height: 300px;
+    overflow-y: auto;
 }
-.btn-secondary{
-    border-radius: 5px;
-}
-.btn-secondary:hover,.imgbtn--profile:hover{
-    box-shadow:inset 3px 3px 6px black;
-}
+
 
 /**
  *   Base TWIG file stylesheet
@@ -58,7 +77,7 @@ body{
     cursor:pointer;
 } */
 /* */
-#header--header{
+#section--header{
     /* border:2px solid red; */
     /* background-color: white; */
     /**/
@@ -84,8 +103,10 @@ body{
 }
 .nav--logo{
     /* background-color:white; */
-    margin:10px;
-    min-width:110px;
+    margin-left:1em;
+    /* margin:10px; */
+    width:75px;
+    /* min-width:110px; */
     max-height:75px;
 }
 .nav--words{
@@ -106,9 +127,9 @@ body{
     display: flex;
     flex-direction: row;
 }
-.navbar-toggler{
+/* .navbar-toggler{
     border:5px solid black;
-}
+} */
 /* */
 .nav--menu{
     display:flex;
@@ -136,7 +157,7 @@ body{
 /**
  *   Homepage TWIG file stylesheet
  */
-#homepage--banner{
+.homepage--banner{
     position: relative;
     /**/
     display: flex;
@@ -152,7 +173,7 @@ body{
     justify-content: center;
     align-items: center;
 }
-#homepage--banner>h1{
+.homepage--banner>h1{
     color:white;
     font-weight: bolder;
     text-shadow: 5px 5px 0.25em blue;
@@ -169,7 +190,7 @@ body{
     position: absolute;
     bottom:0px;
 }
-.nav--inpage-btn-bgw{
+.nav--btn--white{
     margin-bottom:0.75em;
     margin-left: 0.5em;
     margin-right: 0.5em;
@@ -185,7 +206,7 @@ body{
     /**/
     border-radius: 10px;
 }
-.nav--inpage-btn-bgb{
+.nav--btn--blue{
     margin-bottom:0.75em;
     margin-left: 0.5em;
     margin-right: 0.5em;
@@ -201,6 +222,17 @@ body{
     /**/
     border-radius: 10px;
 }
+.nav--btn--blue:hover{
+    color:white;
+    background-color: rgba(0, 89, 255, 1);
+    box-shadow:inset 3px 3px 6px black;
+}
+.nav--btn--white:hover{
+    color:blue;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow:inset 3px 3px 6px black;
+}
+/* */
 .nav--inpage-btn-important{
     margin-bottom:0.75em;
     margin-left: 0.5em;
@@ -238,6 +270,67 @@ body{
 
 
 
+/**
+ *   Flatrate TWIG file stylesheet
+ */
+.flatrate--banner{
+    position: relative;
+    /**/
+    display: flex;
+    flex-direction: column;
+    /**/
+    /* background-image:url('../images/banner/honda_gl1800_2018_deux_models-750x410.jpg') ; */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /**/
+    min-height: 250px;
+    /**/
+    justify-content: center;
+    align-items: center;
+}
+.flatrate--banner>h1{
+    color:white;
+    font-weight: bolder;
+    text-shadow: 5px 5px 0.25em red;
+    justify-self: center;
+}
+/* */
+
+
+
+/**
+ *   Ordering TWIG file stylesheet
+ */
+.claim--banner{
+    position: relative;
+    /**/
+    display: flex;
+    flex-direction: column;
+    /**/
+    /* background-image:url('../images/banner/honda_gl1800_2018_deux_models-750x410.jpg') ; */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /**/
+    min-height: 400px;
+    /**/
+    justify-content: center;
+    align-items: center;
+}
+.claim--banner>h1{
+    color:white;
+    font-weight: bolder;
+    text-shadow: 5px 5px 0.25em blue;
+    justify-self: center;
+}
+/**/
+#blk--flatrates{
+    align-items:center;
+    justify-content:center;
+    width:100%;
+}
+/* */
 
 
 
@@ -254,6 +347,23 @@ body{
     color:red;
 }
 /* */
+.btn--secondary{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    width:fit-content;
+    /**/
+    color:white;
+    /* font-weight: bold; */
+    /* text-align: center; */
+    /* text-justify: distribute; */
+    /**/
+    background-color: rgba(80, 80, 80, .7);
+    box-shadow: 2px 2px 0.25em black;
+    border-radius: 10px;
+}
 .btn--ordering{
     /**/
     position: absolute;
@@ -273,36 +383,54 @@ body{
     box-shadow:inset 3px 3px 8px black;
 }
 .btn--blue{
-    display: flex;
-    align-items: center;
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
     width:fit-content;
     /**/
     color:white;
-    font-weight: bold;
-    /* text-align: center;
-    text-justify: distribute; */
+    /* font-weight: bold; */
+    /* text-align: center; */
+    /* text-justify: distribute; */
     /**/
     background-color: rgba(0, 89, 255, 0.65);
     box-shadow: 2px 2px 0.25em red;
     border-radius: 10px;
 }
-.btn--blue:hover{
-    box-shadow:inset 3px 3px 8px black;
-}
 .btn--red{
-    /* display: flex;
-    align-items: center;
-    width:fit-content; */
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    width:fit-content;
+    /**/
     color:white;
-    font-weight: bold;
+    /* font-weight: bold; */
     background-color: rgba(255, 0, 0, 0.55);
     box-shadow: 2px 2px 0.25em blue;
     border-radius: 10px;
 }
-.btn--red:hover{
+.btn--green{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    width:fit-content;
+    /**/
     color:white;
-    background-color: rgba(255, 0, 0, 1);
-    box-shadow:inset 3px 3px 8px black;
+    /* font-weight: bold; */
+    background-color: rgba(115, 175, 50, 0.70);
+    box-shadow: 2px 2px 0.25em rgb(20, 120, 0);
+    border-radius: 10px;
+}
+.btn--secondary:hover,.btn--blue:hover,.btn--red:hover,.btn--green:hover{
+    color:white;
+    /* font-weight: bold; */
+    box-shadow:inset 3px 3px 8px black;/*rgb(20, 120, 0);*/
 }
 /* */
 .paragraph--large{
@@ -340,7 +468,7 @@ body{
     justify-content:center;
     /* align-items: center; */
     /**/
-    overflow:hidden;
+    /* overflow:hidden; */
     text-overflow:ellipsis;
     flex-shrink:2;
     /**/
@@ -410,11 +538,24 @@ body{
     justify-self: center;
     align-self: center;
 }
+.card--imground{
+    width:200px;
+    height:200px;
+    border-radius: 50%;
+    margin:1em;
+    /**/
+    box-shadow: 2px 2px 2px 2px 10px black;
+    /**/
+    justify-self: center;
+    align-self: center;
+}
 /* */
 .block--datas-horizontal{
     display:flex;
     flex-direction:row;
     flex-wrap:wrap;
+    justify-content: space-around;
+    align-items: center;
     /**/
     border:1px solid black;
     padding:10px;
@@ -423,10 +564,18 @@ body{
     display:flex;
     flex-direction:column;
     flex-wrap:wrap;
+    justify-content: center;
+    align-items: center;
     /**/
     border:1px solid black;
     padding:10px;
 }
+.block--date{
+    /* border:2px solid red; */
+    display:flex;
+    flex-direction:row;
+}
+
 
 
 
@@ -456,7 +605,7 @@ body{
 /**
  *   DriversPresentation TWIG file stylesheet
  */
-#driverspresentation--banner{
+.driverspresentation--banner{
     position: relative;
     /**/
     display: flex;
@@ -472,7 +621,7 @@ body{
     justify-content: center;
     align-items: center;
 }
-#driverspresentation--banner>h1{
+.driverspresentation--banner>h1{
     color:white;
     font-weight: bolder;
     text-shadow: 5px 5px 0.25em red;
@@ -538,7 +687,7 @@ body{
 /**
  *   Profile TWIG file stylesheet
  */
-#profile--banner{
+.profile--banner{
     position: relative;
     /**/
     display: flex;
@@ -554,7 +703,7 @@ body{
     justify-content: center;
     align-items: center;
 }
-#profile--banner>h1{
+.profile--banner>h1{
     color:blue;
     font-weight: bolder;
     text-shadow: 5px 5px 0.25em red;
@@ -575,7 +724,6 @@ body{
     height:100px;
 }
 .btns--row{
-    /* border:2px solid black; */
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -587,33 +735,29 @@ body{
 
 
 /* *** */
-@media screen and (min-width: 1200px)
-{
+@media screen and (min-width: 1200px){
     .block--datas-horizontal,.block--datas-vertical{
         height: 92%;
     }
 }
-@media screen and (max-width: 990px)
-{
+@media screen and (max-width: 990px){
     .card--3D-horizontal{
         justify-content: center;
     }
 }
-@media screen and (max-width: 700px)
-{
-    .btn--ordering{
-        left: 38%;
+@media screen and (max-width: 700px){
+    .block--date{
+        flex-direction:column;
     }
 }
-@media screen and (max-width: 650px)
-{
-    .btn--ordering{
-        left: 30%;
-    }
+@media screen and (max-width: 650px){
 }
-@media screen and (max-width: 600px)
-{
-    .btn--ordering{
-        left: 25%;
+@media screen and (max-width: 600px){
+    .block--datas-vertical,.block--datas-horizontal,.card--3D-vertical{
+        width:100%;
+        margin:0%;
+        padding:0%;
+        border:none;
+        box-shadow:none;
     }
 }

@@ -59,7 +59,8 @@ class ProfileController extends AbstractController
             }
             // test de la validité des nouvelles entrées
             if($_POST['phone']!=$user->getPhone()){
-                if(!preg_match('@^0+[0-9]{9}+@iD',$_POST['phone'])){
+                if(!preg_match('@^0+[0-9]{9}@',$_POST['phone'])){
+                // if(!preg_match('@^0+[0-9]{9}+@iD',$_POST['phone'])){
                     $error_phone=true;
                 }
                 // ...
@@ -255,7 +256,7 @@ class ProfileController extends AbstractController
         }
 
         return $this->render('profile/driver.html.twig', [
-            'controller_name' => 'ProfileController',
+            // 'controller_name' => 'ProfileController',
             'driver'=>$entityManager->getRepository(Driver::class)
                 ->findOneBy(['id'=>$this->getUser()->getDriver()->getId()]),
             'company'=>$entityManager->getRepository(Company::class)

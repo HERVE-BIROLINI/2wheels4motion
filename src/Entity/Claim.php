@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\RequestRepository;
+use App\Repository\ClaimRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=RequestRepository::class)
+ * @ORM\Entity(repositoryClass=ClaimRepository::class)
  */
-class Request
+class Claim
 {
     /**
      * @ORM\Id
@@ -20,7 +20,7 @@ class Request
     /**
      * @ORM\Column(type="datetime")
      */
-    private $request_datetime;
+    private $claim_datetime;
 
     /**
      * @ORM\Column(type="date")
@@ -33,17 +33,17 @@ class Request
     private $from_road;
 
     /**
-     * @ORM\Column(type="string", string=5)
+     * @ORM\Column(type="string", length=5)
      */
     private $from_zip;
 
     /**
-     * @ORM\Column(type="string", string=255)
+     * @ORM\Column(type="string", length=255)
      */
     private $to_road;
 
     /**
-     * @ORM\Column(type="string", string=5)
+     * @ORM\Column(type="string", length=5)
      */
     private $to_zip;
 
@@ -57,19 +57,35 @@ class Request
      */
     private $comments;
 
+    /**
+     * @ORM\Column(type="string", length=128)
+     */
+    private $from_city;
+
+    /**
+     * @ORM\Column(type="string", length=128)
+     */
+    private $to_city;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="claim")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $customer;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getRequestDatetime(): ?\DateTimeInterface
+    public function getClaimDatetime(): ?\DateTimeInterface
     {
-        return $this->request_datetime;
+        return $this->claim_datetime;
     }
 
-    public function setRequestDatetime(\DateTimeInterface $request_datetime): self
+    public function setClaimDatetime(\DateTimeInterface $claim_datetime): self
     {
-        $this->request_datetime = $request_datetime;
+        $this->claim_datetime = $claim_datetime;
 
         return $this;
     }
@@ -154,6 +170,42 @@ class Request
     public function setComments(string $comments): self
     {
         $this->comments = $comments;
+
+        return $this;
+    }
+
+    public function getFromCity(): ?string
+    {
+        return $this->from_city;
+    }
+
+    public function setFromCity(string $from_city): self
+    {
+        $this->from_city = $from_city;
+
+        return $this;
+    }
+
+    public function getToCity(): ?string
+    {
+        return $this->to_city;
+    }
+
+    public function setToCity(string $to_city): self
+    {
+        $this->to_city = $to_city;
+
+        return $this;
+    }
+
+    public function getCustomer(): ?Customer
+    {
+        return $this->customer;
+    }
+
+    public function setCustomer(?Customer $customer): self
+    {
+        $this->customer = $customer;
 
         return $this;
     }

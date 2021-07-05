@@ -40,7 +40,7 @@ class Company
     private $road;
 
     /**
-     * @ORM\Column(type="decimal", precision=5, scale=0)
+     * @ORM\Column(type="string", length=5)
      */
     private $zip;
 

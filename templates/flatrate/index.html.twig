@@ -1,0 +1,89 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Les tarifs et forfaits{% endblock %}
+
+{% block body %}
+
+<!-- Flatrate Controller banner -->
+{{ include('flatrate/banner.html.twig') }}
+
+<section class="paragraph--large" id="section--services">
+    <h2 class="title--h2" id="services--title">Vous servir... au juste prix !</h2>
+    <div class="card--3D-horizontal">
+        <p class="card--paragraph col-md-12 col-lg-8" id="services--p">
+            Les tarifs pratiqués ici sont déterminés sur la base de ceux pratiqués par toute la profession, quelque soit la région.
+            Ils ont été proposés par les professionnels référencés dans cet annuaire, selon les tarifs pratiqués dans leur région...
+            <br>
+            Concernant les modes de paiement, tous les chauffeurs ne disposent pas d'appareils permettant les paiement par carte bancaire.
+            Pensez à communiquer préalablement afin de vous munir du mode de paiement qui conviendra.
+            <br><br>
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Hic, dolor expedita consequatur quisquam totam molestias sunt ab est nemo deserunt voluptates libero? Quo voluptas magni, id ipsa soluta laborum rem?
+            Totam sunt rerum blanditiis debitis facere! Ex autem quam similique corrupti temporibus vero quae qui repudiandae, nobis distinctio, delectus minima laborum tempora nostrum neque molestiae modi ullam, dolores asperiores id!
+        </p>
+        <img class="card--imground" src="{{ asset(sImgPath ~'misc/sumup.png') }}" alt="Photo d'un sumUp">
+    </div>
+</section>
+
+
+<section class="paragraph--large" id="section--presentation">
+    <h2 class="title--h2" id="flatrates--title">Les tarifs...</h2>
+    {% if flatrates %}
+    <table class="table table-striped table--txtlight">
+        <thead class="thead--light">
+            <tr>
+                <th style="width:5%;"></th>
+                <th>Région / Dépt.</th>
+                <th>Libellé</th>
+                <th>Prix (euros)</th>
+                <th>Prise en charge incluse</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flatrate in flatrates %}
+            <tr>
+                <td></td>
+                <td>
+                    {% if flatrate.departmentcode is defined and flatrate.departmentcode is not null and flatrate.departmentcode !='' %}
+                        {% set obDepartment=getdepartmentbycode(flatrate.departmentcode) %}
+                        {{ getregionbycode(obDepartment.region_code).name~' / '~obDepartment.name }}
+                    {% else %}
+                    &emsp;&emsp;-
+                    {% endif %}
+                </td>
+                <td>{{ flatrate.label }}</td>
+                <td>&emsp;&emsp;{{ flatrate.price }}</td>
+                <td>
+                    <div class="d-flex flex-row">
+                        <div class="col-2"></div>
+                        <div>
+                            &emsp;&emsp;
+                            {% if flatrate.label ends with "(hors forfait)" %}<!-- {#{% if 'charge' in flatrate.label %}#} -->
+                            n.c.
+                            {% elseif flatrate.pickupincluded %}
+                            <img class="img--boolean"
+                                src="{{ asset(sImgPath ~'misc/true.png') }}"
+                                alt="image pour booléen"
+                            >
+                            {% else %}
+                            <img class="img--boolean"
+                                src="{{ asset(sImgPath ~'misc/false.png') }}"
+                                alt="image pour booléen"
+                            >
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4"></td>
+            </tr>
+        </tfoot>
+    </table>
+    {% endif %}
+</section>
+
+{% endblock %}

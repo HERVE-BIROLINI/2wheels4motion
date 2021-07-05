@@ -1,0 +1,49 @@
+<div style='display:flex;flex-direction:row;justify-content:space-between'>
+    <div>
+        <div>{{ lastname~'  '~firstname }}</div>
+        <div>{{ road }}</div>
+        <div>{{ zip~'  '~city }}</div>
+        <div>{{ phone }}</div>
+        <div>{{ user_email }}</div>
+    </div>
+    <div style='display:flex;flex-direction:column;justify-content:end;'>
+        Demande envoyée via 2Wheels4Motion,<br>
+        l'Annuaire des VMDTR français,<br>
+        le {{ claim_datetime }}
+    </div>
+</div>
+<div style="margin-top:2em;">
+    <span>
+        &emsp;Bonjour,
+        <br><br>
+        J'aurais besoin d'un chauffeur le <b>{{ journey_date }}</b>,
+        pour effectuer un trajet avec une prise en charge à l'adresse :
+        <div style='margin-left:5em;font-weight:bolder;'>
+            {{ from_road }}
+            <br>
+            {{ from_zip~'  '~from_city }}
+        </div>
+        pour destination, l'adresse :
+        <div style='margin-left:5em;font-weight:bolder;'>
+            {{ to_road }}
+            <br>
+            {{ to_zip~'  '~to_city }}
+        </div>
+        et une arrivée à destination pour :
+        <div style='margin-left:5em;font-weight:bolder;'>
+            {{ arrivalat_time }}
+        </div>
+        <br>
+        Autres commentaires relatifs à la courses :
+        <div style='margin-left:5em;font-weight:bolder;'>
+            {{ comments }}
+        </div>
+    </span>
+    <p>
+        Si vous êtes en mesure d'exécuter cette course,
+        merci de me faire parvenir votre devis, en précisant,
+        selon vous, l'heure à laquelle devra se faire la prise en charge,
+        afin que je formalise une commande suite à acceptation de celui-ci...
+    </p>
+    <p>Cordialement</p>
+</div>

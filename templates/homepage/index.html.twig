@@ -12,10 +12,10 @@
     {% endfor %}
 
     <!-- DEBUT Homepage banner -->
-    <section id="homepage--banner" style="background-image:url({{ asset(sImgPath ~'banner/honda_gl1800_2018_deux_models-750x410.jpg') }});">
+    <section class="homepage--banner" id="banner" style="background-image:url({{ asset(sImgPath ~'banner/honda_gl1800_2018_deux_models-750x410.jpg') }});">
         <H1>L'ANNUAIRE DES TAXIS-MOTO DE FRANCE</H1>
         
-        <a class="btn btn--ordering" href="#services">
+        <a class="btn btn--ordering" href="{{ path('claim_index') }}">
             <i class="fas fa-motorcycle"></i>
             &nbsp;
             Commander une course
@@ -23,12 +23,12 @@
         
         <!-- internal page menu, to navigate to ID -->
         <div id="nav--inpage">
-            <a class="btn nav--inpage-btn-bgw" href="#section--services">A votre service</a>
-            <a class="btn nav--inpage-btn-bgw" href="#section--advices">L'avis des utilisateurs</a>
-            <a class="btn nav--inpage-btn-bgw" href="#section--pro">Professionnalisme</a>
-            <a class="btn nav--inpage-btn-bgw" href="#section--equipments">Les équipements passager</a>
-            <a class="btn nav--inpage-btn-bgw" href="#section--bikes">Les motos</a>
-            <a class="btn nav--inpage-btn-bgw" href="#section--luggages">Les bagages</a>
+            <a class="btn nav--btn--white" href="#section--services">A votre service</a>
+            <a class="btn nav--btn--white" href="#section--advices">L'avis des utilisateurs</a>
+            <a class="btn nav--btn--white" href="#section--pro">Professionnalisme</a>
+            <a class="btn nav--btn--white" href="#section--equipments">Les équipements passager</a>
+            <a class="btn nav--btn--white" href="#section--bikes">Les motos</a>
+            <a class="btn nav--btn--white" href="#section--luggages">Les bagages</a>
         </div>
     </section>
     <!-- FIN Homepage banner -->
@@ -232,10 +232,10 @@
     </section>
     <!-- -->
     <section class="paragraph--large" id="section--luggages">
-        <h2 class="title--h2" id="bikes--title">Les bagages</h2>
+        <h2 class="title--h2" id="luggages--title">Les bagages</h2>
         <div class="card--3D-horizontal" style="justify-content: center;">
             <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/luggages.jpg') }}" alt="Photo d'une vignette VMDTR">
-            <p class="card--paragraph col-md-12 col-lg-8" id="pro--p">
+            <p class="card--paragraph col-md-12 col-lg-8" id="luggages--p">
                 Les motos sont équipées d'un porte-paquet permettant le transport d'une valise cabine,
                 d'une scoche d'ordinateur portable, et si vous aviez besoin,
                 un sac à dos en position ventrale doit pouvoir passer...

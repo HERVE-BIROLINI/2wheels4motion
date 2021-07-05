@@ -8,7 +8,7 @@
 {{ include('driver/banner.html.twig') }}
 
 <section class="paragraph--large" id="section--presentation">
-    <h2 class="title--h2" id="services--title">Les pilotes...</h2>
+    
     {% if drivers is defined and drivers|length > 0 %}
 
         {% set regions=getregions() %}
@@ -22,37 +22,45 @@
         {% endif %}
 
         <form class="d-flex flex-row mt-4 mb-4" method="post">
-            <div class="dropdown dropright" name="region">
-                <button class="btn btn-sm btn-secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Région 
-                    {% if region %}
-                        {{ ' ('~region.name~')' }}
-                    {% endif %}
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
-                    <button class="dropdown-item" type="submit" name="region" value="all">TOUTES</button>
-                    <div class="dropdown-divider"></div>
-                    {% for region in regions %}
-                    <button class="dropdown-item" type="submit" name="region" value="{{ region.code }}">{{ region.name }}</button>
-                    {% endfor %}
+            <div class="d-flex flex-row align-items-center">
+                <h2 class="title--h2" id="drivers--title">Les pilotes...</h2>
+                &emsp;
+                <!-- DEBUT buttons sélection filtre Region/Dept. -->
+                <div class="d-flex flex-row">
+                    <div class="btn-group dropdown" name="region">
+                        <button class="btn btn-sm btn--secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset--Region" data-toggle="dropdown">
+                            Région 
+                            {% if region %}
+                                {{ ' ('~region.name~')' }}
+                            {% endif %}
+                        </button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item" type="submit" name="region" value="all">TOUTES</button>
+                            <div class="dropdown-divider"></div>
+                            {% for region in regions %}
+                            <button class="dropdown-item" type="submit" name="region" value="{{ region.code }}">{{ region.name }}</button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="btn-group dropdown">
+                        <button class="btn btn-sm btn--secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset--Department" data-toggle="dropdown">
+                            Dépt.
+                            {% if dept %}
+                                {{ ' ('~dept.name~')' }}
+                            {% endif %}
+                        </button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item" type="submit" name="dept" value="all">TOUS</button>
+                            <div class="dropdown-divider"></div>
+                            {% for dept in depts %}
+                                {% if region is null or dept.region_code==region.code %}
+                            <button class="dropdown-item" type="submit" name="dept" value="{{ dept.code }}">{{ dept.name~' ('~dept.code~')' }}</button>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="dropdown dropright">
-                <button class="btn btn-sm btn-secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Dépt.
-                    {% if dept %}
-                        {{ ' ('~dept.name~')' }}
-                    {% endif %}
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
-                    <button class="dropdown-item" type="submit" name="dept" value="all">TOUS</button>
-                    <div class="dropdown-divider"></div>
-                    {% for dept in depts %}
-                        {% if region is null or dept.region_code==region.code %}
-                    <button class="dropdown-item" type="submit" name="dept" value="{{ dept.code }}">{{ dept.name~' ('~dept.code~')' }}</button>
-                        {% endif %}
-                    {% endfor %}
-                </div>
+                <!-- FIN buttons sélection filtre Region/Dept. -->
             </div>
         </form>
 

@@ -32,6 +32,11 @@ class Flatrate
      */
     private $pickup_included;
 
+    /**
+     * @ORM\Column(type="string", length=4, nullable=true)
+     */
+    private $department_code;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +74,18 @@ class Flatrate
     public function setPickupIncluded(bool $pickup_included): self
     {
         $this->pickup_included = $pickup_included;
+
+        return $this;
+    }
+
+    public function getDepartmentCode(): ?string
+    {
+        return $this->department_code;
+    }
+
+    public function setDepartmentCode(?string $department_code): self
+    {
+        $this->department_code = $department_code;
 
         return $this;
     }

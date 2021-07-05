@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CustomerRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -23,7 +25,7 @@ class Customer
     private $road;
 
     /**
-     * @ORM\Column(type="string", length=5, scale=0)
+     * @ORM\Column(type="string", length=5)
      */
     private $zip;
 
@@ -36,6 +38,16 @@ class Customer
      * @ORM\OneToOne(targetEntity=User::class, mappedBy="customer", cascade={"persist", "remove"})
      */
     private $user;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Claim::class, mappedBy="customer", orphanRemoval=true)
+     */
+    private $claim;
+
+    public function __construct()
+    {
+        $this->claim = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -96,6 +108,36 @@ class Customer
         }
 
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Claim[]
+     */
+    public function getClaim(): Collection
+    {
+        return $this->claim;
+    }
+
+    public function addClaim(Claim $claim): self
+    {
+        if (!$this->claim->contains($claim)) {
+            $this->claim[] = $claim;
+            $claim->setCustomer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClaim(Claim $claim): self
+    {
+        if ($this->claim->removeElement($claim)) {
+            // set the owning side to null (unless already changed)
+            if ($claim->getCustomer() === $this) {
+                $claim->setCustomer(null);
+            }
+        }
 
         return $this;
     }

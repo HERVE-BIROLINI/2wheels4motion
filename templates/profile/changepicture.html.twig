@@ -4,7 +4,6 @@
 
 {% block body %}
 
-
 {#{{ dump(picture) }}#}
 
     {{ include('profile/banner.html.twig') }}
@@ -47,9 +46,9 @@
             <div class="card--profile m-2">
                 <label for="avatarfile">
                     {% if getuserportrait(app.user.id) %}
-                    <img class="imgbtn--profile" src="{{ asset(getuserportrait(app.user.id).pathname) }}" alt="Photo de profil">
+                    <img class="imgbtn--profile" id="img--browse" src="{{ asset(getuserportrait(app.user.id).pathname) }}" alt="Photo de profil">
                     {% else %}                    
-                    <img class="imgbtn--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
+                    <img class="imgbtn--profile" id="img--browse" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
                     {% endif %}
                 </label>
                 <input type="radio" id="avatarfile" name="avatar" value="FILE" for="browse"
@@ -62,15 +61,22 @@
                 value="{{ asset(getuserportrait(app.user.id).pathname) }}"
                 accept=".jpg, .jpeg, .png"
             >
+<!-- <script>
+    const fileSelector = document.getElementById('browse');
+    fileSelector.addEventListener('change', (event) => {
+        const fileList = event.target.files;
+        // document.querySelector('#img--browse').src=event.target.result;
+        console.log(event.target.result);
+    });
+</script> -->
         </div>
         <br>
         <div class="btns--row">
             <button class="btn btn-sm btn--blue" type="submit">
                 <i class="ri-cursor-line"></i>
-                <p>&ensp;</p>
                 Sélectionner
             </button>
-            <a class="btn btn-bg btn-secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">
+            <a class="btn btn-bg btn--secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">
                 <i class="ri-close-fill"></i>
                 Annuler
             </a>

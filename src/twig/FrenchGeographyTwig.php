@@ -20,6 +20,7 @@ class FrenchGeographyTwig extends AbstractExtension
             // new TwigFunction('getregionbyslug', [$this, 'getRegionBySlug']),
             new TwigFunction('getregionbycode', [$this, 'getRegionByCode']),
             // new TwigFunction('getregionbydeptcode', [$this, 'getRegionByDeptCode']),
+            new TwigFunction('getregionbyzip', [$this, 'getRegionByZip']),
             //
             new TwigFunction('getdepartments', [$this, 'getAllDepartments']),
             new TwigFunction('JSgetdpts', [$this, 'getAllDepartments_4Javascript']),
@@ -80,6 +81,14 @@ class FrenchGeographyTwig extends AbstractExtension
     //     }
     //     return $obRegionFounded;
     // }
+    public function getRegionByZip($zip){
+        $obRegionFounded=null;
+        if($obCity=$this->getCityByZip($zip)){
+            $obDpt=$this->getDepartmentByCode($obCity->department_code);
+            $obRegionFounded=$this->getRegionByCode($obDpt->region_code);
+        }
+        return $obRegionFounded;
+    }
     //
     // [{"id":1,"region_code":"84","code":"01","name":"Ain","slug":"ain"},
     //   ...

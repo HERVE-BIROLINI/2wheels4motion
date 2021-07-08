@@ -90,6 +90,8 @@
             <!-- {# rien à faire pour l'instant si Customer déjà existant... #} -->
         {% endif %}
 
+        {# PASSE EN COMMENTAIRE DU FAIT DE LA COMPLICATION
+            DE LA GESTION DES ADRESSES COMBINE AUX FORFAITS
         <!-- Zone des forfaits -->
         <div class="d-flex flex-column justify-content-between">
             <!-- bouton collapse/expand + Titre -->
@@ -135,13 +137,10 @@
                 <div class="d-flex flex-row">
                     <div class="btn-group dropdown" name="region">
                         <button class="btn btn-sm btn--secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset--Region" data-toggle="dropdown">
-                            Région 
-                            <!-- {#{% if region is defined %}{{ ' ('~region.name~')' }}{% endif %}#} -->
+                            Région
                         </button>
                         <div class="dropdown-menu">
-                            <!-- <a href=""></a> -->
                             <button class="dropdown-item btn--filtre-region" type="button" name="region" value="all">TOUTES</button>
-                            <!-- <button class="dropdown-item" name="region" value="all">TOUTES</button>--><!-- type="submit" -->
                             <div class="dropdown-divider"></div>
                             {% for region in regions %}
                             <button class="dropdown-item btn--filtre-region" type="button" name="region" value="{{ region.code }}">{{ region.name }}</button><!--  type="submit" -->
@@ -151,7 +150,6 @@
                     <div class="btn-group dropdown">
                         <button class="btn btn-sm btn--secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset--Department" data-toggle="dropdown">
                             Dépt.
-                            <!-- {#{% if dept is defined %}{{ ' ('~dept.name~')' }}{% endif %}#} -->
                         </button>
                         <div class="dropdown-menu">
                             <button class="dropdown-item btn--filtre-dept" type="button" name="dept" value="all">TOUS</button><!--  type="submit" -->
@@ -181,7 +179,6 @@
                         </thead>
                         <tbody>
                             {% for flatrate in flatrates %}
-                            {#{{ dump(flatrate) }}#}
                                 {% if flatrate.pickupincluded and (flatrate.label ends with "(hors forfait)") == false %}
                                     {% set obDepartment=getdepartmentbycode(flatrate.departmentcode) %}
                                     {% if obDepartment is defined and obDepartment is not null %}
@@ -235,6 +232,7 @@
 
             </div>
         </div>
+        #}
         
         <!-- Zone de saisie des paramètres de la courses -->
         <div class="card--horizontal">

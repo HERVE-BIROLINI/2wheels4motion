@@ -1,3 +1,8 @@
+
+{% if flatrate is defined and flatrate is not null %}
+{{ flatrate }}
+{% endif %}
+
 <div style='display:flex;flex-direction:row;justify-content:space-between'>
     <div>
         <div>{{ lastname~'  '~firstname }}</div>
@@ -39,11 +44,17 @@
             {{ comments }}
         </div>
     </span>
-    <p>
-        Si vous êtes en mesure d'exécuter cette course,
+    <p><b>
+        Si vous êtes en mesure d'exécuter et d'accepter cette course,
         merci de me faire parvenir votre devis, en précisant,
         selon vous, l'heure à laquelle devra se faire la prise en charge,
         afin que je formalise une commande suite à acceptation de celui-ci...
-    </p>
+    </b></p>
     <p>Cordialement</p>
+    
+    <p>
+        NB : Cher(e) {{ driver_firstname }}, pour répondre à cette demande,
+        rendez-vous dans votre compte de l'Annuaire 2Wheels4Motion,
+        et retournez-lui un devis d'un simple clique !...
+    </p>
 </div>

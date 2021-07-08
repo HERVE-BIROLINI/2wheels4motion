@@ -34,24 +34,27 @@ class DriverTwig extends AbstractExtension
         // $this->urlGenerator = $urlGenerator;
         // $this->passwordEncoder = $passwordEncoder;
         $this->entityManager = $entityManager;
-    // // private $drivers;
-    // // private $companies;
-    // // public function __construct(DriverRepository $drivers
-    // //                             , CompanyRepository $companies
-    // //                             )
-    // // {
-    // //     $this->drivers=$drivers;
-    // //     $this->companies=$companies;
+        // // private $drivers;
+        // // private $companies;
+        // // public function __construct(DriverRepository $drivers
+        // //                             , CompanyRepository $companies
+        // //                             )
+        // // {
+        // //     $this->drivers=$drivers;
+        // //     $this->companies=$companies;
     }
 
     // Déclaration des extensions de functions TWIG
+    // (... utilisées essentiellement dans le Template/Profile/Driver...)
     public function getFunctions(){
         return [
             // fonctions de manipulations de l'objet Driver
             new TwigFunction('getdriverbyid', [$this, 'getDriverById']),
+            new TwigFunction('getdriversbyregionorzip', [$this, 'getDriversByRegionOrZip']),
             // fonctions de manipulations de l'objet Company
             new TwigFunction('getallcompanies', [$this, 'getAllCompanies']),
             new TwigFunction('getcompanybyid', [$this, 'getCompanyById']),
+            new TwigFunction('getcompaniesbyregionorzip', [$this, 'getCompaniesByRegionOrZip']),
             new TwigFunction('getknowncompanies', [$this, 'getKnownCompanies']),
         ];
     }
@@ -70,12 +73,43 @@ class DriverTwig extends AbstractExtension
     public function getDriverById($id){
         return $this->entityManager->getRepository(Driver::class)->findOneBy(['id'=>$id]);
     }
+    public function getDriversByRegionOrZip($obRegion){
+        $obFGTwig = new FrenchGeographyTwig;
+        if(gettype($obRegion)=='string' and is_numeric($obRegion) and strlen($obRegion)==5){
+            $obRegion=$obFGTwig->getRegionByZip($obRegion);
+        }
+        // doit passer par l'adresse des entreprises T3P pour trouver les pilotes...
+        $arCompanies=[];
+        foreach($this->getCompaniesByRegionOrZip($obRegion) as $obCompany){
+            if (!in_array($obCompany,$arCompanies)) {
+                array_push($arCompanies,$obCompany);
+            }
+        }
+        // extrait les pilotes associées aux entreprises T3P localisées
+        return $this->entityManager->getRepository(Driver::class)->findBy(['company'=>$arCompanies]);
+    }
     // fonctions de manipulations de l'objet Company
     public function getAllCompanies(){
         return $this->entityManager->getRepository(Company::class)->findAll();
     }
     public function getCompanyById($id){
         return $this->entityManager->getRepository(Company::class)->findOneBy(['id'=>$id]);
+    }
+    public function getCompaniesByRegionOrZip($obRegion){
+        $obFGTwig = new FrenchGeographyTwig;
+        if(gettype($obRegion)=='string' and is_numeric($obRegion) and strlen($obRegion)==5){
+            $obRegion=$obFGTwig->getRegionByZip($obRegion);
+        }
+        //
+        $arCompanies=[];
+        foreach($this->getAllCompanies() as $obCompany){
+            // dd($obCompany);
+            $obCompanyRegion=$obFGTwig->getRegionByZip($obCompany->getZip());
+            if($obCompanyRegion==$obRegion){
+                array_push($arCompanies,$obCompany);
+            }
+        }
+        return $arCompanies;
     }
     public function getKnownCompanies(){
         return $this->entityManager->getRepository(Company::class)->findOneBy(['isconfirmed'=>true]);
@@ -92,9 +126,6 @@ class DriverTwig extends AbstractExtension
     //     }
     //     return $response;
     // }
-
-
-
 
 }
 

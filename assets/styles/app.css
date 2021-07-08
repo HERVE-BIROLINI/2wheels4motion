@@ -27,6 +27,10 @@
 .form-error-message{
     color:red;
 }
+.small-title-message{
+    color:red;
+    font-size:0.35em;
+}
 .img--boolean{
     height:20px;
 }

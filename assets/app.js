@@ -21,6 +21,15 @@ import { identifierForContextKey } from 'stimulus/webpack-helpers';
 
 document.addEventListener("DOMContentLoaded", function(event) {
     
+    // !!! NE SERT A RIEN !!!
+    //------------------------
+    // document.addEventListener('keyup keypress', function(e) {
+    //     if(e.keyCode == 13) {
+    //         e.preventDefault();
+    //         return false;
+    //     }
+    // });
+    //------------------------
     
     // ** Vérifie l'existance d'une section (HTML) "masquée"
     //    contenant le fichier JSON transmis par PHP...
@@ -116,6 +125,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         // * Fonction de gestion des entrées clavier de l'utilisateur dans le nom de la commune *
         function zipFilter(sCurrentEntry){
+
+            // !!! NE SERT A RIEN !!!
+            // // Si pas touche ENTER -> sort...
+            // if(sCurrentEntry.key!=='Enter'){
+
             // ... la touche enfoncée...
             if(sCurrentEntry.type=='keyup' && sCurrentEntry.key){
                 sCurrentEntry=sCurrentEntry.key;
@@ -169,8 +183,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
                     // document.querySelector("."+htmlCity.getAttribute('id').replace('city','zip')).value='';
                 }
                 else if(arZip.length==1){
+                    // City Input
                     htmlCity.value=arZip[0].substr(0,arZip[0].length-8);
-                    document.querySelector("."+htmlCity.getAttribute('id').replace('city','zip')).value=arZip[0].substr(arZip[0].length-6,5);
+                    // ALL Zip Input
+                    let htmlZips=document.querySelectorAll("."+htmlCity.getAttribute('id').replace('city','zip'));
+                    for(let htmlZip of htmlZips){
+                        htmlZip.value=arZip[0].substr(arZip[0].length-6,5);
+                    }
+                    document.querySelector("#"+htmlCity.getAttribute('id').replace('city','zip')).value=arZip[0].substr(arZip[0].length-6,5);
+                    // document.querySelector("."+htmlCity.getAttribute('id').replace('city','zip')).value=arZip[0].substr(arZip[0].length-6,5);
                 }
                 else{
                     // tri dans l'ordre alphabétique et affiche la liste des possibilités
@@ -188,7 +209,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
             else if(sCurrentEntry=="Backspace" && sCurrentValue.length==0)
             {
                 htmlCities.style.display='none';
-                document.querySelector("."+htmlCity.getAttribute('id').replace('city','zip')).value='';
+                // Reset ALL Zip Input
+                let htmlZips=document.querySelectorAll("."+htmlCity.getAttribute('id').replace('city','zip'));
+                for(let htmlZip of htmlZips){
+                    htmlZip.value='';
+                }
+                document.querySelector("#"+htmlCity.getAttribute('id').replace('city','zip')).value='';
+                // document.querySelector("."+htmlCity.getAttribute('id').replace('city','zip')).value='';
             }
             // ... si c'était une touche 'neutre'
             else if(sCurrentEntry == 'Control'
@@ -218,8 +245,16 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 htmlCity.value=sCurrentValue.substr(0,sCurrentValue.length-1);
             }
             else{
-                document.querySelector("."+htmlCity.getAttribute('id').replace('city','zip')).value='';
+                // Reset ALL Zip Input
+                let htmlZips=document.querySelectorAll("."+htmlCity.getAttribute('id').replace('city','zip'));
+                for(let htmlZip of htmlZips){
+                    htmlZip.value='';
+                }
+                document.querySelector("#"+htmlCity.getAttribute('id').replace('city','zip')).value='';
+                // document.querySelector("."+htmlCity.getAttribute('id').replace('city','zip')).value='';
             }
+            
+        // }
         }
 
         // * Fonction de gestion d'une sélection dans la liste des communes *
@@ -238,7 +273,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
             htmlZip.value=this.value.substr(this.value.length-6,5);
             for(let htmlZip of htmlZips){
                 htmlZip.value=this.value.substr(this.value.length-6,5);
-                // htmlZip.value=cities.substr(cities.indexOf(htmlCity.value)-5,5);
             }
         }
     }
@@ -320,7 +354,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         function showhideByRegions(){
             // let btnFiltreRegion= document.getElementsByClassName("dropdownMenuOffset--region");
             // btnFiltreRegion.innerText=btnFiltreRegion.textContent="Région ("+this.innerHTML+")";
-            console.log(btnFiltreRegion);
+            // console.log(btnFiltreRegion);
             let bOneMinimum=false;
             arRowFlatrate.forEach(element => {
                 if(this.innerHTML=='TOUTES'){

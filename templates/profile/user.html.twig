@@ -7,66 +7,82 @@
 
     {{ include('profile/banner.html.twig') }}
 
+    {% for flash in app.flashes('information') %}
+    <div class="alert alert-info" role="alert">{{ flash }}</div>
+    {% endfor %}
+    {% for flash in app.flashes('success') %}
+    <div class="alert alert-success" role="alert">{{ flash }}</div>
+    {% endfor %}
+    
+    {#
     {% if msg_info %}
     <div class="alert alert-info" role="alert">{{ msg_info }}</div>
     {% endif %}
-
+    #}
+    
     {% if app.user %}
     <div class="paragraph--large">
         <form class="card--3D-vertical" method="post">
             <!-- Rangée titre + photo Avatar-->
             <div class="d-flex flew-row flex-wrap justify-content-between align-items-center w-100">
-                <div>
-                    <h2 class="h3 mb-3 font-weight-normal">Données personnelles</h2>
+                <!-- Titre + date d'inscription -->
+                <div class="ml-2">
+                    <h2 class="h3 mb-3 font-weight-normal">Données personnelles :</h2>
                     <p>Inscrit depuis le {{ app.user.registrationdate|date('d-m-Y') }}</p>
                 </div>
-                <!---->
+                <!-- Photo -->
                 <div class="card--profile">
                     <a href="{{ path('profile_changepicture', {'id': app.user.id }) }}">
-                        {% if app.user.picture|length > 0 %}
+                        {% if app.user.pictures|length > 0 %}
                         <img class="imgbtn--profile" src="{{ asset(getuserportrait(app.user).pathname) }}" alt="Photo de profil">
                         {% else %}                    
                         <img class="imgbtn--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
                         {% endif %}
                     </a>
                     <!-- <br> -->
-                    <a class="btn btn-sm btn--secondary w-100 rounded-0" href="{{ path('profile_changepicture', {'id': app.user.id }) }}">Modifier</a>
+                    <a class="btn btn-sm btn--secondary w-100 rounded-0" href="{{ path('profile_changepicture', {'id': app.user.id }) }}">
+                        <i class="ri-file-upload-line"></i>&ensp;Modifier
+                    </a>
                 </div>
             </div>
             <!-- Rangée de case d'édition -->
             <div class="d-flex flew-row flex-wrap">
+                <!-- Nom de famille -->
                 <div class="col-12 col-md-6 mb-2">
                     <label class="required" for="inputLastname">Nom :</label>
-                    <input type="text" value={{ app.user.lastname }} name="lastname" id="inputLastname" class="form-control" required ><!-- autofocus> -->
+                    <input type="text" value="{{ app.user.lastname }}" name="lastname" id="inputLastname" class="form-control" required ><!-- autofocus> -->
                     {% if error_lastname %}
                     <span class="d-block">
-                        <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
-                        <span class="form-error-message">Le nom ne peut contenir que des lettres.</span>
+                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                        <small class="form-error-message">Le nom ne peut contenir que des lettres.</small>
                     </span>
                     {% endif %}
                 </div>
+                <!-- Prénom -->
                 <div class="col-12 col-md-6 mb-2">
                     <label class="required" for="inputFirstname">Prénom :</label>
-                    <input type="text" value={{ app.user.firstname }} name="firstname" id="inputFirstname" class="form-control" required ><!-- autofocus> -->
+                    <input type="text" value="{{ app.user.firstname }}" name="firstname" id="inputFirstname" class="form-control" required ><!-- autofocus> -->
                     {% if error_firstname %}
                     <span class="d-block">
-                        <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
-                        <span class="form-error-message">Le prénom ne peut contenir que des lettres.</span>
+                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                        <small class="form-error-message">Le prénom ne peut contenir que des lettres, un espace ou un tiret.</small>
                     </span>
                     {% endif %}
                 </div>
+                <!-- Courriel -->
                 <div class="col-12 col-md-6 mb-2">
                     <label class="required" for="inputEmail">Adresse électronique :</label>
                     <input type="email" value="{{ app.user.email }}" class="form-control" disabled />
                     <input type="hidden" value="{{ app.user.email }}" name="email" id="inputEmail">
                 </div>
+                <!-- Téléphone -->
                 <div class="col-12 col-md-6 mb-2">
                     <label class="required" for="inputPhone">Téléphone :</label>
-                    <input type="text" value="{{ app.user.phone }}" name="phone" id="inputPhone" class="form-control" pattern="@^0+[0-9]{9}@i" required ><!-- autofocus> -->
+                    <input type="text" value="{{ app.user.phone }}" name="phone" id="inputPhone" class="form-control" required ><!-- pattern="@^0+[\d]{9}@" autofocus> -->
                     {% if error_phone %}
                     <span class="d-block">
-                        <span class="form-error-icon badge badge-danger text-uppercase">Error</span>
-                        <span class="form-error-message">... doit commencer par 0 et comporter 10 chiffres.</span>
+                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                        <small class="form-error-message">... doit commencer par 0 et comporter 10 chiffres.</small>
                     </span>
                     {% endif %}
                 </div>
@@ -76,14 +92,10 @@
             <!-- rangée de boutons : Mise à jour / Modification MdP / Création compte Driver -->
             <div class="btns--row">
                 <button class="btn btn-sm btn--blue mb-3" type="submit">
-                    <i class="ri-record-circle-line"></i>
-                    Enregistrer les modifications
+                    <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
                 </button>
-                <a class="btn btn-lg btn--blue mb-3" href="{{ path('profile_pwd', {'id': app.user.id}) }}">
-                    <i class="ri-find-replace-line"></i>
-                    <small>
-                    Modifier le mot de passe
-                    </small>
+                <a class="btn btn-sm btn--blue mb-3" href="{{ path('profile_pwd', {'id': app.user.id}) }}">
+                    <i class="ri-find-replace-line"></i>&ensp;<small>Modifier le mot de passe</small>
                 </a>
             </div>
 

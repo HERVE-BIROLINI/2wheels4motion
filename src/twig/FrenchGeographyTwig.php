@@ -17,6 +17,7 @@ class FrenchGeographyTwig extends AbstractExtension
     public function getFunctions(){
         return [
             new TwigFunction('getregions', [$this, 'getAllRegions']),
+            new TwigFunction('JSgetregions', [$this, 'getAllRegions_4Javascript']),
             // new TwigFunction('getregionbyslug', [$this, 'getRegionBySlug']),
             new TwigFunction('getregionbycode', [$this, 'getRegionByCode']),
             // new TwigFunction('getregionbydeptcode', [$this, 'getRegionByDeptCode']),
@@ -55,6 +56,13 @@ class FrenchGeographyTwig extends AbstractExtension
     public function getAllRegions(){
         $regions = file_get_contents($this->rootJSON."regions.json");
         return(json_decode($regions));
+    }
+    public function getAllRegions_4Javascript(){
+        $sRegions='';
+        foreach($this->getAllRegions() as $obRegion){
+            $sRegions.='$'.$obRegion->code.'#'.$obRegion->name.'';
+        }
+        return substr($sRegions,1);
     }
     // public function getRegionBySlug($slug){
     //     foreach($this->getAllRegions() as $obRegion){

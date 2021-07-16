@@ -4,15 +4,16 @@ namespace App\Controller;
 
 use App\Entity\Picture;
 use App\Entity\User;
-use App\Entity\Driver;
+// use App\Entity\Driver;
 use App\Entity\Company;
 use App\Entity\Picturelabel;
 use App\Form\ChangePwdFormType;
 // use App\Repository\PicturelabelRepository;
 use App\Repository\UserRepository;
+use App\Tools\RegexTools;
 use App\Tools\UploadPictureTools;
 // use App\Twig\PictureTwig;
-use Doctrine\ORM\EntityManagerInterface;
+// use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,41 +39,50 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        //
         $error_firstname=false;
         $error_lastname=false;
         $error_phone=false;
-        // $entityManager = $this->getDoctrine()->getManager();
-        $msg_info=false;
 
+        // * Si retour après Submit *
         if(isset($_POST['firstname'])){
-            // test de la validité des nouvelles entrées
+            // test de la validité des nouvelles entrées...
+            // ... prénom
             if($_POST['firstname']!=$user->getFirstname()){
-                if(!preg_match('@^[a-zA-Z \-]+@iD',$_POST['firstname'])){
+                if(!RegexTools::pattern_match($_POST['firstname'],'name')){
+                // if(!preg_match('@^[a-zA-Z \-]+@iD',$_POST['firstname'])){
                     $error_firstname=true;
                 }
             }
-            // test de la validité des nouvelles entrées
+            // ... nom
             if($_POST['lastname']!=$user->getLastname()){
-                if(!preg_match('@^[a-zA-Z \-]+@iD',$_POST['lastname'])){
+                if(!RegexTools::pattern_match($_POST['lastname'],'name')){
+                // if(!preg_match('@^[a-zA-Z \-]+@iD',$_POST['lastname'])){
                     $error_lastname=true;
                 }
             }
-            // test de la validité des nouvelles entrées
+            // ... téléphone
             if($_POST['phone']!=$user->getPhone()){
-                if(!preg_match('@^0+[0-9]{9}@',$_POST['phone'])){
+                if(!RegexTools::pattern_match($_POST['phone'],'phone')){
                 // if(!preg_match('@^0+[0-9]{9}+@iD',$_POST['phone'])){
                     $error_phone=true;
                 }
                 // ...
             }
-            //
-            // $user->setFirstname($_POST['firstname']);
-            // $user->setLastname($_POST['lastname']);
-            // $user->setPhone($_POST['phone']);
-            // dd($user);
+
+            // sauvegarde les modifications
+            if(!$error_firstname and !$error_lastname and !$error_phone){
+                $user->setFirstname($_POST['firstname']);
+                $user->setLastname($_POST['lastname']);
+                $user->setPhone($_POST['phone']);
+                //
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($user);
+                $entityManager->flush();
+            }
         }
         
-        // $obPictureLabel_Portrait=$entityManager->getRepository(Picturelabel::class)->findOneBy(['label'=>'Avatar']);
+        // ?? $obPictureLabel_Portrait=$entityManager->getRepository(Picturelabel::class)->findOneBy(['label'=>'Avatar']);
         
         return $this->render('profile/user.html.twig', [
             // 'picture_portrait'  => $entityManager->getRepository(Picture::class)->findOneBy(['picturelabel'=>$obPictureLabel_Portrait,'user'=>$user]),
@@ -80,8 +90,6 @@ class ProfileController extends AbstractController
             'error_firstname'   => $error_firstname,
             'error_lastname'    => $error_lastname,
             'error_phone'       => $error_phone,
-            //
-            'msg_info'  => $msg_info,
         ]);
     }
     
@@ -100,7 +108,6 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $msg_info='';
         // 'drapeau' de levée d'actions, selon l'analyse
         $bError=false;
         $bReturn2Profile=false;
@@ -185,8 +192,7 @@ class ProfileController extends AbstractController
         
         // *** Si ARRIVEE dans le formulaire, ou RETOUR suite erreur...
         return $this->render('profile/changepicture.html.twig', [
-            'msg_info'  => $msg_info,
-            // 'controller_name' => 'ProfileController',
+            'controller_name' => 'ProfileController',
         ]);
     }
 
@@ -247,20 +253,70 @@ class ProfileController extends AbstractController
     /**
      * @Route("/driver", name="driver")
      */
-    public function profiledriver(EntityManagerInterface $entityManager
+    public function profiledriver(
+        // EntityManagerInterface $entityManager
     ): Response
     {
+// var_dump("<pre>");
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $companies=$entityManager->getRepository(Company::class);
+
         // test si l'utilisateur N'est PAS encore identifié
-        if(!$this->getUser()){
+        if(!$user=$this->getUser()){
             return $this->redirectToRoute('app_login');
         }
 
+        // Récupère la Company si déjà définie...
+        if($driver=$this->getUser()->getDriver()){
+            $obCompany=$driver->getCompany();
+        }
+        // ... sinon (bien qu'impossible), renvoie vers la page de création du Driver
+        else{
+            return $this->redirectToRoute('registration_driver');
+        }
+
+        // * Si retour dans le Controller par le bouton 'Associer la société choisie' *
+        if(isset($_POST['companychoosen'])){
+            $obCompany=$companies->findOneBy(['id'=>$_POST['companychoosen']]);
+
+            $this->addFlash('information', "Données d'une entreprise T3P référencée récupérées. Pensez à enregistrer vos modifications pour confirmer...");
+        }
+        // * Si retour dans le Controller par le bouton 'Enregistrer les modifications' *
+        elseif(isset($_POST['siren'])){
+            // Si le n° de SIREN n'existe pas, crée une nouvelle Company...
+            if(!$obCompany=$companies->findOneBy(['siren'=>$_POST['siren']])){
+            // if($obCompany=$companies->findOneBy(['siren'=>$_POST['siren']])){
+            //     var_dump("<br> 1.2 - Modification d'une Company existante...");
+            // }
+            // else{
+dd("développer l'envoi d'un email à l'administrateur pour vérification de la nouvelle Company !");
+                $obCompany=new Company;
+                $obCompany->setSiren($_POST['siren']);
+            }
+            //
+            $obCompany->setName($_POST['name']);
+            $obCompany->setNic($_POST['nic']);
+            $obCompany->setRoad($_POST['road']);
+            $obCompany->setZip($_POST['zip']);
+            $obCompany->setCity($_POST['city']);
+            //
+            $entityManager->persist($obCompany);
+            $entityManager->flush();
+            
+            // Associe la company au Driver
+            $driver->setCompany($obCompany);
+            $entityManager->flush();
+            
+            $this->addFlash('success', "Vos modifications ont bien été enregistrées.");
+        }
+        
         return $this->render('profile/driver.html.twig', [
-            // 'controller_name' => 'ProfileController',
-            'driver'=>$entityManager->getRepository(Driver::class)
-                ->findOneBy(['id'=>$this->getUser()->getDriver()->getId()]),
-            'company'=>$entityManager->getRepository(Company::class)
-                ->findOneBy(['id'=>$this->getUser()->getDriver()->getCompany()->getId()]),
+            'controller_name' => 'ProfileController',
+            //
+            'company'   => $obCompany,
+            //
+            'allcompaniesknown'=>$entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>true]),
 
         ]);
     }
@@ -270,33 +326,48 @@ class ProfileController extends AbstractController
      */
     public function profilecustomer(): Response
     {
+        $error_customer_city=null;
+        $error_customer_road=null;
         
         // test si l'utilisateur N'est PAS encore identifié
-        if(!$this->getUser()){
+        if(!$user=$this->getUser()){
             return $this->redirectToRoute('app_login');
         }
-        // test si l'utilisateur a déjà un compte client
-        if($this->getUser()){
-            dd('tester que User a bien un compte Customer, sinon renvoi vers Register Customer');
-        }
 
+        //
+        if(isset($_POST) and $_POST!=null){
+            // Regex / Pattern pour ROAD et CITY
+            if(RegexTools::pattern_match($_POST['customer_road'] )){
+                if(RegexTools::pattern_match($_POST['customer_city'] )){
+
+                    // Pour les enregistrements dans la BdD
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $customer=$user->getCustomer();
+                    //
+                    $customer->setRoad($_POST['customer_road']);
+                    $customer->setCity($_POST['customer_city']);
+                    $customer->setZip($_POST['customer_zip']);
+                    //
+                    $entityManager->persist($customer);
+                    $entityManager->flush();
+
+                }
+                else{
+                    $error_customer_city=true;
+                }
+            }
+            else{
+                $error_customer_road=true;
+            }
+        }
+        
         // au 1er passage, affiche la page du Profil et son formulaire
         return $this->render('profile/customer.html.twig', [
-            // 'controller_name' => 'ProfileController',
-
+            'controller_name'       => 'ProfileController',
+            'error_customer_road'   => $error_customer_road,
+            'error_customer_city'   => $error_customer_city,
         ]);
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 //     /**

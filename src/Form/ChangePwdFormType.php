@@ -36,7 +36,7 @@ class ChangePwdFormType extends AbstractType
                             'max'           => 4096,
                         ]),
                         new Regex([
-                            'pattern'   => "@^[a-zA-Z0-9\@\$\£]+@i",
+                            'pattern'   => "@^[0-9a-zA-Z\@\$\£]+@i",
                             'message'   => "Doit contenir des caractères alphanumériques",
                         ])
                     ],

@@ -4,10 +4,12 @@
 
     <!-- internal page menu, to navigate to ID -->
     <div id="nav--inpage">
+        <a class="btn nav--btn--blue" href="{{ path('admin_index') }}">Actions en attente</a>
         <a class="btn nav--btn--blue" href="{{ path('flatrate_read') }}">Les tarifs</a>
-        <a class="btn nav--btn--blue" href="#section--users">Les utilisateurs</a>
-        <a class="btn nav--btn--blue" href="#section--customers">Les clients</a>
-        <a class="btn nav--btn--blue" href="#section--drivers">Les pilotes</a>
+        <a class="btn nav--btn--blue" href="{{ path('admin_read') }}">Les inscrits</a>
+        <!-- <a class="btn nav--btn--blue" href="#section--customers">Les clients</a> -->
+        <!-- <a class="btn nav--btn--blue" href="#section--drivers">Les pilotes</a> -->
+        {#<!-- <a class="btn nav--btn--blue" href="{{ path('company_read') }}">Les T3P</a> -->#}
     </div>
     
 </section>

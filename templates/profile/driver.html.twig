@@ -6,11 +6,6 @@
 {% block body %}
 
     {{ include('profile/banner.html.twig') }}
-    
-    <h2>Proposer ici au Driver de gérer ses demandes de courses (=> envoi de devis)...</h2>
-    <h2> ... de gérer ses commandes en cours (=> contact client / annulation)</h2>
-    <h2> ... de gérer ses courses exécutées (=> contact client / envoi facture)</h2>
-    <h2> ... et évidemment, gestion modification de ses données personnelles et d'entreprise...</h2>
 
     <!-- CA MARCHE !!!... -->
     {#
@@ -51,8 +46,253 @@
         {{ dump(company) }}
         #}
 
-    {% if app.user %}
 
-    {% endif %}
+        {% for flash in app.flashes('information') %}
+        <div class="alert alert-info" role="alert">{{ flash }}</div>
+        {% endfor %}
+        {% for flash in app.flashes('success') %}
+        <div class="alert alert-success" role="alert">{{ flash }}</div>
+        {% endfor %}
+        
+            {#<!-- <section id="regions_json" hidden>{{ JSgetregions() }}</section> -->#}
+            {#<!-- <section id="dpts_json" hidden>{{ JSgetdpts() }}</section> -->#}
+            <section id="cities_json" hidden>
+                {{ JSgetcities() }}
+            </section>
+
+            <div id="div--2hide-ifmodal">
+                <!-- Block affiché SSI le pilote change de *Company pour une existante -->
+                <div class="paragraph--large">
+                    <!-- Common Form to choose Company object in existing list -->
+                    {{ include('company/_form-companies.html.twig') }}
+                </div>
+                
+                <!-- Block par défaut affichant les données de la Company actuelle -->
+                <div class="paragraph--large" id="blk--company2create">
+                
+                    <!-- La company T3P -->
+                    <form class="card--3D-vertical my-4" method="post"><!--class="d-flex flex-row justify-content-center my-4">-->
+                        <!-- <h2 class="h3 ml-2 mt-4 mb-3 font-weight-normal">Adresse personnelle :</h2> -->
+                        
+                        <!-- Common Form to edit Company object -->
+                        {{ include('company/_form-company.html.twig') }}
+                        <br>
+            
+                        <!-- rangée de boutons : Mise à jour / Modification MdP / Création compte Driver -->
+                        <div class="btns--row">
+                            <button class="btn btn-sm btn--blue" type="submit">
+                                <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
+                            </button>
+                            {#<!-- <a class="btn btn-sm btn--secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">
+                                <i class="ri-close-fill"></i>&ensp;Annuler
+                            </a> -->#}
+                        </div>
+            
+                    </form>
+            
+                    <!-- L'historique des demandes de course -->
+                    <div class="d-flex flex-row flex-wrap justify-content-between align-items-center mb-3">
+                        <h2 class="h3 mt-4 mb-3 font-weight-normal">Historique des échanges :</h2>
+                        <button class="btn btn-sm btn--green" id="btn--show-hide--archive">
+                            <i class="ri-eye-line"></i>&ensp;Récents seulement
+                        </button>
+                    </div>
+                    <div class="row--tabtype" id="row--tabtype--travel">
+                        <div class="btn--tabtype" id="btn--tabtype--claim" parent_id="row--tabtype--travel" default>Demandes reçues</div>
+                        <div class="btn--tabtype" id="btn--tabtype--tender" parent_id="row--tabtype--travel">Devis envoyés</div>
+                        <div class="btn--tabtype" id="btn--tabtype--order" parent_id="row--tabtype--travel">Courses effectuées</div>
+                    </div>
+                    <!-- tableau des Demandes envoyées (Claims) -->
+                    <table class="table table-striped table--txtlight table--tabtype" id="table--tabtype--claim" parent_id="btn--tabtype--claim">
+                        <thead class="thead--dark">
+                            <tr>
+                                <th></th>
+                                <th>#</th>
+                                <th>Demande du</th>
+                                <th>Course pour le</th>
+                                <th>Prise en charge</th>
+                                <th>Destination</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for claim in app.user.driver.getclaims %}
+                                {% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
+                            <tr class="row--claim TOUTES">
+                                {% else %}
+                            <tr class="row--claim ARCHIVE">
+                                {% endif %}
+                                <td></td>
+                                <td>{{ claim.id }}</td>
+                                <td>{{ claim.claimdatetime|date('d/m/Y') }}</td>
+                                <td>{{ claim.journeydate|date('d/m/Y') }}</td>
+                                <td>{{ getcitybyzip(claim.fromzip).name }}</td>
+                                <td>{{ getcitybyzip(claim.tozip).name }}</td>
+                                <td>
+                                    <div class="d-flex flex-row flex-wrap align-items-center">
+                                        <button class="btn btn-sm btn--blue btn--claim--viewdetails" id="{{ 'btn--claim--viewdetails'~claim.id }}" claim_id="{{ claim.id }}">
+                                            <i class="ri-eye-line"></i>&ensp;Détails
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            {% if app.user.customer.getclaims|length == 0 %}
+                            <tr>
+                                <td colspan="6">Vous n'avez fait encore aucune demande...</td>
+                            </tr>
+                            {% endif %}
+                        </tfoot>
+                    </table>
+                    <!-- tableau des Devis reçus (Tenders) -->
+                    <table class="table table-striped table--txtlight table--tabtype" id="table--tabtype--tender" parent_id="btn--tabtype--tender">
+                        <thead class="thead--dark">
+                            <tr>
+                                <th></th>
+                                <th>Devis du</th>
+                                <th>Proposé par</th>
+                                <th>Pour la demande du</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {#{% for claim in app.user.customer.getclaim %}
+                                {% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
+                                #}
+                            <tr class="row--claim ARCHIVE">
+                                {#{% else %}#}
+                            <tr class="row--claim TOUTES">
+                                {#{% endif %}#}
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>                    
+                                <td> Accepter / Refuser </td>
+                            </tr>
+                            {#{% endfor %}#}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5">Pas de devis reçu...</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <!-- tableau des Courses effectuées (Orders) -->
+                    <table class="table table-striped table--txtlight table--tabtype" id="table--tabtype--order" parent_id="btn--tabtype--order">
+                        <thead class="thead--dark">
+                            <tr>
+                                <th></th>
+                                <th>Demande du</th>
+                                <th>Course le</th>
+                                <th>Prise en charge</th>
+                                <th>Destination</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for claim in app.user.customer.getclaims %}
+                                {% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
+                            <tr class="row--claim ARCHIVE">
+                                {% else %}
+                            <tr class="row--claim TOUTES">
+                                {% endif %}
+                                <td></td>
+                                
+                                <td> Les boutons !! </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            {% if app.user.customer.getclaims|length == 0 %}
+                            <tr>
+                                <td colspan="4">Vous n'avez encore pas bénéficié des services des pilotes de l'Annuaire...</td>
+                            </tr>
+                            {% endif %}
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal d'affichage des détails de la demande -->
+            {% for claim in app.user.driver.getclaims %}
+            <div class="modal--big p-5" id="{{ 'modal--claim--'~claim.id }}" style="display:none;">
+                <!-- parent_id="{{ 'btn--claim--viewdetails'~claim.id }}" -->
+                <!-- Les "détails" de la demande -->
+                <h3 class="pb-1">{{ 'Demande : (#'~claim.id~')' }}</h3>
+                <table class="table table-striped table--txtlight">
+                    <tbody>
+                        <tr>
+                            <th class="thead--dark">Date de la demande</th>
+                            <td>{{ claim.claimdatetime|date('d/m/Y') }}</td>
+                        </tr>
+                        <tr>
+                            <th class="thead--dark">Jour de la course</th>
+                            <td>{{ claim.journeydate|date('d/m/Y') }}</td>
+                        </tr>
+                        <tr>
+                            <th class="thead--dark">Prise en charge à l'adresse</th>
+                            <td>{{ claim.fromroad~', '~claim.fromzip~' '~getcitybyzip(claim.fromzip).name }}</td>
+                        </tr>
+                        <tr>
+                            <th class="thead--dark">Arrivée attendue pour</th>
+                            <td>{{ claim.arrivalattime|date('H:i') }}</td>
+                        </tr>
+                        <tr>
+                            <th class="thead--dark">A la destination</th>
+                            <td>{{ claim.toroad~', '~claim.tozip~' '~getcitybyzip(claim.tozip).name }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--  -->
+                {% if claim.customer.user %}
+                <h3 class="pt-3">Reçu de :</h3>
+                <!-- ... LA "carte utilisateur" du Customer à l'origine de la demande... -->
+                <!-- <div class="d-flex flex-column align-items-center w-100"> -->
+                <div class="d-flex flex-row flex-wrap">
+                    <div class="card--3D-horizontal col-12">
+                        <!-- ... photo -->
+                        <div class="d-flex flex-row justify-content-center mb-2 col-12 col-lg-3"><!--  col-4 -->
+                            <img class="img--profile justify-self-start" src="{{ asset(getuserportrait(claim.customer.user).pathname) }}" alt="Photo de profil">
+                        </div>
+                        <!-- ... coordonnées -->
+                        <div class="d-flex flex-column justify-content-center col-12 col-lg-9">
+                            <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                                <div class="col-sm-12 col-md-6"><b>Nom :</b></div>
+                                <div class="pl-4 col-sm-12 col-md-6">{{ claim.customer.user.lastname~' '~claim.customer.user.firstname }}</div>
+                            </div>
+                            <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                                <div class="col-sm-12 col-md-6"><b>Courriel :</b></div>
+                                <div class="pl-4 col-sm-12 col-md-6">
+                                    <a href="{{ 'mailto:' ~ claim.customer.user.email }}">
+                                        {{ claim.customer.user.email }}
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                                <div class="col-sm-12 col-md-6"><b>Téléphone :</b></div>
+                                <div class="pl-4 col-sm-12 col-md-6">
+                                    <a href="{{ 'tel:' ~claim.customer.user.phone }}">
+                                        {{ claim.customer.user.phone }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        &ensp;
+                        <!-- bouton d'envoi d'un Tender en réponse à la Claim -->
+                        <button class="btn btn-sm btn--blue mt-2" id="btn--send-tender" claim_id="{{ claim.id }}">
+                            <i class="ri-send-plane-fill"></i>&ensp;Retourner un devis (A DEVELOPPER)
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+
+                <button class="btn btn-sm btn--secondary mt-5" id="btn--claim--closedetails" parent_id="{{ 'modal--claim--'~claim.id }}">
+                    <i class="ri-close-fill"></i>&ensp;Fermer
+                </button>
+            </div>
+{% endfor %}
+
 
 {% endblock %}

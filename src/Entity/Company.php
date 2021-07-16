@@ -25,12 +25,12 @@ class Company
     private $name;
 
     /**
-     * @ORM\Column(type="decimal", precision=9, scale=0)
+     * @ORM\Column(type="string", length=9)
      */
     private $siren;
 
     /**
-     * @ORM\Column(type="decimal", precision=5, scale=0, nullable=true)
+     * @ORM\Column(type="string", length=5, nullable=true)
      */
     private $nic;
 
@@ -64,92 +64,80 @@ class Company
         $this->drivers = new ArrayCollection();
     }
 
+    //
     public function getId(): ?int
     {
         return $this->id;
     }
-
+    //
     public function getName(): ?string
     {
         return $this->name;
     }
-
     public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
     }
-
+    //
     public function getSiren(): ?string
     {
         return $this->siren;
     }
-
     public function setSiren(string $siren): self
     {
         $this->siren = $siren;
 
         return $this;
     }
-
+    //
     public function getNic(): ?string
     {
         return $this->nic;
     }
-
     public function setNic(string $nic): self
     {
         $this->nic = $nic;
-
         return $this;
     }
-
+    //
     public function getRoad(): ?string
     {
         return $this->road;
     }
-
     public function setRoad(string $road): self
     {
         $this->road = $road;
-
         return $this;
     }
-
+    //
     public function getZip(): ?string
     {
         return $this->zip;
     }
-
     public function setZip(string $zip): self
     {
         $this->zip = $zip;
-
         return $this;
     }
-
+    //
     public function getCity(): ?string
     {
         return $this->city;
     }
-
     public function setCity(string $city): self
     {
         $this->city = $city;
-
         return $this;
     }
-
+    //
     public function getIsconfirmed(): ?bool
     {
         return $this->isconfirmed;
     }
-
     public function setIsconfirmed(?bool $isconfirmed): self
     {
         $this->isconfirmed = $isconfirmed;
-
         return $this;
     }
 
@@ -160,17 +148,14 @@ class Company
     {
         return $this->drivers;
     }
-
     public function addDriver(Driver $driver): self
     {
         if (!$this->drivers->contains($driver)) {
             $this->drivers[] = $driver;
             $driver->setCompany($this);
         }
-
         return $this;
     }
-
     public function removeDriver(Driver $driver): self
     {
         if ($this->drivers->removeElement($driver)) {
@@ -179,7 +164,6 @@ class Company
                 $driver->setCompany(null);
             }
         }
-
         return $this;
     }
 }

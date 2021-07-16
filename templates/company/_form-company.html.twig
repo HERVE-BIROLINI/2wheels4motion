@@ -1,0 +1,150 @@
+
+{#<!-- <section id="regions_json" hidden>{{ JSgetregions() }}</section> -->#}
+{#<!-- <section id="dpts_json" hidden>{{ JSgetdpts() }}</section> -->#}
+<section id="cities_json" hidden>
+    {{ JSgetcities() }}
+</section>
+
+{% if company is defined and company is not null %}
+    {% set name = company.name %}
+    {% set siren = company.siren %}
+    {% set nic = company.nic %}
+    {% set road = company.road %}
+    {% set city = company.city %}
+    {% set zip = company.zip %}
+{% elseif app.user.driver and app.user.driver.company %}
+    {% set name = app.user.driver.company.name %}
+    {% set siren = app.user.driver.company.siren %}
+    {% set nic = app.user.driver.company.nic %}
+    {% set road = app.user.driver.company.road %}
+    {% set city = app.user.driver.company.city %}
+    {% set zip = app.user.driver.company.zip %}
+{% endif %}
+
+<!-- Block de données de l'entreprise T3P -->
+{% if controller_name is defined and controller_name=='RegistrationController' %}
+<div class="mt-1 mb-2 col-12 col-lg-5" id="blk--companydatas">
+{% elseif controller_name is defined and controller_name=='ProfileController' %}
+<div class="mt-1 mb-2 col-12" id="blk--companydatas">
+{% endif %}
+    <!-- Titre + boutons (choix parmi les entreprises référencées) -->
+    <div class="d-flex flex-row flex-wrap justify-content-between align-items-center">
+        {% if controller_name is defined and controller_name=='RegistrationController' %}
+        <h5>Entreprise affiliée T3P</h5>
+        {% else %}
+        <h2 class="h3 ml-2 mt-4 mb-3 font-weight-normal">Entreprise affiliée T3P</h2>
+        {% endif %}
+        <!--  -->
+        {% if allcompaniesknown is defined and allcompaniesknown|length > 0 %}
+        <button class="btn btn-sm btn--secondary align-self-end" type="button" id="btn--companies2choice"
+            style="border-bottom-left-radius:0;border-bottom-right-radius:0;"
+        >
+            <i class="ri-search-line"></i>&ensp;Entreprises référencées
+        </button>
+        {% endif %}
+    </div>
+    <!-- Encadrement -->
+    <div class="block--datas-vertical" id="block--company-T3P">
+        <!-- nom de l'entreprise -->
+        <div class="p-3 w-100">
+            <label class="required" for="inputname">Nom :</label>
+            <input type="text" name="name" id="inputname" class="form-control"
+                {% if name is defined and name is not null %}value="{{ name }}"{% endif %}
+                required
+            ><!-- autofocus> -->
+            {% if error_name is defined and error_name is not null %}
+            <!-- <span class="d-block">
+                <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                <small class="form-error-message">Le numéro ne peut contenir que des chiffres.</small>
+            </span> -->
+            {% endif %}
+        </div>
+        <!-- numéro d'enregistrement de l'entreprise -->
+        <div class="d-flex flex-row flex-wrap justify-content-between w-100">
+            <div class="col-12 col-md-7">
+                <label class="required" for="inputsiren">SIREN :</label>
+                <input type="text" name="siren" id="inputsiren" class="form-control"
+                    placeholder="9 chiffres..." size="9"
+                    {% if siren is defined and siren is not null %}value="{{ siren }}"{% endif %}
+                    required
+                ><!-- pattern="[\d]{9}" autofocus> -->
+                {% if error_siren is defined and error_siren is not null %}
+                <span class="d-block">
+                    <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                    <small class="form-error-message">Le numéro SIREN doit contenir 9 chiffres.</small>
+                </span>
+                {% endif %}
+            </div>
+            &ensp;
+            <div class="col-12 col-md-4">
+                <label for="inputnic">NIC :</label>
+                <input type="text" name="nic" id="inputnic" class="form-control"
+                    placeholder="5 chiffres..." size="5"
+                    {% if nic is defined and nic is not null %}value="{{ nic }}"{% endif %} size="5"
+                ><!-- pattern="[\d]{5}" required autofocus> -->
+                {#{% if error_nic is defined and error_nic is not null %}#}
+                <!-- <span class="d-block">
+                    <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                    <small class="form-error-message">Le numéro ne peut contenir que des chiffres.</small>
+                </span> -->
+                {#{% endif %}#}
+            </div>
+        </div>
+        <!-- adresse de l'entreprise -->
+        <div class="d-flex flex-column p-3 w-100">
+            <small>Adresse :</small>
+            &ensp;
+            <!--  -->
+            <label class="required" for="inputroad">N° et Voie :</label>
+            <input type="text" {% if road is defined and road is not null %}value="{{ road }}"{% endif %} name="road" id="inputroad" class="form-control" required ><!-- autofocus> -->
+            {% if error_road is defined and error_road is not null %}
+            <span class="d-block">
+                <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                <small class="form-error-message">La voie doit comporter un numéro et un nom.</small>
+            </span>
+            {% endif %}
+            &ensp;
+            <div class="d-flex flex-row flex-wrap w-100 justify-content-between">
+                <!-- Nom commune -->
+                <div class="col-12 col-md-7">
+                    <label class="required" for="inputcity">Commune :</label>
+                    <input type="text" class="form-control inputcity required" id="inputcity"
+                        {% if city is defined and city is not null %}value="{{ city }}"{% endif %}
+                        name="city"
+                    ><!-- pattern="[\da-zA-Z \-àáâãäåçèéêëìíîïðòóôõöùúûüýÿ]" disabled autofocus> -->
+                    <select class="form-control cities" id="inputcities"
+                        name="cities"
+                    >
+                        <option >Sélectionnez votre commune</option>
+                    </select>
+                    {% if error_city is defined and error_city is not null %}
+                    <span class="d-block">
+                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                        <small class="form-error-message">Le nom d'une commune ne peut contenir que des lettres, et lettres accentuées.</small>
+                    </span>
+                    {% endif %}
+                </div>
+                &ensp;
+                <!-- ZIP commune (code postal) -->
+                <div class="col-12 col-md-4">
+                    <label class="required" for="inputzip">CP :</label>
+                    <input type="text" {% if zip is defined and zip is not null %}value="{{ zip }}"{% endif %}
+                        name="zip" id="inputzip" class="form-control" style="display:none;"
+                    ><!-- pattern="[\d]{5}" size="5" required autofocus> -->
+                    <input type="text" {% if zip is defined and zip is not null %}value="{{ zip }}"{% endif %}
+                        name="zip" id="inputzip" class="form-control inputzip"
+                        disabled
+                    >
+                    {#{% if error_zip is defined and error_zip is not null %}#}
+                    <!-- <span class="d-block">
+                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                        <small class="form-error-message">Le numéro ne peut contenir que des chiffres.</small>
+                    </span> -->
+                    {#{% endif %}#}
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+</div>
+                

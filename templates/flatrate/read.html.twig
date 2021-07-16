@@ -9,10 +9,15 @@
 {{ include('admin/banner.html.twig') }}
 
 <section class="paragraph--large" id="section--presentation">
-    <h2 class="title--h2" id="flatrates--title">Les tarifs...</h2>
+    <div class="d-flex flex-row flex-wrap justify-content-between">
+        <h2 class="title--h2" id="flatrates--title">Les tarifs...</h2>
+        <a class="btn btn-sm btn--green" href="{{ path('flatrate_create') }}">
+            <i class="ri-add-circle-line"></i>&ensp;Ajouter un nouveau tarif
+        </a>
+    </div>
     {% if flatrates %}
     <table class="table table-striped table--txtlight">
-        <thead class="thead--light">
+        <thead class="thead--dark">
             <tr>
                 <th style="width:5%;"></th>
                 <th>Dépt/Région</th>
@@ -20,11 +25,7 @@
                 <th>Prix</th>
                 <th>Prise en charge incluse (forfait)</th>
                 <th>Actions
-                    &nbsp;
-                    <a class="btn btn-sm btn--green" href="{{ path('flatrate_create') }}">
-                        <i class="ri-add-circle-line"></i>
-                        Ajouter un nouveau tarif
-                    </a>
+                    <!-- &nbsp; -->
                 </th>
             </tr>
         </thead>
@@ -61,8 +62,7 @@
                 </td>
                 <td class="d-flex flex-row">
                     <a class="btn btn-sm btn--blue" href="{{ path('flatrate_update', {'flatrate': flatrate.id}) }}" title="Modifier" class="mr-2">
-                        <i class="ri-edit-2-line"></i>
-                        Modifier
+                        <i class="ri-edit-2-line"></i>&ensp;Modifier
                     </a>
                     &emsp;
                     {{ include('flatrate/_delete_form.html.twig') }}

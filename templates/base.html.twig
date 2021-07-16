@@ -77,8 +77,7 @@
                             <!-- page(s) profil utilisateur -->
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ path('profile_user', {'id': app.user.id}) }}">
-                                    <i class="ri-profile-line"></i>
-                                    {{ app.user.firstname }} {{ app.user.lastname }}
+                                    <i class="ri-profile-line"></i>&ensp;{{ app.user.firstname }} {{ app.user.lastname }}
                                 </a>
                             </li>
                             <!-- page(s) profil administrateur -->
@@ -100,9 +99,7 @@
                             <!-- Lien de déconnexion -->
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ path('app_logout') }}">
-                                    <i class="ri-logout-circle-r-line"></i>
-                                    <!-- &nbsp; -->
-                                    Déconnexion
+                                    <i class="ri-logout-circle-r-line"></i>&ensp;Déconnexion
                                 </a>
                                 <!-- <a class="nav-link" href="{#{{ path('app_logout') }}#}">Déconnexion</a> -->
                             </li>
@@ -112,9 +109,7 @@
                         <ul class="navbar-nav ml-0">
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ path('app_login') }}">
-                                    <i class="ri-login-box-line"></i>
-                                    <!-- &nbsp; -->
-                                    Connexion
+                                    <i class="ri-login-box-line"></i>&ensp;Connexion
                                 </a>
                             </li>
                         </ul>

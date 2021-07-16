@@ -42,103 +42,90 @@ class Customer
     /**
      * @ORM\OneToMany(targetEntity=Claim::class, mappedBy="customer", orphanRemoval=true)
      */
-    private $claim;
+    private $claims;
 
     public function __construct()
     {
-        $this->claim = new ArrayCollection();
+        $this->claims = new ArrayCollection();
     }
 
+    //
     public function getId(): ?int
     {
         return $this->id;
     }
-
+    //
     public function getRoad(): ?string
     {
         return $this->road;
     }
-
     public function setRoad(string $road): self
     {
         $this->road = $road;
-
         return $this;
     }
-
+    //
     public function getZip(): ?string
     {
         return $this->zip;
     }
-
     public function setZip(string $zip): self
     {
         $this->zip = $zip;
-
         return $this;
     }
-
+    //
     public function getCity(): ?string
     {
         return $this->city;
     }
-
     public function setCity(string $city): self
     {
         $this->city = $city;
-
         return $this;
     }
-
+    //
     public function getUser(): ?User
     {
         return $this->user;
     }
-
     public function setUser(?User $user): self
     {
         // unset the owning side of the relation if necessary
         if ($user === null && $this->user !== null) {
             $this->user->setCustomer(null);
         }
-
         // set the owning side of the relation if necessary
         if ($user !== null && $user->getCustomer() !== $this) {
             $user->setCustomer($this);
         }
-
         $this->user = $user;
-
         return $this;
     }
 
     /**
      * @return Collection|Claim[]
      */
-    public function getClaim(): Collection
+    public function getClaims(): Collection
     {
-        return $this->claim;
+        return $this->claims;
     }
-
     public function addClaim(Claim $claim): self
     {
-        if (!$this->claim->contains($claim)) {
-            $this->claim[] = $claim;
+        if (!$this->claims->contains($claim)) {
+            $this->claims[] = $claim;
             $claim->setCustomer($this);
         }
-
         return $this;
     }
-
     public function removeClaim(Claim $claim): self
     {
-        if ($this->claim->removeElement($claim)) {
+        if ($this->claims->removeElement($claim)) {
             // set the owning side to null (unless already changed)
             if ($claim->getCustomer() === $this) {
                 $claim->setCustomer(null);
             }
         }
-
         return $this;
     }
 }

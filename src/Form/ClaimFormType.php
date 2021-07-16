@@ -72,7 +72,7 @@ class ClaimFormType extends AbstractType
                 'constraints'   =>  [
                     //new NotBlank(['message'=>"Le CP est déterminé par l'indication de la ville..."]),
                     new Regex([
-                        'pattern'   => "@^[0-9]{5}+@i",
+                        'pattern'   => "@^[\d]{5}+@i",
                         'message'   => "Doit contenir 5 chiffres",
                     ]),
                 ],
@@ -100,7 +100,7 @@ class ClaimFormType extends AbstractType
                 'constraints'   =>  [
                     //new NotBlank(['message'=>"Le CP est déterminé par l'indication de la ville..."]),
                     new Regex([
-                        'pattern'   => "@^[0-9]{5}+@i",
+                        'pattern'   => "@^[\d]{5}+@i",
                         'message'   => "Doit contenir 5 chiffres",
                     ]),
                 ],

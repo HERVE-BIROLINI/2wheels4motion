@@ -51,6 +51,8 @@
     margin-bottom: 5px;
 }
 .btn--secondary:hover,.imgbtn--profile:hover,.btn--circle:hover{
+    text-justify: inter-cluster;
+    text-align: center;
     box-shadow:inset 3px 3px 6px black;
 }
 /* Permet de définir à la Class Bootstrap une hauteur Max,
@@ -358,6 +360,7 @@ body{
     justify-content:space-between;
     align-items:center;
     width:fit-content;
+    height: fit-content;
     /**/
     color:white;
     /* font-weight: bold; */
@@ -393,6 +396,7 @@ body{
     justify-content:space-between;
     align-items:center;
     width:fit-content;
+    height: fit-content;
     /**/
     color:white;
     /* font-weight: bold; */
@@ -410,6 +414,7 @@ body{
     justify-content:space-between;
     align-items:center;
     width:fit-content;
+    height: fit-content;
     /**/
     color:white;
     /* font-weight: bold; */
@@ -424,6 +429,7 @@ body{
     justify-content:space-between;
     align-items:center;
     width:fit-content;
+    height: fit-content;
     /**/
     color:white;
     /* font-weight: bold; */
@@ -437,6 +443,32 @@ body{
     box-shadow:inset 3px 3px 8px black;/*rgb(20, 120, 0);*/
 }
 /* */
+.row--tabtype{
+    display: flex;
+    flex-direction: row;
+    /* border-bottom:0.5px solid black; */
+}
+.btn--tabtype{
+    padding-left: 1em;
+    padding-right: 1em;
+    /* border:0.1px solid black; */
+    /* border-bottom:0; */
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.btn--tabtype:hover{
+    font-weight: bold;
+    cursor:pointer;
+}
+.btn--tabtype:hover{
+    font-weight: bold;
+    cursor:pointer;
+}
+.table--tabtype{
+    /* display:none; */
+}
+
+/* */
 .paragraph--large{
     margin:2.5em;
 }
@@ -447,9 +479,10 @@ body{
 }
 /* */
 .card--3D-horizontal{
+    /* border:1px solid black; */
     display:flex;
     flex-direction:row;
-    flex-wrap: wrap;
+    flex-wrap:wrap;
     overflow:hidden;
     text-overflow:ellipsis;
     flex-shrink:2;
@@ -484,9 +517,7 @@ body{
     border-radius:3px;
     margin:0.5em;
 }
-/**
- *
- */
+/* */
 .card--inset{
     display:flex;
     flex-direction:row;
@@ -503,9 +534,11 @@ body{
 /* .card--paragraph{ */
 /* } */
 .card--horizontal{
+    /* border:1px solid black; */
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    /* justify-content: space-between; */
     justify-content: space-evenly;
     align-items: center;
     /**/
@@ -555,23 +588,23 @@ body{
 }
 /* */
 .block--datas-horizontal{
+    border:1px solid black;
     display:flex;
     flex-direction:row;
     flex-wrap:wrap;
     justify-content: space-around;
     align-items: center;
     /**/
-    border:1px solid black;
     padding:10px;
 }
 .block--datas-vertical{
+    border:1px solid black;
     display:flex;
     flex-direction:column;
     flex-wrap:wrap;
     justify-content: center;
     align-items: center;
     /**/
-    border:1px solid black;
     padding:10px;
 }
 .block--date{
@@ -654,14 +687,23 @@ body{
  *   ALL Modal...
  */
 .modal--big{
+    /**/
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /**/
     background:whitesmoke;
-    width:95vw;
-    height:80vh;
+    width:97vw;
+    /* width:95vw; */
+    height:98vh;
+    /* height:80vh; */
     border-radius:10px;
     /**/
     position: fixed;
-    left:2.5vw;
-    bottom:11vh;
+    left:1vw;
+    /* left:2vw; */
+    bottom:1vh;
+    /* bottom:11vh; */
     /**/
     filter: drop-shadow(0px 2px 5px black);
     box-shadow: inset 
@@ -669,14 +711,18 @@ body{
     0 0  0 1px rgb(255,255,255),
     0.3em 0.3em 1em rgba(0,0,0,0.3);
     /**/
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /**/
     overflow: auto;
     /* padding: 5%; */
     /* padding-top: 10%; */
     /* padding-top: 5%; */
+}
+.thead--light{
+    /* color: rgb(83, 22, 22); */
+    background-color:white;
+}
+.thead--dark{
+    background-color: black;
+    color:white;
 }
 /* .modal--content{
     border:2px solid red;
@@ -718,14 +764,17 @@ body{
     display: flex;
     flex-direction: column;
     align-items:center;
+    /* justify-content: center; */
 }
 .img--profile{
     border:2px solid black;
     height:100px;
+    width:90px;
 }
 .imgbtn--profile{
     border:2px solid black;
     height:100px;
+    width:90px;
 }
 .btns--row{
     display: flex;
@@ -734,6 +783,8 @@ body{
     width: 100%;
     justify-content: space-evenly;
     align-items: center;
+    margin-top:1em;
+    margin-bottom:1em;
 }
 
 

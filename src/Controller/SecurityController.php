@@ -19,7 +19,6 @@ class SecurityController extends AbstractController
         $this->emailVerifier = $emailVerifier;
     }
 
-    
     /**
      * @Route("/login", name="app_login")
      */
@@ -69,8 +68,9 @@ class SecurityController extends AbstractController
         dd("Passe dans LOGOUT (src/controller)");
 
         // tu peux écrire ce que tu veux là-dedans,
-        // c'est ce qui est défini dans SECURITY.YAML 
+        // c'est ce qui est défini dans Config/Packages/SECURITY.YAML
         // qui sera lu et exécuté !...
+        // Actuellement, renvoi vers 'app_login'
         //
         // throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }

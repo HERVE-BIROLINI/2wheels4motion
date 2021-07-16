@@ -8,9 +8,26 @@
 {{ include('driver/banner.html.twig') }}
 
 <section class="paragraph--large" id="section--presentation">
+{% if drivers is defined and drivers|length > 0 %}
     
-    {% if drivers is defined and drivers|length > 0 %}
+    <!-- Boucle 1 : boucle d'analyse pour comptage et détermination du comportement WRAP -->
+    {% set counter=0 %}
+    {% for oDriver in drivers %}
+        {% set oUser=oDriver.user %}
+        {% set oCompany=oDriver.company %}
+        {% set oDept=getdepartmentbycode(oCompany.zip|slice(0,2)) %}
+        {% set oRegion=getregionbycode(oDept.region_code) %}
+        {% if oCompany.isconfirmed 
+            and (region is null or region.code==oDept.region_code)
+            and (dept is null or dept is not defined or dept.code==oCompany.zip|slice(0,2))
+        %}
+            {% set counter = counter + 1 %}
+        {% endif %}
+    {% endfor %}
 
+
+    {% if counter > 0 %}
+    
         {% set regions=getregions() %}
         {% set depts=getdepartments() %}
 
@@ -65,20 +82,6 @@
         </form>
 
         <div class="d-flex flex-row flex-wrap">
-        <!-- Boucle 1 : boucle d'analyse pour comptage et détermination du comportement WRAP -->
-        {% set counter=0 %}
-        {% for oDriver in drivers %}
-            {% set oUser=oDriver.user %}
-            {% set oCompany=oDriver.company %}
-            {% set oDept=getdepartmentbycode(oCompany.zip|slice(0,2)) %}
-            {% set oRegion=getregionbycode(oDept.region_code) %}
-            {% if oCompany.isconfirmed 
-                and (region is null or region.code==oDept.region_code)
-                and (dept is null or dept is not defined or dept.code==oCompany.zip|slice(0,2))
-            %}
-                {% set counter = counter + 1 %}
-            {% endif %}
-        {% endfor %}
         <!-- Boucle 2 : boucle "active" -->
         {% for oDriver in drivers %}
             {% set oUser=oDriver.user %}
@@ -128,7 +131,7 @@
                         </div>
                     </div>
 
-                    <!-- 2nde rangé : photo carte VMDTR -->
+                    <!-- 2nde rangée : photo carte VMDTR -->
                     {% set oVMDTR=getdrivercard(oUser) %}
                     {% if oVMDTR %}
                     <img style='width:95%;' src="{{ asset(oVMDTR.pathname) }}" alt="Carte VMDTR">
@@ -165,8 +168,11 @@
             {% endif %}
         {% endfor %}
         </div>
-
+    {% else %}
+        <h5>Aucun pilote référencé ET "vérifié" pour l'heure...</h5>
     {% endif %}
+
+{% endif %}
 </section>
 
 <section class="paragraph--large" id="section--invitation">

@@ -8,10 +8,16 @@
 <!-- Claim Controller banner -->
 {{ include('claim/banner.html.twig') }}
 
-<!-- <section id="regions.json" hidden></section> -->
-<section id="dpts_json" hidden>
-    {{ JSgetdpts() }}
-</section>
+<!-- Getion de l'affichage d'une éventuelle erreur -->
+{% for flashError in app.flashes('error') %}
+    <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+{% endfor %}
+{% for flash in app.flashes('information') %}
+    <div class="alert alert-success" role="alert">{{ flash }}</div>
+{% endfor %}
+
+{#<!-- <section id="regions_json" hidden>{{ JSgetregions() }}</section> -->#}
+{#<!-- <section id="dpts_json" hidden>{{ JSgetdpts() }}</section> -->#}
 <section id="cities_json" hidden>
     {{ JSgetcities() }}
 </section>
@@ -26,7 +32,7 @@
     {% if date is defined %}{{ dump(date|date("d/m/Y")) }}{% else %}{{ "<br>Date non-défini" }}{% endif %}
     {% if time is defined %}{{ dump(time|date("H:i:s")) }}{% else %}{{ "<br>Time non-défini" }}{% endif %}
 #}
-        <!-- Adresse personnel du Customer -->
+        <!-- Adresse personnel du Customer, si pas encore de compte Customer -->
         {% if customer2Create %}
         <fieldset class="my-4"><!--class="d-flex flex-row justify-content-center my-4">-->
             <legend>Adresse personnelle :</legend>
@@ -54,7 +60,7 @@
                         required
                     >
                     <select class="form-control cities" id="inputcities"
-                    name="city" title="cities"
+                    name="cities" title="cities"
                     >
                         <option value="Select your city">Sélectionnez votre commune</option>
                     </select>
@@ -278,7 +284,7 @@
                                     <label class="required" for="claim_form_from_city">Ville :</label>
                                     {{ form_widget(claimForm.from_city) }}
                                     <select class="form-control cities" id="claim_form_from_cities"
-                                        name="city" title="cities"
+                                        name="cities" title="cities"
                                     >
                                         <option value="Select your city">Sélectionnez votre commune</option>
                                     </select>
@@ -342,7 +348,7 @@
                                 <label class="required" for="claim_form_to_city">Ville :</label>
                                 {{ form_widget(claimForm.to_city) }}
                                 <select class="form-control cities" id="claim_form_to_cities"
-                                    name="city" title="cities"
+                                    name="cities" title="cities"
                                 >
                                     <option value="Select your city">Sélectionnez votre commune</option>
                                 </select>
@@ -370,18 +376,15 @@
         {{ form_row(claimForm.comments) }}
         
         <!-- Boutons de sortie -->
-        &emsp;
+        {#<!-- &ensp; -->#}
         <div class="btns--row">
             <button class="btn btn-sm btn--blue" type="submit">
-                <i class="ri-send-plane-line"></i>
-                Envoyer la demande
+                <i class="ri-send-plane-line"></i>&ensp;Envoyer la demande
             </button>
-            <a class="btn btn-bg btn--secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">
-                <i class="ri-close-fill"></i>
-                Annuler
+            <a class="btn btn-sm btn--secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">
+                <i class="ri-close-fill"></i>&ensp;Annuler
             </a>
         </div>
-        <!-- &ensp; -->
         
         {{ form_end(claimForm) }}
     </div>

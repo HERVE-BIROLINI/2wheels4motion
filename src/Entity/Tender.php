@@ -42,6 +42,12 @@ class Tender
      */
     private $price;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Claim::class, inversedBy="tender")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $claim;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -103,6 +109,18 @@ class Tender
     public function setPrice(int $price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getClaim(): ?Claim
+    {
+        return $this->claim;
+    }
+
+    public function setClaim(?Claim $claim): self
+    {
+        $this->claim = $claim;
 
         return $this;
     }

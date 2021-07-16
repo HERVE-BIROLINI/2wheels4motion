@@ -25,7 +25,7 @@ security:
                 # path: homepage
                 path: app_logout
                 # where to redirect after logout (BIROLINI)
-                target: homepage
+                target: app_login
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication

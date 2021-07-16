@@ -109,7 +109,7 @@ class ClaimController extends AbstractController
         $claimForm->handleRequest($request);
 
         //
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager=$this->getDoctrine()->getManager();
         // ** Si le formulaire est correctement rempli... **
         if ($claimForm->isSubmitted() && $claimForm->isValid()
                 && ( (isset($customer_road) and $customer_road!='')
@@ -129,39 +129,77 @@ class ClaimController extends AbstractController
                     or $claim->getJourneyDate() > $now
                 )
                 // ... si délai < à 2h
-                and strtotime($claim->getArrivalatTime()->format('H:i'))
+                and
+                (
+                    strtotime($claim->getArrivalatTime()->format('H:i'))
                         -
                     strtotime($now->format('H:i'))
                     >= 7200
+                    or
+                    $claim->getJourneyDate() > $now
+                )
             ){
-                // Pour les enregistrements dans la BdD
-                $entityManager = $this->getDoctrine()->getManager();
 
-                //
-                if($customer2Create){
-                    $customer= new Customer();
+                // D'abord, recherche la liste des chauffeurs concernés...
+                // ... pour les régions de prise la "prise en charge" et de la "destination"
+                $obFGTwig = new FrenchGeographyTwig;
+                $obDriverTwig = new DriverTwig($this->getDoctrine()->getManager());
+                $arRegions=[];
+                foreach([$claim->getFromZip(), $claim->getToZip()] as $zip){
+                    $obRegion=$obFGTwig->getRegionByZip($zip);
+                    //
+                    if (!in_array($obRegion,$arRegions)) {
+                        array_push($arRegions,$obRegion);
+                    }
                 }
-                $customer->setRoad($customer_road);
-                $customer->setCity($customer_city);
-                $customer->setZip($customer_zip);
-                //
-                $claim->setClaimDatetime(new DateTime('now'));
-                //
-                $entityManager->persist($customer);
-                $entityManager->flush();
-                //
-                $claim->setCustomer($customer);
-                $entityManager->persist($claim);
-                //
-                $user->setCustomer($customer);
-                $entityManager->persist($customer);
+                // ... en localisant les entreprises T3P
+                $arDrivers=[];
+                foreach($arRegions as $obRegion){
+                    $arDrivers4Region=$obDriverTwig->getDriversByRegionOrZip($obRegion);
+                    $arDrivers=array_merge($arDrivers,$arDrivers4Region);
+                }
 
-                $entityManager->flush();
-                // c'est ici !!!!
-                // envoi des emails aux chauffeurs de la région du demandeur
-                var_dump('<br>... ENVOI DU COURRIEL (reste à gérer les destinataires) ??');
-                $this->sendClaimEmails($claim);
-                dd('courriels envoyés !!');
+                // Si aucun pilote référencé dans la région de la demande,
+                // en informe le client
+                if(count($arDrivers)>0){
+
+                    // Pour les enregistrements dans la BdD
+                    $entityManager = $this->getDoctrine()->getManager();
+
+                    //
+                    if($customer2Create){
+                        $customer= new Customer();
+                    }
+                    $customer->setRoad($customer_road);
+                    $customer->setCity($customer_city);
+                    $customer->setZip($customer_zip);
+                    //
+                    $claim->setClaimDatetime(new DateTime('now'));
+                    //
+                    $entityManager->persist($customer);
+                    $entityManager->flush();
+                    //
+                    $claim->setCustomer($customer);
+                    $entityManager->persist($claim);
+                    //
+                    $user->setCustomer($customer);
+                    $entityManager->persist($customer);
+
+
+                    // associe la Demande et tous les pilotes à qui elle sera envoyée
+                    foreach($arDrivers4Region as $obDriver){
+                        $claim->addDriver($obDriver);
+                    }
+
+                    // "remplissage" de la BdD
+                    $entityManager->flush();
+                    
+                    // envoi des emails aux chauffeurs de la région du demandeur
+                    $this->sendClaimEmails($claim,);
+                    // puis, renvoi à la page du tableau de bord du Customer
+                    return $this->redirectToRoute('profile_customer');
+                }
+                else{$this->addFlash('error', "Actuellement aucun pilote n'opérant dans la région de votre demande n'est encore référencé dans notre communauté. Malheureusement votre demande ne peut être satisfaite...");}
             }
             // ... problème d'heure (??)
             elseif(strtotime($claim->getArrivalatTime()->format('H:i'))
@@ -210,24 +248,6 @@ class ClaimController extends AbstractController
                                     //, MailerInterface $mailer
                                     )
     {
-        // recherche la liste des chauffeurs concernés...
-        // ... pour les régions de prise la "prise en charge" et de la "destination"
-        $obFGTwig = new FrenchGeographyTwig;
-        $obDriverTwig = new DriverTwig($this->getDoctrine()->getManager());
-        $arRegions=[];
-        $arDrivers=[];
-        foreach([$obClaim->getFromZip(), $obClaim->getToZip()] as $zip){
-            $obRegion=$obFGTwig->getRegionByZip($zip);
-            //
-            if (!in_array($obRegion,$arRegions)) {
-                array_push($arRegions,$obRegion);
-            }
-        }
-        // ... en localisant les entreprises T3P
-        foreach($arRegions as $obRegion){
-            $arDrivers=array_merge($arDrivers,$obDriverTwig->getDriversByRegionOrZip($obRegion));
-        }
-        //
         $obCustomer=$obClaim->getCustomer();
         $obUser=$obCustomer->getUser();
 
@@ -259,7 +279,8 @@ class ClaimController extends AbstractController
         $context['comments']=$obClaim->getComments();
 
         // Envoi d'eMail individuellement à tous les pilotes concernés par la région
-        foreach($arDrivers as $obDriver){
+        foreach($obClaim->getDrivers() as $obDriver){
+        // foreach($arDrivers as $obDriver){
             $context['driver_firstname']=$obDriver->getUser()->getFirstname();
             //
             $claimEmail->context($context)

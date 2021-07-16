@@ -34,16 +34,19 @@ class DriverController extends AbstractController
         else{
             $dept=null;
         }
-// dd($drivers);
+        
         return $this->render('driver/driverspresentation.html.twig', [
             'controller_name' => 'DriverController',
-            'drivers'   => $drivers->findAll(),
+
+            // 'drivers'   => $drivers->findAll(),
+            'drivers'   => $drivers->findBy(['is_verified'=>true]),
+
             'region'    => $region,
             'dept'      => $dept,
         ]);
     }
 
-    /**
+    /**NON UTILISE
      * @Route("{id}/presentation", name="profile")
      */
     public function profiledriver(Driver $obDriver = null, DriverRepository $drivers
@@ -60,6 +63,29 @@ class DriverController extends AbstractController
             'oDriver' => $obDriver,
             // 'oDriver' => $obDriver,
         ]);
+    }
+
+    /**
+     * @Route("{driver}/confirm", name="confirm", methods={"GET","POST"}, requirements={"company":"\d+"})
+     */
+    public function driverConfirm(Driver $driver): Response
+    {
+        dd("coder la vérification du Driver par l'administrateur...");
+        // // test si l'utilisateur N'est PAS encore identifié...
+        // if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
+        //     // ... renvoi vers la page de connection
+        //     return $this->redirectToRoute('app_login');
+        // }
+
+        // $entityManager = $this->getDoctrine()->getManager();
+        // if($entityManager->getRepository(Driver::class)->findOneBy(['id'=>$driver->getId()])) {
+        //     $driver->setIsconfirmed(True);
+        //     $entityManager->flush();
+        // }
+
+        // return $this->redirectToRoute('admin_index', [
+        //     'allcompaniesunknown'=>$entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>null]),
+        // ]);
     }
 
 

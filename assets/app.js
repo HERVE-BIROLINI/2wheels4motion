@@ -33,6 +33,20 @@ document.addEventListener("DOMContentLoaded", function(event) {
     
     // ** Vérifie l'existance d'une section (HTML) "masquée"
     //    contenant le fichier JSON transmis par PHP...
+    //  * REGIONS *
+    let regions=document.querySelector('#regions_json');
+    // ... si données des Departments (nom+zip) trouvées...
+    if(regions){
+        // récupère les données JSON et les "stock" dans Javascript...
+        // ... garde une version chaîne unique pour la recherche du ZIP à partir du NOM...
+        regions=regions.textContent;
+        while(regions.substr(0,1)=='\n' || regions.substr(0,1)==' '){
+            regions=regions.substr(1);
+        }
+        // ... crée un tableau pour distinguer chaque commune pour l'affichage dans les listes
+        var arRegions=regions.split(`$`);
+    }
+    //  * DEPARTMENTS *
     let dpts=document.querySelector('#dpts_json');
     // ... si données des Departments (nom+zip) trouvées...
     if(dpts){
@@ -45,8 +59,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         // ... crée un tableau pour distinguer chaque commune pour l'affichage dans les listes
         var arDpts=dpts.split(`$`);
     }
-    // ** Vérifie l'existance d'une section (HTML) "masquée"
-    //    contenant le fichier JSON transmis par PHP...
+    //  * CITIES *
     let cities=document.querySelector('#cities_json');
     // ... si données des Communes (nom+zip) trouvées...
     if(cities){
@@ -287,7 +300,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     // action sur le bouton de choix d'une entreprise existante
     let btnCompanies2Choice = document.querySelector('#btn--companies2choice');
     if(btnCompanies2Choice){
-
+        //
         btnCompanies2Choice.addEventListener('click', showKnownCompanies);
         function showKnownCompanies(){
             document.getElementById('blk--company2create').style.display = 'none';
@@ -306,6 +319,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
             document.querySelector('#btn--associate-company').style.pointerEvents="initial";
             document.querySelector('#btn--associate-company').style.opacity='initial';
         }
+
+        // gestion du retour par le bouton d'annulation
+        document.querySelector('#btn--companies-exit').onclick = goBackNewCompanyWithoutChoosen;
+        function goBackNewCompanyWithoutChoosen(){
+            document.getElementById('blk--company2create').style.display = '';
+            document.getElementById('blk--companies2choice').style.display = 'none';
+        }
+
     }
     //---------------------------------------------------------------
     // *** FIN - Gestion de la sélection d'une COMPANY existante ***
@@ -350,7 +371,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
         let arRowFlatrate = document.getElementsByClassName("row--flatrate");
         document.querySelector('#foot--flatrate').style.display = "none";
 
-        // console.log(arBtnFiltreRegion);
         function showhideByRegions(){
             // let btnFiltreRegion= document.getElementsByClassName("dropdownMenuOffset--region");
             // btnFiltreRegion.innerText=btnFiltreRegion.textContent="Région ("+this.innerHTML+")";
@@ -414,20 +434,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
         // ** gestion liste des départements suite à sélection d'une région **
 // console.log(arDpts);
 // console.log(document.querySelectorAll('.btn--filtre-region'));
-        document.querySelectorAll('.btn--filtre-region').forEach(element => {
-            element.addEventListener('click', applyRegionFilterOnDpts);
-        });
-        function applyRegionFilterOnDpts(){
-            // if(){
+        // document.querySelectorAll('.btn--filtre-region').forEach(element => {
+        //     element.addEventListener('click', applyRegionFilterOnDpts);
+        // });
+        // function applyRegionFilterOnDpts(){
+        //     // if(){
 
-            // }
-        };
-
-
-
+        //     // }
+        // };
 
         // ** Gestion des actions sur les boutons de filtrage **
-        let arBtnFlatrates = document.querySelectorAll('.flatrate');
+        // let arBtnFlatrates = document.querySelectorAll('.flatrate');
 
         // for(let btnFlatratesKnown of arBtnFlatratesKnown){
         //     btnFlatratesKnown.addEventListener('click', showSubmitButton);
@@ -441,5 +458,119 @@ document.addEventListener("DOMContentLoaded", function(event) {
     //-----------------------------------------------------
     // *** FIN - Gestion de la sélection d'un FLATRATE ***
     //-----------------------------------------------------
+
+
+    //------------------------------------------------------------------------
+    // *** DEBUT - Gestion de l'affichage des pages relatives aux onglets ***
+    //------------------------------------------------------------------------
+    // action sur le bouton de choix d'une entreprise existante
+    let arRowTabtype = document.querySelectorAll('.row--tabtype');
+    if(arRowTabtype){
+
+        // Pour chaque Block multi-tab
+        arRowTabtype.forEach(rowTabtype => {
+            // "colle" un espion à chaque élément associé
+            let arBtnTabtype=document.querySelectorAll('.btn--tabtype[parent_id="'+rowTabtype.id+'"]');
+            arBtnTabtype.forEach(btnTabType => {
+                btnTabType.onclick = showhideTable;
+                //
+                if(btnTabType.getAttribute('default') != null){
+                    activeTab(btnTabType);
+                }
+            });
+        });
+
+        // Gère l'affichage de la table et l'effet visuel de l'onglet
+        function showhideTable(){
+            activeTab(this);
+        }
+        function activeTab(btnTab2Activate){
+            // récupère tous les onglets "voisins"...
+            let arBtnTabtype=document.querySelectorAll('.btn--tabtype[parent_id="'+btnTab2Activate.getAttribute('parent_id')+'"]');
+            // ... gère les effets visuels des onglets
+            arBtnTabtype.forEach(btnTabType => {
+                if(btnTabType==btnTab2Activate){
+                    btnTabType.style.color = 'white';
+                    btnTabType.style.backgroundColor = 'black';
+                    // btnTabType.style.borderBottom = '0';
+                    btnTabType.style.boxShadow='0 0 0 0, 0 -4px 4px 0 rgb(140, 140, 140)';
+                    // ... en profite pour gérer l'affichage des tables associées
+                    document.querySelector('.table--tabtype[parent_id="'+btnTab2Activate.id+'"]').style.display = "";
+                    btnTabType.setAttribute('shown','Y');
+                }
+                else{
+                    btnTabType.style.color = 'black';
+                    btnTabType.style.backgroundColor = 'lightgray';
+                    // btnTabType.style.borderBottom = '0.5px solid black';
+                    btnTabType.style.boxShadow='0 0 0 0';
+                    // ... en profite pour gérer l'affichage des tables associées
+                    document.querySelector('.table--tabtype[parent_id="'+btnTabType.id+'"]').style.display = "none";
+                    btnTabType.setAttribute('shown','N');
+                }
+            })
+            //
+            document.querySelector('#btn--show-hide--archive').innerHTML='<i class="ri-eye-line"></i>&ensp;Récents seulement';
+            showhideArchive();
+        }
+
+        //
+        document.querySelector('#btn--show-hide--archive').onclick = showhideArchive;
+        function showhideArchive(){
+            // recherche les 'lignes' de Class ARCHIVE, pour la Table affichée
+            let btnTabTypeVisible=document.querySelector('.btn--tabtype[shown="Y"]');
+            let trTabTypeVisible=document.querySelectorAll('.table--tabtype[parent_id="'+btnTabTypeVisible.id+'"] tbody tr.ARCHIVE');
+            // observe l'état actuel
+            let btnSwitch=document.querySelector('#btn--show-hide--archive');
+            if(btnSwitch.innerHTML.includes('Afficher')){
+            // if(this.innerHTML.endswith('toutes')){
+                btnSwitch.innerHTML='<i class="ri-eye-line"></i>&ensp;Récents seulement';
+                //
+                trTabTypeVisible.forEach(tr => {
+                    tr.style.display = "";
+                })
+            }
+            else{
+                btnSwitch.innerHTML='<i class="ri-eye-line"></i>&ensp;Afficher tout';
+                //
+                trTabTypeVisible.forEach(tr => {
+                    tr.style.display = "none";
+                })
+            }
+        }
+    }
+    //----------------------------------------------------------------------
+    // *** FIN - Gestion de l'affichage des pages relatives aux onglets ***
+    //----------------------------------------------------------------------
+
+
+    //----------------------------------------------------------------------------
+    // *** DEBUT - Gestion de l'affichage des modales d'affichage des détails ***
+    //----------------------------------------------------------------------------
+    let arBtnDetailsView = document.querySelectorAll('.btn--claim--viewdetails');
+    if(arBtnDetailsView){
+        arBtnDetailsView.forEach(btn => {
+            btn.onclick = showDetails;
+        })
+
+        function showDetails(){
+            document.querySelector('#div--2hide-ifmodal').style.display="none";
+            document.querySelector('#modal--claim--'+this.getAttribute('claim_id')).style.display="";
+        }
+    }
+    //
+    let arBtnDetailsClose = document.querySelectorAll('#btn--claim--closedetails');
+    if(arBtnDetailsClose){
+        arBtnDetailsClose.forEach(btn => {
+            btn.onclick = hideDetails;
+        })
+
+        function hideDetails(){
+            document.querySelector('#'+this.getAttribute('parent_id')).style.display="none";
+            document.querySelector('#div--2hide-ifmodal').style.display="";
+        }
+    }
+    //--------------------------------------------------------------------------
+    // *** FIN - Gestion de l'affichage des modales d'affichage des détails ***
+    //--------------------------------------------------------------------------
 
 });

@@ -62,7 +62,7 @@ class RegistrationFormType extends AbstractType
                     new Email   (['message' => "L'adresse eMail n'est pas valide"]),
                     // new Unique  (['message' =>  "Un compte utilisant cet email existe déjà"]),
                     new Regex([
-                        'pattern' => "@^[A-Za-z]{1}+[0-9A-Za-z\-\_\.]+\@{1}[0-9A-Za-z\-\_\.]+\.{1}+[A-Za-z]{2}+@i",
+                        'pattern' => "@^[a-zA-Z]{1}+[\da-zA-Z\-\_\.]+\@{1}[\da-zA-Z\-\_\.]+\.{1}+[a-zA-Z]{2}+@i",
                         'message' => "Ne doit contenir que des caractères alphanumériques, un '@' et un '.' quelque chose",
                     ])
                 ],
@@ -75,7 +75,7 @@ class RegistrationFormType extends AbstractType
                 'constraints' =>  [
                     new NotBlank(['message' =>  "Le numéro de téléphone obligatoire"]),
                     new Regex([
-                        'pattern' => "@^0+[0-9]{9}@",
+                        'pattern' => "@^0+[\d]{9}@",
                         'message' => "Doit comporter 10 chiffres et commencer par un 0",
                     ]),
                     new Length([
@@ -121,7 +121,7 @@ class RegistrationFormType extends AbstractType
                             'max'           => 4096,
                         ]),
                         new Regex([
-                            'pattern'   => "@^[a-zA-Z0-9\@\$\£]+@i",
+                            'pattern'   => "@^[\da-zA-Z\@\$\£]+@i",
                             'message'   => "Doit contenir des caractères alphanumériques",
                         ]),
                     ],

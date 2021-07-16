@@ -72,15 +72,12 @@ class User implements UserInterface
     /**
      * @ORM\OneToOne(targetEntity=Driver::class, inversedBy="user", cascade={"persist", "remove"})
      */
-    // /**
-    //  * @ORM\ManyToOne(targetEntity=Driver::class)
-    //  */
     private $driver;
 
     /**
      * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="user", orphanRemoval=true, cascade={"persist"})
      */
-    private $picture;
+    private $pictures;
 
     /**
      * @ORM\OneToOne(targetEntity=Customer::class, inversedBy="user", cascade={"persist", "remove"})
@@ -89,7 +86,7 @@ class User implements UserInterface
 
     public function __construct()
     {
-        $this->picture = new ArrayCollection();
+        $this->pictures = new ArrayCollection();
     }
 
 
@@ -265,15 +262,15 @@ class User implements UserInterface
     /**
      * @return Collection|Picture[]
      */
-    public function getPicture(): Collection
+    public function getPictures(): Collection
     {
-        return $this->picture;
+        return $this->pictures;
     }
 
     public function addPicture(Picture $picture): self
     {
-        if (!$this->picture->contains($picture)) {
-            $this->picture[] = $picture;
+        if (!$this->pictures->contains($picture)) {
+            $this->pictures[] = $picture;
             $picture->setUser($this);
         }
 

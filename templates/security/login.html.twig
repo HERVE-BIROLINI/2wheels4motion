@@ -30,8 +30,7 @@
                 Mot de passe oublié ?
                 &ensp;
                 <a class="btn btn-bg btn--secondary" href="{#{{ path('profile_pwd') }}#}">
-                    <i class="ri-key-2-line"></i>
-                    Reinitialiser le mot de passe (RESTE A DEVELOPPER)
+                    <i class="ri-key-2-line"></i>&ensp;Reinitialiser le mot de passe (RESTE A DEVELOPPER)
                 </a>
             </div>
             {% endif %}
@@ -61,16 +60,14 @@
         <div class="d-flex justify-content-between w-100">
             <button class="btn btn-sm btn--blue" type="submit">
             <!-- <button class="btn btn-lg btn-primary" type="submit"> -->
-                <i class="ri-login-box-line"></i>
-                Se connecter
+                <i class="ri-login-box-line"></i>&ensp;Se connecter
             </button>
             {% if app.user is null %}
             <div class="d-flex justify-content-between align-items-center">
                 Pas encore de compte ?
                 &ensp;
                 <a class="btn btn-bg btn--secondary" href="{{ path('registration_user') }}">
-                    <i class="ri-record-circle-line"></i>
-                    Créer un compte
+                    <i class="ri-record-circle-line"></i>&ensp;Créer un compte
                 </a>
             </div>
             {% endif %}

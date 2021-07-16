@@ -14,6 +14,7 @@ use App\Security\EmailVerifier;
 use App\Repository\DriverRepository;
 use App\Repository\CompanyRepository;
 use App\Repository\PicturelabelRepository;
+use App\Tools\RegexTools;
 use App\Tools\UploadPictureTools;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -130,6 +131,7 @@ class RegistrationController extends AbstractController
         $error_siren=null;
         $driver_exist=null;
         $bError=null;
+        $obCompany=null;
         // Définition des variables, nécessaire si 1er passage...
         // $city=null;
         // ... mais si 2nd passage, récupère les saisies de l'interface
@@ -203,7 +205,8 @@ class RegistrationController extends AbstractController
             and !$error_siren
             and (is_null($bError) or !isset($bError) or $bError==false) and !is_null($obUploadPicture)
             and $vmdtr_number!==null and !$driver_exist=$drivers->findBy(['vmdtr_number'=>$vmdtr_number])
-            and preg_match("@^[A-Za-z'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ -]+@i", $city)
+            // and preg_match("@^[A-Za-z'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ -]+@i", $city)
+            and RegexTools::pattern_match($city,'name')
         ){
             // Pour les enregistrements dans la BdD
             $entityManager = $this->getDoctrine()->getManager();
@@ -295,23 +298,24 @@ class RegistrationController extends AbstractController
             ;
             $mailer->send($email);
 
+            $this->addFlash('information', "Votre demande a été signifiée à l'administrateur par courriel");
             return $this->render('profile/user.html.twig', [
                 'error_firstname'   => false,
                 'error_lastname'    => false,
                 'error_phone'       => false,
                 //
-                'msg_info'   => "Votre demande a été signifiée à l'administrateur par courriel",
+                // 'msg_info'   => "Votre demande a été signifiée à l'administrateur par courriel",
             ]);
         }
         // ... suite au choix d'une Company déjà "référencée"
         elseif(isset($_POST['companychoosen'])){
             $obCompany=$companies->findOneBy(['id'=>$_POST['companychoosen']]);
-            $name=$obCompany->getName();
-            $siren=$obCompany->getSiren();
-            $nic=$obCompany->getNic();
-            $road=$obCompany->getRoad();
-            $zip=$obCompany->getZip();
-            $city=$obCompany->getCity();
+            // $name=$obCompany->getName();
+            // $siren=$obCompany->getSiren();
+            // $nic=$obCompany->getNic();
+            // $road=$obCompany->getRoad();
+            // $zip=$obCompany->getZip();
+            // $city=$obCompany->getCity();
         }
         // ... autres cas, sources de conflit
         elseif(!is_null($driver_exist)){
@@ -326,13 +330,15 @@ class RegistrationController extends AbstractController
         elseif($hasconfirmedgoodstanding
                 and (is_null($bError) or !isset($bError) or $bError==false) and !is_null($obUploadPicture)
                 and $vmdtr_number!==null and !$driver_exist=$drivers->findBy(['vmdtr_number'=>$vmdtr_number])
-                and !preg_match("@^[A-Za-z'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ -]+@i", $city)
+                // and !preg_match("@^[A-Za-z'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ -]+@i", $city)
+                and RegexTools::pattern_match($city,'name')
         ){
             $error_city=true;
         }
 
         // 1er passage, ou retour après erreur de saisie
         return $this->render('registration/driver.html.twig', [
+            'controller_name' => 'RegistrationController',
             'error_files'   => $error_files,
             'error_city'    => $error_city,
             'error_siren'   => $error_siren,
@@ -341,12 +347,14 @@ class RegistrationController extends AbstractController
             'vmdtr_number'  => $vmdtr_number,
             'vmdtr_validity'=> $vmdtr_validity,
             'motomodel'     => $motomodel,
-            'name'          => $name,
-            'siren'         => $siren,
-            'nic'           => $nic,
-            'road'          => $road,
-            'zip'           => $zip,
-            'city'          => $city,
+            //
+            'company'       => $obCompany,
+            // 'name'          => $name,
+            // 'siren'         => $siren,
+            // 'nic'           => $nic,
+            // 'road'          => $road,
+            // 'zip'           => $zip,
+            // 'city'          => $city,
             'hasconfirmedgoodstanding'=>$hasconfirmedgoodstanding,
             //
             'allcompaniesknown'=>$companies->findBy(['isconfirmed'=>true]),

@@ -70,22 +70,21 @@ class DriverController extends AbstractController
      */
     public function driverConfirm(Driver $driver): Response
     {
-        dd("coder la vérification du Driver par l'administrateur...");
-        // // test si l'utilisateur N'est PAS encore identifié...
-        // if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
-        //     // ... renvoi vers la page de connection
-        //     return $this->redirectToRoute('app_login');
-        // }
+        // test si l'utilisateur N'est PAS encore identifié...
+        if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
+            // ... renvoi vers la page de connection
+            return $this->redirectToRoute('app_login');
+        }
 
-        // $entityManager = $this->getDoctrine()->getManager();
-        // if($entityManager->getRepository(Driver::class)->findOneBy(['id'=>$driver->getId()])) {
-        //     $driver->setIsconfirmed(True);
-        //     $entityManager->flush();
-        // }
+        $entityManager = $this->getDoctrine()->getManager();
+        if($entityManager->getRepository(Driver::class)->findOneBy(['id'=>$driver->getId()])) {
+            $driver->setIsVerified(True);
+            $entityManager->flush();
+        }
 
-        // return $this->redirectToRoute('admin_index', [
-        //     'allcompaniesunknown'=>$entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>null]),
-        // ]);
+        return $this->redirectToRoute('admin_index', [
+            'allcompaniesunknown'=>$entityManager->getRepository(Driver::class)->findBy(['is_verified'=>null]),
+        ]);
     }
 
 

@@ -49,9 +49,9 @@
                         <i class="ri-record-circle-line"></i>&ensp;Associer la société choisie
                     </button>
                     {% if controller_name is defined and controller_name=='RegistrationController' %}
-                    <a class="btn btn-bg btn--secondary btn-return" href="{{ path('registration_driver', {'id': app.user.id}) }}">
+                    <a class="btn btn-sm btn--secondary btn-return" href="{{ path('registration_driver', {'id': app.user.id}) }}">
                     {% elseif controller_name is defined and controller_name=='ProfileController' %}
-                    <a class="btn btn-bg btn--secondary btn-return" id="btn--companies-exit">{#<!--  href="{{ path('profile_driver') }} -->#}
+                    <a class="btn btn-sm btn--secondary btn-return" id="btn--companies-exit">
                     {% else %}
                     {% endif %}
                         <i class="ri-close-fill"></i>&ensp;Retourner déclarer une nouvelle société

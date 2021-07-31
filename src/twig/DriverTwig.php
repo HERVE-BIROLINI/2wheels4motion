@@ -51,6 +51,7 @@ class DriverTwig extends AbstractExtension
             // fonctions de manipulations de l'objet Driver
             new TwigFunction('getdriverbyid', [$this, 'getDriverById']),
             new TwigFunction('getdriversbyregionorzip', [$this, 'getDriversByRegionOrZip']),
+            new TwigFunction('getdriversbycompany', [$this, 'getDriversByCompany']),
             // fonctions de manipulations de l'objet Company
             new TwigFunction('getallcompanies', [$this, 'getAllCompanies']),
             new TwigFunction('getcompanybyid', [$this, 'getCompanyById']),
@@ -88,6 +89,9 @@ class DriverTwig extends AbstractExtension
         // extrait les pilotes associées aux entreprises T3P localisées
         return $this->entityManager->getRepository(Driver::class)->findBy(['company'=>$arCompanies]);
     }
+    public function getDriversByCompany($id){
+        return $this->entityManager->getRepository(Driver::class)->findBy(['company'=>$id]);
+    }
     // fonctions de manipulations de l'objet Company
     public function getAllCompanies(){
         return $this->entityManager->getRepository(Company::class)->findAll();
@@ -112,7 +116,7 @@ class DriverTwig extends AbstractExtension
         return $arCompanies;
     }
     public function getKnownCompanies(){
-        return $this->entityManager->getRepository(Company::class)->findOneBy(['isconfirmed'=>true]);
+        return $this->entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>true]);
     }
 
     // *************************************************************

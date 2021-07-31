@@ -47,13 +47,17 @@
                     <div class="d-flex flex-row">
                         <div class="col-4"></div>
                         <div>
-                            <img class="img--boolean"
                             {% if flatrate.pickupincluded %}
-                            src="{{ asset(sImgPath ~'misc/true.png') }}"
+                            <img class="img--boolean"
+                                src="{{ asset(sImgPath ~'misc/true.png') }}"
+                                alt="image pour booléen TRUE"
+                            >
                             {% else %}
-                            src="{{ asset(sImgPath ~'misc/false.png') }}"
+                            <img class="img--boolean"
+                                src="{{ asset(sImgPath ~'misc/false.png') }}"
+                                alt="image pour booléen FALSE"
+                            >
                             {% endif %}
-                            alt="image pour booléen">
                             {#<input type="checkbox" name="pickupincluded" disabled
                                 {% if flatrate.pickupincluded %}checked{% endif %}
                             />#}

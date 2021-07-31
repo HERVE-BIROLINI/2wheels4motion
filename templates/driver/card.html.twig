@@ -1,0 +1,88 @@
+
+            <!-- ... LA "carte utilisateur" à itérer... -->
+            <div class="card--3D-horizontal col-12">
+                <!-- ... photo / notation -->
+                <div class="d-flex flex-row flex-wrap col-12 col-lg-3">
+                    <div class="d-flex flex-row col-2 justify-content-center">
+                        <img class="img--profile justify-self-start" src="{{ asset(getuserportrait(obDriver.user).pathname) }}" alt="Photo de profil">
+                    </div>
+                    &emsp;
+                    <div class="col-8">
+                        <!-- indication du statut courant sur l'Annuaire -->
+                        <div class="d-flex flex-row">
+                            <b>Vérifié :</b>
+                            &ensp;
+                            {% if obDriver.isverified %}
+                            <img class="img--boolean"
+                                src="{{ asset(sImgPath ~'misc/true.png') }}"
+                                alt="image pour booléen TRUE"
+                            >
+                            {% else %}
+                            <img class="img--boolean"
+                                src="{{ asset(sImgPath ~'misc/false.png') }}"
+                                alt="image pour booléen FALSE"
+                            >
+                            {% endif %}
+                        </div>
+                        <!-- indication du nombre de courses effectuées par l'Annuaire -->
+                        <div class="d-flex flex-row">
+                            <b>Courses :</b>
+                            &ensp;
+                            {% if obDriver.isverified %}
+                            A développer (total Driver)
+                            {% else %}
+                            A développer (total Driver)
+                            {% endif %}
+                        </div>
+                        <!-- indication de la moyenne des notes reçues par les Customers -->
+                        <div><b>Notation :</b></div>
+                        <div class="d-flex flex-row justify-content-start">
+                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                        </div>
+                    </div>
+                </div>
+                <!-- ... coordonnées -->
+                <div class="card--horizontal justify-content-between mt-2 col-12 col-lg-9">
+                    <!-- ... colonne Nom / Courriel -->
+                    <div class="col-12 col-xl-6">
+                        <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                                <div class="col-sm-12 col-md-6"><b>Nom :</b></div>
+                                <div class="pl-4 col-sm-12 col-md-6">{{ obDriver.user.lastname~' '~obDriver.user.firstname }}</div>
+                        </div>
+                        <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                            <div class="col-sm-12 col-md-6"><b>Courriel :</b></div>
+                            <div class="pl-4 col-sm-12 col-md-6">
+                                <a href="{{ 'mailto:' ~ obDriver.user.email }}">
+                                    {{ obDriver.user.email }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ... colonne Téléphone / Moto -->
+                    <div class="col-12 col-xl-6">
+                        <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                            <div class="col-sm-12 col-md-6"><b>Téléphone :</b></div>
+                            <div class="pl-4 col-sm-12 col-md-6">
+                                <a href="{{ 'tel:' ~obDriver.user.phone }}">
+                                    {{ obDriver.user.phone }}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                            <div class="col-sm-12 col-md-6"><b>Modèle moto :</b></div>
+                            <div class="pl-4 col-sm-12 col-md-6">{{ obDriver.motomodel }}</div>
+                        </div>
+                    </div>
+                    &ensp;
+                    {#
+                    <!-- bouton de suppression de la Claim -->
+                    <button class="btn btn-sm btn--blue mt-2" id="btn--send-tender" data_id="{{ claim.id }}" data_type="claim">
+                        <i class="ri-file-shred-line"></i>&ensp;Annuler la demande (A DEVELOPPER OU PAS)
+                    </button>
+                    #}
+                </div>
+            </div>

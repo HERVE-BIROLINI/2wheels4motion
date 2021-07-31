@@ -85,7 +85,7 @@ class RegistrationController extends AbstractController
                     ->from(new Address('twowheelsformotion@gmail.com', 'Annuaire Moto-taxi'))
                     ->to($user->getEmail())
                     ->subject('Merci de confirmer votre adresse électronique.')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
+                    ->htmlTemplate('mailer/confirmation.html.twig')
             );
 
             // do anything else you need here, like send an email
@@ -282,7 +282,7 @@ class RegistrationController extends AbstractController
                 ->to($obUser->getEmail())
                 ->subject("Bienvenue parmi la flotte de pilotes de l'Annuaire 2Wheels4Motion")
                 // ->text('text') ou htmlTemplate au choix !!
-                ->htmlTemplate('registration/newdriver_email.html.twig')
+                ->htmlTemplate('mailer/newdriver.html.twig')
             ;
             $mailer->send($email);
 
@@ -310,12 +310,6 @@ class RegistrationController extends AbstractController
         // ... suite au choix d'une Company déjà "référencée"
         elseif(isset($_POST['companychoosen'])){
             $obCompany=$companies->findOneBy(['id'=>$_POST['companychoosen']]);
-            // $name=$obCompany->getName();
-            // $siren=$obCompany->getSiren();
-            // $nic=$obCompany->getNic();
-            // $road=$obCompany->getRoad();
-            // $zip=$obCompany->getZip();
-            // $city=$obCompany->getCity();
         }
         // ... autres cas, sources de conflit
         elseif(!is_null($driver_exist)){

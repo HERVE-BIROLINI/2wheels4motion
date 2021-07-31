@@ -25,6 +25,10 @@
     </head>
 
     <body>
+
+        <!-- Bouton "fixe" à afficher en même temps que toute Modale -->
+        <div class="btn--circle btn--hidemodal modal--closing" id="btn--modal--closing" style="display:none;">X</div>
+        
         <!-- {# ["ROLE_ADMIN"] #} -->
         <header id="section--header">
             {% if app.user %}
@@ -122,16 +126,13 @@
     <!-- IS_AUTHENTICATED_FULLY ? -->
     <!-- {#{{ dump(is_granted('IS_AUTHENTICATED_FULLY')) }}#} -->
 
-
         {% block body %}
-        
         {% endblock %}
-
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
 
-        <div id="uptotop"><a href="#section--header" title="title"><i class="ri-arrow-up-line"></i></a></div>
+        <div class="btn--circle" id="uptotop"><a href="#section--header" title="title"><i class="ri-arrow-up-line"></i></a></div>
     </body>
 </html>

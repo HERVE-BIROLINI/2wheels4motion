@@ -1,0 +1,47 @@
+
+<body style="width:2100px;height:2970px;font-size:2em;padding:2em;border:2px solid red;">
+    
+    <div style="display:flex;flex-direction:row;margin-top:1em;align-self:center;">
+        <div style="display:flex;flex-direction:column;width:66%;margin-left:2em;font-weight:bolder;">
+            <u>Société de transport (T3P) :</u><br>
+            {{ company_name }}<br>
+            {{ company_road }}<br>
+            {{ company_zip~' '~company_city }}<br>
+            {{ user_phone }}<br>
+            {{ user_email }}<br>
+            {{ company_siren~company_nic }}<br>
+        </div>
+        <div style="display:flex;flex-direction:column;width:33%;">
+            <u>Client :</u><br>
+            {{ customer_name }}<br>
+            {{ customer_road }}<br>
+            {{ customer_zip~' '~customer_city }}<br>
+            {{ customer_phone }}<br>
+            {{ customer_email }}<br>
+            {{ customer_siren~customer_nic }}<br>
+        </div>
+    </div>
+
+    <div style="margin:5em;">
+        <h2>Devis n°{{ tender_number }},<br>
+            du {{ tender_datetime }}
+        </h2>
+    </div>
+
+    <h3>Date de la course :</h3>
+    <div style="padding-left:2em;">{{ claim_journeydate }}</div>
+    <h3>Lieu de prise en charge :</h3>
+    <div style="padding-left:2em;">{{ claim_fromroad~', '~claim_fromzip~' '~claim_fromcity }}</div>
+    <h3>Heure de rendez-vous :</h3>
+    <div style="padding-left:2em;">{{ tender_rdvattime }}</div>
+    <h3>Destination :</h3>
+    <div style="padding-left:2em;">{{ claim_toroad~', '~claim_tozip~' '~claim_tocity }}</div>
+    <h3>Tarif de la course :</h3>
+    <div style="padding-left:2em;">{{ tender_price }}</div>
+
+    <br>
+
+    <h3>TVA :</h3>
+    <div style="padding-left:2em;">{{ tender_price }}</div>
+
+</body>

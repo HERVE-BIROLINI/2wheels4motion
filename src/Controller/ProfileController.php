@@ -12,11 +12,14 @@ use App\Form\ChangePwdFormType;
 use App\Repository\UserRepository;
 use App\Tools\RegexTools;
 use App\Tools\UploadPictureTools;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 // use App\Twig\PictureTwig;
 // use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 // use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -254,6 +257,7 @@ class ProfileController extends AbstractController
      * @Route("/driver", name="driver")
      */
     public function profiledriver(
+        MailerInterface $mailer
         // EntityManagerInterface $entityManager
     ): Response
     {
@@ -286,13 +290,23 @@ class ProfileController extends AbstractController
         elseif(isset($_POST['siren'])){
             // Si le n° de SIREN n'existe pas, crée une nouvelle Company...
             if(!$obCompany=$companies->findOneBy(['siren'=>$_POST['siren']])){
-            // if($obCompany=$companies->findOneBy(['siren'=>$_POST['siren']])){
-            //     var_dump("<br> 1.2 - Modification d'une Company existante...");
-            // }
-            // else{
-dd("développer l'envoi d'un email à l'administrateur pour vérification de la nouvelle Company !");
                 $obCompany=new Company;
                 $obCompany->setSiren($_POST['siren']);
+
+                // envoi d'un courriel à l'administrateur pour validation du compte Driver
+                $email=(new TemplatedEmail());
+                $email->from(new Address($user->getEmail(), '2Wheels4Motion - Annuaire Moto-taxi'))
+                    ->to('twowheelsformotion@gmail.com')
+                    ->subject("Validation du référencement d'un nouveau PILOTE !")
+                    ->text("Vérifier le SIREN ".$_POST['siren']." pour la demande de pilote de l'utilisateur "
+                        .$user->getLastname()." ".$user->getFirstname()." (".$user->getId().")..."
+                        ."Ainsi que sa carte VMDTR dont le n° est ".$driver->getVmdtrNumber()." !"
+                    )
+                ;
+                $mailer->send($email);
+
+                $this->addFlash('information', "Votre demande a été signifiée à l'administrateur par courriel");
+            
             }
             //
             $obCompany->setName($_POST['name']);

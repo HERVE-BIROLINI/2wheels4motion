@@ -108,7 +108,7 @@ class ClaimFormType extends AbstractType
             ->add('comments',TextareaType::class,[
                 'label' => "Commentaires :",
                 'required'=> false,
-                'attr'  => ['placeholder'=>"ex: précisez un bagage, un 'crochet' sur le trajet...",],
+                'attr'  => ['placeholder'=>"ex: précisez un bagage, une 'étape' sur le trajet...",],
             ])
         ;
     }

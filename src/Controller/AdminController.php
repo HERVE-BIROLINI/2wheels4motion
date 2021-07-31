@@ -25,7 +25,6 @@ class AdminController extends AbstractController
             //
             'allcompaniesunknown'=>$entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>null]),
             'alldriversunverified'=>$entityManager->getRepository(Driver::class)->findBy(['is_verified'=>null]),
-
         ]);
     }
     

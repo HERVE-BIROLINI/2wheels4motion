@@ -132,14 +132,14 @@
                     <td>{{ getcitybyzip(claim.tozip).name }}</td>
                     <td>
                         <div class="d-flex flex-row flex-wrap align-items-center">
-                            <button class="btn btn-sm btn--blue btn--claim--viewdetails" id="{{ 'btn--claim--viewdetails'~claim.id }}" claim_id="{{ claim.id }}">
+                            <button class="btn btn-sm btn--blue btn--showmodal" id="{{ 'btn--showmodal'~claim.id }}" data_id="{{ claim.id }}" data_type="claim">
                                 <i class="ri-eye-line"></i>&ensp;Détails
                             </button>
                             &ensp;
                             {% if claim.tenders|length < 0 %}
                             {#
                             {% if claim.tenders|length > 0 %}
-                            <button class="btn btn-sm btn--blue" claim_id="{{ claim.id }}">
+                            <button class="btn btn-sm btn--blue" data_id="{{ claim.id }}" data_type="claim">
                                 <i class="ri-file-paper-2-line"></i>&ensp;{{ claim.tenders|length }}&ensp;Devis
                             </button>
                             <!-- id="btn--claim--viewtenders" -->
@@ -231,7 +231,6 @@
     <!-- Modal d'affichage des détails de la demande -->
     {% for claim in app.user.customer.getclaims %}
     <div class="modal--big p-5" id="{{ 'modal--claim--'~claim.id }}" style="display:none;">
-        <!-- parent_id="{{ 'btn--claim--viewdetails'~claim.id }}" -->
         <!-- Les "détails" de la demande -->
         <h3 class="pb-1">{{ 'Demande : (#'~claim.id~')' }}</h3>
         <table class="table table-striped table--txtlight">
@@ -265,68 +264,15 @@
         <div class="d-flex flex-column align-items-center">
         <!-- <div class="d-flex flex-row flex-wrap"> -->
             {% for driver in claim.drivers %}
-            <!-- ... LA "carte utilisateur" à itérer... -->
-            <div class="card--3D-horizontal col-12">
-                <!-- ... photo -->
-                <div class="d-flex flex-row flex-wrap col-12 col-lg-3">
-                    <div class="d-flex flex-row col-4 justify-content-center">
-                        <img class="img--profile justify-self-start" src="{{ asset(getuserportrait(driver.user).pathname) }}" alt="Photo de profil">
-                    </div>
-                    <div class="col-8">
-                        <div><b>Notation :</b></div>
-                        <div class="d-flex flex-row justify-content-start">
-                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
-                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
-                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
-                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
-                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
-                        </div>
-                    </div>
-                </div>
-                <!-- ... coordonnées -->
-                <div class="card--horizontal justify-content-between mt-2 col-12 col-lg-9">
-                    <div class="col-12 col-xl-6">
-                        <div class="d-flex flex-row flex-wrap justify-content-between col-12">
-                                <div class="col-sm-12 col-md-6"><b>Nom :</b></div>
-                                <div class="pl-4 col-sm-12 col-md-6">{{ driver.user.lastname~' '~driver.user.firstname }}</div>
-                        </div>
-                        <div class="d-flex flex-row flex-wrap justify-content-between col-12">
-                            <div class="col-sm-12 col-md-6"><b>Courriel :</b></div>
-                            <div class="pl-4 col-sm-12 col-md-6">
-                                <a href="{{ 'mailto:' ~ driver.user.email }}">
-                                    {{ driver.user.email }}
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-xl-6">
-                        <div class="d-flex flex-row flex-wrap justify-content-between col-12">
-                            <div class="col-sm-12 col-md-6"><b>Téléphone :</b></div>
-                            <div class="pl-4 col-sm-12 col-md-6">
-                                <a href="{{ 'tel:' ~driver.user.phone }}">
-                                    {{ driver.user.phone }}
-                                </a>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row flex-wrap justify-content-between col-12">
-                            <div class="col-sm-12 col-md-6"><b>Modèle moto :</b></div>
-                            <div class="pl-4 col-sm-12 col-md-6">{{ driver.motomodel }}</div>
-                        </div>
-                    </div>
-                    &ensp;
-                    {#
-                    <!-- bouton de suppression de la Claim -->
-                    <button class="btn btn-sm btn--blue mt-2" id="btn--send-tender" claim_id="{{ claim.id }}">
-                        <i class="ri-file-shred-line"></i>&ensp;Annuler la demande (A DEVELOPPER OU PAS)
-                    </button>
-                    #}
-                </div>
-            </div>
+                <!-- ... LA "carte utilisateur" à itérer... -->
+                {{ include('driver/card.html.twig', {obDriver: driver}) }}
             {% endfor %}
         </div>
         {% endif %}
 
-        <button class="btn btn-sm btn--secondary mt-5" id="btn--claim--closedetails" parent_id="{{ 'modal--claim--'~claim.id }}">
+        <button class="btn btn-sm btn--secondary mt-5 btn--hidemodal"
+            parent_id="{{ 'modal--claim--'~claim.id }}"
+        >
             <i class="ri-close-fill"></i>&ensp;Fermer
         </button>
     </div>

@@ -18,8 +18,7 @@ import 'bootstrap';
 import { identifierForContextKey } from 'stimulus/webpack-helpers';
 
 
-
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener("DOMContentLoaded", function(event){
     
     // !!! NE SERT A RIEN !!!
     //------------------------
@@ -465,9 +464,41 @@ document.addEventListener("DOMContentLoaded", function(event) {
     //------------------------------------------------------------------------
     // action sur le bouton de choix d'une entreprise existante
     let arRowTabtype = document.querySelectorAll('.row--tabtype');
-    if(arRowTabtype){
+    if(arRowTabtype.length>0){
 
-        // Pour chaque Block multi-tab
+        // ** Gestion du filtrage sur l'onglet courant **
+        let htmlBtnSwitchArchive=document.querySelector('#btn--show-hide--archive');
+        console.log(htmlBtnSwitchArchive);
+        // if(htmlBtnSwitchArchive.length>0){
+        //     htmlBtnSwitchArchive.forEach(html => {
+        //         html.onclick = showhideArchive;
+        //     })
+        // }
+        htmlBtnSwitchArchive.onclick = showhideArchive;
+        function showhideArchive(){
+            // recherche les 'lignes' de Class ARCHIVE, pour la Table affichée
+            let btnTabTypeVisible=document.querySelector('.btn--tabtype[shown="Y"]');
+            let trTabTypeVisible=document.querySelectorAll('.table--tabtype[parent_id="'+btnTabTypeVisible.id+'"] tbody tr.ARCHIVE');
+            // observe l'état actuel
+            let btnSwitch=document.querySelector('#btn--show-hide--archive');
+            if(btnSwitch.innerHTML.includes('Afficher')){
+            // if(this.innerHTML.endswith('toutes')){
+                btnSwitch.innerHTML='<i class="ri-eye-line"></i>&ensp;Récents seulement';
+                //
+                trTabTypeVisible.forEach(tr => {
+                    tr.style.display = "";
+                })
+            }
+            else{
+                btnSwitch.innerHTML='<i class="ri-eye-line"></i>&ensp;Afficher tout';
+                //
+                trTabTypeVisible.forEach(tr => {
+                    tr.style.display = "none";
+                })
+            }
+        }
+    
+        // ** Pour chaque Block multi-tab **
         arRowTabtype.forEach(rowTabtype => {
             // "colle" un espion à chaque élément associé
             let arBtnTabtype=document.querySelectorAll('.btn--tabtype[parent_id="'+rowTabtype.id+'"]');
@@ -512,65 +543,88 @@ document.addEventListener("DOMContentLoaded", function(event) {
             document.querySelector('#btn--show-hide--archive').innerHTML='<i class="ri-eye-line"></i>&ensp;Récents seulement';
             showhideArchive();
         }
-
-        //
-        document.querySelector('#btn--show-hide--archive').onclick = showhideArchive;
-        function showhideArchive(){
-            // recherche les 'lignes' de Class ARCHIVE, pour la Table affichée
-            let btnTabTypeVisible=document.querySelector('.btn--tabtype[shown="Y"]');
-            let trTabTypeVisible=document.querySelectorAll('.table--tabtype[parent_id="'+btnTabTypeVisible.id+'"] tbody tr.ARCHIVE');
-            // observe l'état actuel
-            let btnSwitch=document.querySelector('#btn--show-hide--archive');
-            if(btnSwitch.innerHTML.includes('Afficher')){
-            // if(this.innerHTML.endswith('toutes')){
-                btnSwitch.innerHTML='<i class="ri-eye-line"></i>&ensp;Récents seulement';
-                //
-                trTabTypeVisible.forEach(tr => {
-                    tr.style.display = "";
-                })
-            }
-            else{
-                btnSwitch.innerHTML='<i class="ri-eye-line"></i>&ensp;Afficher tout';
-                //
-                trTabTypeVisible.forEach(tr => {
-                    tr.style.display = "none";
-                })
-            }
-        }
     }
+
     //----------------------------------------------------------------------
     // *** FIN - Gestion de l'affichage des pages relatives aux onglets ***
     //----------------------------------------------------------------------
 
 
-    //----------------------------------------------------------------------------
-    // *** DEBUT - Gestion de l'affichage des modales d'affichage des détails ***
-    //----------------------------------------------------------------------------
-    let arBtnDetailsView = document.querySelectorAll('.btn--claim--viewdetails');
-    if(arBtnDetailsView){
-        arBtnDetailsView.forEach(btn => {
-            btn.onclick = showDetails;
+    //----------------------------------------------------
+    // *** DEBUT - Gestion de l'affichage des modales ***
+    //----------------------------------------------------
+    let arBtnShowModal = document.querySelectorAll('.btn--showmodal');
+    if(arBtnShowModal.length>0){
+        arBtnShowModal.forEach(btn => {
+            btn.onclick=showModal;
         })
 
-        function showDetails(){
+        function showModal(){
             document.querySelector('#div--2hide-ifmodal').style.display="none";
-            document.querySelector('#modal--claim--'+this.getAttribute('claim_id')).style.display="";
+            document.querySelector('#modal--'+this.getAttribute('data_type')+'--'+this.getAttribute('data_id')).style.display="";
+            //
+            document.querySelector('#btn--modal--closing').style.display="";
+            //
+            document.querySelector('#section--header').classList.add("disabledelements");
+            document.querySelector('#banner').classList.add("disabledelements");
         }
     }
-    //
-    let arBtnDetailsClose = document.querySelectorAll('#btn--claim--closedetails');
-    if(arBtnDetailsClose){
-        arBtnDetailsClose.forEach(btn => {
-            btn.onclick = hideDetails;
+    // Gestion de l'action sur le bouton FERMER des Modal
+    let arBtnHideModal = document.querySelectorAll('.btn--hidemodal');
+    if(arBtnHideModal.length>0){
+        arBtnHideModal.forEach(btn => {
+            btn.onclick=hideModal;
         })
 
-        function hideDetails(){
-            document.querySelector('#'+this.getAttribute('parent_id')).style.display="none";
+        function hideModal(){
+            let htmlModalShown = document.querySelector('#'+this.getAttribute('parent_id'));
+            if(htmlModalShown){
+                htmlModalShown.style.display="none";
+            }
+            else{
+                let arModal=document.querySelectorAll('.modal--big');
+                arModal.forEach(htmlModal => {
+                    htmlModal.style.display="none";
+                });
+            }
+            //
+            document.querySelector('#btn--modal--closing').style.display="none";
             document.querySelector('#div--2hide-ifmodal').style.display="";
+            //
+            document.querySelector('#section--header').classList.remove("disabledelements");
+            document.querySelector('#banner').classList.remove("disabledelements");
         }
     }
-    //--------------------------------------------------------------------------
-    // *** FIN - Gestion de l'affichage des modales d'affichage des détails ***
-    //--------------------------------------------------------------------------
+    //--------------------------------------------------
+    // *** FIN - Gestion de l'affichage des modales ***
+    //--------------------------------------------------
+
+
+    //----------------------------------------------------------------
+    // *** DEBUT - Gestion de la copie d'un' ID dans le Clipboard ***
+    //----------------------------------------------------------------
+    // /!\ La copie dans le presse-papiers ne fonctionne pas si il y a enchaînement avec HREF
+    let arHtml_CopyId2Clipboard = document.querySelectorAll('.html--copyidtoclipboard');
+    if(arHtml_CopyId2Clipboard.length>0){
+        arHtml_CopyId2Clipboard.forEach(html => {
+            html.onclick = copyId2Clipboard;
+        })
+
+        function copyId2Clipboard(){
+            console.log(this.id);
+            navigator.permissions.query({name: "clipboard-write"}).then(result => {
+                if (result.state == "granted" || result.state == "prompt") {
+                    navigator.clipboard.writeText(this.id)
+                    //
+                    alert("Vous n'avez plus qu'à \"coller\" le n° de SIRET dans la zone à renseigner...");
+                    window.open('https://avis-situation-sirene.insee.fr/', '_blank');
+                }
+            });
+        }
+
+    }
+    //--------------------------------------------------------------
+    // *** FIN - Gestion de la copie d'un' ID dans le Clipboard ***
+    //--------------------------------------------------------------
 
 });

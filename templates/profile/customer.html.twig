@@ -6,12 +6,9 @@
 {% block body %}
 
     {{ include('profile/banner.html.twig') }}
-
-    {#
-    {% if msg_info %}
-    <div class="alert alert-info" role="alert">{{ msg_info }}</div>
-    {% endif %}
-    #}
+    
+    <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+    {{ include('flash.html.twig') }}
 
     {#<!-- <section id="regions_json" hidden>{{ JSgetregions() }}</section> -->#}
     {#<!-- <section id="dpts_json" hidden>{{ JSgetdpts() }}</section> -->#}
@@ -51,7 +48,7 @@
                     <select class="form-control cities" id="inputcities"
                         name="cities" title="cities"
                     >
-                        <option value="Select your city">Sélectionnez votre commune</option>
+                        <option value="">-- Sélectionnez votre commune --</option>
                     </select>
                     {% if error_customer_city is defined and error_customer_city is not null %}
                     <span class="d-block">
@@ -86,7 +83,7 @@
                 <button class="btn btn-sm btn--blue" type="submit">
                     <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
                 </button>
-                {#<!-- <a class="btn btn-sm btn--secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">
+                {#<!-- <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
                     <i class="ri-close-fill"></i>&ensp;Annuler
                 </a> -->#}
             </div>
@@ -95,9 +92,12 @@
         <!-- L'historique des échanges -->
         <div class="d-flex flex-row flex-wrap justify-content-between align-items-center mb-3">
             <h2 class="h3 mt-4 mb-3 font-weight-normal">Historique des échanges :</h2>
+
+            <!-- Affiche dépendant de l'existance de données de plus d'un an -->
             <button class="btn btn-sm btn--green" id="btn--show-hide--archive">
                 <i class="ri-eye-line"></i>&ensp;Récents seulement
             </button>
+
         </div>
         <div class="row--tabtype" id="row--tabtype--travel">
             <div class="btn--tabtype" id="btn--tabtype--claim" parent_id="row--tabtype--travel" default>Demandes envoyées</div>
@@ -105,7 +105,7 @@
             <div class="btn--tabtype" id="btn--tabtype--order" parent_id="row--tabtype--travel">Courses effectuées</div>
         </div>
         <!-- tableau des Demandes envoyées (Claims) -->
-        <table class="table table-striped table--txtlight table--tabtype" id="table--tabtype--claim" parent_id="btn--tabtype--claim">
+        <table class="table table-striped table--tabtype" id="table--tabtype--claim" parent_id="btn--tabtype--claim">
             <thead class="thead--dark">
                 <tr>
                     <th></th>
@@ -120,9 +120,9 @@
             <tbody>
                 {% for claim in app.user.customer.getclaims %}
                     {% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
-                <tr class="row--claim TOUTES">
+                <tr class="row--tab row--claim TOUTES" parent_id="btn--tabtype--claim">
                     {% else %}
-                <tr class="row--claim ARCHIVE">
+                <tr class="row--tab row--claim ARCHIVE" parent_id="btn--tabtype--claim">
                     {% endif %}
                     <td></td>
                     <td>{{ claim.id }}</td>
@@ -161,7 +161,7 @@
             </tfoot>
         </table>
         <!-- tableau des Devis reçus (Tenders) -->
-        <table class="table table-striped table--txtlight table--tabtype" id="table--tabtype--tender" parent_id="btn--tabtype--tender">
+        <table class="table table-striped table--tabtype" id="table--tabtype--tender" parent_id="btn--tabtype--tender">
             <thead class="thead--dark">
                 <tr>
                     <th></th>
@@ -174,10 +174,10 @@
             <tbody>
                 {#{% for claim in app.user.customer.getclaim %}
                     {% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
-                    #}
-                <tr class="row--claim ARCHIVE">
-                    {#{% else %}#}
-                <tr class="row--claim TOUTES">
+                    
+                <tr class="row--tab row--tender ARCHIVE" parent_id="btn--tabtype--tender">
+                    {% else %}#}
+                <tr class="row--tab row--tender TOUTES" parent_id="btn--tabtype--tender">
                     {#{% endif %}#}
                     <td></td>
                     <td></td>
@@ -194,7 +194,7 @@
             </tfoot>
         </table>
         <!-- tableau des Courses effectuées (Orders) -->
-        <table class="table table-striped table--txtlight table--tabtype" id="table--tabtype--order" parent_id="btn--tabtype--order">
+        <table class="table table-striped table--tabtype" id="table--tabtype--order" parent_id="btn--tabtype--order">
             <thead class="thead--dark">
                 <tr>
                     <th></th>
@@ -207,11 +207,11 @@
             </thead>
             <tbody>
                 {% for claim in app.user.customer.getclaims %}
-                    {% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
-                <tr class="row--claim ARCHIVE">
-                    {% else %}
-                <tr class="row--claim TOUTES">
-                    {% endif %}
+                {#{% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
+                <tr class="row--tab row--order ARCHIVE" parent_id="btn--tabtype--order">
+                    {% else %}#}
+                <tr class="row--tab row--order TOUTES" parent_id="btn--tabtype--order">
+                    {#{% endif %}#}
                     <td></td>
                     
                     <td> Les boutons !! </td>
@@ -233,7 +233,7 @@
     <div class="modal--big p-5" id="{{ 'modal--claim--'~claim.id }}" style="display:none;">
         <!-- Les "détails" de la demande -->
         <h3 class="pb-1">{{ 'Demande : (#'~claim.id~')' }}</h3>
-        <table class="table table-striped table--txtlight">
+        <table class="table table-striped">
             <tbody>
                 <tr>
                     <th class="thead--dark">Date de la demande</th>

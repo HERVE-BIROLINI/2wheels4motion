@@ -7,12 +7,7 @@
 {#{{ dump(picture) }}#}
 
     {{ include('profile/banner.html.twig') }}
-    <form class="modal--big container-fluid" method="post" enctype="multipart/form-data">
-        
-{% if msg_info is defined and msg_info is not null %}
-<div class="alert alert-warning" role="alert" style="width:100%;">{{ msg_info }}</div>
-{% endif %}
-
+    <form class="container-fluid modal--big" method="post" enctype="multipart/form-data">
         <h1 class="h3 mt-4 mb-3 font-weight-normal">Choississez votre photo de profil :</h1>
         
         <div class="d-flex flex-row">
@@ -41,44 +36,41 @@
                 <input type="radio" id="avatar4" name="avatar" value="Avatar-MB.png">
             </div>
         </div>
-        <hr ><!-- style="width:50%", size="3", color=black> -->
+        <hr >
         <div class="d-flex flex-row align-items-center">
             <div class="card--profile m-2">
-                <label for="avatarfile">
-                    {% if getuserportrait(app.user.id) %}
-                    <img class="imgbtn--profile" id="img--browse" src="{{ asset(getuserportrait(app.user.id).pathname) }}" alt="Photo de profil">
+                <label for="browse">
+                    {% set oUserPortrait=getuserportrait(app.user.id) %}
+                    {% if oUserPortrait %}
+                    <img class="imgbtn--profile" id="avatarpicture" src="{{ asset(oUserPortrait.pathname) }}" alt="Photo de profil">
                     {% else %}                    
-                    <img class="imgbtn--profile" id="img--browse" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
+                    <img class="imgbtn--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
                     {% endif %}
                 </label>
-                <input type="radio" id="avatarfile" name="avatar" value="FILE" for="browse"
-                    {#{% if getuserportrait(app.user.id) %}#}
-                    checked
-                    {#{% endif %}#}
-                >
+                {% if oUserPortrait %}
+                <input type="radio" id="avatarfile" name="avatar" value="FILE" for="browse" checked>
+                {% else %}
+                <input type="radio" id="avatarfile" name="avatar" value="FILE" for="browse">
+                {% endif %}
             </div>
-            <input type="file" name="file" id="browse"
-                value="{{ asset(getuserportrait(app.user.id).pathname) }}"
-                accept=".jpg, .jpeg, .png"
-            >
-<!-- <script>
-    const fileSelector = document.getElementById('browse');
-    fileSelector.addEventListener('change', (event) => {
-        const fileList = event.target.files;
-        // document.querySelector('#img--browse').src=event.target.result;
-        console.log(event.target.result);
-    });
-</script> -->
+            <!-- INUTILE DE CHERCHER A "JOUER" AVEC L'ATTRIBUT VALUE,
+                    SAUF A MANIPULER EN JAVASCRIPT...
+            -->
+            {% if oUserPortrait %}
+            <input type="file" name="file" id="browse" for="avatarfile" target_id="avatarpicture" value="{{ asset(oUserPortrait.pathname) }}" accept=".jpg, .jpeg, .png">
+            {% else %}
+            <input type="file" name="file" id="browse" for="avatarfile" target_id="avatarpicture" accept=".jpg, .jpeg, .png">
+            {% endif %}
         </div>
+
         <br>
         <div class="btns--row">
             <button class="btn btn-sm btn--blue" type="submit">
                 <i class="ri-cursor-line"></i>&ensp;Sélectionner
             </button>
-            <a class="btn btn-sm btn--secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">
+            <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
                 <i class="ri-close-fill"></i>&ensp;Annuler
             </a>
         </div>
     </form>
-<!-- </div> -->
 {% endblock %}

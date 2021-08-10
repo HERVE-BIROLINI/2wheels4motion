@@ -1,72 +1,8 @@
-.test{
-    border:1px solid black;
-}
-.testr{
-    border:1px solid red;
-}
-
 @import url(https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900display=swap%27);
 *{
     font-family: "Poppins", sans-serif;
 }
 
-/**
- * Astuce pour renommer le bouton de l'élément Bootstrap FileType,
- * à la condition que dans FormType, soit précisé : 'attr'=>['lang'=>"fr"],
-*/
-.custom-file-label::after{
-    content: "Parcourir...";
-}
-.custom-file-label::before{
-    content: ".custom-file-label::before{content:'Texte à afficher';}";
-}
-
-/**
- *
-*/
-.form-error-message{
-    color:red;
-}
-.small-title-message{
-    color:red;
-    font-size:0.35em;
-}
-.img--boolean{
-    height:20px;
-}
-.btn--circle{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    box-shadow:2px 2px 4px black;
-}
-.imgbtn--plus-minus{
-    height: 17px;
-    border-radius: 50%;
-    margin-left: 2px;
-    margin-bottom: 5px;
-}
-.imgbtn--profile:hover,.btn--circle:hover{
-    text-justify: inter-cluster;
-    text-align: center;
-    box-shadow:inset 3px 3px 6px black;
-}
-/* Permet de définir à la Class Bootstrap une hauteur Max,
-    au-delà de laquelle apparaît le Scroll...
-*/
-.dropdown-menu {         
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-
-/**
- *   Base TWIG file stylesheet
-*/
 body{
     background-color: lightgray;
     /**/
@@ -79,14 +15,113 @@ body{
     justify-content: center;
     /* align-items: center; */
 }
-/* i{
-    color:black;
-} */
-/* i:hover{
-    color:rgb(55, 156, 55);
-    cursor:pointer;
-} */
+
+
+/**
+ * -------------------------------------------------------------------------
+ * Astuce pour renommer le bouton de l'élément Bootstrap FileType,
+ * à la condition que dans FormType, soit précisé : 'attr'=>['lang'=>"fr"],
+ * -------------------------------------------------------------------------
+*/
+.custom-file-label::after{
+    content: "Parcourir...";
+}
+.custom-file-label::before{
+    content: ".custom-file-label::before{content:'Texte à afficher';}";
+}
+
+
+/**
+ * ------------------------------
+ * Surcharge des Class Bootstrap
+ * ------------------------------
+*/
+/*  -- Permet de définir à la Class associée au SELECT une     --
+    -- hauteur Max, au-delà de laquelle apparaît le Scroll...  -- */
+.dropdown-menu {         
+    max-height: 300px;
+    overflow-y: auto;
+}
 /* */
+.alert{
+    font-weight:bold;
+    border:2px solid black;
+    border-radius:5em;
+    box-shadow:4px 4px 6px grey;
+}
+
+
+/**
+ * ---------------------------------------------------------------
+ * Class utilisées dans l'ensemble du site (et/ou Base.html.twig)
+ * ---------------------------------------------------------------
+*/
+/*---- Class définies mais uniquement pour traitement Javascript ----
+#banner{}               
+-
+#avatarpicture
+#vmdtrpicture
+-
+.btn--hidemodal{}       
+.btn--showmodal{}
+#btn--modal--closing{}  
+#div--2hide-ifmodal{}
+-
+#regions_json{}
+#dpts_json{}
+#cities_json{}
+    V gestion de la sélection de la zone géographique V
+#dropdownMenuOffset--Region{}
+#dropdownMenuOffset--Department{}
+    V gestion des Table multi-onglets V
+.table--tabtype{}
+.row--tab{}
+    V Modale de selection d'une entreprise T3P existante V
+#blk--company2create{}
+---------------------------------------------------------------------
+*/
+/* -- DIVERS -- */
+.btn--circle{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    box-shadow:2px 2px 4px black;
+}
+.btn--circle:hover{
+    cursor:pointer;
+    font-weight: bold;
+    text-justify: inter-cluster;
+    text-align: center;
+    box-shadow:inset 3px 3px 6px black;
+}
+#uptotop{
+    position:fixed;
+    bottom:2em;
+    right:2em;
+    /**/
+    color:blue;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.55);
+    box-shadow: 2px 2px 0.25em red;
+}
+.modal--closing{
+    position:fixed;
+    right:2.5em;
+    top:1.5em;
+    z-index:999;
+    /**/
+    background-color: rgba(80, 80, 80, .7);
+    box-shadow: 2px 2px 0.25em black;
+    /**/
+    color:white;
+    font-weight: bold;
+    /* text-justify: inter-cluster; */
+    text-align: center;
+}
 #section--header{
     /* border:2px solid red; */
     /* background-color: white; */
@@ -99,12 +134,37 @@ body{
     background: linear-gradient(to top right,blue, 8%, white, 90%, red);
     box-shadow: 1px 5px 10px white;
 }
+.disabledelements{
+    pointer-events:none;
+    opacity:0.4;
+}
+.small-title-message{
+    color:red;
+    font-size:0.35em;
+}
+.form-error-message{
+    color:red;
+}
+/* . Création/Edition compte Driver => Modal des entreprises existantes . */
+#blk--companies2choice{
+    display:none;
+}
+#btn--associate-company{
+    pointer-events:none;
+    opacity:0.2;
+}
+/* -- MENU PRINCIPAL DE NAVIGATION -- */
+.nav--bar{
+    /* border:3px solid magenta; */
+    /**/
+    display: flex;
+    flex-direction: row;
+}
 .container--nav{
     /* border:3px solid yellow; */
     /**/
     width:100%;
 }
-/* */
 #nav--brand{
     /* border:3px solid green; */
     /**/
@@ -130,17 +190,6 @@ body{
     align-items:center;
     justify-content: space-evenly;
 }
-/* */
-.nav--bar{
-    /* border:3px solid magenta; */
-    /**/
-    display: flex;
-    flex-direction: row;
-}
-/* .navbar-toggler{
-    border:5px solid black;
-} */
-/* */
 .nav--menu{
     display:flex;
     flex-direction: row;
@@ -154,227 +203,8 @@ body{
     /**/
     font-weight: bold;
 }
-/* *** */
-@media screen and (max-width: 991px)
-{
-    .nav--menu{
-        justify-content: flex-start;
-    }
-}
-
-
-
-/**
- *   Homepage TWIG file stylesheet
- */
-.homepage--banner{
-    position: relative;
-    /**/
-    display: flex;
-    flex-direction: column;
-    /**/
-    /* background-image:url('../images/banner/honda_gl1800_2018_deux_models-750x410.jpg') ; */
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    /**/
-    min-height: 400px;
-    /**/
-    justify-content: center;
-    align-items: center;
-}
-.homepage--banner>h1{
-    color:white;
-    font-weight: bolder;
-    text-shadow: 5px 5px 0.25em blue;
-    justify-self: center;
-}
-/* */
-#nav--inpage{
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
-    /**/
-    position: absolute;
-    bottom:0px;
-}
-.nav--btn--white{
-    margin-bottom:0.75em;
-    margin-left: 0.5em;
-    margin-right: 0.5em;
-    padding: 0.5em;
-    padding-left: 1em;
-    padding-right: 1em;
-    font-size: 0.75em;
-    font-weight: bold;
-    /**/
-    color:blue;
-    background-color: rgba(255, 255, 255, 0.55);
-    box-shadow: 2px 2px 0.25em red;
-    /**/
-    border-radius: 10px;
-}
-.nav--btn--blue{
-    margin-bottom:0.75em;
-    margin-left: 0.5em;
-    margin-right: 0.5em;
-    padding: 0.5em;
-    padding-left: 1em;
-    padding-right: 1em;
-    font-size: 0.75em;
-    font-weight: bold;
-    /**/
-    color:white;
-    background-color: rgba(0, 89, 255, 0.55);
-    box-shadow: 2px 2px 0.25em red;
-    /**/
-    border-radius: 10px;
-}
-.nav--btn--blue:hover{
-    color:white;
-    background-color: rgba(0, 89, 255, 1);
-    box-shadow:inset 3px 3px 6px black;
-}
-.nav--btn--white:hover{
-    color:blue;
-    background-color: rgba(255, 255, 255, 1);
-    box-shadow:inset 3px 3px 6px black;
-}
-/* */
-.nav--inpage-btn-important{
-    margin-bottom:0.75em;
-    margin-left: 0.5em;
-    margin-right: 0.5em;
-    padding: 0.5em;
-    padding-left: 1em;
-    padding-right: 1em;
-    font-size: 0.75em;
-    font-weight: bold;
-    /**/
-    color:white;
-    background-color: rgba(255, 0, 0, 0.55);
-    box-shadow: 2px 2px 0.25em blue;
-    /**/
-    border-radius: 10px;
-}
-.nav--inpage-btn-important:hover{
-    color:white;
-    background-color: rgba(255, 0, 0, 0.75);
-    box-shadow:inset 3px 3px 6px black;
-}
-/**/
-
-
-/**
-* register Driver
-*/
-#blk--companies2choice{
-    display:none;
-}
-#btn--associate-company{
-    pointer-events:none;
-    opacity:0.2;
-}
-
-
-
-/**
- *   Flatrate TWIG file stylesheet
- */
-.flatrate--banner{
-    position: relative;
-    /**/
-    display: flex;
-    flex-direction: column;
-    /**/
-    /* background-image:url('../images/banner/honda_gl1800_2018_deux_models-750x410.jpg') ; */
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    /**/
-    min-height: 250px;
-    /**/
-    justify-content: center;
-    align-items: center;
-}
-.flatrate--banner>h1{
-    color:white;
-    font-weight: bolder;
-    text-shadow: 5px 5px 0.25em red;
-    justify-self: center;
-}
-/* */
-
-
-
-/**
- *   Ordering TWIG file stylesheet
- */
-.claim--banner{
-    position: relative;
-    /**/
-    display: flex;
-    flex-direction: column;
-    /**/
-    /* background-image:url('../images/banner/honda_gl1800_2018_deux_models-750x410.jpg') ; */
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    /**/
-    min-height: 400px;
-    /**/
-    justify-content: center;
-    align-items: center;
-}
-.claim--banner>h1{
-    color:white;
-    font-weight: bolder;
-    text-shadow: 5px 5px 0.25em blue;
-    justify-self: center;
-}
-/**/
-#blk--flatrates{
-    align-items:center;
-    justify-content:center;
-    width:100%;
-}
-/* */
-
-
-
-
-
-
-
-/**
- *   ALL pages TWIG files stylesheet
- *   shared elements control
-*/
-.required::after{
-    content:'   *';
-    color:red;
-}
-/* */
-.btn--secondary{
-    display:flex;
-    flex-direction:row;
-    flex-wrap:wrap;
-    justify-content:space-between;
-    align-items:center;
-    width:fit-content;
-    height: fit-content;
-    /**/
-    color:white;
-    /* font-weight: bold; */
-    /* text-align: center; */
-    /* text-justify: distribute; */
-    /**/
-    background-color: rgba(80, 80, 80, .7);
-    box-shadow: 2px 2px 0.25em black;
-    border-radius: 10px;
-}
+/* -- BANNIERES --
+/* - Bouton de demande de course - */
 .btn--ordering{
     /**/
     position: absolute;
@@ -393,23 +223,21 @@ body{
     background-color: rgba(255, 0, 0, 1);
     box-shadow:inset 3px 3px 8px black;
 }
-.btn--blue{
-    display:flex;
-    flex-direction:row;
-    flex-wrap:wrap;
-    justify-content:space-between;
-    align-items:center;
-    width:fit-content;
-    height: fit-content;
+/* - Menus secondaires... - */
+#nav--inpage{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
     /**/
-    color:white;
-    /* font-weight: bold; */
-    /* text-align: center; */
-    /* text-justify: distribute; */
-    /**/
-    background-color: rgba(0, 89, 255, 0.65);
-    box-shadow: 2px 2px 0.25em red;
-    border-radius: 10px;
+    position: absolute;
+    bottom:0px;
+}
+/* -- POUR LES FORMULAIRES -- */
+.required::after{
+    content:'   *';
+    color:red;
 }
 .btn--red{
     display:flex;
@@ -441,61 +269,10 @@ body{
     box-shadow: 2px 2px 0.25em rgb(20, 120, 0);
     border-radius: 10px;
 }
-.btn--orange{
-    display:flex;
-    flex-direction:row;
-    flex-wrap:wrap;
-    justify-content:space-between;
-    align-items:center;
-    width:fit-content;
-    height: fit-content;
-    /**/
-    color:white;
-    font-weight: bold;
-    /* text-align: center; */
-    /* text-justify: distribute; */
-    /**/
-    background-color: orange;
-    box-shadow: 2px 2px 0.25em black;
-    border-radius: 10px;
-}
-.btn--secondary:hover,.btn--blue:hover,.btn--red:hover,.btn--green:hover,.modal--closing:hover,.btn--orange:hover{
-    color:white;
-    /* font-weight: bold; */
-    box-shadow:inset 3px 3px 8px black;/*rgb(20, 120, 0);*/
-}
-/* */
-.row--tabtype{
-    display: flex;
-    flex-direction: row;
-    /* border-bottom:0.5px solid black; */
-}
-.btn--tabtype{
-    padding-left: 1em;
-    padding-right: 1em;
-    /* border:0.1px solid black; */
-    /* border-bottom:0; */
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
-.btn--tabtype:hover,.btn--circle:hover{
-    font-weight: bold;
-    cursor:pointer;
-}
-/* .table--tabtype{ */
-    /* display:none; */
-/* } */
-
-/* */
+/* -- CONTENEURS & TABLEAUX -- */
 .paragraph--large{
     margin:2.5em;
 }
-.title--h2{
-    font-weight:bold;
-    font-style:oblique;
-    padding-left:2em;
-}
-/* */
 .card--3D-horizontal{
     /* border:1px solid black; */
     display:flex;
@@ -520,43 +297,42 @@ body{
     display:flex;
     flex-direction:column;
     flex-wrap:wrap;
-    justify-content:center;
+    /* justify-content:center; */
     /* align-items: center; */
     /**/
     /* overflow:hidden; */
     text-overflow:ellipsis;
     flex-shrink:2;
     /**/
+    margin:0.5em;
     padding:0.5em;
     box-shadow:inset 
     0 -3em 3em rgba(0,0,0,0.1),
     0 0  0 1px rgb(255,255,255),
     0.3em 0.3em 1em rgba(0,0,0,0.3);
     border-radius:3px;
-    margin:0.5em;
 }
-/* */
-.card--inset{
+.card--head{
     display:flex;
     flex-direction:row;
     flex-wrap:wrap;
+    justify-content:space-between;
     /**/
-    justify-content:center;
-    box-shadow:inset 3px 3px 8px grey;
-    border-radius: 5px;
+    padding:1em;
 }
-/* .card--3D-horizontal:hover,.card--3D-vertical:hover{
-    border:3px solid black;
-} */
-/* */
-/* .card--paragraph{ */
-/* } */
+.row--stars{
+    display:flex;
+    flex-direction:row;
+    justify-content:start;
+    /**/
+    height:10px;
+    margin-bottom:1em;
+}
 .card--horizontal{
     /* border:1px solid black; */
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    /* justify-content: space-between; */
     justify-content: space-evenly;
     align-items: center;
     /**/
@@ -573,38 +349,6 @@ body{
     justify-self: center;
     align-self: center;
 }
-.card--imgsquare{
-    width:200px;
-    height:200px;
-    margin:1em;
-    /**/
-    box-shadow: 2px 2px 2px 2px 10px black;
-    /**/
-    justify-self: center;
-    align-self: center;
-}
-.card--imgrectangular{
-    width:300px;
-    height:200px;
-    margin:1em;
-    /**/
-    box-shadow: 2px 2px 2px 2px 10px black;
-    /**/
-    justify-self: center;
-    align-self: center;
-}
-.card--imground{
-    width:200px;
-    height:200px;
-    border-radius: 50%;
-    margin:1em;
-    /**/
-    box-shadow: 2px 2px 2px 2px 10px black;
-    /**/
-    justify-self: center;
-    align-self: center;
-}
-/* */
 .block--datas-horizontal{
     border:1px solid black;
     display:flex;
@@ -614,6 +358,9 @@ body{
     align-items: center;
     /**/
     padding:10px;
+    /**/
+    height: 95%;
+    justify-content:space-between;
 }
 .block--datas-vertical{
     border:1px solid black;
@@ -625,77 +372,44 @@ body{
     /**/
     padding:10px;
 }
-.block--date{
-    /* border:2px solid red; */
-    display:flex;
-    flex-direction:row;
-}
-
-
-
-
-/* */
-#uptotop{
-    position:fixed;
-    bottom:2em;
-    right:2em;
-    /**/
-    color:blue;
-    font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.55);
-    box-shadow: 2px 2px 0.25em red;
-}
-
-
-
-
-/**
- *   DriversPresentation TWIG file stylesheet
- */
-.driverspresentation--banner{
-    position: relative;
-    /**/
-    display: flex;
-    flex-direction: column;
-    /**/
-    /* background-image:url('../images/banner/pilotes-motogp-2020.png') ; */
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    /**/
-    min-height: 400px;
-    /**/
-    justify-content: center;
-    align-items: center;
-}
-.driverspresentation--banner>h1{
-    color:white;
-    font-weight: bolder;
-    text-shadow: 5px 5px 0.25em red;
-    justify-self: center;
-}
-.card--footer-horizontal{
-    background-color:whitesmoke;
+.btns--row{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    /**/
-    position:absolute;
-    bottom:0em;
-    left:-0.1em;
-    /**/
-    width:101%;
-    height:3em;
-    justify-content:center;
-    align-items:center;
+    width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-top:1em;
+    margin-bottom:1em;
 }
-
-
-
-
-/**
- *   ALL Modal...
- */
+/* - Les tableaux - */
+.thead--dark{
+    background-color: black;
+    color:white;
+}
+.thead--light{
+    /* color: rgb(83, 22, 22); */
+    background-color:white;
+}
+/* . class liées à la gestion de tableaux multi-onglets en Javascript . */
+.row--tabtype{
+    display: flex;
+    flex-direction: row;
+    /* border-bottom:0.5px solid black; */
+}
+.btn--tabtype{
+    padding-left: 1em;
+    padding-right: 1em;
+    /* border:0.1px solid black; */
+    /* border-bottom:0; */
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.btn--tabtype:hover{
+    font-weight: bold;
+    cursor:pointer;
+}
+/* - Liées à l'utilisation de Modals - */
 .modal--big{
     justify-self: center;
     align-self: center;
@@ -729,46 +443,268 @@ body{
     /* padding-top: 5%; */
     z-index: 998;
 }
-.thead--light{
-    /* color: rgb(83, 22, 22); */
-    background-color:white;
+/* -- TEXTES -- */
+.title--h2{
+    font-weight:bold;
+    font-style:oblique;
+    padding-left:2em;
 }
-.thead--dark{
-    background-color: black;
+/* -- LES IMAGES -- */
+.img--profile{
+    border:2px solid black;
+    height:100px;
+    width:90px;
+}
+.img--boolean{
+    height:20px;
+}
+/* -- BOUTONS D'ACTION (CRUD et autres formulaires) -- */
+.btn--secondary{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    width:fit-content;
+    height: fit-content;
+    /**/
     color:white;
-}
-/* */
-.modal--closing{
-    position:fixed;
-    right:2.5em;
-    top:1.5em;
-    z-index:999;
+    /* font-weight: bold; */
+    /* text-align: center; */
+    /* text-justify: distribute; */
     /**/
     background-color: rgba(80, 80, 80, .7);
     box-shadow: 2px 2px 0.25em black;
+    border-radius: 10px;
+}
+.btn--blue{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    width:fit-content;
+    height: fit-content;
     /**/
     color:white;
-    font-weight: bold;
-    /* text-justify: inter-cluster; */
-    text-align: center;
+    /* font-weight: bold; */
+    /* text-align: center; */
+    /* text-justify: distribute; */
+    /**/
+    background-color: rgba(0, 89, 255, 0.65);
+    box-shadow: 2px 2px 0.25em red;
+    border-radius: 10px;
 }
-.disabledelements{
-    pointer-events:none;
-    opacity:0.4;
-}
-/* .modal--content{
-    border:2px solid red;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: auto;
-    padding:5%;
-} */
 
 
 /**
- *   Profile TWIG file stylesheet
- */
+ * ---------------------------------------
+ * Class utilisées dans la page d'Accueil
+ * ---------------------------------------
+*/
+/*---- class définies mais uniquement pour navigation "interne" à la page (paragraphes) ----
+#section--services{}
+#section--advices{}
+#section--pro{}
+#section--equipments{}
+#section--bikes{}
+#section--luggages{}
+*/
+/* -- BANNIERES -- */
+.homepage--banner{
+    position: relative;
+    /**/
+    display: flex;
+    flex-direction: column;
+    /**/
+    /* background-image:url('../images/banner/honda_gl1800_2018_deux_models-750x410.jpg') ; */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /**/
+    min-height: 400px;
+    /**/
+    justify-content: center;
+    align-items: center;
+}
+.homepage--banner>h1{
+    color:white;
+    font-weight: bolder;
+    text-shadow: 5px 5px 0.25em blue;
+    justify-self: center;
+}
+/* - Menus secondaires... - */
+.nav--btn--white{
+    margin-bottom:0.75em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    padding: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+    font-size: 0.75em;
+    font-weight: bold;
+    /**/
+    color:blue;
+    background-color: rgba(255, 255, 255, 0.55);
+    box-shadow: 2px 2px 0.25em red;
+    /**/
+    border-radius: 10px;
+}
+.nav--btn--white:hover{
+    color:blue;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow:inset 3px 3px 6px black;
+}
+/* -- CONTENEURS -- */
+.card--inset{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    /**/
+    justify-content:space-around;
+    box-shadow:inset 3px 3px 8px grey;
+    border-radius: 5px;
+}
+.card--text{
+    display:flex;
+    flex-direction:column;
+    flex-wrap:wrap;
+    /**/
+    padding:0.5em;
+    /* padding-top: 2em; */
+    /**/
+    justify-content: left;
+    text-align: left;
+}
+/* -- LES IMAGES -- */
+.card--imgsquare{
+    width:200px;
+    height:200px;
+    margin:1em;
+    /**/
+    box-shadow: 2px 2px 2px 2px 10px black;
+    /**/
+    justify-self: center;
+    align-self: center;
+}
+.card--imgrectangular{
+    width:300px;
+    height:200px;
+    margin:1em;
+    /**/
+    box-shadow: 2px 2px 2px 2px 10px black;
+    /**/
+    justify-self: center;
+    align-self: center;
+}
+
+
+/**
+ * ------------------------------------------------------
+ * Class utilisées dans la page Présentation des Pilotes
+ * ------------------------------------------------------
+*/
+/*---- class définies mais uniquement pour ... ----
+
+*/
+/* -- BANNIERES -- */
+.driverspresentation--banner{
+    position: relative;
+    /**/
+    display: flex;
+    flex-direction: column;
+    /**/
+    /* background-image:url('../images/banner/pilotes-motogp-2020.png') ; */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /**/
+    min-height: 400px;
+    /**/
+    justify-content: center;
+    align-items: center;
+}
+.driverspresentation--banner>h1{
+    color:white;
+    font-weight: bolder;
+    text-shadow: 5px 5px 0.25em red;
+    justify-self: center;
+}
+/* -- CONTENEURS -- */
+.card--footer-horizontal{
+    background-color:whitesmoke;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    /**/
+    position:absolute;
+    bottom:0em;
+    left:-0.1em;
+    /**/
+    width:101%;
+    height:3em;
+    justify-content:center;
+    align-items:center;
+    /**/
+    border-bottom-left-radius:3px;
+    border-bottom-right-radius:3px;
+}
+/* -- IMAGES -- */
+.card--imground-200{
+    width:200px;
+    height:200px;
+    border-radius: 50%;
+    margin:1em;
+    /**/
+    box-shadow: 2px 2px 2px 2px 10px black;
+    /**/
+    justify-self: center;
+    align-self: center;
+}
+
+
+/**
+ * -----------------------------------------------------
+ * Class utilisées dans la page Présentation des Tarifs
+ * -----------------------------------------------------
+*/
+/*---- class définies mais uniquement pour ... ----
+
+*/
+/* -- BANNIERES -- */
+.flatrate--banner{
+    position: relative;
+    /**/
+    display: flex;
+    flex-direction: column;
+    /**/
+    /* background-image:url('../images/banner/honda_gl1800_2018_deux_models-750x410.jpg') ; */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /**/
+    min-height: 250px;
+    /**/
+    justify-content: center;
+    align-items: center;
+}
+.flatrate--banner>h1{
+    color:white;
+    font-weight: bolder;
+    text-shadow: 5px 5px 0.25em red;
+    justify-self: center;
+}
+
+
+/**
+ * ------------------------------------------------------------------------
+ * Class utilisées dans les pages "Tableau de bord" (User/Customer/Driver)
+ * ------------------------------------------------------------------------
+*/
+/*---- class définies mais uniquement pour ... ----
+
+*/
+/* -- BANNIERES -- */
 .profile--banner{
     position: relative;
     /**/
@@ -791,45 +727,188 @@ body{
     text-shadow: 5px 5px 0.25em red;
     justify-self: center;
 }
-/**/
+/* - Menus secondaires... - */
+.nav--btn--blue{
+    margin-bottom:0.75em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    padding: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+    font-size: 0.75em;
+    font-weight: bold;
+    /**/
+    color:white;
+    background-color: rgba(0, 89, 255, 0.55);
+    box-shadow: 2px 2px 0.25em red;
+    /**/
+    border-radius: 10px;
+}
+.nav--btn--blue:hover{
+    color:white;
+    background-color: rgba(0, 89, 255, 1);
+    box-shadow:inset 3px 3px 6px black;
+}
+.nav--inpage-btn-important{
+    margin-bottom:0.75em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    padding: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+    font-size: 0.75em;
+    font-weight: bold;
+    /**/
+    color:white;
+    background-color: rgba(255, 0, 0, 0.55);
+    box-shadow: 2px 2px 0.25em blue;
+    /**/
+    border-radius: 10px;
+}
+.nav--inpage-btn-important:hover{
+    color:white;
+    background-color: rgba(255, 0, 0, 0.75);
+    box-shadow:inset 3px 3px 6px black;
+}
+/* -- CONTENEURS -- */
 .card--profile{
     display: flex;
     flex-direction: column;
     align-items:center;
     /* justify-content: center; */
 }
-.img--profile{
-    border:2px solid black;
-    height:100px;
-    width:90px;
-}
+/* -- IMAGES -- */
 .imgbtn--profile{
     border:2px solid black;
     height:100px;
     width:90px;
 }
-.btns--row{
+.imgbtn--vmdtr{
+    border:2px solid black;
+    width:100%;
+}
+.imgbtn--profile:hover,.imgbtn--vmdtr:hover{
+    text-justify: inter-cluster;
+    text-align: center;
+    box-shadow:inset 3px 3px 6px black;
+}
+
+
+/**
+ * -----------------------------------------------------------
+ * Class utilisées de la page "Programmer une course" (Claim)
+ * -----------------------------------------------------------
+*/
+/*---- Class définies mais uniquement pour traitement Javascript ----
+#btn--FlatrateToggle
+#btn--expand{}
+#btn--collapse{}
+#btn--FlatrateToggle
+.btn--filtre-region
+.btn--filtre-dept
+.row--flatrate
+#head--flatrate
+#foot--flatrate
+---------------------------------------------------------------------
+*/
+/* -- BANNIERES -- */
+.claim--banner{
+    position: relative;
+    /**/
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 100%;
-    justify-content: space-evenly;
+    flex-direction: column;
+    /**/
+    /* background-image:url('../images/banner/honda_gl1800_2018_deux_models-750x410.jpg') ; */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /**/
+    min-height: 400px;
+    /**/
+    justify-content: center;
     align-items: center;
-    margin-top:1em;
-    margin-bottom:1em;
+}
+.claim--banner>h1{
+    color:white;
+    font-weight: bolder;
+    text-shadow: 5px 5px 0.25em blue;
+    justify-self: center;
+}
+/* -- CONTENEURS -- */
+.block--date{
+    /* border:2px solid red; */
+    display:flex;
+    flex-direction:row;
+}
+/* -- IMAGES -- */
+.imgbtn--plus-minus{
+    height: 17px;
+    border-radius: 50%;
+    margin-left: 2px;
+    margin-bottom: 5px;
+}
+/* -- "BLOCK" DES FORFAITS, OPTION DESACTIVEE -- */
+#blk--flatrates{
+    align-items:center;
+    justify-content:center;
+    width:100%;
 }
 
 
-
-/* *** */
-@media screen and (min-width: 1200px){
-    .block--datas-horizontal,.block--datas-vertical{
-        height: 92%;
-    }
+/**
+ * -------------------------------------------------------
+ * Class utilisées sur la page Admin "Actions en attente"
+ * -------------------------------------------------------
+*/
+/* -- BOUTONS -- */
+.btn--orange{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    width:fit-content;
+    height: fit-content;
+    /**/
+    color:white;
+    font-weight: bold;
+    /* text-align: center; */
+    /* text-justify: distribute; */
+    /**/
+    background-color: orange;
+    box-shadow: 2px 2px 0.25em black;
+    border-radius: 10px;
 }
+.btn--secondary:hover,.btn--blue:hover,.btn--red:hover,.btn--green:hover,.modal--closing:hover,.btn--orange:hover{
+    color:white;
+    /* font-weight: bold; */
+    box-shadow:inset 3px 3px 8px black;/*rgb(20, 120, 0);*/
+}
+
+
+/**
+ * ------------------------------------------------------------
+ * Class utilisées sur la page Admin "Raisons sociales et TVA"
+ * ------------------------------------------------------------
+*/
+/* -- BOUTONS -- */
+#btn--associate--socialreason-tva{
+    pointer-events:none;
+    opacity:0.2;
+}
+
+
+/**
+ * -----------------------------------
+ * LES REQUETES MEDIA => RESPONSIVE !
+ * -----------------------------------
+*/
 @media screen and (max-width: 990px){
     .card--3D-horizontal{
         justify-content: center;
+    }
+    .nav--menu{
+        justify-content: flex-start;
     }
 }
 @media screen and (max-width: 700px){
@@ -842,8 +921,10 @@ body{
 @media screen and (max-width: 600px){
     .block--datas-vertical,.block--datas-horizontal,.card--3D-vertical{
         width:100%;
-        margin:0%;
-        padding:0%;
+        /* margin:0%; */
+        /* padding:0%; */
+        /* padding-top:1em; */
+        /**/
         border:none;
         box-shadow:none;
     }

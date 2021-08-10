@@ -7,17 +7,24 @@ use App\Entity\User;
 
 class UploadPictureTools
 {
-    private string $pathName;
-    private bool $deletePreviousFile;
+    private string $pathName='';
+    private bool $deletePreviousFile=false;
 
     public function UploadPicture(User $user, Picturelabel $Picturelabel, String $root){
-        $bError=false;
+
         // * déclaration/création du dossier destination *
         $sDestinationFolder='';
-        // ----------v- A analyser lors de la publication -v----------
-        $arFolder=[$root,'images/','uploads/','user/',$user->getId()];
-        // $arFolder=[$this->getParameter('asset_path_prod'),'images/','uploads/','user/',$user->getId()];
-        // ----------^- A analyser lors de la publication -^----------
+        
+        
+        // ----------v- A analyser lors de l'hébergement -v----------
+        $arFolder=array_merge([$root],
+            $Picturelabel->getArray_imgfiles_user_path(),
+            [$user->getId()]
+        );
+        // $arFolder=[$root,'images/','uploads/','user/',$user->getId()];
+        // ----------^- A analyser lors de l'hébergement -^----------
+        
+        
         foreach($arFolder as $sFolder){
             $sDestinationFolder.=$sFolder;
             // ... si le dossier n'existe pas => le créer
@@ -30,7 +37,7 @@ class UploadPictureTools
         // ... le nom (sans le chemin) de l'image dans la super globale
         $sFilePathInfo=pathinfo($_FILES['file']['name']);
         // // ... en déduit le nom (sans l'extension)
-        // $sFileName=$sFilePathInfo['filename'];
+        $sFileName=$sFilePathInfo['basename']; // => si n'impose pas pour nom, le sujet de l'image
         // ... en déduit son extension
         $sFileExtension=strtolower($sFilePathInfo['extension']);
         // ... parce que l'outil AURA DEJA copié le fichier dans une zone tampon...
@@ -39,36 +46,36 @@ class UploadPictureTools
         // ... vérifie que le type de fichier est autorisé (extension)
         $arExtensions=array('jpg','jpeg','png');
         // * si le fichier est bon, effectue la "copie" *
-        // dd($arExtensions);
         if(in_array($sFileExtension, $arExtensions)){
+
             // Déplace le fichier de la zone tampon vers le chemin destination...
-            $sFileFullDestination=$sDestinationFolder.'/'.$Picturelabel->getLabel().'.'.$sFileExtension;
-            // Déplace le fichier...
+            $sFileFullDestination=$sDestinationFolder.'/'.$sFileName;
+            // $sFileFullDestination=$sDestinationFolder.'/'.$Picturelabel->getLabel().'.'.$sFileExtension;
+            
             if(move_uploaded_file($sFileTmp,$sFileFullDestination)){
                 // ... si le déplacement s'est bien dérouler...
                 $this->setPathName('build/'.strstr($sFileFullDestination,'images/'));
-                // $picture_PathName='build/'.strstr($sFileFullDestination,'images/');
-            //     // $obPicture->setPathname('build/'.strstr($sFileFullDestination,'images/'));
                 // ... demande la suppression de l'ancien fichier si existait
-                $this->setdeletePreviousFile(true);
-                // $bDeletePreviousFileIfExist=true;
+                $this->setDeletePreviousFile(true);
+                // ... retourne l'objet "Upload"
+                return $this;
             }
+            // ... si problème lors du déplacement...
             else{
-                $bError=true;
+                return false;
             }
         }
-        // ... si le fichier n'a pas la bonne extension, lève le drapeau d'erreur
+        // ... si le fichier n'a pas la bonne extension...
         else{
-            $bError=true;
+            return false;
         }
-        return $bError;
     }
     
 
     /**
      * Get the value of pathName
      */ 
-    public function getPathName()
+    public function getPathName():string
     {
         return $this->pathName;
     }
@@ -78,17 +85,16 @@ class UploadPictureTools
      *
      * @return  self
      */ 
-    public function setPathName($pathName)
+    public function setPathName(string $pathName)
     {
         $this->pathName = $pathName;
-
         return $this;
     }
 
     /**
      * Get the value of deletePreviousFile
      */ 
-    public function getdeletePreviousFile()
+    public function getDeletePreviousFile()
     {
         return $this->deletePreviousFile;
     }
@@ -98,10 +104,9 @@ class UploadPictureTools
      *
      * @return  self
      */ 
-    public function setdeletePreviousFile($deletePreviousFile)
+    public function setDeletePreviousFile($deletePreviousFile)
     {
         $this->deletePreviousFile = $deletePreviousFile;
-
         return $this;
     }
 }

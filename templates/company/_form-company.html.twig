@@ -9,6 +9,7 @@
     {% set name = company.name %}
     {% set siren = company.siren %}
     {% set nic = company.nic %}
+{#{% set socialreason = company.raisonsocial %}#}
     {% set road = company.road %}
     {% set city = company.city %}
     {% set zip = company.zip %}
@@ -16,24 +17,18 @@
     {% set name = app.user.driver.company.name %}
     {% set siren = app.user.driver.company.siren %}
     {% set nic = app.user.driver.company.nic %}
+{#{% set socialreason = company.raisonsocial %}#}
     {% set road = app.user.driver.company.road %}
     {% set city = app.user.driver.company.city %}
     {% set zip = app.user.driver.company.zip %}
 {% endif %}
 
 <!-- Block de données de l'entreprise T3P -->
-{% if controller_name is defined and controller_name=='RegistrationController' %}
-<div class="mt-1 mb-2 col-12 col-lg-5" id="blk--companydatas">
-{% elseif controller_name is defined and controller_name=='ProfileController' %}
-<div class="mt-1 mb-2 col-12" id="blk--companydatas">
-{% endif %}
+<div class="my-2 col-md-12 col-lg-6" id="blk--companydatas">
+    
     <!-- Titre + boutons (choix parmi les entreprises référencées) -->
     <div class="d-flex flex-row flex-wrap justify-content-between align-items-center">
-        {% if controller_name is defined and controller_name=='RegistrationController' %}
         <h5>Entreprise affiliée T3P</h5>
-        {% else %}
-        <h2 class="h3 ml-2 mt-4 mb-3 font-weight-normal">Entreprise affiliée T3P</h2>
-        {% endif %}
         <!--  -->
         {% if allcompaniesknown is defined and allcompaniesknown|length > 0 %}
         <button class="btn btn-sm btn--secondary align-self-end" type="button" id="btn--companies2choice"
@@ -43,25 +38,30 @@
         </button>
         {% endif %}
     </div>
+
     <!-- Encadrement -->
-    <div class="block--datas-vertical" id="block--company-T3P">
+    <!-- <div class="block--datas-vertical flex-nowrap p-3" id="block--company-T3P"> -->
+    <div class="block--datas-horizontal p-3" id="block--company-T3P">
         <!-- nom de l'entreprise -->
-        <div class="p-3 w-100">
+        <div class="col-12">
             <label class="required" for="inputname">Nom :</label>
             <input type="text" name="name" id="inputname" class="form-control"
-                {% if name is defined and name is not null %}value="{{ name }}"{% endif %}
+                {% if name is defined and name is not null %}
+                value="{{ name }}"
+                {% endif %}
                 required
             ><!-- autofocus> -->
             {% if error_name is defined and error_name is not null %}
-            <!-- <span class="d-block">
+            <span class="d-block">
                 <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
-                <small class="form-error-message">Le numéro ne peut contenir que des chiffres.</small>
-            </span> -->
+                <small class="form-error-message">Un nom d'enregistrement associé au SIREN doit-être renseigné.</small>
+            </span>
             {% endif %}
         </div>
         <!-- numéro d'enregistrement de l'entreprise -->
-        <div class="d-flex flex-row flex-wrap justify-content-between w-100">
-            <div class="col-12 col-md-7">
+        <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+            <!-- SIREN -->
+            <div class="col-12 col-md-7 pt-3">
                 <label class="required" for="inputsiren">SIREN :</label>
                 <input type="text" name="siren" id="inputsiren" class="form-control"
                     placeholder="9 chiffres..." size="9"
@@ -75,26 +75,51 @@
                 </span>
                 {% endif %}
             </div>
-            &ensp;
-            <div class="col-12 col-md-4">
+            <!-- NIC -->
+            <div class="col-12 col-md-4 pt-3">
                 <label for="inputnic">NIC :</label>
                 <input type="text" name="nic" id="inputnic" class="form-control"
                     placeholder="5 chiffres..." size="5"
                     {% if nic is defined and nic is not null %}value="{{ nic }}"{% endif %} size="5"
                 ><!-- pattern="[\d]{5}" required autofocus> -->
-                {#{% if error_nic is defined and error_nic is not null %}#}
-                <!-- <span class="d-block">
+                {% if error_nic is defined and error_nic is not null %}
+                <span class="d-block">
                     <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
                     <small class="form-error-message">Le numéro ne peut contenir que des chiffres.</small>
-                </span> -->
-                {#{% endif %}#}
+                </span>
+                {% endif %}
             </div>
         </div>
+        <!-- Raison sociale -->
+        {% set arSocialreasons=getsocialreasons() %}
+        {% if arSocialreasons|length > 0 %}
+        <div class="pt-3 col-12">
+            <label class="required" for="inputreasons">Raison sociale :</label>
+            <select class="form-control socialreasons" id="inputreasons"
+                name="socialreason" title="socialreasons"
+            >
+                <optgroup label="-- Sélectionnez la raison sociale --">
+            {% for socialreason in arSocialreasons %}
+
+                {% if toto is defined %}
+                    <option value="{{ socialreason.id }}" name="{{ socialreason.label }}">
+                {% else %}
+                    <option value="{{ socialreason.id }}" name="{{ socialreason.label }}">
+                {% endif %}
+                        {{ socialreason.label }}
+                    </option>
+
+            {% endfor %}
+                </optgroup>
+            </select>
+        </div>
+        {% endif %}
+
+        <!-- <br> -->
         <!-- adresse de l'entreprise -->
-        <div class="d-flex flex-column p-3 w-100">
-            <small>Adresse :</small>
-            &ensp;
-            <!--  -->
+        <div class="d-flex flex-column mt-1 pt-3 col-12">
+            <p><u><b>Adresse postale :</b></u></p>
+            <!-- Nunméro et nom de la voie -->
             <label class="required" for="inputroad">N° et Voie :</label>
             <input type="text" {% if road is defined and road is not null %}value="{{ road }}"{% endif %} name="road" id="inputroad" class="form-control" required ><!-- autofocus> -->
             {% if error_road is defined and error_road is not null %}
@@ -103,8 +128,7 @@
                 <small class="form-error-message">La voie doit comporter un numéro et un nom.</small>
             </span>
             {% endif %}
-            &ensp;
-            <div class="d-flex flex-row flex-wrap w-100 justify-content-between">
+            <div class="d-flex flex-row flex-wrap justify-content-between mt-2 w-100">
                 <!-- Nom commune -->
                 <div class="col-12 col-md-7">
                     <label class="required" for="inputcity">Commune :</label>
@@ -124,7 +148,6 @@
                     </span>
                     {% endif %}
                 </div>
-                &ensp;
                 <!-- ZIP commune (code postal) -->
                 <div class="col-12 col-md-4">
                     <label class="required" for="inputzip">CP :</label>
@@ -135,16 +158,15 @@
                         name="zip" id="inputzip" class="form-control inputzip"
                         disabled
                     >
-                    {#{% if error_zip is defined and error_zip is not null %}#}
-                    <!-- <span class="d-block">
+                    {#<!-- {% if error_zip is defined and error_zip is not null %}
+                    <span class="d-block">
                         <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
                         <small class="form-error-message">Le numéro ne peut contenir que des chiffres.</small>
-                    </span> -->
-                    {#{% endif %}#}
+                    </span>
+                    {% endif %} -->#}
                 </div>
             </div>
         </div>
-        <br>
     </div>
 </div>
                 

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TvaRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -26,6 +28,16 @@ class Tva
      * @ORM\Column(type="string", length=255)
      */
     private $comment;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Socialreason::class, mappedBy="tva")
+     */
+    private $socialreasons;
+
+    public function __construct()
+    {
+        $this->socialreasons = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -52,6 +64,33 @@ class Tva
     public function setComment(string $comment): self
     {
         $this->comment = $comment;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Socialreason[]
+     */
+    public function getSocialreasons(): Collection
+    {
+        return $this->socialreasons;
+    }
+
+    public function addSocialreason(Socialreason $socialreason): self
+    {
+        if (!$this->socialreasons->contains($socialreason)) {
+            $this->socialreasons[] = $socialreason;
+            $socialreason->addTva($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSocialreason(Socialreason $socialreason): self
+    {
+        if ($this->socialreasons->removeElement($socialreason)) {
+            $socialreason->removeTva($this);
+        }
 
         return $this;
     }

@@ -8,6 +8,7 @@ parameters:
     # ( appel : $this->getParameter('asset_path') )
     asset_path_dev: '%kernel.project_dir%/assets/'
     asset_path_prod: '%kernel.project_dir%/public/build/'
+    array_imgfiles_user_path: ['images/','uploads/','user/']
     # Impossible car erreur à cause du 1er @...
     # pattern_road: "@[a-zA-Z\'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ \d-]@ig"
     # pattern_city: "@[a-zA-Z\'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ -]@ig"

@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Picturelabel
 {
+    private $array_imgfiles_user_path=['images/','uploads/','user/'];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -79,5 +81,13 @@ class Picturelabel
         }
 
         return $this;
+    }
+
+    /**
+     * Get the value of array_imgfiles_user_path
+     */ 
+    public function getArray_imgfiles_user_path()
+    {
+        return $this->array_imgfiles_user_path;
     }
 }

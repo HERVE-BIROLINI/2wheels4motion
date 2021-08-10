@@ -26,10 +26,10 @@
 
     <body>
 
-        <!-- Bouton "fixe" à afficher en même temps que toute Modale -->
+        <!-- Bouton "fixe" à afficher en même temps que toute Modale, pour fermeture de celle-ci -->
         <div class="btn--circle btn--hidemodal modal--closing" id="btn--modal--closing" style="display:none;">X</div>
         
-        <!-- {# ["ROLE_ADMIN"] #} -->
+        <!-- Ruban horizontal pour le Header -->
         <header id="section--header">
             {% if app.user %}
             <div class="align-self-end mt-1 mr-3">
@@ -90,14 +90,10 @@
                                 <!--dropdown">
                                 <a class="nav-link dropdown-toggle" href="{{ path('profile_user', {'id': app.user.id}) }}" id="navbarDropdown" role="button" data-toggle="dropdown">
                                 -->
-                                <a class="nav-link" href="{{ path('admin_index') }}">
+                                <a class="nav-link" href="{{ path('admin_pending') }}">
                                     <i class="ri-admin-line"></i>
                                     Administration
                                 </a>
-                                <!-- <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="{#{{ path('...') }}#}">...</a>
-                                    <a class="dropdown-item" href="{#{{ path('...') }}#}">...</a>
-                                </div> -->
                             </li>
                             {% endif %}
                             <!-- Lien de déconnexion -->
@@ -123,10 +119,8 @@
             </div>
         </header>
 
-    <!-- IS_AUTHENTICATED_FULLY ? -->
-    <!-- {#{{ dump(is_granted('IS_AUTHENTICATED_FULLY')) }}#} -->
-
         {% block body %}
+        <!-- ... Ici sera placé le contenu de toute page "étendant" cette page... -->
         {% endblock %}
 
         {% block javascripts %}

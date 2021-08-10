@@ -1,0 +1,252 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenue Administrateur !{% endblock %}
+
+{% block body %}
+
+    <!-- Admin Controller banner -->
+    {{ include('admin/banner.html.twig') }}
+
+    <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+    {{ include('flash.html.twig') }}
+
+    <div class="paragraph--large" id="div--2hide-ifmodal">
+
+        <!-- Tableau des actions attendues concernant les demandes de référencement... -->
+        <!-- ... des T3P -->
+        {% if allcompaniesunknown is defined and allcompaniesunknown is not empty %}
+        <div class="paragraph--large">
+            <table class="table table-striped">
+                <h2 class="title--h2">T3P nouvellement référencée(s) à confirmer...</h2>
+                <thead class="thead--dark">
+                    <tr>
+                        <th style="width:5%;"></th>
+                        <th>Nom</th>
+                        <th>SIREN</th>
+                        <th>NIC</th>
+                        <th>N° et voie</th>
+                        <th>CP</th>
+                        <th>Ville</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obCompany in allcompaniesunknown %}
+                    <tr>
+                        <td></td>
+                        <td>{{ obCompany.name }}</td>
+                        <td>
+                            <!-- La copie dans le presse-papiers ne fonctionne pas si il y a enchaînement avec HREF -->
+                            <input class='btn btn-sm btn--orange html--copyidtoclipboard'
+                                {% if obCompany.nic|length == 5 %}
+                                id="{{ obCompany.siren~obCompany.nic }}"
+                                {% else %}
+                                id="{{ obCompany.siren }}"
+                                {% endif %}
+                                value="{{ obCompany.siren }}"
+                            />
+                        </td>
+                        <td>{{ obCompany.nic }}</td>
+                        <td>{{ obCompany.road }}</td>
+                        <td>{{ obCompany.zip }}</td>
+                        <td>{{ obCompany.city }}</td>
+                        <td>
+                            <a class="btn btn-sm btn--blue mr-2" href="{{ path('admin_company_confirm', {'company': obCompany.id}) }}" title="Modifier">
+                                <i class="ri-award-fill"></i>&ensp;Confirmer
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="8">
+                            Contrôle de l'existance d'une entreprise : https://avis-situation-sirene.insee.fr/
+                            <br>
+                            Cliquez sur le bouton orange, puis effectuer un "coller" dans la zone d'édition du N° de Siren/Siret...
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- ... des pilotes -->
+        {% if alldriversunverified is defined and alldriversunverified is not empty %}
+        <div class="paragraph--large">
+            <table class="table table-striped">
+                <h2 class="title--h2">Pilote(s) nouvellement référencé(s) à vérifier...</h2>
+                <thead class="thead--dark">
+                    <tr>
+                        <th style="width:10%;"></th>
+                        <th>Nom / Prénom</th>
+                        <th>N° VMDTR</th>
+                        <th>T3P</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for obDriver in alldriversunverified %}
+                    <tr>
+                        <td></td>
+                        <td>{{ obDriver.user.lastname~' / '~obDriver.user.firstname }}</td>
+                        <td>
+                            <input class='btn btn-sm btn--orange btn--showmodal'
+                                id="{{ 'btn--showmodal'~obDriver.id }}"
+                                value="{{ obDriver.vmdtrnumber }}"
+                                data_id="{{ obDriver.id }}"
+                                data_type="vmdtr"
+                            />
+                        </td>
+                        <td>{{ obDriver.company.name }}</td>
+                        <td class="d-flex flex-row">
+                            <a class="btn btn-sm btn--blue" href="{{ path('admin_driver_confirm', {'driver': obDriver.id}) }}" title="Modifier" class="mr-2">
+                                <i class="ri-award-fill"></i>&ensp;Confirmer
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- Tableau des Company "référencées" -->
+        {% set allcompaniesknown=getknowncompanies() %}
+        {% if allcompaniesknown is defined and allcompaniesknown is not empty %}
+        <div class="paragraph--large">
+            <table class="table table-striped">
+                <h2 class="title--h2">T3P référencées et vérifiées</h2>
+                <thead class="thead--dark">
+                    <tr>
+                        <th style="width:5%;"></th>
+                        <th>Nom</th>
+                        <th>SIREN</th>
+                        <th>NIC</th>
+                        <th>N° et voie</th>
+                        <th>CP</th>
+                        <th>Ville</th>
+                        <th>Pilotes</th>
+                        <th>Courses</th>
+                        <th>Notation</th>
+                        <!-- <th>Actions</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obCompany in allcompaniesknown %}
+                    <tr>
+                        <td></td>
+                        <td>{{ obCompany.name }}</td>
+                        <td>{{ obCompany.siren }}</td>
+                        <td>{{ obCompany.nic }}</td>
+                        <td>{{ obCompany.road }}</td>
+                        <td>{{ obCompany.zip }}</td>
+                        <td>{{ obCompany.city }}</td>
+                        <td>
+                            {% set arDrivers=getdriversbycompany(obCompany) %}
+                            {% if arDrivers|length > 0 %}
+                            <div class="d-flex flex-row flex-wrap align-items-center">
+                                <button class="btn btn-sm btn--secondary btn--showmodal" data_id="{{ obCompany.id }}" data_type="t3p">
+                                    <i class="ri-file-paper-2-line"></i>&ensp;{{ arDrivers|length }}
+                                </button>
+                            </div>
+                            {% else %}
+                            0
+                            {% endif %}
+                        </td>
+                        <td>{{ 'A DEVELOPPER (total T3P)' }}</td>
+                        <td>
+                            <div class="d-flex flex-row justify-content-start">
+                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="8"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        {% endif %}
+
+    </div>
+
+
+    <!-- Modal d'affichage des photos du Driver -->
+    {% if alldriversunverified is defined and alldriversunverified is not empty %}
+        {% for obDriver in alldriversunverified %}
+        <div class="modal--big p-5" id="{{ 'modal--vmdtr--'~obDriver.id }}" style="display:none;">
+            <h3 class="pb-1">{{ 'Pilote VMDTR : (carte Pro. #'~obDriver.vmdtrnumber~')' }}</h3>
+            
+            <div>
+                {% set oVMDTR=getdrivercard(obDriver.user) %}
+                {% set oPortrait=getuserportrait(obDriver.user) %}
+
+                {% if oPortrait %}
+                <img style='width:15%;' src="{{ asset(oPortrait.pathname) }}" alt="Portrait pilote">
+                {% else %}                    
+                <img style='width:15%;' src="{{ asset(oPortrait.pathname) }}" alt="Portrait pilote">
+                {% endif %}
+
+                &ensp;
+
+                {% if oVMDTR %}
+                <img style='width:75%;' src="{{ asset(oVMDTR.pathname) }}" alt="Carte VMDTR">
+                {% else %}                    
+                <img style='width:75%;' src="{{ asset(sImgPath ~'no-image.png') }}" alt="Carte VMDTR">
+                {% endif %}
+
+            </div>
+            
+            <button class="btn btn-sm btn--secondary mt-5 btn--hidemodal"
+                parent_id="{{ 'modal--vmdtr--'~obDriver.id }}"
+            >
+                <i class="ri-close-fill"></i>&ensp;Fermer
+            </button>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+
+    <!-- Modal d'affichage des "cartes" pilotes "rattachés" à une T3P -->
+    {% if allcompaniesknown is defined and allcompaniesknown is not empty %}
+        {% for obCompany in allcompaniesknown %}
+        
+            {% set arDrivers= getdriversbycompany(obCompany) %}
+            {% if arDrivers|length > 0 %}
+        <div class="modal--big p-5" id="{{ 'modal--t3p--'~obCompany.id }}" style="display:none;">
+            <h3 class="pb-1">{{ 'Société T3P : '~obCompany.name }}</h3>
+            
+            <!-- Les "cartes" des utilisateurs destinataires de la demande... -->
+            <!-- ... la rangée "cartes" des utilisateurs destinataires de la demande... -->
+            <div class="d-flex flex-column align-items-center">
+                {% for obDriver in arDrivers %}
+                    {{ include('driver/card.html.twig', {obDriver: obDriver}) }}
+                {% endfor %}
+            </div>
+
+            <button class="btn btn-sm btn--secondary mt-5 btn--hidemodal"
+                parent_id="{{ 'modal--t3p--'~obCompany.id }}"
+            >
+                <i class="ri-close-fill"></i>&ensp;Fermer
+            </button>
+        </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

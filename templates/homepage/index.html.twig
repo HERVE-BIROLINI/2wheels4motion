@@ -4,21 +4,13 @@
 {% block title %}{{ parent() }} - {{ Title }}{% endblock %}
 
 {% block body %}
-    {% for flashError in app.flashes('adding_to_cart') %}
-        <div class="alert alert-success" role="alert">{{ flashError }}</div>
-    {% endfor %}
-    {% for flashError in app.flashes('register-success') %}
-        <div class="alert alert-success" role="alert">{{ flashError }}</div>
-    {% endfor %}
 
     <!-- DEBUT Homepage banner -->
     <section class="homepage--banner" id="banner" style="background-image:url({{ asset(sImgPath ~'banner/honda_gl1800_2018_deux_models-750x410.jpg') }});">
         <H1>L'ANNUAIRE DES TAXIS-MOTO DE FRANCE</H1>
-        
         <a class="btn btn--ordering" href="{{ path('claim_create') }}">
             <i class="fas fa-motorcycle"></i>&nbsp;Commander une course
         </a>
-        
         <!-- internal page menu, to navigate to ID -->
         <div id="nav--inpage">
             <a class="btn nav--btn--white" href="#section--services">A votre service</a>
@@ -31,12 +23,15 @@
     </section>
     <!-- FIN Homepage banner -->
 
+    <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+    {{ include('flash.html.twig') }}
+
     <!-- Job description -->
     <!--------------------->
     <section class="paragraph--large" id="section--services">
-        <h2 class="title--h2" id="services--title">Vous servir...</h2>
+        <h2 class="title--h2">Vous servir...</h2>
         <div class="card--3D-horizontal">
-            <p class="card--paragraph col-md-12 col-lg-8" id="services--p">
+            <p class="col-md-12 col-lg-8">
                 Vous avez besoin d'effectuer des transferts, sans risquer d'être en retard ? Votre temps est précieux et vous voudriez optimiser vos temps de trajets ?
                 Assurez-vous les services d'un professionnel pour tous vos déplacements, et passez au moto-taxi...
             </p>
@@ -49,122 +44,118 @@
     <!----------------------------------------------->
     <section class="paragraph--large" id="section--advices">
         {#{% if siteadvices_last is defined %}#}
-        <h2 class="title--h2" id="advices--title">L'avis des utilisateurs de l'annuaire</h2>
-        <div class="card--inset" id="advices--3lasts">
-            <!-- <div class="card--inset"> -->
-                {#{% for advice in siteadvices_last %}#}
-                <div class="card--advice card--3D-vertical col-12 col-md-4 col-xl-3">
-                    <div class='d-flex flex-row justify-content-between'>
-                        <div>
-                            <h4>Prénom</h4>
-                            <p>Inscrit depuis le 04-06-2021</p>
-                        </div>
-                        <div style='height:10px;'>
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                        </div>
+        <h2 class="title--h2">L'avis des utilisateurs de l'annuaire</h2>
+        <div class="card--inset">
+            {#{% for advice in siteadvices_last %}#}
+            <div class="card--3D-vertical col-12 col-md-3">
+                <div class='card--head'>
+                    <div>
+                        <h4>Prénom</h4>
+                        <p>Inscrit depuis le 04-06-2021</p>
                     </div>
-                    <!-- <hr> -->
-                    <span>
-                        Ce site est génial !
-                        Facile de compréhension, on trouve facilement et rapidement l'information concernant la réponse possible à notre besoin.
-                        Les pilotes sont très pros, toujours ponctuels et courtois. Pour les passagers débutants, ils savent mettre en confiance...
-                    </span>
-                </div>
-                <div class="card--advice card--3D-vertical col-12 col-md-4 col-xl-3">
-                    <div class='d-flex flex-row justify-content-between'>
-                        <div>
-                            <h4>Prénom</h4>
-                            <p>Inscrit depuis le 04-06-2021</p>
-                        </div>
-                        <div style='height:10px;'>
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                        </div>
+                    <div class="row--stars">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
                     </div>
-                    <!-- <hr> -->
-                    <span>
-                        Ce site est génial !
-                    </span>
                 </div>
-                <div class="card--advice card--3D-vertical col-12 col-md-4 col-xl-3">
-                    <div class='d-flex flex-row justify-content-between'>
-                        <div>
-                            <h4>Prénom</h4>
-                            <p>Inscrit depuis le 04-06-2021</p>
-                        </div>
-                        <div style='height:10px;'>
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                        </div>
+                <!-- <hr> -->
+                <span class="card--text">
+                    Ce site est génial !
+                    Facile de compréhension, on trouve facilement et rapidement l'information concernant la réponse possible à notre besoin.
+                    Les pilotes sont très pros, toujours ponctuels et courtois. Pour les passagers débutants, ils savent mettre en confiance...
+                </span>
+            </div>
+            <div class="card--3D-vertical col-12 col-md-3">
+                <div class='card--head'>
+                    <div>
+                        <h4>Prénom</h4>
+                        <p>Inscrit depuis le 04-06-2021</p>
                     </div>
-                    <!-- <hr> -->
-                    <span>
-                        Ce site est génial !
-                        Facile de compréhension, on trouve facilement et rapidement l'information concernant la réponse possible à notre besoin.
-                        Les pilotes sont très pros, toujours ponctuels et courtois. Pour les passagers débutants, ils savent mettre en confiance...
-                    </span>
+                    <div class="row--stars">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="">
+                    </div>
                 </div>
-                {#{% endfor %}#}
-            <!-- </div> -->
+                <!-- <hr> -->
+                <span class="card--text">
+                    Ce site est génial !
+                </span>
+            </div>
+            <div class="card--3D-vertical col-12 col-md-3">
+                <div class='card--head'>
+                    <div>
+                        <h4>Prénom</h4>
+                        <p>Inscrit depuis le 04-06-2021</p>
+                    </div>
+                    <div class="row--stars">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                    </div>
+                </div>
+                <!-- <hr> -->
+                <span class="card--text">
+                    Ce site est génial !
+                    Facile de compréhension, on trouve facilement et rapidement l'information concernant la réponse possible à notre besoin.
+                    Les pilotes sont très pros, toujours ponctuels et courtois. Pour les passagers débutants, ils savent mettre en confiance...
+                </span>
+            </div>
+            {#{% endfor %}#}
         </div>
         <br>
         {#{% endif %}#}
         {#{% if siteadvices_extrem is defined %}#}
-        <div class="card--inset" id="advices--best&worst">
-            <!-- <div class="d-flex flex-row flex-wrap col-12 justify-content-center"> -->
-                {#{% for advice in siteadvices_extrem %}#}
-                <div class="card--advice card--3D-vertical col-12 col-xl-5">
-                    <div class='d-flex flex-row justify-content-between'>
-                        <div>
-                            <h4>Prénom</h4>
-                            <p>Inscrit depuis le 04-06-2021</p>
-                        </div>
-                        <div style='height:10px;'>
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
-                        </div>
+        <div class="card--inset">
+            {#{% for advice in siteadvices_extrem %}#}
+            <div class="card--3D-vertical col-12 col-xl-5">
+                <div class='card--head'>
+                    <div>
+                        <h4>Prénom</h4>
+                        <p>Inscrit depuis le 04-06-2021</p>
                     </div>
-                    <!-- <hr> -->
-                    <span>
-                        Le meilleur des avis !
-                        J'peux plus m'en passeerrrrr.......
-                    </span>
-                </div>
-                <div class="card--advice card--3D-vertical col-12 col-xl-5">
-                    <div class='d-flex flex-row justify-content-between'>
-                        <div>
-                            <h4>Prénom</h4>
-                            <p>Inscrit depuis le 04-06-2021</p>
-                        </div>
-                        <div style='height:10px;'>
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="">
-                            <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="">
-                        </div>
+                    <div class="row--stars">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="">
                     </div>
-                    <!-- <hr> -->
-                    <span>
-                        Le pire des avis !
-                        A fuir...
-                    </span>
                 </div>
-                {#{% endfor %}#}
-            <!-- </div> -->
+                <!-- <hr> -->
+                <span class="card--text">
+                    Le meilleur des avis !
+                    J'peux plus m'en passeerrrrr.......
+                </span>
+            </div>
+            <div class="card--3D-vertical col-12 col-xl-5">
+                <div class='card--head'>
+                    <div>
+                        <h4>Prénom</h4>
+                        <p>Inscrit depuis le 04-06-2021</p>
+                    </div>
+                    <div class="row--stars">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="">
+                        <img style='height:20px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="">
+                    </div>
+                </div>
+                <!-- <hr> -->
+                <span class="card--text">
+                    Le pire des avis !
+                    A fuir...
+                </span>
+            </div>
+            {#{% endfor %}#}
         </div>
         {#{% endif %}#}
     </section>
@@ -172,10 +163,10 @@
     <!-- Professionnals listing presentation -->
     <!----------------------------------------->
     <section class="paragraph--large" id="section--pro">
-        <h2 class="title--h2" id="pro--title">Des professionnels sur qui compter...</h2>
+        <h2 class="title--h2">Des professionnels sur qui compter...</h2>
         <div class="card--3D-horizontal">
             <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/Vignette-VMDTR.png') }}" alt="Photo d'une vignette VMDTR">
-            <p class="card--paragraph col-md-12 col-lg-8" id="pro--p">
+            <p class="col-md-12 col-lg-8">
                 Tous les pilotes référencés sont des auto-entrepreneurs, réunissant toutes les conditions d'exercice de la profession de transport de personne.
                 Cela signifie que tous ont suivi la formation VMDTR, et ont justifié la détention et la validité des documents ci-dessous :
                 <br>- carte pro
@@ -192,9 +183,9 @@
     </section>
     <!-- -->
     <section class="paragraph--large" id="section--equipments">
-        <h2 class="title--h2" id="equipments--title">Les équipements indispensables...</h2>
-        <div class="card--3D-horizontal" style="justify-content: center;">
-            <p class="card--paragraph" id="equipments--p">
+        <h2 class="title--h2">Les équipements indispensables...</h2>
+        <div class="card--3D-horizontal" style="justify-content:center;">
+            <p>
                 <br>- Charlotte
                 <br>- casque
                 <br>- gants
@@ -215,9 +206,9 @@
     </section>
     <!-- -->
     <section class="paragraph--large" id="section--bikes">
-        <h2 class="title--h2" id="bikes--title">Les motos</h2>
+        <h2 class="title--h2">Les motos</h2>
         <div class="card--3D-horizontal" style="justify-content: center;">
-            <p class="card--paragraph" id="bikes--p">
+            <p>
                 La profession impose une catégorie de moto. De plus, celles-ci doivent avoir moins de 5 ans.
                 <br>- Honda Goldwing
                 <br>- BMW K1600B
@@ -232,13 +223,12 @@
     </section>
     <!-- -->
     <section class="paragraph--large" id="section--luggages">
-        <h2 class="title--h2" id="luggages--title">Les bagages</h2>
+        <h2 class="title--h2">Les bagages</h2>
         <div class="card--3D-horizontal" style="justify-content: center;">
             <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/luggages.jpg') }}" alt="Photo d'une vignette VMDTR">
-            <p class="card--paragraph col-md-12 col-lg-8" id="luggages--p">
+            <p class="col-md-12 col-lg-8">
                 Les motos sont équipées d'un porte-paquet permettant le transport d'une valise cabine,
-                d'une scoche d'ordinateur portable, et si vous aviez besoin,
-                un sac à dos en position ventrale doit pouvoir passer...
+                d'une scoche d'ordinateur portable...
             </p>
         </div>
     </section>

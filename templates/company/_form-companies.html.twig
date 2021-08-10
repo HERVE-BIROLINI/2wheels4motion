@@ -3,8 +3,8 @@
         <div class="mt-1 mb-2 col-12" id="blk--companies2choice">
             <!-- <div class="mt-1 mb-2 col-lg-12 col-xl-5" id="blk--companies2choice"> -->
             {% if allcompaniesknown is defined %}
-            <form method="post">
-                <table class="table table-striped table--txtlight">
+            <form method="post" novalidate>
+                <table class="table table-striped">
                     <thead class="thead--dark">
                         <tr>
                             <th>Choisir</th>
@@ -49,9 +49,9 @@
                         <i class="ri-record-circle-line"></i>&ensp;Associer la société choisie
                     </button>
                     {% if controller_name is defined and controller_name=='RegistrationController' %}
-                    <a class="btn btn-sm btn--secondary btn-return" href="{{ path('registration_driver', {'id': app.user.id}) }}">
+                    <a class="btn btn-sm btn--secondary" href="{{ path('registration_driver', {'id': app.user.id}) }}">
                     {% elseif controller_name is defined and controller_name=='ProfileController' %}
-                    <a class="btn btn-sm btn--secondary btn-return" id="btn--companies-exit">
+                    <a class="btn btn-sm btn--secondary" id="btn--companies-exit">
                     {% else %}
                     {% endif %}
                         <i class="ri-close-fill"></i>&ensp;Retourner déclarer une nouvelle société

@@ -1,0 +1,19 @@
+<!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+{% for flash in app.flashes('information') %}
+<div class="alert alert-info mx-3 my-1" role="alert">{{ flash }}</div>
+{% endfor %}
+{% for flash in app.flashes('success') %}
+<div class="alert alert-success mx-3 my-1" role="alert">{{ flash }}</div>
+{% endfor %}
+{% for flash in app.flashes('warning') %}
+<div class="alert alert-warning mx-3 my-1" role="alert">{{ flash }}</div>
+{% endfor %}
+{% for flash in app.flashes('danger') %}
+<div class="alert alert-danger mx-3 my-1" role="alert">{{ flash }}</div>
+{% endfor %}
+{% for flash in app.flashes('verify_email_error') %}
+    <div class="alert alert-danger" role="alert">{{ flash }}</div>
+{% endfor %}
+{% if error is defined and error is not null %}
+    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+{% endif %}

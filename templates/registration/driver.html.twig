@@ -3,141 +3,70 @@
 {% block title %}Enregistrement d'un nouveau pilote{% endblock %}
 
 {% block body %}
-    {% for flashError in app.flashes('verify_email_error') %}
-    <div class="alert alert-danger" role="alert">{{ flashError }}</div>
-    {% endfor %}
 
-    {% if error_files %}
-    <div class="alert alert-danger" role="alert">{{ error_files }}</div>
-    {% endif %}
-    {% if driver_exist %}
-    <div class="alert alert-danger" role="alert">{{ driver_exist }}</div>
-    {% endif %}
-    
-{#
-    {{ dump('Nb de compagnies connues (paramètre) : '~allcompaniesknown|length) }}
-    {{ dump(allcompaniesknown[0].drivers[0]) }}
-    {% set allcompaniesknown=getallcompanies() %}
-    {% if allcompaniesknown is defined %}
-    {{ dump('Nb de compagnies connues (twig) : '~getknowncompanies()|length) }}
-    {{ dump(allcompaniesknown[0].drivers[0]) }}
-    {% endif %}
-#}
+    <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+    {{ include('flash.html.twig') }}
 
+    <div class="paragraph--large" method="post"> 
+        <h1 class="title--h2">Enregistrez-vous : <small class="small-title-message">(* champs obligatoire)</small></h1>
+        <!-- *** DEBUT de la Carte3D *** -->
+        <div class="card--3D-vertical">
 
-<div class="paragraph--large" method="post"> 
-    <h1 class="title--h2">Enregistrez-vous : <small class="small-title-message">(* champs obligatoire)</small></h1>
-    <!-- *** DEBUT de la Carte3D *** -->
-    <div class="card--3D-vertical">
+            <!-- Common Form to choose Company object in existing list -->
+            {{ include('company/_form-companies.html.twig') }}
 
-        <!-- Common Form to choose Company object in existing list -->
-        {{ include('company/_form-companies.html.twig') }}
+            <!-- ** FORMULAIRE PRINCIPAL DE CREATION DU PILOTE AVEC SON ENTREPRISE ** -->
+            <form id="blk--company2create" method="post" enctype="multipart/form-data"  novalidate>
+                <!--  id="formregistrationdriver" -->
+                <div class="card--horizontal mb-4">
+                    
+                <!-- BlockS de données de l'entreprise T3P + données propres au pilote -->
+                <div class="d-flex flex-row flex-wrap justify-content-between">
 
-        <!-- ** FORMULAIRE PRINCIPAL DE CREATION DU PILOTE AVEC SON ENTREPRISE ** -->
-        {% set drivercard=getdrivercard(app.user.id) %}
-        <form id="blk--company2create" method="post" enctype="multipart/form-data">
-        
-            <!-- BlockS de données de l'entreprise T3P + données propres au pilote -->
-            <div class="d-flex flex-row flex-wrap justify-content-between">
+                    <!-- Block de données de la company T3P -->
+                    {{ include('company/_form-company.html.twig') }}
 
-                <!-- Common Form to edit Company object -->
-                {{ include('company/_form-company.html.twig') }}
+                    <!-- Block de données propres au pilote -->
+                    {{ include('driver/_form.html.twig') }}
 
-                <!-- Block de données propres au pilote -->
-                <div class="mt-1 mb-2 col-12 col-lg-7" id="blk--driverdatas">
-                    <!-- Titre -->
-                    <h5>Carte Professionnelle de Conducteur de VMDTR</h5>
-                    <!-- Encadrement -->
-                    <div class="block--datas-horizontal" id="block--file-VMDTR-card">
-                        <div class="d-flex flex-column col-12"><!-- col-lg-5 -->
-                            <label class="required" for="inputvmdtrnumber">Numéro :</label>
-                            <input type="text" {% if vmdtr_number is not null %}value="{{ vmdtr_number }}"{% endif %} placeholder="11 chiffres..." pattern="[\d]{11}" name="vmdtr_number" id="inputvmdtrnumber" class="form-control" size="11" required ><!-- autofocus> -->
-                            {#{% if error_vmdtrnumber %}#}
-                            <!-- <span class="d-block">
-                                <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
-                                <small class="form-error-message">Le numéro ne peut contenir que des chiffres.</small>
-                            </span> -->
-                            {#{% endif %}#}
-                            <br>
+                </div>
+            </div>
 
-                            <label class="required" for="inputvmdtrvalidity">Date de fin de validité :</label>
-                            <input type="date" {% if vmdtr_validity is not null %}value="{{ vmdtr_validity }}"{% endif %} name="vmdtr_validity" id="inputvmdtrvalidity" class="form-control" required ><!-- autofocus> -->
-                            {#{% if error_vmdtrvalidity %}#}
-                            <!-- <span class="d-block">
-                                <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
-                                <small class="form-error-message">La date ne peut contenir que des chiffres.</small>
-                            </span> -->
-                            {#{% endif %}#}
-                            <br>
-
-                            <label class="required" for="inputmotomodel">Modèle de moto :</label>
-                            <input type="text" name="motomodel" id="inputmotomodel" class="form-control"
-                                {% if motomodel is not null %}value="{{ motomodel }}"{% endif %}
-                                placeholder="ex: Honda Goldwing 2021..." required
-                            ><!-- autofocus> -->
-                            {#{% if error_motomodel %}#}
-                            <!-- <span class="d-block">
-                                <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
-                                <small class="form-error-message">La date ne peut contenir que des chiffres.</small>
-                            </span> -->
-                            {#{% endif %}#}
-                            <br>
-                        </div>
-                        &ensp;
-                        <div class="d-flex flex-column col-12 align-items-center justify-content-center"><!-- col-lg-7 -->
-                            <label for="browse">
-                                <img class="imgbtn--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="">
-                            </label>
-                            <!-- VALUE NE SERT A RIEN AVEC UN INPUT TYPE FILE, MAIS BON... -->
-                            <input class="required" type="file" name="file" id="browse"
-                                {% if drivercard is not null %}
-                                value="{{ asset(drivercard.pathname) }}"
-                                {% endif %}
-                                accept=".jpg, .jpeg, .png">
-                            <br>
-                        </div>
-                    </div>
-                    <br>
+                <!-- Déclaration de véracité des informations -->
+                <div class="d-flex flex-row flex-wrap ml-4 mb-2">
+                    <input type="checkbox" id="hasconfirmedgoodstanding"
+                        name="hasconfirmedgoodstanding" required
+                        {% if hasconfirmedgoodstanding =='on' %}checked{% endif %}
+                    />
+                    <p>&ensp;</p>
+                    <label for="hasconfirmedgoodstanding">" En cochant cette case,</label>
+                    &ensp;
+                    <label for="hasconfirmedgoodstanding">je certifie être en règle pour l'exercice</label>
+                    &ensp;
+                    <label for="hasconfirmedgoodstanding">de la profession de chauffeur VMDTR,</label>
+                    &ensp;
+                    <label class="required" for="hasconfirmedgoodstanding">et l'exactitude de mes déclarations. "</label>
+                    {% if error_hasconfirmedgoodstanding is defined and error_hasconfirmedgoodstanding is not null %}
+                    <span class="d-block">
+                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                        <small class="form-error-message">Vous devez cocher la case de confirmation de l'exactitude des déclarations.</small>
+                    </span>
+                    {% endif %}
                 </div>
 
-            </div>
+                <!-- Boutons de sortie -->
+                <div class="btns--row mb-2">
+                    <button class="btn btn-sm btn--blue" type="submit">
+                        <i class="ri-record-circle-line"></i>&ensp;Créer le compte
+                    </button>
+                    <!--  form="formregistrationdriver" -->
+                    <a class="btn btn-bg btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
+                        <i class="ri-close-fill"></i>&ensp;Annuler
+                    </a>
+                </div>
+                <!-- <a href="https://www.francecompetences.fr/recherche/rs/3864/">Consulter les Conditions Générales d'Utilisation</a> -->
 
-            <!-- Déclaration de véracité des informations -->
-            <div class="d-flex flex-row flex-wrap ml-4 mb-2">
-                <input type="checkbox" id="hasconfirmedgoodstanding"
-                    name="hasconfirmedgoodstanding" required
-                    {% if hasconfirmedgoodstanding =='on' %}checked{% endif %}
-                />
-                <p>&ensp;</p>
-                <label for="hasconfirmedgoodstanding">
-                    " En cochant cette case,
-                </label>
-                &ensp;
-                <label for="hasconfirmedgoodstanding">
-                    je certifie être en règle pour l'exercice
-                </label>
-                &ensp;
-                <label for="hasconfirmedgoodstanding">
-                    de la profession de chauffeur VMDTR,
-                </label>
-                &ensp;
-                <label class="required" for="hasconfirmedgoodstanding">
-                    et l'exactitude de mes déclarations. "
-                </label>
-            </div>
-
-            <!-- Boutons de sortie -->
-            <div class="btns--row mb-2">
-                <button class="btn btn-sm btn--blue" type="submit">
-                    <i class="ri-record-circle-line"></i>&ensp;Créer le compte
-                </button>
-                <a class="btn btn-bg btn--secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">
-                    <i class="ri-close-fill"></i>&ensp;Annuler
-                </a>
-            </div>
-            <!-- <a href="https://www.francecompetences.fr/recherche/rs/3864/">Consulter les Conditions Générales d'Utilisation</a> -->
-
-        </form><!-- ** FIN DU FORMULAIRE ** -->
-    </div><!-- FIN de la Carte3D -->
-</div>
+            </form><!-- ** FIN DU FORMULAIRE ** -->
+        </div><!-- FIN de la Carte3D -->
+    </div>
 {% endblock %}

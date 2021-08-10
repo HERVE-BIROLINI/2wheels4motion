@@ -1,10 +1,10 @@
 {% set depts=getdepartments() %}
-<section class="paragraph--large" id="section--presentation">
+<section class="paragraph--large">
 
     <div class="d-flex flex-row flex-wrap justify-content-between align-items-center">
-        <h2 class="title--h2" id="flatrates--title">Mise à jour d'un tarif...</h2>
+        <h2 class="title--h2">Mise à jour d'un tarif...</h2>
         <div class="d-flex flex-row flex-wrap justify-content-between align-items-center">
-            <a class="btn btn-sm btn--secondary" href="{{ path('flatrate_read') }}">
+            <a class="btn btn-sm btn--secondary" href="{{ path('admin_flatrate_read') }}">
                 <i class="ri-file-list-3-line"></i>&ensp;Retour à la liste
             </a>
             &emsp;
@@ -14,28 +14,28 @@
         </div>
     </div>
 
-    <table class="table table-striped table--txtlight">
+    <table class="table table-striped">
         <thead class="thead--dark">
             <tr>
                 <th style="width:1%;"></th>
-                <th style="width:30%;"><label class="required">Libellé</label></th>
-                <th style="width:10%;"><label class="required">Prix</label></th>
-                <th style="width:15%;"><label>Forfait (* PCI)</label></th>
-                <th style="width:25%;"><label>Département</label></th>
+                <th style="width:30%;"><label class="required" for="inputlabel">Libellé</label></th>
+                <th style="width:10%;"><label class="required" for="inputprice">Prix</label></th>
+                <th style="width:15%;"><label for="inputflatrate">Forfait (* PCI)</label></th>
+                <th style="width:25%;"><label for="claim_form_to_departments">Département</label></th>
                 <th style="width:15%;"><label>Actions</label></th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <form class="mt-4 mb-4" id="update" method="post">
+                <form class="mt-4 mb-4" id="formupdate" method="post">
                     <td></td>
-                    <td width="20%"><input type="text" class="form-control" value="{% if flatrate %}{{ flatrate.label }}{% endif %}" name="label" size="50" required/></td>
-                    <td><input type="text" class="form-control" value="{% if flatrate %}{{ flatrate.price }}{% endif %}" name="price" size="5" required/></td>
+                    <td width="20%"><input type="text" class="form-control" id="inputlabel" value="{% if flatrate %}{{ flatrate.label }}{% endif %}" name="label" size="50" required/></td>
+                    <td><input type="text" class="form-control" id="inputprice" value="{% if flatrate %}{{ flatrate.price }}{% endif %}" name="price" size="5" required/></td>
                     <td>
                         <div class="d-flex flex-row">
                             <div class="col-4"></div>
                             <div>
-                                <input type="checkbox" name="pickupincluded"
+                                <input id="inputflatrate" type="checkbox" name="pickupincluded"
                                     {% if flatrate and flatrate.pickupincluded %}checked{% endif %}
                                 />
                             </div>
@@ -59,11 +59,9 @@
                         {% endif %}
                     </td>
                     <td>
-                        <!-- <div class="d-flex flex-row flex-wrap"> -->
-                            <button class="btn btn-sm btn--blue" type="submit" title="Sauvegarder" class="mr-2"><!--  form="update"> -->
-                                <i class="ri-save-line"></i>&ensp;Sauvegarder
-                            </button>
-                        <!-- </div> -->
+                        <button class="btn btn-sm btn--blue mr-2" type="submit" title="Sauvegarder" form="formupdate">
+                            <i class="ri-save-line"></i>&ensp;Sauvegarder
+                        </button>
                     </td>
                 </form>
             </tr>

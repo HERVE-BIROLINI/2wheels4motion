@@ -57,16 +57,15 @@ class PictureTwig extends AbstractExtension
 
     // ** Les méthodes liées aux extensions de fonctions **
     //
-    public function getPictureOfUserProfile($user_id){
+    public function getPictureOfUserProfile($user){
         $obPictureLabel_Portrait=$this->entityManager->getRepository(Picturelabel::class)->findOneBy(['label'=>'Avatar']);
         return $this->entityManager->getRepository(Picture::class)
-            ->findOneBy(['picturelabel'=>$obPictureLabel_Portrait,'user'=>$user_id]);
+            ->findOneBy(['picturelabel'=>$obPictureLabel_Portrait,'user'=>$user]);
     }
-
-    public function getPictureOfDriverCard($user_id){
+    public function getPictureOfDriverCard($user){
         $obPictureLabel_VMDTR=$this->entityManager->getRepository(Picturelabel::class)->findOneBy(['label'=>'Carte pro. VMDTR - Face']);
         return $this->entityManager->getRepository(Picture::class)
-            ->findOneBy(['picturelabel'=>$obPictureLabel_VMDTR,'user'=>$user_id]);
+            ->findOneBy(['picturelabel'=>$obPictureLabel_VMDTR,'user'=>$user]);
     }
     // public function getAllPicturelabels(){
     //     $obPDO = new DBTools;

@@ -65,28 +65,6 @@ class DriverController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("{driver}/confirm", name="confirm", methods={"GET","POST"}, requirements={"company":"\d+"})
-     */
-    public function driverConfirm(Driver $driver): Response
-    {
-        // test si l'utilisateur N'est PAS encore identifié...
-        if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
-            // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
-        }
-
-        $entityManager = $this->getDoctrine()->getManager();
-        if($entityManager->getRepository(Driver::class)->findOneBy(['id'=>$driver->getId()])) {
-            $driver->setIsVerified(True);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('admin_index', [
-            'allcompaniesunknown'=>$entityManager->getRepository(Driver::class)->findBy(['is_verified'=>null]),
-        ]);
-    }
-
 
     // /**
     //  * @Route("s", name="index")

@@ -4,6 +4,8 @@ namespace App\Twig;
 
 use App\Entity\Driver;
 use App\Entity\Company;
+use App\Entity\Socialreason;
+use App\Entity\Tva;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -57,6 +59,12 @@ class DriverTwig extends AbstractExtension
             new TwigFunction('getcompanybyid', [$this, 'getCompanyById']),
             new TwigFunction('getcompaniesbyregionorzip', [$this, 'getCompaniesByRegionOrZip']),
             new TwigFunction('getknowncompanies', [$this, 'getKnownCompanies']),
+            //
+            new TwigFunction('getsocialreasons', [$this, 'getSocialReasons']),
+            //
+            new TwigFunction('gettvarates', [$this, 'getTvaRates']),
+            //
+            new TwigFunction('getassocsocialreasontva', [$this, 'getAssocSocialreasonTva']),
         ];
     }
 
@@ -117,6 +125,32 @@ class DriverTwig extends AbstractExtension
     }
     public function getKnownCompanies(){
         return $this->entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>true]);
+    }
+    //
+    public function getSocialReasons(){
+        return $this->entityManager->getRepository(Socialreason::class)->findBy(array(), array('label'=>'asc'));
+    }
+    //
+    public function getTvaRates(){
+        return $this->entityManager->getRepository(Tva::class)->findBy(array(),array('value'=>'asc'));
+    }
+    //
+    public function getAssocSocialreasonTva(){
+        $socialreasons=$this->getSocialReasons();
+        $echo=[];
+        // boucle sur le nombre d'enregistrements de la table
+        foreach($socialreasons as $socialreason){
+            foreach($socialreason->getTva() as $tva){
+                // dd($tva);
+                $echo[]=array('socialreason_label'=>$socialreason->getLabel(),
+                                'tva_value'=>$tva->getValue(),
+                                'tva_comment'=>$tva->getComment(),
+                                'socialreason_id'=>$socialreason->getId(),
+                                'tva_id'=>$tva->getId()
+                );
+            }
+        }
+        return $echo;
     }
 
     // *************************************************************

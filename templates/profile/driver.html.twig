@@ -7,52 +7,8 @@
 
     {{ include('profile/banner.html.twig') }}
 
-    <!-- CA MARCHE !!!... -->
-    {#
-    {{ dump('app.user.picture[0] :') }}
-    {{ dump(app.user.picture[0]) }}
-    #}
-
-    <!-- CA MARCHE !!!... -->
-    {#
-    {{ dump('app.user.picture (Current = 6 ?) :') }}
-    {{ dump(app.user.picture) }}
-    {{ dump('app.user.picture.pathname : '~app.user.picture.pathname) }}
-    {{ dump('app.user.picture.picturelabel.label : '~app.user.picture.picturelabel.label) }}
-    #}
-
-    
-    <!-- NE FONCTIONNE PLUS SANS LIAISON-->
-    {#
-    {{ dump('app.user.driver (User('~app.user.id~') => Driver('~app.user.driver.id~') ?) :') }}
-    {{ dump(app.user.driver) }}
-    #}
-    <!-- LES 2, CA MARCHE SI PAS DE LIAISON !!! -->
-    {#
-    {{ dump('Driver (TWIG ! getdriverbyid('~app.user.driver.id~')) :') }}
-    {{ dump(getdriverbyid(app.user.driver.id)) }}
-    {{ dump('Driver (variable driver) :') }}
-    {{ dump(driver) }}
-    #}
-
-    <!-- LES 2, CA MARCHE SI PAS DE LIAISON !!! -->
-    {#
-    {{ dump('app.user.driver.company (User('~app.user.id~') => Driver('~app.user.driver.id~') => Company('~app.user.driver.company.id~') ?) :') }}
-    {{ dump(app.user.driver.company) }}
-
-    {{ dump('Company(TWIG ! getcompanybyid('~app.user.driver.company.id~')) :') }}
-    {{ dump(getcompanybyid(app.user.driver.company.id)) }}
-    {{ dump('Company(variable company) :') }}
-    {{ dump(company) }}
-    #}
-
-
-    {% for flash in app.flashes('information') %}
-    <div class="alert alert-info" role="alert">{{ flash }}</div>
-    {% endfor %}
-    {% for flash in app.flashes('success') %}
-    <div class="alert alert-success" role="alert">{{ flash }}</div>
-    {% endfor %}
+    <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+    {{ include('flash.html.twig') }}
         
     {#<!-- <section id="regions_json" hidden>{{ JSgetregions() }}</section> -->#}
     {#<!-- <section id="dpts_json" hidden>{{ JSgetdpts() }}</section> -->#}
@@ -70,20 +26,24 @@
         <!-- Block par défaut -->
         <div class="paragraph--large" id="blk--company2create">
         
-            <!-- La company T3P : les données de la Company actuelle -->
-            <form class="card--3D-vertical my-4" method="post"><!--class="d-flex flex-row justify-content-center my-4">-->
-                <!-- <h2 class="h3 ml-2 mt-4 mb-3 font-weight-normal">Adresse personnelle :</h2> -->
-                
-                <!-- Common Form to edit Company object -->
-                {{ include('company/_form-company.html.twig') }}
-                <br>
-    
+            <!-- Les informations professionnelles : T3P & Pilote VMDTR -->
+            <form class="card--3D-vertical" id="formprofiledriver" method="post" enctype="multipart/form-data" novalidate>
+                <div class="card--horizontal mb-2">
+                    <!-- BlockS de données de l'entreprise T3P + données propres au pilote -->
+                    <div class="d-flex flex-row flex-wrap justify-content-between">
+                        <!-- Block de données de la company T3P -->
+                        {{ include('company/_form-company.html.twig') }}
+                        <!-- Block de données propres au pilote -->
+                        {{ include('driver/_form.html.twig') }}
+                    </div>
+                </div>
+
                 <!-- rangée de boutons : Mise à jour / Modification MdP / Création compte Driver -->
                 <div class="btns--row">
-                    <button class="btn btn-sm btn--blue" type="submit">
+                    <button class="btn btn-sm btn--blue" type="submit" form="formprofiledriver">
                         <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
                     </button>
-                    {#<!-- <a class="btn btn-sm btn--secondary btn-return" href="{{ path('profile_user',{'id': app.user.id}) }}">
+                    {#<!-- <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
                         <i class="ri-close-fill"></i>&ensp;Annuler
                     </a> -->#}
                 </div>
@@ -103,7 +63,7 @@
                 <div class="btn--tabtype" id="btn--tabtype--order" parent_id="row--tabtype--travel">Courses effectuées</div>
             </div>
             <!-- tableau des Demandes envoyées (Claims) -->
-            <table class="table table-striped table--txtlight table--tabtype" id="table--tabtype--claim" parent_id="btn--tabtype--claim">
+            <table class="table table-striped table--tabtype" id="table--tabtype--claim" parent_id="btn--tabtype--claim">
                 <thead class="thead--dark">
                     <tr>
                         <th></th>
@@ -118,9 +78,9 @@
                 <tbody>
                     {% for claim in app.user.driver.getclaims %}
                         {% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
-                    <tr class="row--claim TOUTES">
+                    <tr class="row--tab row--claim TOUTES" parent_id="btn--tabtype--claim">
                         {% else %}
-                    <tr class="row--claim ARCHIVE">
+                    <tr class="row--tab row--claim ARCHIVE" parent_id="btn--tabtype--claim">
                         {% endif %}
                         <td></td>
                         <td>{{ claim.id }}</td>
@@ -139,7 +99,7 @@
                     {% endfor %}
                 </tbody>
                 <tfoot>
-                    {% if app.user.customer.getclaims|length == 0 %}
+                    {% if not app.user.customer or app.user.customer.getclaims|length == 0 %}
                     <tr>
                         <td colspan="6">Vous n'avez fait encore aucune demande...</td>
                     </tr>
@@ -147,7 +107,7 @@
                 </tfoot>
             </table>
             <!-- tableau des Devis reçus (Tenders) -->
-            <table class="table table-striped table--txtlight table--tabtype" id="table--tabtype--tender" parent_id="btn--tabtype--tender">
+            <table class="table table-striped table--tabtype" id="table--tabtype--tender" parent_id="btn--tabtype--tender">
                 <thead class="thead--dark">
                     <tr>
                         <th></th>
@@ -160,10 +120,10 @@
                 <tbody>
                     {#{% for claim in app.user.customer.getclaim %}
                         {% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
-                        #}
-                    <tr class="row--claim ARCHIVE">
-                        {#{% else %}#}
-                    <tr class="row--claim TOUTES">
+                        
+                    <tr class="row--tab row--tender ARCHIVE" parent_id="btn--tabtype--tender">
+                        {% else %}#}
+                    <tr class="row--tab row--tender TOUTES" parent_id="btn--tabtype--tender">
                         {#{% endif %}#}
                         <td></td>
                         <td></td>
@@ -180,7 +140,7 @@
                 </tfoot>
             </table>
             <!-- tableau des Courses effectuées (Orders) -->
-            <table class="table table-striped table--txtlight table--tabtype" id="table--tabtype--order" parent_id="btn--tabtype--order">
+            <table class="table table-striped table--tabtype" id="table--tabtype--order" parent_id="btn--tabtype--order">
                 <thead class="thead--dark">
                     <tr>
                         <th></th>
@@ -192,20 +152,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for claim in app.user.customer.getclaims %}
-                        {% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
-                    <tr class="row--claim ARCHIVE">
-                        {% else %}
-                    <tr class="row--claim TOUTES">
-                        {% endif %}
+                    {% if app.user.customer %}
+                        {% for claim in app.user.customer.getclaims %}
+                            {#{% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
+                    <tr class="row--tab row--order ARCHIVE" parent_id="btn--tabtype--order">
+                        {% else %}#}
+                    <tr class="row--tab row--order TOUTES" parent_id="btn--tabtype--order">
+                            {#{% endif %}#}
                         <td></td>
-                        
                         <td> Les boutons !! </td>
                     </tr>
-                    {% endfor %}
+                        {% endfor %}
+                    {% endif %}
                 </tbody>
                 <tfoot>
-                    {% if app.user.customer.getclaims|length == 0 %}
+                    {% if app.user.customer and app.user.customer.getclaims|length == 0 %}
                     <tr>
                         <td colspan="4">Vous n'avez encore pas bénéficié des services des pilotes de l'Annuaire...</td>
                     </tr>
@@ -225,7 +186,7 @@
 
         <!-- Les "détails" de la demande -->
         <h3 class="pb-1">{{ 'Demande : (#'~claim.id~')' }}</h3>
-        <table class="table table-striped table--txtlight">
+        <table class="table table-striped">
             <tbody>
                 <tr>
                     <th class="thead--dark">Date de la demande</th>
@@ -294,7 +255,7 @@
 
         <button class="btn btn-sm btn--secondary mt-5 btn--hidemodal"
             parent_id="{{ 'modal--claim--'~claim.id }}"
-        ><!-- id="btn--hidemodal"> -->
+        >
             <i class="ri-close-fill"></i>&ensp;Fermer
         </button>
     </div>

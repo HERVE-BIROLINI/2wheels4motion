@@ -108,6 +108,30 @@ document.addEventListener("DOMContentLoaded", function(event){
     // *** FIN - Gestion du scroll ***
     //---------------------------------
 
+    
+    //  LE FICHIER IMAGE CHOISI PAR UTILISATEUR N'ETANT PAS ENCORE UPLOADE,
+    //  NE MARCHERA PAS !!!
+    //----------------------------------------------------------------------------------
+    // *** DEBUT - Gestion du non-affichage d'une image suite à l'Upload en attente ***
+    //----------------------------------------------------------------------------------
+    // ... si bouton de recherche de fichiers trouvé...
+    // recherche de tous les éléments Input et Select liés au nom de la commune...
+    let htmlBrowseButton=document.querySelector("#browse");
+    if(htmlBrowseButton){
+        htmlBrowseButton.onchange=function(){
+            let htmlImg=document.querySelector("#"+htmlBrowseButton.getAttribute('target_id'));
+            // Si attribut spécifique permettant l'identification d'un élément HTML image...
+            if(htmlImg){
+                // ... le cache en attendant que la nouvelle image soit téléchargée pour l'afficher
+                // htmlImg.src=...;
+                htmlImg.style.display='none';
+            }
+        }
+    }
+    //--------------------------------------------------------------------------------
+    // *** FIN - Gestion du non-affichage d'une image suite à l'Upload en attente ***
+    //--------------------------------------------------------------------------------
+    
 
     //------------------------------------------------------------------
     // *** DEBUT - Gestion de la sélection d'une City et de son Zip ***
@@ -275,7 +299,7 @@ document.addEventListener("DOMContentLoaded", function(event){
             //
             let htmlZip=document.querySelector("#"+this.getAttribute('id').replace('cities','zip'));
             let htmlZips=document.querySelectorAll("."+this.getAttribute('id').replace('cities','zip'));
-            console.log(htmlZips);
+            // console.log(htmlZips);
             // ... (RE)masque la liste des communes
             this.style.display='none';
             // ... affiche le Nom de la Commune choisie dans le Input TEXT
@@ -296,15 +320,13 @@ document.addEventListener("DOMContentLoaded", function(event){
     //-----------------------------------------------------------------
     // *** DEBUT - Gestion de la sélection d'une COMPANY existante ***
     //-----------------------------------------------------------------
-    // action sur le bouton de choix d'une entreprise existante
+    // action sur le bouton de choix d'une entreprise existante (MODAL, aussi...)
     let btnCompanies2Choice = document.querySelector('#btn--companies2choice');
     if(btnCompanies2Choice){
         //
         btnCompanies2Choice.addEventListener('click', showKnownCompanies);
         function showKnownCompanies(){
             document.getElementById('blk--company2create').style.display = 'none';
-            // document.querySelector('#blk--company2create').style.display = 'none';
-            // document.getElementById('blk--driverdatas').setAttribute('class','col-12');
             document.getElementById('blk--companies2choice').style.display = 'block';
         }
 
@@ -448,11 +470,6 @@ document.addEventListener("DOMContentLoaded", function(event){
         // for(let btnFlatratesKnown of arBtnFlatratesKnown){
         //     btnFlatratesKnown.addEventListener('click', showSubmitButton);
         // }
-        //
-        // function showSubmitButton(){
-        //     document.querySelector('#btn--associate-company').style.pointerEvents="initial";
-        //     document.querySelector('#btn--associate-company').style.opacity='initial';
-        // }
     }
     //-----------------------------------------------------
     // *** FIN - Gestion de la sélection d'un FLATRATE ***
@@ -463,18 +480,12 @@ document.addEventListener("DOMContentLoaded", function(event){
     // *** DEBUT - Gestion de l'affichage des pages relatives aux onglets ***
     //------------------------------------------------------------------------
     // action sur le bouton de choix d'une entreprise existante
-    let arRowTabtype = document.querySelectorAll('.row--tabtype');
+    let arRowTabtype=document.querySelectorAll('.row--tabtype');
     if(arRowTabtype.length>0){
 
         // ** Gestion du filtrage sur l'onglet courant **
         let htmlBtnSwitchArchive=document.querySelector('#btn--show-hide--archive');
-        console.log(htmlBtnSwitchArchive);
-        // if(htmlBtnSwitchArchive.length>0){
-        //     htmlBtnSwitchArchive.forEach(html => {
-        //         html.onclick = showhideArchive;
-        //     })
-        // }
-        htmlBtnSwitchArchive.onclick = showhideArchive;
+        htmlBtnSwitchArchive.onclick=showhideArchive;
         function showhideArchive(){
             // recherche les 'lignes' de Class ARCHIVE, pour la Table affichée
             let btnTabTypeVisible=document.querySelector('.btn--tabtype[shown="Y"]');
@@ -486,14 +497,14 @@ document.addEventListener("DOMContentLoaded", function(event){
                 btnSwitch.innerHTML='<i class="ri-eye-line"></i>&ensp;Récents seulement';
                 //
                 trTabTypeVisible.forEach(tr => {
-                    tr.style.display = "";
+                    tr.style.display="";
                 })
             }
             else{
                 btnSwitch.innerHTML='<i class="ri-eye-line"></i>&ensp;Afficher tout';
                 //
                 trTabTypeVisible.forEach(tr => {
-                    tr.style.display = "none";
+                    tr.style.display="none";
                 })
             }
         }
@@ -521,21 +532,29 @@ document.addEventListener("DOMContentLoaded", function(event){
             // ... gère les effets visuels des onglets
             arBtnTabtype.forEach(btnTabType => {
                 if(btnTabType==btnTab2Activate){
-                    btnTabType.style.color = 'white';
-                    btnTabType.style.backgroundColor = 'black';
-                    // btnTabType.style.borderBottom = '0';
+                    btnTabType.style.color='white';
+                    btnTabType.style.backgroundColor='black';
+                    // btnTabType.style.borderBottom='0';
                     btnTabType.style.boxShadow='0 0 0 0, 0 -4px 4px 0 rgb(140, 140, 140)';
                     // ... en profite pour gérer l'affichage des tables associées
-                    document.querySelector('.table--tabtype[parent_id="'+btnTab2Activate.id+'"]').style.display = "";
+                    document.querySelector('.table--tabtype[parent_id="'+btnTab2Activate.id+'"]').style.display="";
                     btnTabType.setAttribute('shown','Y');
+                    // ... et l'affichage du bouton de filtrage, si données de plus d'1 an
+                    let arRowArchive=document.querySelectorAll('.row--tab.ARCHIVE[parent_id="'+btnTab2Activate.id+'"]');
+                    if(arRowArchive.length>0){
+                        htmlBtnSwitchArchive.style.display="";
+                    }
+                    else{
+                        htmlBtnSwitchArchive.style.display="none";
+                    }
                 }
                 else{
-                    btnTabType.style.color = 'black';
-                    btnTabType.style.backgroundColor = 'lightgray';
-                    // btnTabType.style.borderBottom = '0.5px solid black';
+                    btnTabType.style.color='black';
+                    btnTabType.style.backgroundColor='lightgray';
+                    // btnTabType.style.borderBottom='0.5px solid black';
                     btnTabType.style.boxShadow='0 0 0 0';
                     // ... en profite pour gérer l'affichage des tables associées
-                    document.querySelector('.table--tabtype[parent_id="'+btnTabType.id+'"]').style.display = "none";
+                    document.querySelector('.table--tabtype[parent_id="'+btnTabType.id+'"]').style.display="none";
                     btnTabType.setAttribute('shown','N');
                 }
             })
@@ -611,7 +630,7 @@ document.addEventListener("DOMContentLoaded", function(event){
         })
 
         function copyId2Clipboard(){
-            console.log(this.id);
+            // console.log(this.id);
             navigator.permissions.query({name: "clipboard-write"}).then(result => {
                 if (result.state == "granted" || result.state == "prompt") {
                     navigator.clipboard.writeText(this.id)
@@ -622,6 +641,34 @@ document.addEventListener("DOMContentLoaded", function(event){
             });
         }
 
+    }
+    //--------------------------------------------------------------
+    // *** FIN - Gestion de la copie d'un' ID dans le Clipboard ***
+    //--------------------------------------------------------------
+
+
+    //----------------------------------------------------------------
+    // *** DEBUT - Gestion de la copie d'un' ID dans le Clipboard ***
+    //----------------------------------------------------------------
+    let html_SubmitBtn4Association=document.querySelector('#btn--associate--socialreason-tva');
+    if(html_SubmitBtn4Association){
+
+        document.querySelector('#select--socialreason').onclick=oneSelected;
+        document.querySelector('#select--tva').onclick=oneSelected;
+
+        //
+        function oneSelected(){
+            if(document.querySelector('#select--socialreason').value!=''
+                && document.querySelector('#select--tva').value!=''
+            ){
+                showSubmitButton();
+            }
+        }
+        //
+        function showSubmitButton(){
+            html_SubmitBtn4Association.style.pointerEvents="initial";
+            html_SubmitBtn4Association.style.opacity='initial';
+        }
     }
     //--------------------------------------------------------------
     // *** FIN - Gestion de la copie d'un' ID dans le Clipboard ***

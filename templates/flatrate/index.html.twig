@@ -8,25 +8,28 @@
 <!-- Flatrate Controller banner -->
 {{ include('flatrate/banner.html.twig') }}
 
-<section class="paragraph--large" id="section--services">
-    <h2 class="title--h2" id="services--title">Vous servir... au juste prix !</h2>
+<!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+{{ include('flash.html.twig') }}
+
+<section class="paragraph--large">
+    <h2 class="title--h2">Vous servir... au juste prix !</h2>
     <div class="card--3D-horizontal">
-        <p class="card--paragraph col-md-12 col-lg-8" id="services--p">
+        <p class="col-md-12 col-lg-8">
             Les tarifs pratiqués ici sont déterminés sur la base de ceux pratiqués par toute la profession, quelque soit la région.
             Ils ont été proposés par les professionnels référencés dans cet annuaire, selon les tarifs pratiqués dans leur région...
             <br>
             Concernant les modes de paiement, tous les chauffeurs ne disposent pas d'appareils permettant les paiement par carte bancaire.
             Pensez à communiquer préalablement afin de vous munir du mode de paiement qui conviendra.
         </p>
-        <img class="card--imground" src="{{ asset(sImgPath ~'misc/sumup.png') }}" alt="Photo d'un sumUp">
+        <img class="card--imground-200" src="{{ asset(sImgPath ~'misc/sumup.png') }}" alt="Photo d'un sumUp">
     </div>
 </section>
 
 
-<section class="paragraph--large" id="section--presentation">
-    <h2 class="title--h2" id="flatrates--title">Les tarifs...</h2>
+<section class="paragraph--large">
+    <h2 class="title--h2">Les tarifs...</h2>
     {% if flatrates %}
-    <table class="table table-striped table--txtlight">
+    <table class="table table-striped">
         <thead class="thead--dark">
             <tr>
                 <th style="width:5%;"></th>

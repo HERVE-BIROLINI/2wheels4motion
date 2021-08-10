@@ -7,18 +7,8 @@
 
     {{ include('profile/banner.html.twig') }}
 
-    {% for flash in app.flashes('information') %}
-    <div class="alert alert-info" role="alert">{{ flash }}</div>
-    {% endfor %}
-    {% for flash in app.flashes('success') %}
-    <div class="alert alert-success" role="alert">{{ flash }}</div>
-    {% endfor %}
-    
-    {#
-    {% if msg_info %}
-    <div class="alert alert-info" role="alert">{{ msg_info }}</div>
-    {% endif %}
-    #}
+    <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+    {{ include('flash.html.twig') }}
     
     {% if app.user %}
     <div class="paragraph--large">

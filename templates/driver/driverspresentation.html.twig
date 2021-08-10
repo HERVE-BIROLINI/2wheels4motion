@@ -7,7 +7,7 @@
 <!-- Driver Controller banner -->
 {{ include('driver/banner.html.twig') }}
 
-<section class="paragraph--large" id="section--presentation">
+<section class="paragraph--large">
 {% if drivers is defined and drivers|length > 0 %}
     
     <!-- Boucle 1 : boucle d'analyse pour comptage et détermination du comportement WRAP -->
@@ -40,7 +40,7 @@
 
         <form class="d-flex flex-row mt-4 mb-4" method="post">
             <div class="d-flex flex-row align-items-center">
-                <h2 class="title--h2" id="drivers--title">Les pilotes...</h2>
+                <h2 class="title--h2">Les pilotes...</h2>
                 &emsp;
                 <!-- DEBUT buttons sélection filtre Region/Dept. -->
                 <div class="d-flex flex-row">
@@ -117,7 +117,7 @@
                         </div>
                         <!-- Bloc notation + id user -->
                         <div>
-                            <div class="d-flex flex-row justify-content-start">
+                            <div class="row--stars">
                                 <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
                                 <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
                                 <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
@@ -148,8 +148,7 @@
                 </div>
 
                 <!-- Footer proposant les liens de contact -->
-                <div class="card--footer-horizontal" style="border-bottom-left-radius:3px;border-bottom-right-radius:3px;">
-                    <!-- class="card--footer-horizontal"> -->
+                <div class="card--footer-horizontal">
                     Contacter le pilote :
                     <!-- &emsp;
                     <a href="{#{{ path('driver_profile', {'id': oDriver.id}) }}#}" title="Voir sa fiche" class="mr-2">
@@ -175,7 +174,7 @@
 {% endif %}
 </section>
 
-<section class="paragraph--large" id="section--invitation">
+<section class="paragraph--large">
     <p>
         Si vous êtes vous-même détenteur de la carte professionnelle de conducteur VMDTR,
         que vous êtes immatriculé au répertoire des métiers, et disposez de votre propre véhicule,

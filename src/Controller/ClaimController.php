@@ -5,21 +5,21 @@ namespace App\Controller;
 use App\Entity\Claim;
 use App\Entity\Customer;
 use App\Entity\Flatrate;
-use App\Entity\User;
+// use App\Entity\User;
 use App\Form\ClaimFormType;
-use App\Security\EmailVerifier;
+// use App\Security\EmailVerifier;
 use App\Twig\DriverTwig;
 use App\Twig\FrenchGeographyTwig;
 use DateInterval;
 use DateTime;
-use DateTimeZone;
+// use DateTimeZone;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\Mime\Email;
+// use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -199,7 +199,7 @@ class ClaimController extends AbstractController
                     // puis, renvoi à la page du tableau de bord du Customer
                     return $this->redirectToRoute('profile_customer');
                 }
-                else{$this->addFlash('error', "Actuellement aucun pilote n'opérant dans la région de votre demande n'est encore référencé dans notre communauté. Malheureusement votre demande ne peut être satisfaite...");}
+                else{$this->addFlash('danger', "Actuellement aucun pilote n'opérant dans la région de votre demande n'est encore référencé dans notre communauté. Malheureusement votre demande ne peut être satisfaite...");}
             }
             // ... problème d'heure (??)
             elseif(strtotime($claim->getArrivalatTime()->format('H:i'))

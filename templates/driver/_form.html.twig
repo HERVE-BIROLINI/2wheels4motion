@@ -1,0 +1,83 @@
+{% if driver is defined and driver is not null %}
+    {% set vmdtr_number = driver.vmdtrnumber %}
+    {% set vmdtr_validity = driver.vmdtrvalidity|date("Y-m-d") %}
+    {% set motomodel = driver.motomodel %}
+{% elseif app.user.driver %}
+    {% set vmdtr_number = app.user.driver.vmdtrnumber %}
+    {% set vmdtr_validity = app.user.driver.vmdtrvalidity|date("Y-m-d") %}
+    {% set motomodel = app.user.driver.motomodel %}
+{% endif %}
+    <!-- Block de données propres au pilote -->
+    <div class="my-2 col-md-12 col-lg-6">
+        <!-- Titre -->
+        <h5>Carte Professionnelle de Conducteur de VMDTR</h5>
+        <!-- Encadrement -->
+        <!-- <div class="block--datas-vertical"> -->
+        <div class="block--datas-horizontal">
+            <div class="d-flex flex-column col-12">
+                <label class="required" for="inputvmdtrnumber">Numéro :</label>
+                <input type="text" class="form-control" id="inputvmdtrnumber" name="vmdtr_number" size="11" placeholder="11 chiffres..." pattern="[\d]{11}" required 
+                    {% if vmdtr_number is defined and vmdtr_number is not null %}value="{{ vmdtr_number }}"{% endif %}
+                ><!-- autofocus> -->
+                {% if error_vmdtrnumber is defined and  error_vmdtrnumber is not null %}
+                <span class="d-block">
+                    <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                    <small class="form-error-message">Le numéro doit contenir 11 chiffres.</small>
+                </span>
+                {% endif %}
+                <br>
+
+                <label class="required" for="inputvmdtrvalidity">Date de fin de validité :</label>
+                <input type="date" class="form-control" id="inputvmdtrvalidity" name="vmdtr_validity" required
+                    {% if vmdtr_validity is defined and vmdtr_validity is not null %}value="{{ vmdtr_validity }}"{% endif %}
+                ><!-- autofocus> -->
+                {% if error_vmdtrvalidity is defined and error_vmdtrvalidity is not null %}
+                <span class="d-block">
+                    <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                    <small class="form-error-message">La date ne peut contenir que des chiffres.</small>
+                </span>
+                {% endif %}
+                <br>
+
+                <label class="required" for="inputmotomodel">Modèle de moto :</label>
+                <input type="text" name="motomodel" id="inputmotomodel" class="form-control"
+                    {% if motomodel is defined and motomodel is not null %}value="{{ motomodel }}"{% endif %}
+                    placeholder="ex: Honda Goldwing 2021..." required
+                ><!-- autofocus> -->
+                {% if error_motomodel is defined and error_motomodel is not null %}
+                <span class="d-block">
+                    <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                    <small class="form-error-message">Précisez votre modèle de machine.</small>
+                </span>
+                {% endif %}
+                <br>
+            </div>
+            <!-- &ensp; -->
+            <div class="d-flex flex-column col-12 align-items-center justify-content-center">
+                <!-- VALUE NE SERT A RIEN AVEC UN INPUT TYPE FILE, MAIS BON... -->
+                {% set drivercard=getdrivercard(app.user.id) %}
+                <label id="vmdtrpicture" for="browse">
+                    {% if drivercard is defined and drivercard is not null and drivercard.pathname!='' %}
+                    <img class="imgbtn--vmdtr mb-2 w-100" src="{{ asset(drivercard.pathname) }}" alt="">
+                    {% else %}
+                    <img class="imgbtn--profile mb-2" src="{{ asset(sImgPath ~'no-image.png') }}" alt="">
+                    {% endif %}
+                </label>
+                <input class="required" type="file" name="file" id="browse"
+                    {% if drivercard is defined and drivercard is not null %}
+                    value="{{ asset(drivercard.pathname) }}"
+                    {% endif %}
+                    accept=".jpg, .jpeg, .png"
+                    target_id="vmdtrpicture"
+                >
+                {% if error_file is defined and error_file is not null %}
+                <span class="d-block">
+                    <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                    <small class="form-error-message">Vous devez 'télécharger' une photo de votre carte pro. VMDTR</small>
+                </span>
+                {% endif %}
+                <br>
+            </div>
+        </div>
+        <br>
+    </div>

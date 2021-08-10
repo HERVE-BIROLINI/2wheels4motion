@@ -1,10 +1,10 @@
-<form id="delete" method="post" 
-    action="{{ path('flatrate_delete', {'flatrate': flatrate.id}) }}"
+<form id="{{ 'delete_'~flatrate.id }}" method="post" 
+    action="{{ path('admin_flatrate_delete', {'flatrate': flatrate.id}) }}"
     onsubmit="return confirm('Voulez-vous vraiment supprimer ce tarif ?');"
 >
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ flatrate.id) }}">
-    <button class="btn btn-sm btn--red" href="{{ path('flatrate_delete', {'flatrate': flatrate.id}) }}"
-        title="Supprimer" type='submit'
+    <button class="btn btn-sm btn--red" href="{{ path('admin_flatrate_delete', {'flatrate': flatrate.id}) }}"
+        title="Supprimer" type='submit' form="{{ 'delete_'~flatrate.id }}"
     >
         <i class="ri-delete-bin-6-line"></i>&ensp;Supprimer
     </button>

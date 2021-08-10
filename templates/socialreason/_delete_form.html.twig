@@ -1,0 +1,12 @@
+<form id="{{ 'assocdelete_'~socialreason~'-'~tva }}" method="post"
+    action="{{ path('admin_socialreason_assocdelete', {'socialreason': socialreason, 'tva': tva}) }}"
+    onsubmit="return confirm('Voulez-vous vraiment supprimer cette association, Raison sociale / Taux de TVA ?');"
+>
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ socialreason) }}">
+    <button class="btn btn-sm btn--red"
+        href="{{ path('admin_socialreason_assocdelete', {'socialreason': socialreason, 'tva': tva}) }}"
+        title="Supprimer" type='submit' form="{{ 'assocdelete_'~socialreason~'-'~tva }}"
+    >
+        <i class="ri-delete-bin-6-line"></i>&ensp;Supprimer
+    </button>
+</form>

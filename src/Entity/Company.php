@@ -59,6 +59,12 @@ class Company
      */
     private $drivers;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Socialreason::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $socialreason;
+
     public function __construct()
     {
         $this->drivers = new ArrayCollection();
@@ -164,6 +170,18 @@ class Company
                 $driver->setCompany(null);
             }
         }
+        return $this;
+    }
+
+    public function getSocialreason(): ?Socialreason
+    {
+        return $this->socialreason;
+    }
+
+    public function setSocialreason(?Socialreason $socialreason): self
+    {
+        $this->socialreason = $socialreason;
+
         return $this;
     }
 }

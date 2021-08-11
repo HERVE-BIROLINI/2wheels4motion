@@ -1,4 +1,3 @@
-
 {#<!-- <section id="regions_json" hidden>{{ JSgetregions() }}</section> -->#}
 {#<!-- <section id="dpts_json" hidden>{{ JSgetdpts() }}</section> -->#}
 <section id="cities_json" hidden>
@@ -9,15 +8,23 @@
     {% set name = company.name %}
     {% set siren = company.siren %}
     {% set nic = company.nic %}
-{#{% set socialreason = company.raisonsocial %}#}
+    {% set socialreason = company.socialreason %}
     {% set road = company.road %}
     {% set city = company.city %}
     {% set zip = company.zip %}
+{% elseif driver is defined and company is not null and driver.company %}
+    {% set name = driver.company.name %}
+    {% set siren = driver.company.siren %}
+    {% set nic = driver.company.nic %}
+    {% set socialreason = driver.company.socialreason %}
+    {% set road = driver.company.road %}
+    {% set city = driver.company.city %}
+    {% set zip = driver.company.zip %}
 {% elseif app.user.driver and app.user.driver.company %}
     {% set name = app.user.driver.company.name %}
     {% set siren = app.user.driver.company.siren %}
     {% set nic = app.user.driver.company.nic %}
-{#{% set socialreason = company.raisonsocial %}#}
+    {% set socialreason = app.user.driver.company.socialreason %}
     {% set road = app.user.driver.company.road %}
     {% set city = app.user.driver.company.city %}
     {% set zip = app.user.driver.company.zip %}
@@ -91,6 +98,7 @@
             </div>
         </div>
         <!-- Raison sociale -->
+
         {% set arSocialreasons=getsocialreasons() %}
         {% if arSocialreasons|length > 0 %}
         <div class="pt-3 col-12">
@@ -99,14 +107,14 @@
                 name="socialreason" title="socialreasons"
             >
                 <optgroup label="-- Sélectionnez la raison sociale --">
-            {% for socialreason in arSocialreasons %}
-
-                {% if toto is defined %}
-                    <option value="{{ socialreason.id }}" name="{{ socialreason.label }}">
-                {% else %}
-                    <option value="{{ socialreason.id }}" name="{{ socialreason.label }}">
+            {% for obSocialreason in arSocialreasons %}
+                
+                    <option value="{{ obSocialreason.id }}" name="{{ obSocialreason.label }}"
+                {% if socialreason is defined and socialreason.label==obSocialreason.label %}
+                        selected="selected"
                 {% endif %}
-                        {{ socialreason.label }}
+                    >
+                        {{ obSocialreason.label }}
                     </option>
 
             {% endfor %}

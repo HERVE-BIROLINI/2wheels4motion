@@ -50,7 +50,7 @@
                             {% for dept in depts %}
                             
                             <option value="{{ dept.code }}" name="{{ dept.code }}" 
-                                {% if flatrate is defined and flatrate is not null and flatrate.departmentcode==dept.code %}selected{% endif %}
+                                {% if flatrate is defined and flatrate is not null and flatrate.departmentcode==dept.code %}selected="selected"{% endif %}
                             >
                                 {{ dept.name~' ('~dept.code~')' }}
                             </option>

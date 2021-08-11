@@ -16,9 +16,14 @@
         <div class="block--datas-horizontal">
             <div class="d-flex flex-column col-12">
                 <label class="required" for="inputvmdtrnumber">Numéro :</label>
-                <input type="text" class="form-control" id="inputvmdtrnumber" name="vmdtr_number" size="11" placeholder="11 chiffres..." pattern="[\d]{11}" required 
-                    {% if vmdtr_number is defined and vmdtr_number is not null %}value="{{ vmdtr_number }}"{% endif %}
-                ><!-- autofocus> -->
+                <input type="text" class="form-control" id="inputvmdtrnumber" name="vmdtr_number" size="11" placeholder="11 chiffres..." pattern="[\d]{11}"
+                    {% if controller_name is defined and controller_name=='ProfileController' %}
+                    disabled
+                    {% endif %}
+                    {% if vmdtr_number is defined and vmdtr_number is not null %}
+                    value="{{ vmdtr_number }}"
+                    {% endif %}
+                ><!-- required autofocus> -->
                 {% if error_vmdtrnumber is defined and  error_vmdtrnumber is not null %}
                 <span class="d-block">
                     <small class="form-error-icon badge badge-danger text-uppercase">Error</small>

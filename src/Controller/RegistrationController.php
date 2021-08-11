@@ -157,16 +157,12 @@ class RegistrationController extends AbstractController
         // ** Retour (1/2) dans le Controller suite au choix d'une Company déjà "référencée" **
         // ************************************************************************************
         if(isset($_POST['companychoosen'])){
+            // instancie une nouvelle valeur à l'objet Company,
+            // TWIG réassignera les valeurs dans le formulaire...
+            // $obCompany=$companyRepository->findOneBy(['id'=>$_POST['companychoosen']]);
             $obCompany=$entityManager->getRepository(Company::class)->findOneBy(['id'=>$_POST['companychoosen']]);
             //
-            $name=$obCompany->getName();
-            $siren=$obCompany->getSiren();
-            $nic=$obCompany->getNic();
-        // reste à développer
-// $socialreason=$obCompany->getSocialreason();
-            $road=$obCompany->getRoad();
-            $city=$obCompany->getCity();
-            $zip=$obCompany->getZip();
+            $this->addFlash('information', "Données d'une entreprise T3P référencée récupérées. Pensez à enregistrer vos modifications pour confirmer...");
         }
 
         // ** Retour (2/2) dans le Controller suite au choix au Submit **

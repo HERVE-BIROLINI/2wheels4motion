@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Entity\Company;
 use App\Entity\Driver;
 use App\Entity\Picturelabel;
+use App\Entity\Socialreason;
 use App\Form\ChangePwdFormType;
 // use App\Repository\PicturelabelRepository;
 use App\Repository\UserRepository;
@@ -258,9 +259,7 @@ class ProfileController extends AbstractController
     /**
      * @Route("/driver", name="driver")
      */
-    public function profiledriver(MailerInterface $mailer
-                                , Request $request
-                                ): Response
+    public function profiledriver(MailerInterface $mailer): Response
     {
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$user=$this->getUser()){
@@ -374,11 +373,10 @@ class ProfileController extends AbstractController
             }
             //  ... si aucune modification en lien avec la T3P
             else{
-                $NoChangeAcceptable4T3P=true;
+                // $NoChangeAcceptable4T3P=true;
                 $NoChangeDone4T3P=true;
                 $obCompany=$driver->getCompany();
             }
-
             // ... Si pas de "soucis" avec les données T3P, enregistre le reste des données T3P
             if(!isset($NoChangeAcceptable4T3P)){
                 //  => NAME
@@ -391,10 +389,9 @@ class ProfileController extends AbstractController
                 elseif($nic){
                     $obCompany->setNic($_POST['nic']);
                 }
-                //   => SOCIALREASON !!!
-        // reste à développer
-    // .... MODIFIER ENTITY
-                //   => ADRESSE
+                //  => SOCIALREASON
+                $obCompany->setSocialreason($entityManager->getRepository(Socialreason::class)->findOneBy(['id'=>$_POST['socialreason']]));
+                //  => ADRESSE
                 $obCompany->setRoad($_POST['road']);
                 $obCompany->setZip($_POST['zip']);
                 $obCompany->setCity($_POST['city']);
@@ -465,26 +462,29 @@ class ProfileController extends AbstractController
                 $driver->setCompany($obCompany);
             }
 
-            //   => VMDTR_NUMBER (nombre à 11 chiffres)...
-            $vmdtr_number=$_POST['vmdtr_number'];
-            if(!is_numeric($vmdtr_number) || strlen($vmdtr_number)!=11){
-                $error_vmdtrnumber=true;
-            }
-            //      ... et NON déjà référencé
-            elseif($entityManager->getRepository(Driver::class)->findOneBy(['vmdtr_number'=>$vmdtr_number])){
-                $error_vmdtrnumber=true;
-                $this->addFlash('warning', "Il existe déjà un pilote référencé avec ce n° de carte pro. VMDTR");
-            }
-            elseif($vmdtr_number){
-                $driver->setVmdtrNumber($vmdtr_number);
-            }
+            // // => VMDTR_NUMBER (nombre à 11 chiffres)...
+            // $vmdtr_number=$_POST['vmdtr_number'];
+            // if(!is_numeric($vmdtr_number) || strlen($vmdtr_number)!=11){
+            //     $error_vmdtrnumber=true;
+            // }
+            // //      ... et NON déjà référencé
+            // elseif($DriverAlreadyExist=$entityManager->getRepository(Driver::class)->findOneBy(['vmdtr_number'=>$vmdtr_number])
+            //         and $DriverAlreadyExist!=$driver
+            //     )
+            // {
+            //     $error_vmdtrnumber=true;
+            //     $this->addFlash('warning', "Il existe déjà un pilote référencé avec ce n° de carte pro. VMDTR");
+            // }
+            // elseif($vmdtr_number){
+            //     $driver->setVmdtrNumber($vmdtr_number);
+            // }
             //   => VMDTR_VALIDITY
             $driver->setVmdtrValidity(new \DateTime($_POST['vmdtr_validity']));
             //   => MOTOMODEL
             $driver->setMotomodel($_POST['motomodel']);
             //
             $entityManager->persist($driver);
-            
+
             //
             $entityManager->flush();
 

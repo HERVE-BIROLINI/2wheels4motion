@@ -23,8 +23,9 @@
                 <!-- Photo -->
                 <div class="card--profile">
                     <a href="{{ path('profile_changepicture', {'id': app.user.id }) }}">
-                        {% if app.user.pictures|length > 0 %}
-                        <img class="imgbtn--profile" src="{{ asset(getuserportrait(app.user).pathname) }}" alt="Photo de profil">
+                        {% set obUserportrait=getuserportrait(app.user) %}
+                        {% if obUserportrait is defined and obUserportrait is not null %}
+                        <img class="imgbtn--profile" src="{{ asset(obUserportrait.pathname) }}" alt="Photo de profil">
                         {% else %}                    
                         <img class="imgbtn--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
                         {% endif %}

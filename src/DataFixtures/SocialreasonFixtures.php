@@ -20,6 +20,7 @@ class SocialreasonFixtures
         ['label'    => "EIRL"],
         // ....
     ];
+    
     public function no_load(ObjectManager $manager)
     {
         

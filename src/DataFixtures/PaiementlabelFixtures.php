@@ -20,7 +20,6 @@ class PaiementlabelFixtures
         // ....
     ];
 
-
     public function no_load(ObjectManager $manager)
     {
 

@@ -60,14 +60,14 @@ class Company
     private $drivers;
 
     /**
-     * @ORM\OneToOne(targetEntity=Socialreason::class, cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=Socialreason::class, inversedBy="companies")
      * @ORM\JoinColumn(nullable=false)
      */
     private $socialreason;
 
     public function __construct()
     {
-        $this->drivers = new ArrayCollection();
+        $this->drivers=new ArrayCollection();
     }
 
     //
@@ -82,7 +82,7 @@ class Company
     }
     public function setName(string $name): self
     {
-        $this->name = $name;
+        $this->name=$name;
         return $this;
     }
     //
@@ -92,8 +92,7 @@ class Company
     }
     public function setSiren(string $siren): self
     {
-        $this->siren = $siren;
-
+        $this->siren=$siren;
         return $this;
     }
     //
@@ -103,7 +102,7 @@ class Company
     }
     public function setNic(string $nic): self
     {
-        $this->nic = $nic;
+        $this->nic=$nic;
         return $this;
     }
     //
@@ -113,7 +112,7 @@ class Company
     }
     public function setRoad(string $road): self
     {
-        $this->road = $road;
+        $this->road=$road;
         return $this;
     }
     //
@@ -123,7 +122,7 @@ class Company
     }
     public function setZip(string $zip): self
     {
-        $this->zip = $zip;
+        $this->zip=$zip;
         return $this;
     }
     //
@@ -133,7 +132,7 @@ class Company
     }
     public function setCity(string $city): self
     {
-        $this->city = $city;
+        $this->city=$city;
         return $this;
     }
     //
@@ -156,17 +155,17 @@ class Company
     }
     public function addDriver(Driver $driver): self
     {
-        if (!$this->drivers->contains($driver)) {
-            $this->drivers[] = $driver;
+        if(!$this->drivers->contains($driver)) {
+            $this->drivers[]=$driver;
             $driver->setCompany($this);
         }
         return $this;
     }
     public function removeDriver(Driver $driver): self
     {
-        if ($this->drivers->removeElement($driver)) {
+        if($this->drivers->removeElement($driver)) {
             // set the owning side to null (unless already changed)
-            if ($driver->getCompany() === $this) {
+            if ($driver->getCompany()===$this) {
                 $driver->setCompany(null);
             }
         }
@@ -180,8 +179,7 @@ class Company
 
     public function setSocialreason(?Socialreason $socialreason): self
     {
-        $this->socialreason = $socialreason;
-
+        $this->socialreason=$socialreason;
         return $this;
     }
 }

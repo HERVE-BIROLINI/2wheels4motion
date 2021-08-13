@@ -1,0 +1,30 @@
+
+<h3 class="pb-1">{{ 'Demande : (#'~claim.id~')' }}</h3>
+<table class="table table-striped">
+    <tbody>
+        <tr>
+            <th class="thead--dark">Date de la demande</th>
+            <td>{{ claim.claimdatetime|date('d/m/Y') }}</td>
+        </tr>
+        <tr>
+            <th class="thead--dark">Jour de la course</th>
+            <td>{{ claim.journeydate|date('d/m/Y') }}</td>
+        </tr>
+        <tr>
+            <th class="thead--dark">Prise en charge à l'adresse</th>
+            <td>{{ claim.fromroad~', '~claim.fromzip~' '~getcitybyzip(claim.fromzip).name }}</td>
+        </tr>
+        <tr>
+            <th class="thead--dark">Arrivée attendue pour</th>
+            <td>{{ claim.arrivalattime|date('H:i') }}</td>
+        </tr>
+        <tr>
+            <th class="thead--dark">A la destination</th>
+            <td>{{ claim.toroad~', '~claim.tozip~' '~getcitybyzip(claim.tozip).name }}</td>
+        </tr>
+        <tr>
+            <th class="thead--dark">Commentaires</th>
+            <td>{{ claim.comments }}</td>
+        </tr>
+    </tbody>
+</table>

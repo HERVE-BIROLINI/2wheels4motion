@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TenderRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -47,6 +49,16 @@ class Tender
      * @ORM\JoinColumn(nullable=false)
      */
     private $claim;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Driver::class, mappedBy="tenders")
+     */
+    private $drivers;
+
+    public function __construct()
+    {
+        $this->drivers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -121,6 +133,33 @@ class Tender
     public function setClaim(?Claim $claim): self
     {
         $this->claim = $claim;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Driver[]
+     */
+    public function getDrivers(): Collection
+    {
+        return $this->drivers;
+    }
+
+    public function addDriver(Driver $driver): self
+    {
+        if (!$this->drivers->contains($driver)) {
+            $this->drivers[] = $driver;
+            $driver->addTender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDriver(Driver $driver): self
+    {
+        if ($this->drivers->removeElement($driver)) {
+            $driver->removeTender($this);
+        }
 
         return $this;
     }

@@ -5,6 +5,8 @@
 
 {% block body %}
 
+    <!-- ##### v DEBUT DES ELEMENTS PRINCIPAUX DE LA PAGE v ##### -->
+
     <!-- Admin Controller banner -->
     {{ include('admin/banner.html.twig') }}
 
@@ -15,7 +17,6 @@
 
         <!-- Tableau des actions attendues concernant les demandes de référencement... -->
         <!-- ... des T3P -->
-        {% if allcompaniesunknown is defined and allcompaniesunknown is not empty %}
         <div class="paragraph--large">
             <table class="table table-striped">
                 <h2 class="title--h2">T3P nouvellement référencée(s) à confirmer...</h2>
@@ -31,6 +32,7 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
+                {% if allcompaniesunknown is defined and allcompaniesunknown is not empty %}
                 <tbody>
                     {% for obCompany in allcompaniesunknown %}
                     <tr>
@@ -59,21 +61,24 @@
                     </tr>
                     {% endfor %}
                 </tbody>
+                {% endif %}
                 <tfoot>
                     <tr>
                         <td colspan="8">
+                        {% if allcompaniesunknown is defined and allcompaniesunknown is not empty %}
                             Contrôle de l'existance d'une entreprise : https://avis-situation-sirene.insee.fr/
                             <br>
                             Cliquez sur le bouton orange, puis effectuer un "coller" dans la zone d'édition du N° de Siren/Siret...
+                        {% else %}
+                            Aucune nouvelle entreprise T3P n'a fait de demande de référencement dernièrement...
+                        {% endif %}
                         </td>
                     </tr>
                 </tfoot>
             </table>
         </div>
-        {% endif %}
 
         <!-- ... des pilotes -->
-        {% if alldriversunverified is defined and alldriversunverified is not empty %}
         <div class="paragraph--large">
             <table class="table table-striped">
                 <h2 class="title--h2">Pilote(s) nouvellement référencé(s) à vérifier...</h2>
@@ -86,8 +91,8 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
+                {% if alldriversunverified is defined and alldriversunverified is not empty %}
                 <tbody>
-
                     {% for obDriver in alldriversunverified %}
                     <tr>
                         <td></td>
@@ -109,18 +114,21 @@
                     </tr>
                     {% endfor %}
                 </tbody>
+                {% endif %}
                 <tfoot>
                     <tr>
-                        <td colspan="4"></td>
+                        <td colspan="4">
+                        {% if alldriversunverified is not defined or alldriversunverified is empty %}
+                            Aucun nouveau pilote VMDTR n'a fait de demande de référencement dernièrement...
+                        {% endif %}
+                        </td>
                     </tr>
                 </tfoot>
             </table>
         </div>
-        {% endif %}
 
         <!-- Tableau des Company "référencées" -->
         {% set allcompaniesknown=getknowncompanies() %}
-        {% if allcompaniesknown is defined and allcompaniesknown is not empty %}
         <div class="paragraph--large">
             <table class="table table-striped">
                 <h2 class="title--h2">T3P référencées et vérifiées</h2>
@@ -139,6 +147,7 @@
                         <!-- <th>Actions</th> -->
                     </tr>
                 </thead>
+                {% if allcompaniesknown is defined and allcompaniesknown is not empty %}
                 <tbody>
                     {% for obCompany in allcompaniesknown %}
                     <tr>
@@ -174,17 +183,26 @@
                     </tr>
                     {% endfor %}
                 </tbody>
+                {% endif %}
                 <tfoot>
                     <tr>
-                        <td colspan="8"></td>
+                        <td colspan="8">
+                        {% if allcompaniesknown is not defined or allcompaniesknown is empty %}
+                            Aucune entreprise T3P n'est référencée pour le moment...
+                        {% endif %}
+                        </td>
                     </tr>
                 </tfoot>
             </table>
         </div>
-        {% endif %}
 
     </div>
 
+    <!-- ##### ^ FIN DES ELEMENTS PRINCIPAUX DE LA PAGE ^ ##### -->
+
+    <!-- ------------------------------------------------------ -->
+    
+    <!-- ##### v DEBUT DES MODALES v ##### -->
 
     <!-- Modal d'affichage des photos du Driver -->
     {% if alldriversunverified is defined and alldriversunverified is not empty %}
@@ -221,11 +239,9 @@
         {% endfor %}
     {% endif %}
 
-
     <!-- Modal d'affichage des "cartes" pilotes "rattachés" à une T3P -->
     {% if allcompaniesknown is defined and allcompaniesknown is not empty %}
         {% for obCompany in allcompaniesknown %}
-        
             {% set arDrivers= getdriversbycompany(obCompany) %}
             {% if arDrivers|length > 0 %}
         <div class="modal--big p-5" id="{{ 'modal--t3p--'~obCompany.id }}" style="display:none;">
@@ -248,5 +264,7 @@
             {% endif %}
         {% endfor %}
     {% endif %}
+
+    <!-- ##### v FIN DES MODALES v ##### -->
 
 {% endblock %}

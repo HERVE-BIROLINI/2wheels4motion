@@ -7,6 +7,7 @@ use App\Entity\Company;
 use App\Entity\Driver;
 use App\Entity\Picture;
 use App\Entity\Picturelabel;
+use App\Entity\Socialreason;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 // use App\Twig\FrenchGeographyTwig;
@@ -164,27 +165,27 @@ class RegistrationController extends AbstractController
             //
             $this->addFlash('information', "Données d'une entreprise T3P référencée récupérées. Pensez à enregistrer vos modifications pour confirmer...");
         }
-
         // ** Retour (2/2) dans le Controller suite au choix au Submit **
         // **************************************************************
         elseif(count($_POST)>0){
             // * Entreprise T3P *
             // ------------------
-            //   => NAME
+            //  => NAME
             $name=$_POST['name'];
             if($name==''){$error_name=true;}
-            //   => SIREN (nombre à 9 chiffres)
+            //  => SIREN (nombre à 9 chiffres)
             $siren=$_POST['siren'];
             if(!is_numeric($siren) || strlen($siren)>9){
                 $error_siren=true;
             }
-            //   => NIC
+            //  => NIC
             $nic=$_POST['nic'];
             if($nic!='' and (!is_numeric($_POST['nic']) || strlen($_POST['nic'])!=5)){
                 $error_nic=true;
             }
             //  ... contrôle l'existance ou non d'une entreprise T3P pour les données saisies
             //  (d'abord vérifie l'existance de la T3P,
+            //      ...
             //    )
             if(!$obCompany=$entityManager->getRepository(Company::class)
                     ->findOneBy(['name'=>$name,'siren'=>$siren,'nic'=>$nic])
@@ -206,11 +207,9 @@ class RegistrationController extends AbstractController
                 }
             }
 
-        // reste à développer :
-        //   => SOCIALREASON !!!
-// .... MODIFIER ENTITY
-        $socialreason=$_POST['socialreason'];
-            //   => ADDRESS
+            //  => SOCIALREASON
+            $socialreason=$_POST['socialreason'];
+            //  => ADDRESS
             $road=$_POST['road'];
             if($road==''){$error_road=true;}
             $city=$_POST['city'];
@@ -219,7 +218,7 @@ class RegistrationController extends AbstractController
 
             // * Pilote VMDTR *
             // ----------------
-            //   => VMDTR_NUMBER (nombre à 11 chiffres)...
+            //  => VMDTR_NUMBER (nombre à 11 chiffres)...
             $vmdtr_number=$_POST['vmdtr_number'];
             if(!is_numeric($vmdtr_number) || strlen($vmdtr_number)!=11){
                 $error_vmdtrnumber=true;
@@ -230,15 +229,15 @@ class RegistrationController extends AbstractController
                 $this->addFlash('warning', "Il existe déjà un pilote référencé avec ce n° de carte pro. VMDTR");
             }
 
-            //   => VMDTR_VALIDITY
+            //  => VMDTR_VALIDITY
             $vmdtr_validity=$_POST['vmdtr_validity'];
             if($vmdtr_validity==''){$error_vmdtrvalidity=true;}
 
-            //   => MOTOMODEL
+            //  => MOTOMODEL
             $motomodel=$_POST['motomodel'];
             if($motomodel==''){$error_motomodel=true;}
 
-            //   => FILE (d'abord vérifie/prépare le "déplacement" sans l'effectuer)
+            //  => FILE (d'abord vérifie/prépare le "déplacement" sans l'effectuer)
             // Cas quasi impossible de la primo-existance d'une image...
             $obPictureTwig=new PictureTwig($entityManager);
             if(!$obPicture=$obPictureTwig->getPictureOfDriverCard($user)){
@@ -251,7 +250,7 @@ class RegistrationController extends AbstractController
                 }
 
             }
-            //   => CONFIRMATION DE L'EXACTITUDE DES INFO FOURNIES... *
+            //  => CONFIRMATION DE L'EXACTITUDE DES INFO FOURNIES... *
             if(isset($_POST['hasconfirmedgoodstanding'])){
                 $hasconfirmedgoodstanding=$_POST['hasconfirmedgoodstanding'];
             }
@@ -284,11 +283,13 @@ class RegistrationController extends AbstractController
             {
                 //  => La company T3P
                 //  ... si non-référence, la créer
-                if(!$obCompany and $bCreateT3PIsReady){
+                if(!$obCompany and $bCreateT3PIsReady)
+                {
                     $obCompany=new Company;
                     $obCompany->setName($name);
                     $obCompany->setSiren($siren);
                     if($nic != ''){$obCompany->setNic($nic);}
+                    $obCompany->setSocialreason($entityManager->getRepository(Socialreason::class)->findOneBy(['id'=>$socialreason]));
                     $obCompany->setRoad($road);
                     $obCompany->setZip($zip);
                     $obCompany->setCity($city);
@@ -296,7 +297,7 @@ class RegistrationController extends AbstractController
                     $entityManager->persist($obCompany);
                 }
                 
-                //   => File (Picture)
+                //  => File (Picture)
                 // Cas quasi impossible de la primo-existance d'une image...
                 if(!$obPicture){
                     //  ... vérifie s'il existe une image DEJA enregistrée => instancie l'objet
@@ -323,7 +324,7 @@ class RegistrationController extends AbstractController
                                     .substr(strstr($obPicture->getPathname(),"/"),1)
                                 );
                             }
-                            $obUploadPicture->UploadPicture($user, $obPicturelabel_VMDTR, $this->getParameter('asset_path_dev'));
+                            //
                             $this->addFlash('success', "L'ancienne image a été effacée au profit de la nouvelle...");
                         }
                     }
@@ -347,8 +348,8 @@ class RegistrationController extends AbstractController
                 $obDriver->setVmdtrNumber($vmdtr_number);
                 $obDriver->setVmdtrValidity(new \DateTime($vmdtr_validity));
                 $obDriver->setMotomodel($motomodel);
-            // reste à développer :
-            // $obDriver->setSubscriptionValidity($...);
+        // reste à développer :
+        // $obDriver->setSubscriptionValidity($...);
                 $obDriver->setHasconfirmedgoodstanding($hasconfirmedgoodstanding);
                 $obDriver->setCompany($obCompany);
                 $entityManager->persist($obDriver);                
@@ -409,35 +410,35 @@ class RegistrationController extends AbstractController
         }
         // 1er passage, ou retour après erreur de saisie
         return $this->render('registration/driver.html.twig', [
-        'controller_name'   => 'RegistrationController',
-        //
-        'error_name'            => $error_name,
-        'error_siren'           => $error_siren,
-        'error_nic'             => $error_nic,
-        'error_road'            => $error_road,
-        'error_city'            => $error_city,
-        'error_vmdtrnumber'     => $error_vmdtrnumber,
-        'error_vmdtrvalidity'   => $error_vmdtrvalidity,
-        'error_motomodel'       => $error_motomodel,
-        'error_file'            => $error_file,
-        'error_hasconfirmedgoodstanding'=>$error_hasconfirmedgoodstanding,
-        //
-        'company'   => $obCompany,
-        //
-        'name'  => $name,
-        'siren' => $siren,
-        'nic'   => $nic,
-        'road'  => $road,
-        'zip'   => $zip,
-        'city'  => $city,
-        //
-        'driver_existing'   => $driver_existing,
-        'vmdtr_number'      => $vmdtr_number,
-        'vmdtr_validity'    => $vmdtr_validity,
-        'motomodel'         => $motomodel,
-        'hasconfirmedgoodstanding'=>$hasconfirmedgoodstanding,
-        //
-        'allcompaniesknown' =>$entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>true]),
+            'controller_name'   => 'RegistrationController',
+            //
+            'error_name'            => $error_name,
+            'error_siren'           => $error_siren,
+            'error_nic'             => $error_nic,
+            'error_road'            => $error_road,
+            'error_city'            => $error_city,
+            'error_vmdtrnumber'     => $error_vmdtrnumber,
+            'error_vmdtrvalidity'   => $error_vmdtrvalidity,
+            'error_motomodel'       => $error_motomodel,
+            'error_file'            => $error_file,
+            'error_hasconfirmedgoodstanding'=>$error_hasconfirmedgoodstanding,
+            //
+            'company'   => $obCompany,
+            //
+            'name'  => $name,
+            'siren' => $siren,
+            'nic'   => $nic,
+            'road'  => $road,
+            'zip'   => $zip,
+            'city'  => $city,
+            //
+            'driver_existing'   => $driver_existing,
+            'vmdtr_number'      => $vmdtr_number,
+            'vmdtr_validity'    => $vmdtr_validity,
+            'motomodel'         => $motomodel,
+            'hasconfirmedgoodstanding'=>$hasconfirmedgoodstanding,
+            //
+            'allcompaniesknown' =>$entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>true]),
         ]);
     }
 

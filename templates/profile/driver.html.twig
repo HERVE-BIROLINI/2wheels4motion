@@ -5,6 +5,8 @@
 
 {% block body %}
 
+    <!-- ##### v DEBUT DES ELEMENTS PRINCIPAUX DE LA PAGE v ##### -->
+
     {{ include('profile/banner.html.twig') }}
 
     <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
@@ -176,6 +178,12 @@
         </div>
     </div>
 
+<!-- ##### ^ FIN DES ELEMENTS PRINCIPAUX DE LA PAGE ^ ##### -->
+
+<!-- ------------------------------------------------------ -->
+
+<!-- ##### v DEBUT DES MODALES v ##### -->
+
     <!-- Modal d'affichage des détails de la demande -->
     {% for claim in app.user.driver.getclaims %}
     <div class="modal--big p-5" id="{{ 'modal--claim--'~claim.id }}" style="display:none;">
@@ -185,31 +193,7 @@
         #}-->
 
         <!-- Les "détails" de la demande -->
-        <h3 class="pb-1">{{ 'Demande : (#'~claim.id~')' }}</h3>
-        <table class="table table-striped">
-            <tbody>
-                <tr>
-                    <th class="thead--dark">Date de la demande</th>
-                    <td>{{ claim.claimdatetime|date('d/m/Y') }}</td>
-                </tr>
-                <tr>
-                    <th class="thead--dark">Jour de la course</th>
-                    <td>{{ claim.journeydate|date('d/m/Y') }}</td>
-                </tr>
-                <tr>
-                    <th class="thead--dark">Prise en charge à l'adresse</th>
-                    <td>{{ claim.fromroad~', '~claim.fromzip~' '~getcitybyzip(claim.fromzip).name }}</td>
-                </tr>
-                <tr>
-                    <th class="thead--dark">Arrivée attendue pour</th>
-                    <td>{{ claim.arrivalattime|date('H:i') }}</td>
-                </tr>
-                <tr>
-                    <th class="thead--dark">A la destination</th>
-                    <td>{{ claim.toroad~', '~claim.tozip~' '~getcitybyzip(claim.tozip).name }}</td>
-                </tr>
-            </tbody>
-        </table>
+        {{ include('claim/card.html.twig') }}
         <!--  -->
         {% if claim.customer.user %}
         <h3 class="pt-3">Reçu de :</h3>
@@ -218,8 +202,15 @@
         <div class="d-flex flex-row flex-wrap">
             <div class="card--3D-horizontal col-12">
                 <!-- ... photo -->
+                {% set oUserPortrait=getuserportrait(claim.customer.user) %}
                 <div class="d-flex flex-row justify-content-center mb-2 col-12 col-lg-3"><!--  col-4 -->
-                    <img class="img--profile justify-self-start" src="{{ asset(getuserportrait(claim.customer.user).pathname) }}" alt="Photo de profil">
+                    <img class="img--profile justify-self-start" alt="Photo de profil"
+                        {% if oUserPortrait %}
+                        src="{{ asset(oUserPortrait.pathname) }}"
+                        {% else %}
+                        src="{{ asset(sImgPath ~'no-image.png') }}"
+                        {% endif %}
+                    >
                 </div>
                 <!-- ... coordonnées -->
                 <div class="d-flex flex-column justify-content-center col-12 col-lg-9">
@@ -246,9 +237,11 @@
                 </div>
                 &ensp;
                 <!-- bouton d'envoi d'un Tender en réponse à la Claim -->
-                <button class="btn btn-sm btn--blue mt-2" id="btn--send-tender" data_id="{{ claim.id }}">
+                <a class="btn btn-sm btn--blue mt-2" id="btn--send-tender" data_id="{{ claim.id }}"
+                    href="{{ path('tender_create', {'claim': claim.id}) }}"
+                >
                     <i class="ri-send-plane-fill"></i>&ensp;Retourner un devis (A DEVELOPPER)
-                </button>
+                </a>
             </div>
         </div>
         {% endif %}
@@ -259,7 +252,8 @@
             <i class="ri-close-fill"></i>&ensp;Fermer
         </button>
     </div>
-{% endfor %}
+    {% endfor %}
 
+    <!-- ##### v FIN DES MODALES v ##### -->
 
 {% endblock %}

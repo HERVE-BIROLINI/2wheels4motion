@@ -24,7 +24,6 @@ class FlatrateFixtures
         // ....
     ];
 
-
     public function no_load(ObjectManager $manager)
     {
 

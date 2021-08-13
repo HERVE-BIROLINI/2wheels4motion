@@ -69,12 +69,18 @@ class Driver
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $is_verified;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Tender::class, inversedBy="drivers")
+     */
+    private $tenders;
     
     // * @ORM\ManyToMany(targetEntity=Claim::class, mappedBy="claim")
 
     public function __construct()
     {
-        $this->claims = new ArrayCollection();
+        $this->claims=new ArrayCollection();
+        $this->tenders=new ArrayCollection();
     }
 
     //
@@ -89,7 +95,7 @@ class Driver
     }
     public function setVmdtrValidity(\DateTimeInterface $vmdtr_validity): self
     {
-        $this->vmdtr_validity = $vmdtr_validity;
+        $this->vmdtr_validity=$vmdtr_validity;
         return $this;
     }
     //
@@ -99,7 +105,7 @@ class Driver
     }
     public function setVmdtrNumber(string $vmdtr_number): self
     {
-        $this->vmdtr_number = $vmdtr_number;
+        $this->vmdtr_number=$vmdtr_number;
         return $this;
     }
     //
@@ -109,7 +115,7 @@ class Driver
     }
     public function setSubscriptionValidity(?\DateTimeInterface $subscription_validity): self
     {
-        $this->subscription_validity = $subscription_validity;
+        $this->subscription_validity=$subscription_validity;
         return $this;
     }
     //
@@ -119,7 +125,7 @@ class Driver
     }
     public function setMotomodel(string $motomodel): self
     {
-        $this->motomodel = $motomodel;
+        $this->motomodel=$motomodel;
         return $this;
     }
     //
@@ -129,7 +135,7 @@ class Driver
     }
     public function setHasconfirmedgoodstanding(bool $hasconfirmedgoodstanding): self
     {
-        $this->hasconfirmedgoodstanding = $hasconfirmedgoodstanding;
+        $this->hasconfirmedgoodstanding=$hasconfirmedgoodstanding;
         return $this;
     }
     //
@@ -139,7 +145,7 @@ class Driver
     }
     public function setCompany(?Company $company): self
     {
-        $this->company = $company;
+        $this->company=$company;
         return $this;
     }
     //
@@ -157,7 +163,7 @@ class Driver
         if ($user !== null && $user->getDriver() !== $this) {
             $user->setDriver($this);
         }
-        $this->user = $user;
+        $this->user=$user;
         return $this;
     }
 
@@ -171,7 +177,7 @@ class Driver
     public function addClaim(Claim $claim): self
     {
         if (!$this->claims->contains($claim)) {
-            $this->claims[] = $claim;
+            $this->claims[]=$claim;
             $claim->addDriver($this);
         }
         return $this;
@@ -191,7 +197,31 @@ class Driver
 
     public function setIsVerified(?bool $is_verified): self
     {
-        $this->is_verified = $is_verified;
+        $this->is_verified=$is_verified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Tender[]
+     */
+    public function getTenders(): Collection
+    {
+        return $this->tenders;
+    }
+
+    public function addTender(Tender $tender): self
+    {
+        if (!$this->tenders->contains($tender)) {
+            $this->tenders[]=$tender;
+        }
+
+        return $this;
+    }
+
+    public function removeTender(Tender $tender): self
+    {
+        $this->tenders->removeElement($tender);
 
         return $this;
     }

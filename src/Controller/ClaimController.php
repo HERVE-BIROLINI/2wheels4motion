@@ -27,28 +27,40 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ClaimController extends AbstractController
 {
-    // private $emailVerifier;
     private $mailer;
 
-    public function __construct(MailerInterface $mailer
-                                // , EmailVerifier $emailVerifier
-                                )
+    public function __construct(MailerInterface $mailer)
     {
-        // $this->emailVerifier = $emailVerifier;
         $this->mailer = $mailer;
     }
 
     /**
      * @Route("/claim", name="create")
      */
-    public function create(Request $request
-                            // , MailerInterface $mailer
-                            ): Response
+    public function create(Request $request): Response
     {
+
         date_default_timezone_set('Europe/Paris');
         // définition de l'état initial des variables de type booléen (drapeaux)
-        $bFormIsFullyValid=false;
         $customer2Create=false;
+
+        // * vérifie/crée un Customer pour l'utilisateur *
+        // test si l'utilisateur est connecté...
+        if(!$user=$this->getUser()){
+            // ... si non, lui propose de se connecter
+            return $this->redirectToRoute('app_login');
+        }
+        // ... si connecté, vérifie que son profil est complet (adresse => compte customer)
+        elseif(!$customer=$this->getUser()->getCustomer()){
+            $customer2Create=true;
+        }
+        // ... si non, affichera les éléments de formulaire qui s'imposent
+        else{
+            $customer_road=$customer->getRoad();
+            $customer_city=$customer->getCity();
+            $customer_zip=$customer->getZip();
+        }
+
         //
         if(isset($_POST["customer_road"])){
             $customer_road=($_POST["customer_road"]);
@@ -65,22 +77,6 @@ class ClaimController extends AbstractController
         $error_customer_road=false;
         $error_customer_city=false;
         // $error_customer_zip=false;
-
-        // * vérifie/crée un Customer pour l'utilisateur *
-        // test si l'utilisateur est connecté...
-        if(!$user=$this->getUser()){
-            // ... si non, lui propose de se connecter
-            return $this->redirectToRoute('app_login');
-        }
-        // si connecté, vérifie que son profil est complet (adresse => compte customer)
-        elseif(!$customer=$this->getUser()->getCustomer()){
-            $customer2Create=true;
-        }
-        else{
-            $customer_road=$customer->getRoad();
-            $customer_city=$customer->getCity();
-            $customer_zip=$customer->getZip();
-        }
 
         //
         $claim=new Claim();
@@ -108,21 +104,22 @@ class ClaimController extends AbstractController
         $claimForm=$this->createForm(ClaimFormType::class, $claim);
         $claimForm->handleRequest($request);
 
-        //
+        // Pour les lectures et enregistrements dans la BdD
         $entityManager=$this->getDoctrine()->getManager();
         // ** Si le formulaire est correctement rempli... **
-        if ($claimForm->isSubmitted() && $claimForm->isValid()
-                && ( (isset($customer_road) and $customer_road!='')
-                    ||
-                    (isset($_POST['customer_road']) and $_POST['customer_road']!='')
+        if($claimForm->isSubmitted() && $claimForm->isValid()
+                && (!$customer2Create
+                    || (isset($customer_road) and $customer_road!='')
+                    || (isset($_POST['customer_road']) and $_POST['customer_road']!='')
                     )
-                && ( (isset($customer_city) and $customer_city!='')
-                    ||
-                    (isset($_POST['customer_city']) and $_POST['customer_city']!='')
+                && (!$customer2Create
+                    || (isset($customer_city) and $customer_city!='')
+                    || (isset($_POST['customer_city']) and $_POST['customer_city']!='')
                     )
                 // && $_POST['customer_zip']!=''
             )
         {
+
             // * Si tout est bien renseigner => enregistre, envoi email au chauffeurs, etc... *
             $diffDate=$now->diff($date);
             if((($diffDate->d==0 && $diffDate->m==0 and $diffDate->y==0)
@@ -140,6 +137,21 @@ class ClaimController extends AbstractController
                 )
             ){
 
+                // Se débarrase de l'inscription du Customer,
+                // quelque soit la disponibilité de Driver(s)...
+                if($customer2Create){
+                    $customer= new Customer();
+                    $customer->setRoad($customer_road);
+                    $customer->setCity($customer_city);
+                    $customer->setZip($customer_zip);
+                    $entityManager->persist($customer);
+                    //
+                    $user->setCustomer($customer);
+                    $entityManager->persist($customer);
+                    //
+                    $entityManager->flush();
+                }
+
                 // D'abord, recherche la liste des chauffeurs concernés...
                 // ... pour les régions de prise la "prise en charge" et de la "destination"
                 $obFGTwig = new FrenchGeographyTwig;
@@ -152,54 +164,50 @@ class ClaimController extends AbstractController
                         array_push($arRegions,$obRegion);
                     }
                 }
-                // ... en localisant les entreprises T3P
+                // ... en localisant les pilotes et entreprises T3P
                 $arDrivers=[];
                 foreach($arRegions as $obRegion){
                     $arDrivers4Region=$obDriverTwig->getDriversByRegionOrZip($obRegion);
-                    $arDrivers=array_merge($arDrivers,$arDrivers4Region);
+                    // exclu les pilotes non-vérifiés, ou associés à une T3P non-reconnue
+                    foreach($arDrivers4Region as $obDriver){
+                        if($obDriver->getUser()!==$user
+                            and $obDriver->getIsVerified()
+                            and $obDriver->getCompany()->getIsconfirmed()
+                            )
+                        {
+                            array_push($arDrivers,$obDriver);
+                        }
+                    }
+                    // $arDrivers=array_merge($arDrivers,$arDrivers4Region);
                 }
 
-                // Si aucun pilote référencé dans la région de la demande,
-                // en informe le client
+                // Si au mmoins un  pilote référencé dans la région de la demande,
+                // enregistre la demande et envoie les mails...
                 if(count($arDrivers)>0){
-
-                    // Pour les enregistrements dans la BdD
-                    $entityManager = $this->getDoctrine()->getManager();
-
-                    //
-                    if($customer2Create){
-                        $customer= new Customer();
-                    }
-                    $customer->setRoad($customer_road);
-                    $customer->setCity($customer_city);
-                    $customer->setZip($customer_zip);
                     //
                     $claim->setClaimDatetime(new DateTime('now'));
                     //
-                    $entityManager->persist($customer);
-                    $entityManager->flush();
-                    //
                     $claim->setCustomer($customer);
                     $entityManager->persist($claim);
-                    //
-                    $user->setCustomer($customer);
-                    $entityManager->persist($customer);
 
+                    // "remplissage" de la BdD
+                    $entityManager->flush();
 
                     // associe la Demande et tous les pilotes à qui elle sera envoyée
                     foreach($arDrivers4Region as $obDriver){
                         $claim->addDriver($obDriver);
                     }
-
                     // "remplissage" de la BdD
                     $entityManager->flush();
                     
                     // envoi des emails aux chauffeurs de la région du demandeur
-                    $this->sendClaimEmails($claim,);
+                    $this->sendClaimEmails($claim);
                     // puis, renvoi à la page du tableau de bord du Customer
+                    $this->addFlash('success', "Votre demande a bien été transmise à ".$claim->getDrivers()->count()." pilote(s) référencé(s) dans la région de votre demande...");
                     return $this->redirectToRoute('profile_customer');
                 }
-                else{$this->addFlash('danger', "Actuellement aucun pilote n'opérant dans la région de votre demande n'est encore référencé dans notre communauté. Malheureusement votre demande ne peut être satisfaite...");}
+                //... si aucun pilote référencé... en informe le client
+                else{$this->addFlash('danger', "Actuellement aucun pilote et/ou entreprise T3P n'opérant dans la région de votre demande n'est encore référencé dans notre communauté. Malheureusement votre demande ne peut être satisfaite...");}
             }
             // ... problème d'heure (??)
             elseif(strtotime($claim->getArrivalatTime()->format('H:i'))
@@ -212,7 +220,7 @@ class ClaimController extends AbstractController
             // ... problème de date(??)
             else{$error_date=true;}
         }
-        // ... problème avec l'adresse du Customer
+        // ** si non... problème avec l'adresse du Customer **
         else{
             if(isset($_POST['customer_road']) and $_POST['customer_road']==''){$error_customer_road=true;}
             if(isset($_POST['customer_city']) and $_POST['customer_city']==''){$error_customer_city=true;}
@@ -244,12 +252,18 @@ class ClaimController extends AbstractController
         ]);
     }
 
-    public function sendClaimEmails(Claim $obClaim
-                                    //, MailerInterface $mailer
-                                    )
+    public function sendClaimEmails(Claim $obClaim)
     {
         $obCustomer=$obClaim->getCustomer();
-        $obUser=$obCustomer->getUser();
+
+        // ... parce que l'écriture/création prend plus de temps que l'exécution du code...
+        // // $obUser=$obCustomer->getUser();
+        // IDEE POURRIE !!!
+        //------------------
+        // $obUser=null;
+        // while(!$obUser){$obUser=$obCustomer->getUser();}
+        //------------------
+        $obUser=$this->getUser();
 
         // envoi des courriels de consultation à tous les chauffeurs de la région
         $claimEmail=new TemplatedEmail();

@@ -4,8 +4,6 @@
 
 {% block body %}
 
-{#{{ dump(picture) }}#}
-
     {{ include('profile/banner.html.twig') }}
     <form class="container-fluid modal--big" method="post" enctype="multipart/form-data">
         <h1 class="h3 mt-4 mb-3 font-weight-normal">Choississez votre photo de profil :</h1>
@@ -41,17 +39,19 @@
             <div class="card--profile m-2">
                 <label for="browse">
                     {% set oUserPortrait=getuserportrait(app.user.id) %}
-                    {% if oUserPortrait %}
-                    <img class="imgbtn--profile" id="avatarpicture" src="{{ asset(oUserPortrait.pathname) }}" alt="Photo de profil">
-                    {% else %}                    
-                    <img class="imgbtn--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
-                    {% endif %}
+                    <img class="imgbtn--profile" id="avatarpicture" alt="Photo de profil"
+                        {% if oUserPortrait %}
+                        src="{{ asset(oUserPortrait.pathname) }}"
+                        {% else %}
+                        src="{{ asset(sImgPath ~'no-image.png') }}"
+                        {% endif %}
+                    >
                 </label>
-                {% if oUserPortrait %}
-                <input type="radio" id="avatarfile" name="avatar" value="FILE" for="browse" checked>
-                {% else %}
-                <input type="radio" id="avatarfile" name="avatar" value="FILE" for="browse">
-                {% endif %}
+                <input type="radio" id="avatarfile" name="avatar" value="FILE" for="browse"
+                    {#{% if oUserPortrait %}#}
+                    checked
+                    {#{% endif %}#}
+                >
             </div>
             <!-- INUTILE DE CHERCHER A "JOUER" AVEC L'ATTRIBUT VALUE,
                     SAUF A MANIPULER EN JAVASCRIPT...

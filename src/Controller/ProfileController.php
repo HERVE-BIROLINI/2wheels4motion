@@ -171,7 +171,25 @@ class ProfileController extends AbstractController
                     and str_contains($obPicture->getPathname(),'user')
                     and file_exists($obPicture->getPathname())
                 ){
-                    unlink($obPicture->getPathname());
+                    if(file_exists($this->getParameter('asset_path_dev')
+                                .substr(strstr($obPicture->getPathname(),"/"),1)
+                            )
+                        )
+                    {
+                        unlink($this->getParameter('asset_path_dev')
+                            .substr(strstr($obPicture->getPathname(),"/"),1)
+                        );
+                    }
+                    if(file_exists($this->getParameter('asset_path_prod')
+                                .substr(strstr($obPicture->getPathname(),"/"),1)
+                            )
+                        )
+                    {
+                        unlink($this->getParameter('asset_path_prod')
+                            .substr(strstr($obPicture->getPathname(),"/"),1)
+                        );
+                    }
+                    // unlink($obPicture->getPathname());
                 }
                 
                 //

@@ -29,9 +29,15 @@ class Socialreason
      */
     private $tva;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Company::class, mappedBy="socialreason")
+     */
+    private $companies;
+
     public function __construct()
     {
         $this->tva = new ArrayCollection();
+        $this->companies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -72,6 +78,34 @@ class Socialreason
     {
         $this->tva->removeElement($tva);
 
+        return $this;
+    }
+
+    /**
+     * @return Collection|Company[]
+     */
+    public function getCompanies(): Collection
+    {
+        return $this->companies;
+    }
+
+    public function addCompany(Company $company): self
+    {
+        if (!$this->companies->contains($company)) {
+            $this->companies[] = $company;
+            $company->setSocialreason($this);
+        }
+        return $this;
+    }
+
+    public function removeCompany(Company $company): self
+    {
+        if ($this->companies->removeElement($company)) {
+            // set the owning side to null (unless already changed)
+            if ($company->getSocialreason() === $this) {
+                $company->setSocialreason(null);
+            }
+        }
         return $this;
     }
 }

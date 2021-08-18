@@ -1,0 +1,11 @@
+<form id="{{ 'delete_'~typeplace.id }}" method="post" 
+    action="{{ path('admin_typeplace_delete', {'typeplace': typeplace.id}) }}"
+    onsubmit="return confirm('Voulez-vous vraiment supprimer ce \'\'type de lieu\'\' ?');"
+>
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ typeplace.id) }}">
+    <button class="btn btn-sm btn--red" href="{{ path('admin_typeplace_delete', {'typeplace': typeplace.id}) }}"
+        title="Supprimer" type='submit' form="{{ 'delete_'~typeplace.id }}"
+    >
+        <i class="ri-delete-bin-6-line"></i>&ensp;Supprimer
+    </button>
+</form>

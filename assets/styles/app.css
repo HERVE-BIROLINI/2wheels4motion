@@ -1,3 +1,9 @@
+.test{
+    height: 100%;
+    border:2px solid yellow;
+}
+
+
 @import url(https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900display=swap%27);
 *{
     font-family: "Poppins", sans-serif;
@@ -66,10 +72,6 @@ body{
 .btn--showmodal{}
 #btn--modal--closing{}  
 #div--2hide-ifmodal{}
--
-#regions_json{}
-#dpts_json{}
-#cities_json{}
     V gestion de la sélection de la zone géographique V
 #dropdownMenuOffset--Region{}
 #dropdownMenuOffset--Department{}
@@ -78,6 +80,12 @@ body{
 .row--tab{}
     V Modale de selection d'une entreprise T3P existante V
 #blk--company2create{}
+--------
+#cities_json{}
+    V INUTILISE ACTUELLEMENT, GARDER AU CAS OU... V
+    ===============================================
+#regions_json{}
+#dpts_json{}
 ---------------------------------------------------------------------
 */
 /* -- DIVERS -- */
@@ -400,10 +408,12 @@ body{
 .btn--tabtype{
     padding-left: 1em;
     padding-right: 1em;
-    /* border:0.1px solid black; */
-    /* border-bottom:0; */
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+    /**/
+    border:0.25px solid grey;
+    border-bottom:0;
+    box-shadow: 0 0 0 0, 0 -4px 4px 0 rgb(140, 140, 140);
 }
 .btn--tabtype:hover{
     font-weight: bold;

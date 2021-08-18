@@ -15,8 +15,9 @@
     <h2 class="title--h2">Vous servir... au juste prix !</h2>
     <div class="card--3D-horizontal">
         <p class="col-md-12 col-lg-8">
-            Les tarifs pratiqués ici sont déterminés sur la base de ceux pratiqués par toute la profession, quelque soit la région.
-            Ils ont été proposés par les professionnels référencés dans cet annuaire, selon les tarifs pratiqués dans leur région...
+            Les tarifs présentés ici sont indicatifs, ils sont déterminés sur la base de ceux pratiqués par l'ensemble de la profession, quelque soit la région.
+            Ils ont été proposés par les professionnels référencés dans cet annuaire, selon leurs habitudes.
+            Suite à votre demande, les pilotes vous proposeront un devis détaillé pouvant légèrement varié par rapport à la grille tarifaire ci-dessous, selon les heures, vos bagages, etc... 
             <br>
             Concernant les modes de paiement, tous les chauffeurs ne disposent pas d'appareils permettant les paiement par carte bancaire.
             Pensez à communiquer préalablement afin de vous munir du mode de paiement qui conviendra.
@@ -26,14 +27,15 @@
 </section>
 
 
+{% if flatrates is defined and flatrates is not null %}
 <section class="paragraph--large">
     <h2 class="title--h2">Les tarifs...</h2>
-    {% if flatrates %}
+
     <table class="table table-striped">
         <thead class="thead--dark">
             <tr>
                 <th style="width:5%;"></th>
-                <th>Région / Dépt.</th>
+                <th>{{ include('geography/selectregion.html.twig', {id:'select--region'}) }}</th>
                 <th>Libellé</th>
                 <th>Prix (euros)</th>
                 <th>Prise en charge incluse</th>
@@ -41,14 +43,16 @@
         </thead>
         <tbody>
             {% for flatrate in flatrates %}
-            <tr>
+            <tr class="row--flatrate tr--filtered {{ 'select--region_'~flatrate.regioncode }}"
+                parent_id="select--region"
+            >
                 <td></td>
                 <td>
-                    {% if flatrate.departmentcode is defined and flatrate.departmentcode is not null and flatrate.departmentcode !='' %}
-                        {% set obDepartment=getdepartmentbycode(flatrate.departmentcode) %}
-                        {{ getregionbycode(obDepartment.region_code).name~' / '~obDepartment.name }}
+                    {% if flatrate.regioncode is defined and flatrate.regioncode is not null and flatrate.regioncode !='' %}
+                        {% set obRegion=getregionbycode(flatrate.regioncode) %}
+                        {{ obRegion.name }}
                     {% else %}
-                    &emsp;&emsp;-
+                    &emsp;&emsp;&emsp;-
                     {% endif %}
                 </td>
                 <td>{{ flatrate.label }}</td>
@@ -83,7 +87,7 @@
             </tr>
         </tfoot>
     </table>
-    {% endif %}
 </section>
+{% endif %}
 
 {% endblock %}

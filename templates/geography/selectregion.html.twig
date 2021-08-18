@@ -1,0 +1,15 @@
+
+{% set regions=getregions() %}
+<select class="form-control select--filtered" size="1" position="absolute" name="region"
+    {% if id is defined %}
+    id="{{ id }}"
+    {% else %}
+    id="select--region"
+    {% endif %}
+>
+    <option value="" default_value="Région" disabled>Région</option>
+    <option value="">-- TOUTES --</option>
+    {% for obRegion in regions %}
+    <option value="{{ obRegion.code }}">{{ obRegion.name }}</option>
+    {% endfor %}
+</select>

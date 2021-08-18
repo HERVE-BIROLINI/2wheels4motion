@@ -1,8 +1,5 @@
-{#<!-- <section id="regions_json" hidden>{{ JSgetregions() }}</section> -->#}
-{#<!-- <section id="dpts_json" hidden>{{ JSgetdpts() }}</section> -->#}
-<section id="cities_json" hidden>
-    {{ JSgetcities() }}
-</section>
+<!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
+{{ include('geography/FromJSON4Javascript.html.twig') }}
 
 {% if company is defined and company is not null %}
     {% set name = company.name %}
@@ -177,4 +174,3 @@
         </div>
     </div>
 </div>
-                

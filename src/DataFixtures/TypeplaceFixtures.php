@@ -2,19 +2,20 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Tva;
+use App\Entity\Typeplace;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 
-class TvaFixtures
+class TypeplaceFixtures
     // extends Fixture implements OrderedFixtureInterface
 {
     
-    const TVA = [
-        ['value'    => 0,   'comment' => "Non soumis à la TVA, selon Art, 293B du Code Général des Impôts."],
-        ['value'    => 10,  'comment' => "Taux normal sur forfait, ou si destination déterminée à l'avance."],
-        ['value'    => 20,  'comment' => "Taux normal."]
+    const Typeplace = [
+        ['label'    => 'Aéroport'],
+        ['label'    => 'Gare ferroviaire'],
+        ['label'    => 'Gare routière'],
+        ['label'    => 'Quartier d\'affaires']
         // ....
     ];
     
@@ -22,21 +23,27 @@ class TvaFixtures
     {
 
         ////---------------------------
-        foreach (self::TVA as $tva) {
-            $obTva = new Tva();
-            $obTva->setValue($tva['value']);
-            $obTva->setComment($tva['comment']);
+        foreach (self::Typeplace as $typeplace) {
+            $obTypeplace = new Typeplace();
+            $obTypeplace->setLabel($typeplace['label']);
 
             // utiliser AVANT Persist le setReference, 
             // afin de stocker en mémoire les instances des objets 
             // qui dans un second temps (chargement de Article),
             // récupèrera la donnée...
-            $this->setReference($tva['value'],$obTva);
-            //
-            $manager->persist($obTva);
+            $this->setReference($typeplace['label'],$obTypeplace);
+            // $this->setReference($typeplace['key'],$obTypeplace);
+
+            $manager->persist($obTypeplace);
         }
         //
         $manager->flush();
+        ////----------------------------
+
+
+        // $product = new Product();
+        // $manager->persist($product);
+        // $manager->flush();
     }
 
 
@@ -47,6 +54,6 @@ class TvaFixtures
      * @return integer
      */
     // public function getOrder(): int{
-    //     return 20;
+    //     return 10;
     // }
 }

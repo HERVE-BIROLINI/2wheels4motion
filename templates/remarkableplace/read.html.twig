@@ -1,0 +1,69 @@
+
+{% extends 'base.html.twig' %}
+{% set Title="... des \"types de lieu\"" %}
+{% block title %}{{ parent() }} - {{ Title }}{% endblock %}
+
+{% block body %}
+
+<!-- Admin Controller banner -->
+{{ include('admin/banner.html.twig') }}
+
+<!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+{{ include('flash.html.twig') }}
+
+
+<section class="paragraph--large">
+    <div class="d-flex flex-row flex-wrap justify-content-between">
+        <h2 class="title--h2">Les "lieux remarquables"...</h2>
+        <a class="btn btn-sm btn--green" href="{{ path('admin_remarkableplace_create') }}">
+            <i class="ri-add-circle-line"></i>&ensp;Ajouter un nouveau "lieu remarquable"
+        </a>
+    </div>
+    <table class="table table-striped">
+        <thead class="thead--dark">
+            <tr>
+                <th style="width:10%;"></th>
+                <th style="width:35%;">Libellé</th>
+                <th>Département</th>
+                <th>Type de lieu</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for remarkableplace in remarkableplaces %}
+            <tr>
+                <td></td>
+                <td>{{ remarkableplace.label }}</td>
+                <td>
+                    {% if remarkableplace.deptcode %}
+                        {% set obDept=getdepartmentbycode(remarkableplace.deptcode) %}
+                        {{ obDept.name~' ('~obDept.code~')' }}
+                    {% else %}
+                    -
+                    {% endif %}
+                </td>
+                <td>{{ remarkableplace.typeplace.label }}</td>
+                <td class="d-flex flex-row">
+                    <a class="btn btn-sm btn--blue" href="{{ path('admin_remarkableplace_update', {'remarkableplace': remarkableplace.id}) }}" title="Modifier" class="mr-2">
+                        <i class="ri-edit-2-line"></i>&ensp;Modifier
+                    </a>
+                    &emsp;
+                    {{ include('remarkableplace/_delete_form.html.twig') }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            {% if not remarkableplaces %}
+            <tr>
+                <td colspan="4">
+                    Pas de lieu remarquable référencé actuellement.
+                </td>
+            </tr>
+            {% endif %}
+        </tfoot>
+    </table>
+</section>
+
+
+{% endblock %}

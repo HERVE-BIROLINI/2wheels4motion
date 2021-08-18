@@ -19,18 +19,15 @@
             <i class="ri-add-circle-line"></i>&ensp;Ajouter un nouveau tarif
         </a>
     </div>
-    {% if flatrates %}
     <table class="table table-striped">
         <thead class="thead--dark">
             <tr>
                 <th style="width:5%;"></th>
-                <th>Dépt/Région</th>
+                <th>Région</th>
                 <th>Libellé</th>
                 <th>Prix</th>
                 <th>Prise en charge incluse (forfait)</th>
-                <th>Actions
-                    <!-- &nbsp; -->
-                </th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -38,9 +35,10 @@
             <tr>
                 <td></td>
                 <td>
-                    {% if flatrate.departmentcode %}
-                        {% set obDepartment=getdepartmentbycode(flatrate.departmentcode) %}
-                        {{ obDepartment.name~' / '~getregionbycode(obDepartment.region_code).name }}
+                    {% if flatrate.regioncode %}
+                        {% set obRegion=getregionbycode(flatrate.regioncode) %}
+                        {{ obRegion.name }}
+                        <!-- {#{{ obRegion.name~' / '~getregionbycode(obRegion.region_code).name }}#} -->
                     {% else %}
                     -
                     {% endif %}
@@ -79,12 +77,15 @@
             {% endfor %}
         </tbody>
         <tfoot>
+            {% if not flatrates %}
             <tr>
-                <td colspan="4"></td>
+                <td colspan="4">
+                    Pas de tarif référencé actuellement.
+                </td>
             </tr>
+            {% endif %}
         </tfoot>
     </table>
-    {% endif %}
 </section>
 
 

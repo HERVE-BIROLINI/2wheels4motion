@@ -3,15 +3,25 @@
 namespace App\Twig;
 
 // use App\Tools\DBTools;
+
+use App\Entity\Remarkableplace;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use Doctrine\ORM\EntityManagerInterface;
 
 class FrenchGeographyTwig extends AbstractExtension
 {
-
     // private $rootJSON="build/json/";
     private $rootJSON="../src/twig/";
+    //
+    private $entityManager;
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+
 
     // Déclaration des extensions de functions TWIG
     public function getFunctions(){
@@ -20,7 +30,7 @@ class FrenchGeographyTwig extends AbstractExtension
             new TwigFunction('JSgetregions', [$this, 'getAllRegions_4Javascript']),
             // new TwigFunction('getregionbyslug', [$this, 'getRegionBySlug']),
             new TwigFunction('getregionbycode', [$this, 'getRegionByCode']),
-            // new TwigFunction('getregionbydeptcode', [$this, 'getRegionByDeptCode']),
+            new TwigFunction('getregionbydeptcode', [$this, 'getRegionByDeptCode']),
             new TwigFunction('getregionbyzip', [$this, 'getRegionByZip']),
             //
             new TwigFunction('getdepartments', [$this, 'getAllDepartments']),
@@ -35,6 +45,8 @@ class FrenchGeographyTwig extends AbstractExtension
             new TwigFunction('getzipbycity', [$this, 'getZipByCity']),
             //
             // new TwigFunction('getimages', [$this, 'getImages']),
+            //
+            new TwigFunction('getremarkableplaces', [$this, 'getRemarkableplaces']),
         ];
     }
 
@@ -54,8 +66,11 @@ class FrenchGeographyTwig extends AbstractExtension
     //  ...
     // ]
     public function getAllRegions(){
-        $regions = file_get_contents($this->rootJSON."regions.json");
-        return(json_decode($regions));
+        $regions=json_decode(file_get_contents($this->rootJSON."regions.json"));
+        $columns=array_column($regions, "slug");
+        array_multisort($columns, SORT_LOCALE_STRING, SORT_ASC, $regions);
+        //
+        return $regions;
     }
     public function getAllRegions_4Javascript(){
         $sRegions='';
@@ -80,15 +95,15 @@ class FrenchGeographyTwig extends AbstractExtension
         }
         return $obRegionFounded;
     }
-    // public function getRegionByDeptCode($department_code){
-    //     $region_code=$this->getDepartmentByCode($department_code)->region_code;
-    //     foreach($this->getAllRegions() as $obRegion){
-    //         if($region_code==$obRegion->region_code){
-    //             $obRegionFounded=$obRegion;
-    //         }
-    //     }
-    //     return $obRegionFounded;
-    // }
+    public function getRegionByDeptCode($department_code){
+        $region_code=$this->getDepartmentByCode($department_code)->region_code;
+        foreach($this->getAllRegions() as $obRegion){
+            if($region_code==$obRegion->code){
+                $obRegionFounded=$obRegion;
+            }
+        }
+        return $obRegionFounded;
+    }
     public function getRegionByZip($zip){
         $obRegionFounded=null;
         if($obCity=$this->getCityByZip($zip)){
@@ -102,8 +117,10 @@ class FrenchGeographyTwig extends AbstractExtension
     //   ...
     // ]
     public function getAllDepartments(){
-        $departments = file_get_contents($this->rootJSON."departments.json");
-        return(json_decode($departments));
+        $departments=json_decode(file_get_contents($this->rootJSON."departments.json"));
+        $columns=array_column($departments, "slug");
+        array_multisort($columns, SORT_LOCALE_STRING, SORT_ASC, $departments);
+        return $departments;
     }
     public function getAllDepartments_4Javascript(){
         $sDepartments='';
@@ -121,13 +138,16 @@ class FrenchGeographyTwig extends AbstractExtension
     //     return $obDepartmentFounded;
     // }
     public function getDepartmentByCode($code){
-        $obDepartmentFounded=null;
-        foreach($this->getAllDepartments() as $obDepartment){
-            if($code===$obDepartment->code){
-                $obDepartmentFounded=$obDepartment;
+        if($code and $code!='' and $code!='all'){
+            $obDepartmentFounded=null;
+            foreach($this->getAllDepartments() as $obDepartment){
+                if($code===$obDepartment->code){
+                    $obDepartmentFounded=$obDepartment;
+                }
             }
+            return $obDepartmentFounded;
         }
-        return $obDepartmentFounded;
+        else{return null;}
     }
     //
     // [{"id":31390,"department_code":"78","insee_code":"78621","zip_code":"78190",
@@ -136,8 +156,13 @@ class FrenchGeographyTwig extends AbstractExtension
     //   ....
     // ]
     public function getAllCities(){
-        $cities = file_get_contents($this->rootJSON."cities.json");
-        return(json_decode($cities));
+        $cities=json_decode(file_get_contents($this->rootJSON."cities.json"));
+        $columns=array_column($cities, "slug");
+        array_multisort($columns, SORT_LOCALE_STRING, SORT_ASC, $cities);
+        //
+        return $cities;
+        // $cities = file_get_contents($this->rootJSON."cities.json");
+        // return(json_decode($cities));
     }
     public function getAllCities_4Javascript(){
         $sCities='';
@@ -156,15 +181,17 @@ class FrenchGeographyTwig extends AbstractExtension
     //     return $obCityFounded;
     // }
     public function getCityByZip($zip){
-        if($zip=='75000'){$zip='75001';}
-        $obCityFounded=null;
-        foreach($this->getAllCities() as $obCity){
-            if($zip==$obCity->zip_code){
-                $obCityFounded=$obCity;
+        if($zip!=null){
+            if($zip=='75000'){$zip='75001';}
+            $obCityFounded=null;
+            foreach($this->getAllCities() as $obCity){
+                if($zip==$obCity->zip_code){
+                    $obCityFounded=$obCity;
+                }
             }
-        }
-        if(!is_null($obCityFounded)){
-            return $obCityFounded;
+            if(!is_null($obCityFounded)){
+                return $obCityFounded;
+            }
         }
     }
     public function getZipByCity($city){
@@ -179,16 +206,27 @@ class FrenchGeographyTwig extends AbstractExtension
         }
     }
 
+    public function getRemarkableplaces(){
+    //     $obPDO = new DBTools;
+    //     $obPDO->init();
+    //     $articles=$obPDO->execSqlQuery("select * from article where category_id=".$category);
+    //     if(count($articles)>0){
+    //         return true;
+    //     }
+    //     else{return false;}
+        return $this->entityManager->getRepository(Remarkableplace::class)->findBy([],['dept_code'=>'asc']);
+    }
+
     // *************************************************************
 
-    // ** Les méthodes liées aux filtres **
-    public function castClassToArray($stdClassObject) {
-        $response = array();
-        foreach ($stdClassObject as $key => $value) {
-            $response[] = array($key, $value);
-        }
-        return $response;
-    }
+    // // ** Les méthodes liées aux filtres **
+    // public function castClassToArray($stdClassObject) {
+    //     $response = array();
+    //     foreach ($stdClassObject as $key => $value) {
+    //         $response[] = array($key, $value);
+    //     }
+    //     return $response;
+    // }
     // public function castClassToString($stdClassObject) {
     //     $response = array();
     //     foreach ($stdClassObject as $key => $value) {
@@ -199,6 +237,7 @@ class FrenchGeographyTwig extends AbstractExtension
     // public function jsonDecode($str) {
     //     return json_decode($str);
     // }
+
 
 }
 

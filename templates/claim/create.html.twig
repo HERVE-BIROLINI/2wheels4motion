@@ -11,21 +11,15 @@
 <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
 {{ include('flash.html.twig') }}
 
-{#<!-- <section id="regions_json" hidden>{{ JSgetregions() }}</section> -->#}
-{#<!-- <section id="dpts_json" hidden>{{ JSgetdpts() }}</section> -->#}
-<section id="cities_json" hidden>
-    {{ JSgetcities() }}
-</section>
+<!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
+{{ include('geography/FromJSON4Javascript.html.twig') }}
 
 <div class="paragraph--large" method="post">
 
     <h1 class="title--h2">Précisez votre besoin : <small class="small-title-message">(* champs obligatoire)</small></h1>
     <div class="card--3D-vertical px-4">
         {{ form_start(claimForm,{attr:{novalidate:"novalidate"}}) }}
-{# PAS INDISPENSABLE 
-    {% if date is defined %}{{ dump(date|date("d/m/Y")) }}{% else %}{{ "<br>Date non-défini" }}{% endif %}
-    {% if time is defined %}{{ dump(time|date("H:i:s")) }}{% else %}{{ "<br>Time non-défini" }}{% endif %}
-#}
+        
         <!-- Adresse personnel du Customer, si pas encore de compte Customer -->
         {% if customer2Create %}
         <fieldset class="my-4"><!--class="d-flex flex-row justify-content-center my-4">-->
@@ -88,280 +82,236 @@
         </fieldset>
         {% else %}
             <!-- {# rien à faire pour l'instant si Customer déjà existant... #} -->
-        {% endif %}
+        {% endif %} 
 
-        {# PASSE EN COMMENTAIRE DU FAIT DE LA COMPLICATION
-            DE LA GESTION DES ADRESSES COMBINE AUX FORFAITS
-        <!-- Zone des forfaits -->
-        <div class="d-flex flex-column justify-content-between">
-            <!-- bouton collapse/expand + Titre -->
-            <div class="d-flex flex-row" id="btn--FlatrateToggle">
-                <div class="d-flex flex-column justify-content-end">
-                    <!-- Img/Btn Plus -->
-                    <div class="btn--circle" id="btn--expand">
-                        <img src="{{ asset(sImgPath ~'misc/plus.png') }}" alt="bouton déroulement"
-                            class="imgbtn--plus-minus"
-                        >
-                    </div>
-                    <!-- Img/Btn Minus -->
-                    <div class="btn--circle" id="btn--collapse">
-                        <img src="{{ asset(sImgPath ~'misc/minus.png') }}" alt="bouton enroulement"
-                            class="imgbtn--plus-minus"
-                        >
-                    </div>
-                    &ensp;
-                </div>
-                &emsp;
-                <!-- Label -->
-                <legend>
-                    <label for="btn--FlatrateToggle">
-                        Choisir un forfait :
-                    </label>
-                </legend>
-            </div>
-            <!-- filtres sur Region + tableau des forfaits au choix -->
-            <div id="blk--flatrates">
-                <!-- si Display:Flex => imposible de "jouer" avec la visibilité (BLOCK) !! -->
-                <!--  class="d-flex flex-row align-items-center justify-content-center w-100" -->
-
-                {% set regions=getregions() %}
-                {% set depts=getdepartments() %}
-                <!--  -->
-                {% if region is defined and region is not null %}
-                    {% set region=getregionbycode(region) %}
-                {% endif %}
-                {% if dept is defined and dept is not null %}
-                    {% set dept=getdepartmentbycode(dept) %}
-                {% endif %}
-                <!-- DEBUT buttons sélection filtre Region/Dept. -->
-                <div class="d-flex flex-row">
-                    <div class="btn-group dropdown" name="region">
-                        <button class="btn btn-sm btn--secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset--Region" data-toggle="dropdown">
-                            Région
-                        </button>
-                        <div class="dropdown-menu">
-                            <button class="dropdown-item btn--filtre-region" type="button" name="region" value="all">TOUTES</button>
-                            <div class="dropdown-divider"></div>
-                            {% for region in regions %}
-                            <button class="dropdown-item btn--filtre-region" type="button" name="region" value="{{ region.code }}">{{ region.name }}</button><!--  type="submit" -->
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="btn-group dropdown">
-                        <button class="btn btn-sm btn--secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset--Department" data-toggle="dropdown">
-                            Dépt.
-                        </button>
-                        <div class="dropdown-menu">
-                            <button class="dropdown-item btn--filtre-dept" type="button" name="dept" value="all">TOUS</button><!--  type="submit" -->
-                            <div class="dropdown-divider"></div>
-                            {% for dept in depts %}
-                                {% if region is not defined or region is null or dept.region_code==region.code %}
-                            <button class="dropdown-item btn--filtre-dept" type="button" name="dept" value="{{ dept.code }}">{{ dept.name }}</button><!--  type="submit" -->
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                <!-- FIN buttons sélection filtre Region/Dept. -->
-
-                <!-- Block Tableau des Flatrates (Forfaits) -->
-                <section>
-                    {% if flatrates %}
-                    <table class="table table-striped">
-                        <thead class="thead--light">
-                            <tr class="row--flatrate TOUTES" id="head--flatrate">
-                                <th style="width:20%;">Choisir</th>
-                                <th style="width:30%;">Région / Dépt.</th>
-                                <th style="width:35%;">Libellé</th>
-                                <th style="width:15%;">Prix (euros)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for flatrate in flatrates %}
-                                {% if flatrate.pickupincluded and (flatrate.label ends with "(hors forfait)") == false %}
-                                    {% set obDepartment=getdepartmentbycode(flatrate.departmentcode) %}
-                                    {% if obDepartment is defined and obDepartment is not null %}
-                                        {% set obRegion=getregionbycode(obDepartment.region_code) %}
-                                    {% endif %}
-                                    <!--  -->
-                                    {% if obDepartment is defined and obDepartment is not null %}
-                            <tr class="{{ obDepartment.name~' row--flatrate '~obRegion.name}}">
-                                    {% else %}
-                            <tr class="row--flatrate TOUTES">
-                                    {% endif %}
-                                <td style="width:20%;">
-                                    <label for="{{ flatrate.id }}">
-                                        &emsp;
-                                        <input type="radio" class="flatrate" name="companychoosen" 
-                                            value="{{ flatrate.id }}" id="{{ flatrate.id }}"
-                                        >
-                                    </label>
-                                </td>
-                                <td style="width:30%;">
-                                    <label for="{{ flatrate.id }}">
-                                        {% if obDepartment is defined and obDepartment is not null %}
-                                            {{ obRegion.name~' / '~obDepartment.name }}
-                                        {% else %}
-                                        &emsp;&emsp;-
-                                        {% endif %}
-                                    </label>
-                                </td>
-                                <td style="width:35%;">
-                                    <label for="{{ flatrate.id }}">
-                                        {{ flatrate.label }}
-                                    </label>
-                                </td>
-                                <td style="width:15%;">
-                                    <label for="{{ flatrate.id }}">
-                                        &emsp;{{ flatrate.price }}
-                                    </label>
-                                </td>
-                            </tr>
-                                {% endif %}
-                            {% endfor %}
-                        </tbody>
-                        <tfoot id="foot--flatrate">
-                            <tr>
-                                <td colspan="4">Désolé ! Pour l'heure, aucun forfait n'existe  pour cette région.</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                    {% endif %}
-                </section>
-
-            </div>
-        </div>
-        #}
-        
         <!-- Zone de saisie des paramètres de la courses -->
         <div class="card--horizontal">
-            <!-- Block définition du lieu de prise en charge -->
-            <fieldset class="col-12 col-lg-5">
-                <legend>Prise en charge :</legend>
+
+            <!-- Block définition des date et heure -->
+            <fieldset class="col-12 col-lg-5 mt-2">
+                <legend>Date et heure de la course :</legend>
                 <div class="block--datas-vertical">
                     <!-- date -->
-                    <div class="d-flex flex-column justify-content-center w-50">
+                    <div class="d-flex flex-column justify-content-center">
                         <label class="required" for="claim_form_journey_date_day">Jour de la course :</label>
-                        <div class="block--date"><!-- style="min-width:250px;max-width:400px;border:1px solid black;"> -->
-                            {{ form_widget(claimForm.journey_date) }}
-                            {#
-                            {{ form_widget(claimForm.journey_date.day,{style:{minwidth:'75px',maxwidth:'200px'}})}}
-                            {{ form_widget(claimForm.journey_date.month,{style:{minwidth:'75px',maxwidth:'200px'}})}}
-                            {{ form_widget(claimForm.journey_date.year,{style:{minwidth:'75px',maxwidth:'200px'}})}}
-                            #}
-                        </div>
+                        <div class="block--date">{{ form_widget(claimForm.journey_date) }}</div>
                         {{ form_help(claimForm.journey_date)}}
-                        {#{{ form_errors(claimForm.journey_date)}}#}
-                        {% if error_date %}
+
+                        {#<!-- {% if error_date is defined %}
                         <span class="d-block">
                             <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
                             <small class="form-error-message">Vous devez préciser une date 'correcte'...</small>
                         </span>
-                        {% endif %}
+                        {% endif %} -->#}
+                        {{ form_errors(claimForm.journey_date) }}
+                        
                     </div>
                     &nbsp;
-                    <div class="d-flex flex-column justify-content-center w-100">
+                    <!-- horaire -->
+                    <div class="d-flex flex-column justify-content-center">
+                        <label class="required" for="claim_form_priority_departure_0">Priorité à l'horaire :</label>
+                        {{ form_widget(claimForm.priority_departure.0) }}
+                        {{ form_widget(claimForm.priority_departure.1) }}
+                        {#<!-- {% if error_priority is defined %}
+                        <span class="d-block">
+                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                            <small class="form-error-message">Vous devez préciser quel horaire est à respecter...</small>
+                        </span>
+                        {% endif %} -->#}
+                        {{ form_errors(claimForm.priority_departure) }}
+                        
+                        <!-- heure -->
+                        &nbsp;
+                        <div class="d-flex flex-column justify-content-center">
+                            {#{{ form_row(claimForm.journey_time) }}#}
+                            <label class="required" for="claim_form_journey_time_hour">Heure :</label>
+                            <!-- <div class="d-flex flex-row align-items-center"> -->
+                            <div class="block--date align-items-center">
+                                {{ form_widget(claimForm.journey_time.hour)}}
+                                &nbsp;:&nbsp;
+                                {{ form_widget(claimForm.journey_time.minute)}}
+                            </div>
+                            
+                            {#{{ form_help(claimForm.journey_time)}}#}
+                            {% if error_time is defined and error_time is not null %}
+                            <span class="d-block">
+                                <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                                <small class="form-error-message">L'heure ne laisse pas assez de marge</small>
+                            </span>
+                            {% endif %}
+                            {{ form_errors(claimForm.journey_time) }}
+                        </div>
+                    </div>
+                </div>
+                        
+                <!-- Forfait mise à disposition -->
+                &nbsp;
+                <div class="d-flex flex-row col-12">
+                    <div class="d-flex flex-row col-6 align-items-center">
+                        <input class='cb--switcher' id="cb--flatrate" type="checkbox"
+                        {% if claim is defined and claim.flatrate is not null %}
+                        checked
+                        {% endif %}
+                        >
+                        &ensp;
+                        <label class='mt-2' for="cb--flatrate">Mise à disposition</label>
+                    </div>
+                    <!-- <div> -->
+                    <select class="form-control switcher--target col-6" parent_id="cb--flatrate"
+                        id="select--flatrate" size="1" position="absolute" name="flatrate"
+                    >
+                    {% for obFlatrate in flatrates %}
+                        {% if obFlatrate.label starts with 'Mise à disposition' %}
+                    <option value="{{ obFlatrate.id }}"
+
+                        {% if claim is defined and claim.flatrate is not null and claim.flatrate.id==obFlatrate.id %}
+                        selected='selected'
+                        {% endif %}
+                    >
+                        {{ obFlatrate.label }}
+                    </option>
+                        {% endif %}
+                    {% endfor %}
+                    </select>
+                </div>
+            </fieldset>
+
+            <!-- Block définition des lieux de Prise en charge et Destination -->
+            <div class="col-12 col-lg-7 mt-2">
+                <!-- Block définition du lieu de prise en charge -->
+                <fieldset class="my-1">
+                    <legend>Lieu de prise en charge :</legend>
+                    <div class="row--tabtype" id="row--tabtype--claimfrom">
+                        <div class="btn--tabtype" id="btn--tabtype--adressfrom" parent_id="row--tabtype--claimfrom" default>Adresse</div>
+                        <div class="btn--tabtype" id="btn--tabtype--remarkableplacefrom" parent_id="row--tabtype--claimfrom"
+                            {% if remarkableplace_from is defined and remarkableplace_from is not null and remarkableplace_from!='' %}
+                            default
+                            {% endif %}
+                        >
+                            Lieu particulier
+                        </div>
+                    </div>
+                    <!-- block 'adressfrom' -->
+                    <div class="block--datas-vertical table--tabtype" parent_id="btn--tabtype--adressfrom">
+                        <div class="d-flex flex-column justify-content-center w-100">
+                            <!-- Road -->
+                            <div class="d-flex flex-column justify-content-center w-100">
+                                <label class="required" for="claim_form_from_road">N° et Voie :</label>
+                                {{ form_widget(claimForm.from_road) }}
+                                {{ form_errors(claimForm.from_road) }}
+                                {{ form_help(claimForm.from_road) }}
+                            </div>
+                            &nbsp;
+                            <!-- City + Zip -->
+                            <div class="d-flex flex-column justify-content-center w-100">
+                                <div class="d-flex flex-row" style="margin-left:-1em;margin-right:-1em;">
+                                    <!-- ... City... -->
+                                    <div class="col-8">
+                                        <label class="required" for="claim_form_from_city">Ville :</label>
+                                        {{ form_widget(claimForm.from_city) }}
+                                        <select class="form-control cities" id="claim_form_from_cities"
+                                            name="cities" title="cities"
+                                        >
+                                            <option value="">-- Sélectionnez votre commune --</option>
+                                        </select>
+                                        {{ form_errors(claimForm.from_city) }}
+                                        {{ form_help(claimForm.from_city) }}
+                                    </div>
+                                    <!-- ... Zip... -->
+                                    <div class="col-4">
+                                        <label class="required">CP :</label>
+                                        <div style="display:none;">
+                                            {{ form_widget(claimForm.from_zip) }}
+                                        </div>
+                                        <input type="text" class="form-control zipcode claim_form_from_zip" id="claim_form_from_zip2"
+                                            {% if fromZip %} value='{{ fromZip }}'{% endif %}
+                                            title="zipcode" disabled
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- block 'remarkableplacefrom' -->
+                    <div class="block--datas-vertical table--tabtype" parent_id="btn--tabtype--remarkableplacefrom">
+                        {{ include('geography/selectregion.html.twig', {id:'select--region--from'}) }}
+                        {{ include('remarkableplace/selectremarkableplace.html.twig', {opt_selected: remarkableplace_from, suffix:'from',parent_id:'select--region--from'}) }}
+                    </div>
+                    {% if error_fromzip is defined and error_fromzip is not null %}
+                    <span class="d-block">
+                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                        <small class="form-error-message">Vous devez soit préciser une adresse, soit choisir un lieu particulier...</small>
+                    </span>
+                    {% endif %}
+                </fieldset>
+
+                <!-- Block définition du lieu de destination -->
+                <fieldset class="my-1">
+                    <legend>Destination :</legend>
+                    <div class="row--tabtype" id="row--tabtype--claimto">
+                        <div class="btn--tabtype" id="btn--tabtype--adressto" parent_id="row--tabtype--claimto" default>Adresse</div>
+                        <div class="btn--tabtype" id="btn--tabtype--remarkableplaceto" parent_id="row--tabtype--claimto"
+                        {% if remarkableplace_to is defined and remarkableplace_to is not null and remarkableplace_to!='' %}
+                        default
+                        {% endif %}
+                    >
+                        Lieu particulier
+                    </div>
+                    </div>
+                    <!-- block 'adressto' -->
+                    <div class="block--datas-vertical table--tabtype" parent_id="btn--tabtype--adressto">
                         <!-- Road -->
                         <div class="d-flex flex-column justify-content-center w-100">
-                            <label class="required" for="claim_form_from_road">N° et Voie :</label>
-                            {#{{ form_label(claimForm.from_road) }}#}
-                            {{ form_widget(claimForm.from_road) }}
-                            {{ form_errors(claimForm.from_road) }}
-                            {{ form_help(claimForm.from_road) }}
+                            <label class="required" for="claim_form_to_road">N° et Voie :</label>
+                            {#{{ form_label(claimForm.to_road) }}#}
+                            {{ form_widget(claimForm.to_road) }}
+                            {{ form_errors(claimForm.to_road) }}
+                            {{ form_help(claimForm.to_road) }}
                         </div>
                         &nbsp;
                         <!-- City + Zip -->
                         <div class="d-flex flex-column justify-content-center w-100">
                             <div class="d-flex flex-row" style="margin-left:-1em;margin-right:-1em;">
+                                <!-- ... City... -->
                                 <div class="col-8">
-                                    <label class="required" for="claim_form_from_city">Ville :</label>
-                                    {{ form_widget(claimForm.from_city) }}
-                                    <select class="form-control cities" id="claim_form_from_cities"
+                                    <label class="required" for="claim_form_to_city">Ville :</label>
+                                    {{ form_widget(claimForm.to_city) }}
+                                    <select class="form-control cities" id="claim_form_to_cities"
                                         name="cities" title="cities"
                                     >
                                         <option value="">-- Sélectionnez votre commune --</option>
                                     </select>
-                                    {{ form_errors(claimForm.from_city) }}
-                                    {{ form_help(claimForm.from_city) }}
+                                    {{ form_errors(claimForm.to_city) }}
+                                    {{ form_help(claimForm.to_city) }}
                                 </div>
+                                <!-- ... Zip... -->
                                 <div class="col-4">
                                     <label class="required">CP :</label>
-                                    <div style="display:none;">
-                                        {{ form_widget(claimForm.from_zip) }}
+                                    <div  style="display:none;">
+                                        {{ form_widget(claimForm.to_zip) }}
                                     </div>
-                                    <input type="text" class="form-control zipcode claim_form_from_zip" id="claim_form_from_zip2"
-                                        {% if fromZip %} value='{{ fromZip }}'{% endif %}
-                                        title="zipcode" disabled
+                                    <input type="text" class="form-control claim_form_to_zip" id="claim_form_to_zip2"
+                                        title="zipcode"
+                                        {% if toZip %} value='{{ toZip }}'{% endif %} disabled
                                     >
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </fieldset>
-            &emsp;
+                    <!-- block 'remarkableplacefrom' -->
+                    <div class="block--datas-vertical table--tabtype" parent_id="btn--tabtype--remarkableplaceto">
+                        {{ include('geography/selectregion.html.twig', {id:'select--region--to'}) }}
+                        {{ include('remarkableplace/selectremarkableplace.html.twig', {opt_selected: remarkableplace_to, suffix:'to',parent_id:'select--region--to'}) }}
+                    </div>
+                    {% if error_tozip is defined and error_tozip is not null %}
+                    <span class="d-block">
+                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                        <small class="form-error-message">Vous devez soit préciser une adresse, soit choisir un lieu particulier...</small>
+                    </span>
+                    {% endif %}
+                </fieldset>
+            </div>
 
-            <!-- Block définition du lieu de destination -->
-            <fieldset class="col-12 col-lg-5">
-                <legend>Destination :</legend>
-                <div class="block--datas-vertical">
-                    <!-- heure -->
-                    <div class="d-flex flex-column justify-content-center w-50">
-                        {#{{ form_row(claimForm.arrivalat_time) }}#}
-                        <label class="required" for="claim_form_arrivalat_time_hour">Heure d'arrivée :</label>
-                        <div class="block--date align-items-center">
-                            {{ form_widget(claimForm.arrivalat_time.hour)}}
-                            &nbsp;:&nbsp;
-                            {{ form_widget(claimForm.arrivalat_time.minute)}}
-                        </div>
-                        {{ form_help(claimForm.arrivalat_time)}}
-                        {#{{ form_errors(claimForm.arrivalat_time)}}#}
-                        
-                        {% if error_time %}
-                        <span class="d-block">
-                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
-                            <small class="form-error-message">Vous devez laisser min. 2h de délai...</small>
-                        </span>
-                        {% endif %}
-                    </div>
-                    &nbsp;
-                    <!-- Road -->
-                    <div class="d-flex flex-column justify-content-center w-100">
-                        <label class="required" for="claim_form_to_road">N° et Voie :</label>
-                        {#{{ form_label(claimForm.to_road) }}#}
-                        {{ form_widget(claimForm.to_road) }}
-                        {{ form_errors(claimForm.to_road) }}
-                        {{ form_help(claimForm.to_road) }}
-                    </div>
-                    &nbsp;
-                    <!-- City + Zip -->
-                    <div class="d-flex flex-column justify-content-center w-100">
-                        <div class="d-flex flex-row" style="margin-left:-1em;margin-right:-1em;">
-                            <div class="col-8">
-                                <label class="required" for="claim_form_to_city">Ville :</label>
-                                {{ form_widget(claimForm.to_city) }}
-                                <select class="form-control cities" id="claim_form_to_cities"
-                                    name="cities" title="cities"
-                                >
-                                    <option value="">-- Sélectionnez votre commune --</option>
-                                </select>
-                                {{ form_errors(claimForm.to_city) }}
-                                {{ form_help(claimForm.to_city) }}
-                            </div>
-                            <div class="col-4">
-                                <label class="required">CP :</label>
-                                <div  style="display:none;">
-                                    {{ form_widget(claimForm.to_zip) }}
-                                </div>
-                                <input type="text" class="form-control claim_form_to_zip" id="claim_form_to_zip2"
-                                    title="zipcode"
-                                    {% if toZip %} value='{{ toZip }}'{% endif %} disabled
-                                >
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
         </div>
 
         <!-- Zone de saisie des commentaires -->

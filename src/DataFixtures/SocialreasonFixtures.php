@@ -11,13 +11,13 @@ class SocialreasonFixtures
     // extends Fixture implements OrderedFixtureInterface
 {
     const REASONS = [
-        ['label'    => "SARL"],
-        ['label'    => "EURL"],
-        ['label'    => "SA"],
-        ['label'    => "SAS"],
-        ['label'    => "SNC"],
-        ['label'    => "EI"],
-        ['label'    => "EIRL"],
+        ['label'    => "EI",    'tva'   =>  ['0']],
+        ['label'    => "EIRL",  'tva'   =>  ['0']],
+        ['label'    => "EURL",  'tva'   =>  ['10','20']],
+        ['label'    => "SA",    'tva'   =>  ['10','20']],
+        ['label'    => "SARL",  'tva'   =>  ['10','20']],
+        ['label'    => "SAS",   'tva'   =>  ['10','20']],
+        ['label'    => "SNC",   'tva'   =>  ['10','20']]
         // ....
     ];
     
@@ -33,8 +33,10 @@ class SocialreasonFixtures
             // afin de stocker en mémoire les instances des objets 
             // qui dans un second temps (chargement de Article),
             // récupèrera la donnée...
-            // $this->setReference($reason['label'],$obReason);
-            // $this->setReference($reason['key'],$obReason);
+            foreach($reason['tva'] as $tva){
+                $obReason->addTva($this->getReference($tva));
+            }
+    
 
             $manager->persist($obReason);
         }
@@ -54,6 +56,6 @@ class SocialreasonFixtures
      * @return integer
      */
     // public function getOrder(): int{
-    //     return 1;
+    //     return 21;
     // }
 }

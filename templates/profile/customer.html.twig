@@ -12,11 +12,8 @@
     <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
     {{ include('flash.html.twig') }}
 
-    {#<!-- <section id="regions_json" hidden>{{ JSgetregions() }}</section> -->#}
-    {#<!-- <section id="dpts_json" hidden>{{ JSgetdpts() }}</section> -->#}
-    <section id="cities_json" hidden>
-        {{ JSgetcities() }}
-    </section>
+    <!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
+    {{ include('geography/FromJSON4Javascript.html.twig') }}
     
     <div class="paragraph--large" id="div--2hide-ifmodal">
     
@@ -130,8 +127,20 @@
                     <td>{{ claim.id }}</td>
                     <td>{{ claim.claimdatetime|date('d/m/Y') }}</td>
                     <td>{{ claim.journeydate|date('d/m/Y') }}</td>
-                    <td>{{ getcitybyzip(claim.fromzip).name }}</td>
-                    <td>{{ getcitybyzip(claim.tozip).name }}</td>
+                    <td>
+                        {% if claim.remarkableplacefrom %}
+                            {{ claim.remarkableplacefrom.label }}
+                        {% else %}
+                            {{ getcitybyzip(claim.fromzip).name }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if claim.remarkableplaceto %}
+                            {{ claim.remarkableplaceto.label }}
+                        {% else %}
+                            {{ getcitybyzip(claim.tozip).name }}
+                        {% endif %}
+                    </td>
                     <td>
                         <div class="d-flex flex-row flex-wrap align-items-center">
                             <button class="btn btn-sm btn--blue btn--showmodal" id="{{ 'btn--showmodal'~claim.id }}" data_id="{{ claim.id }}" data_type="claim">
@@ -174,8 +183,8 @@
                 </tr>
             </thead>
             <tbody>
-                {#{% for claim in app.user.customer.getclaim %}
-                    {% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
+                {% for claim in null %}
+                {#{% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
                     
                 <tr class="row--tab row--tender ARCHIVE" parent_id="btn--tabtype--tender">
                     {% else %}#}
@@ -187,12 +196,14 @@
                     <td></td>                    
                     <td> Accepter / Refuser </td>
                 </tr>
-                {#{% endfor %}#}
+                {% endfor %}
             </tbody>
             <tfoot>
+                {% if null|length == 0 %}
                 <tr>
                     <td colspan="5">Pas de devis reçu...</td>
                 </tr>
+                {% endif %}
             </tfoot>
         </table>
         <!-- tableau des Courses effectuées (Orders) -->
@@ -208,7 +219,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for claim in app.user.customer.getclaims %}
+                {% for claim in null %}
                 {#{% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
                 <tr class="row--tab row--order ARCHIVE" parent_id="btn--tabtype--order">
                     {% else %}#}
@@ -221,7 +232,7 @@
                 {% endfor %}
             </tbody>
             <tfoot>
-                {% if app.user.customer.getclaims|length == 0 %}
+                {% if null|length == 0 %}
                 <tr>
                     <td colspan="4">Vous n'avez encore pas bénéficié des services des pilotes de l'Annuaire...</td>
                 </tr>

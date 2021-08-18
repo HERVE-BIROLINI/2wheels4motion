@@ -5,21 +5,15 @@ namespace App\Controller;
 use App\Entity\Claim;
 use App\Entity\Customer;
 use App\Entity\Flatrate;
-// use App\Entity\User;
+use App\Entity\Remarkableplace;
 use App\Form\ClaimFormType;
-// use App\Security\EmailVerifier;
 use App\Twig\DriverTwig;
 use App\Twig\FrenchGeographyTwig;
 use DateInterval;
 use DateTime;
-// use DateTimeZone;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
-// use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -27,12 +21,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ClaimController extends AbstractController
 {
-    private $mailer;
-
-    public function __construct(MailerInterface $mailer)
-    {
-        $this->mailer = $mailer;
-    }
 
     /**
      * @Route("/claim", name="create")
@@ -61,7 +49,10 @@ class ClaimController extends AbstractController
             $customer_zip=$customer->getZip();
         }
 
-        //
+        // Pour les lectures et enregistrements dans la BdD
+        $entityManager=$this->getDoctrine()->getManager();
+
+        // Dans le cas du besoin de créer un nouveau compte Customer
         if(isset($_POST["customer_road"])){
             $customer_road=($_POST["customer_road"]);
         }
@@ -78,36 +69,48 @@ class ClaimController extends AbstractController
         $error_customer_city=false;
         // $error_customer_zip=false;
 
-        //
+        // Instancie un nouvel objet pour la demande, et son formulaire
         $claim=new Claim();
         $claimForm=$this->createForm(ClaimFormType::class, $claim);
         $claimForm->handleRequest($request);
-        //
+
+        // Défini le moment "présent"
         $now=new DateTime('now');
         $date=$claim->getJourneyDate();
-        $time=$claim->getArrivalatTime();
-        // si une date est défini,
-        // ... lève le drapeau d'erreur pour le cas de retour au formulaire
+        $time=$claim->getJourneyTime();
+        
+        // si une date est définie
         $error_date=null;
         if(!isset($date))
         {$claim->setJourneyDate($now);}
-        // si une heure est défini,
-        // ... lève le drapeau d'erreur pour le cas de retour au formulaire
+        // si une heure est définie
         $error_time=null;
         if(!isset($time))
-        {$claim->setArrivalatTime($now->add(new DateInterval('PT2H')));}
+        {$claim->setJourneyTime($now->add(new DateInterval('PT2H')));}
+        // si un Flatrate a été choisi (cas de 2nd passage)
+        if(isset($_POST['flatrate'])){
+            $claim->setFlatrate($entityManager->getRepository(Flatrate::class)->findOneBy(['id'=>$_POST['flatrate']]));
+        }
+
         //
+        // $error_priority=null;
         $fromZip=$claim->getFromZip();
         $toZip=$claim->getToZip();
+        $remarkableplace_from=null;
+        $remarkableplace_to=null;
+        //
+        $error_tozip=null;
+        $error_fromzip=null;
         
-        // ... RE-crée l'interface pour le cas des dates et heures par défaut ...
+        // ... (RE-)crée l'interface pour le cas des dates et heures par défaut ...
         $claimForm=$this->createForm(ClaimFormType::class, $claim);
         $claimForm->handleRequest($request);
 
-        // Pour les lectures et enregistrements dans la BdD
-        $entityManager=$this->getDoctrine()->getManager();
         // ** Si le formulaire est correctement rempli... **
         if($claimForm->isSubmitted() && $claimForm->isValid()
+                // * Test sur tous les critères n'appartenant pas au formulaire *
+                // * ou étant facultatifs (les uns autorisant NULL aux autres)  *
+                // ... sur l'adresse Customer
                 && (!$customer2Create
                     || (isset($customer_road) and $customer_road!='')
                     || (isset($_POST['customer_road']) and $_POST['customer_road']!='')
@@ -116,10 +119,22 @@ class ClaimController extends AbstractController
                     || (isset($customer_city) and $customer_city!='')
                     || (isset($_POST['customer_city']) and $_POST['customer_city']!='')
                     )
-                // && $_POST['customer_zip']!=''
+                    // ... sur le lieu de prise en charge
+                && ((isset($_POST['remarkableplace--from'])
+                    && ($remarkableplace_from=$_POST['remarkableplace--from'] or true)
+                    && $remarkableplace_from!=''
+                    )
+                    || $claim->getFromZip()
+                    )
+                    // ... sur le lieu de prise en charge
+                && ((isset($_POST['remarkableplace--to'])
+                        && ($remarkableplace_to=$_POST['remarkableplace--to'] or true)
+                        && $remarkableplace_to!=''
+                    )
+                    || $claim->getToZip()
+                    )
             )
         {
-
             // * Si tout est bien renseigner => enregistre, envoi email au chauffeurs, etc... *
             $diffDate=$now->diff($date);
             if((($diffDate->d==0 && $diffDate->m==0 and $diffDate->y==0)
@@ -128,7 +143,7 @@ class ClaimController extends AbstractController
                 // ... si délai < à 2h
                 and
                 (
-                    strtotime($claim->getArrivalatTime()->format('H:i'))
+                    strtotime($claim->getJourneyTime()->format('H:i'))
                         -
                     strtotime($now->format('H:i'))
                     >= 7200
@@ -136,8 +151,7 @@ class ClaimController extends AbstractController
                     $claim->getJourneyDate() > $now
                 )
             ){
-
-                // Se débarrase de l'inscription du Customer,
+                // Se "débarrase" maintenant de l'inscription du Customer,
                 // quelque soit la disponibilité de Driver(s)...
                 if($customer2Create){
                     $customer= new Customer();
@@ -148,16 +162,36 @@ class ClaimController extends AbstractController
                     //
                     $user->setCustomer($customer);
                     $entityManager->persist($customer);
-                    //
+                    // "remplissage" de la BdD
                     $entityManager->flush();
                 }
 
                 // D'abord, recherche la liste des chauffeurs concernés...
-                // ... pour les régions de prise la "prise en charge" et de la "destination"
-                $obFGTwig = new FrenchGeographyTwig;
+                // ... pour les régions de la "prise en charge" et de la "destination"
+                $obFGTwig = new FrenchGeographyTwig($entityManager);
                 $obDriverTwig = new DriverTwig($this->getDoctrine()->getManager());
+                //
+                $arZip=[];
+                if($remarkableplace_from){
+                    $oRemarkable=$entityManager->getRepository(Remarkableplace::class)->findOneBy(['id'=>$remarkableplace_from]);
+                    $arZip[]=$oRemarkable->getDeptCode()."000";
+                    $claim->setRemarkableplaceFrom($oRemarkable);
+                }
+                elseif($claim->getFromZip()){
+                    $arZip[]=$claim->getFromZip();
+                }
+                //
+                if($remarkableplace_to){
+                    $oRemarkable=$entityManager->getRepository(Remarkableplace::class)->findOneBy(['id'=>$remarkableplace_to]);
+                    $arZip[]=$oRemarkable->getDeptCode()."000";
+                    $claim->setRemarkableplaceTo($oRemarkable);
+                }
+                elseif($claim->getToZip()){
+                    $arZip[]=$claim->getToZip();
+                }
+                //
                 $arRegions=[];
-                foreach([$claim->getFromZip(), $claim->getToZip()] as $zip){
+                foreach($arZip as $zip){
                     $obRegion=$obFGTwig->getRegionByZip($zip);
                     //
                     if (!in_array($obRegion,$arRegions)) {
@@ -182,18 +216,28 @@ class ClaimController extends AbstractController
                 }
 
                 // Si au mmoins un  pilote référencé dans la région de la demande,
-                // enregistre la demande et envoie les mails...
+                // enregistre la Claim, après avoir récupérer TOUTES les Entrées,
+                // n'appartenant pas à la Form, et envoie les mails...
                 if(count($arDrivers)>0){
-                    //
+                    // Enregistre l'horaire le plus "important"
+                    if($claim->getPriorityDeparture()){
+                        $claim->setDepartureatTime($claim->getJourneyTime());
+                    }
+                    else{
+                        $claim->setArrivalatTime($claim->getJourneyTime());
+                    }
+                    // Récupère le Flatrate (forfait Mise à disposition), si demandé
+                    if(isset($_POST['flatrate'])){
+                        $claim->setFlatrate($entityManager->getRepository(Flatrate::class)->findOneBy(['id'=>$_POST['flatrate']]));
+                    }
+                    // Attribut l'heure actuelle pour création de la Claim
                     $claim->setClaimDatetime(new DateTime('now'));
-                    //
+                    // Associe le Customer à la Claim
                     $claim->setCustomer($customer);
+                    //
                     $entityManager->persist($claim);
 
-                    // "remplissage" de la BdD
-                    $entityManager->flush();
-
-                    // associe la Demande et tous les pilotes à qui elle sera envoyée
+                    // Associe la Demande et tous les pilotes à qui elle sera envoyée
                     foreach($arDrivers4Region as $obDriver){
                         $claim->addDriver($obDriver);
                     }
@@ -201,16 +245,17 @@ class ClaimController extends AbstractController
                     $entityManager->flush();
                     
                     // envoi des emails aux chauffeurs de la région du demandeur
-                    $this->sendClaimEmails($claim);
-                    // puis, renvoi à la page du tableau de bord du Customer
-                    $this->addFlash('success', "Votre demande a bien été transmise à ".$claim->getDrivers()->count()." pilote(s) référencé(s) dans la région de votre demande...");
-                    return $this->redirectToRoute('profile_customer');
+                    return $this->redirectToRoute('mailer_claim', ['id' => $claim->getId()]);
+                    // $this->sendClaimEmails($claim);
+                    // // puis, renvoi à la page du tableau de bord du Customer
+                    // $this->addFlash('success', "Votre demande a bien été transmise à ".$claim->getDrivers()->count()." pilote(s) référencé(s) dans la région de votre demande...");
+                    // return $this->redirectToRoute('profile_customer');
                 }
                 //... si aucun pilote référencé... en informe le client
                 else{$this->addFlash('danger', "Actuellement aucun pilote et/ou entreprise T3P n'opérant dans la région de votre demande n'est encore référencé dans notre communauté. Malheureusement votre demande ne peut être satisfaite...");}
             }
             // ... problème d'heure (??)
-            elseif(strtotime($claim->getArrivalatTime()->format('H:i'))
+            elseif(strtotime($claim->getJourneyTime()->format('H:i'))
                         -
                     strtotime($now->format('H:i'))
                     < 7200 // 7200 = 2h en sec.
@@ -218,94 +263,66 @@ class ClaimController extends AbstractController
                 $error_time=true;
             }
             // ... problème de date(??)
-            else{$error_date=true;}
+            else{
+                var_dump('<br><br>---   PROBLEME DE DATE (???) ---<br>');
+                $error_date=true;
+            }
         }
-        // ** si non... problème avec l'adresse du Customer **
-        else{
+        // ** si formulaire soumis, mais problème... **
+        elseif($claimForm->isSubmitted()){
+            // Problème(s) avec l'adresse Customer
             if(isset($_POST['customer_road']) and $_POST['customer_road']==''){$error_customer_road=true;}
             if(isset($_POST['customer_city']) and $_POST['customer_city']==''){$error_customer_city=true;}
-            // if($_POST['customer_zip']==''){$error_customer_zip=true;}
+            // Problème(s) avec l'adresse de prise en charge
+            if((!isset($remarkableplace_from) || $remarkableplace_from=='')
+                && !$claim->getFromZip()
+            ){
+                $error_fromzip=true;
+            }
+            // Problème(s) avec l'adresse destination
+            if((!isset($_POST['remarkableplace--to'])
+                ||  (isset($_POST['remarkableplace--to'])
+                        && ($remarkableplace_to=$_POST['remarkableplace--to'] or true)
+                        && $remarkableplace_to==''
+                    )
+                )
+                && !$claim->getToZip()
+            ){
+                $error_tozip=true;
+            }
         }
 
+        // affichage de la page du formulaire de demande de course
         return $this->render('claim/create.html.twig', [
-            // 'controller_name' => 'ClaimController',
-            'claimForm' => $claimForm->createView(),
+            'controller_name'   => 'ClaimController',
+            'claimForm'         => $claimForm->createView(),
+            'claim'             => $claim,
+            'flatrates'         => $entityManager->getRepository(Flatrate::class)->findAll(),
             //
             'customer2Create'=>$customer2Create,
-            // ... nécessaire pour l'adresse personnelle qui n'est pas prise en charge par le Formbuilder
-            'customer_road'=> $customer_road,
-            'customer_city'=> $customer_city,
-            'customer_zip' => $customer_zip,
-            'error_customer_road'=> $error_customer_road,
-            'error_customer_city'=> $error_customer_city,
-            // 'error_customer_zip' => $error_customer_zip,
-            //
-            'flatrates'  => $entityManager->getRepository(Flatrate::class)->findAll(),
-            //
-            'error_date' => $error_date,
-            'error_time' => $error_time,
-            // ... utiles au RE-affichage dans un Input disabled,
+            // Utiles au RE-affichage dans un Input disabled,
             // car si utilisation de l'élément du Formbuilder,
             // ne pourrait-être désactivé sans perdre le Submit...
-            'fromZip'   => $fromZip,
-            'toZip'     => $toZip,
-        ]);
-    }
-
-    public function sendClaimEmails(Claim $obClaim)
-    {
-        $obCustomer=$obClaim->getCustomer();
-
-        // ... parce que l'écriture/création prend plus de temps que l'exécution du code...
-        // // $obUser=$obCustomer->getUser();
-        // IDEE POURRIE !!!
-        //------------------
-        // $obUser=null;
-        // while(!$obUser){$obUser=$obCustomer->getUser();}
-        //------------------
-        $obUser=$this->getUser();
-
-        // envoi des courriels de consultation à tous les chauffeurs de la région
-        $claimEmail=new TemplatedEmail();
-        $entityManager = $this->getDoctrine()->getManager();
-        //
-        $context = $claimEmail->getContext();
-        $context['firstname']=$obUser->getFirstname();
-        $context['lastname']=$obUser->getLastname();
-        $context['road']=$obCustomer->getRoad();
-        $context['zip']=$obCustomer->getZip();
-        $context['city']=$obCustomer->getCity();
-        $context['user_email']=$obUser->getEmail();
-        $context['phone']=$obUser->getPhone();
-        $context['claim_datetime']=$obClaim->getClaimDatetime()->format('d/m/Y');
-        $context['journey_date']=$obClaim->getJourneyDate()->format('d/m/Y');
-        //
-        if(isset($_POST["flatratechoosen"])){
-            $context['flatrate']= $entityManager->getRepository(Flatrate::class)->findOneBy(['id'=>$_POST["flatratechoosen"]]);
-        }
-        $context['from_road']=$obClaim->getFromRoad();
-        $context['from_zip']=$obClaim->getFromZip();
-        $context['from_city']=$obClaim->getFromCity();
-        $context['to_road']=$obClaim->getToRoad();
-        $context['to_zip']=$obClaim->getToZip();
-        $context['to_city']=$obClaim->getToCity();
-        $context['arrivalat_time']=$obClaim->getArrivalatTime()->format('H:i:s');
-        $context['comments']=$obClaim->getComments();
-
-        // Envoi d'eMail individuellement à tous les pilotes concernés par la région
-        foreach($obClaim->getDrivers() as $obDriver){
-        // foreach($arDrivers as $obDriver){
-            $context['driver_firstname']=$obDriver->getUser()->getFirstname();
+            // ... nécessaire pour l'adresse personnelle qui n'est pas prise en charge par le Formbuilder
+            'customer_road'         => $customer_road,
+            'customer_city'         => $customer_city,
+            'customer_zip'          => $customer_zip,
+            'error_customer_road'   => $error_customer_road,
+            'error_customer_city'   => $error_customer_city,
+            // 'error_customer_zip' => $error_customer_zip,
             //
-            $claimEmail->context($context)
-                ->from(new Address('twowheelsformotion@gmail.com', '2Wheels4Motion - Annuaire Moto-taxi'))
-                ->to($obDriver->getUser()->getEmail())
-                ->subject("Propositon d'une course Moto-taxi")
-                // ->text('text') //ou htmlTemplate au choix !!
-                ->htmlTemplate('claim/Claim2Drivers_email.html.twig')
-            ;
-            $this->mailer->send($claimEmail);
-        }
+            'error_date'    => $error_date,
+            'error_time'    => $error_time,
+            // 'error_priority'=> $error_priority,
+            //
+            'remarkableplace_from'  => $remarkableplace_from,
+            'remarkableplace_to'    => $remarkableplace_to,
+            //
+            'fromZip'       => $fromZip,
+            'toZip'         => $toZip,
+            'error_fromzip' => $error_fromzip,
+            'error_tozip'   => $error_tozip,
+        ]);
     }
 
 

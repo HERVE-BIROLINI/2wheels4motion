@@ -24,20 +24,39 @@
         J'aurais besoin d'un chauffeur le <b>{{ journey_date }}</b>,
         pour effectuer un trajet avec une prise en charge à l'adresse :
         <div style='margin-left:5em;font-weight:bolder;'>
+        {% if from_place is defined %}
+            {{ from_place.label }}
+        {% else %}
             {{ from_road }}
             <br>
             {{ from_zip~'  '~from_city }}
+        {% endif %}
         </div>
-        pour destination, l'adresse :
+        pour destination :
         <div style='margin-left:5em;font-weight:bolder;'>
-            {{ to_road }}
-            <br>
-            {{ to_zip~'  '~to_city }}
+            {% if to_place is defined %}
+                {{ to_place.label }}
+            {% else %}
+                {{ to_road }}
+                <br>
+                {{ to_zip~'  '~to_city }}
+            {% endif %}
         </div>
+        {% if priority_departure is defined and priority_departure is not null %}
+        avec une prise en charge à :
+        {% else %}
         et une arrivée à destination pour :
+        {% endif %}
         <div style='margin-left:5em;font-weight:bolder;'>
-            {{ arrivalat_time }}
+            {{ journey_time }}
         </div>
+        {% if flatrate is defined %}
+        <br>
+        Je serais particulièrement intéressé pour vous mandater sur un forfait :
+        <div style='margin-left:5em;font-weight:bolder;'>
+            {{ flatrate }}
+        </div>
+        {% endif %}
         <br>
         Autres commentaires relatifs à la courses :
         <div style='margin-left:5em;font-weight:bolder;'>

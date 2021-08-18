@@ -1,0 +1,11 @@
+<form id="{{ 'delete_'~remarkableplace.id }}" method="post" 
+    action="{{ path('admin_remarkableplace_delete', {'remarkableplace': remarkableplace.id}) }}"
+    onsubmit="return confirm('Voulez-vous vraiment supprimer ce lieu ?');"
+>
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ remarkableplace.id) }}">
+    <button class="btn btn-sm btn--red" href="{{ path('admin_remarkableplace_delete', {'remarkableplace': remarkableplace.id}) }}"
+        title="Supprimer" type='submit' form="{{ 'delete_'~remarkableplace.id }}"
+    >
+        <i class="ri-delete-bin-6-line"></i>&ensp;Supprimer
+    </button>
+</form>

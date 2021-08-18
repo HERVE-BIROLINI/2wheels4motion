@@ -1,0 +1,14 @@
+
+{% extends 'base.html.twig' %}
+{% set Title="... d'un tarif" %}
+{% block title %}{{ parent() }} - {{ Title }}{% endblock %}
+
+{% block body %}
+
+<!-- Admin Controller banner -->
+{{ include('admin/banner.html.twig') }}
+
+<!-- Common Form to edit Typeplace object -->
+{{ include('typeplace/_form.html.twig') }}
+
+{% endblock %}

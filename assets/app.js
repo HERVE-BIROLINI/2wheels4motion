@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function(event){
     // ** Vérifie l'existance d'une section (HTML) "masquée"
     //    contenant le fichier JSON transmis par PHP...
     //  * REGIONS *
+    /*  FINALEMENT PAS UTILISE, GARDE SI S'AVERAIT UTILE...
     let regions=document.querySelector('#regions_json');
     // ... si données des Departments (nom+zip) trouvées...
     if(regions){
@@ -45,7 +46,9 @@ document.addEventListener("DOMContentLoaded", function(event){
         // ... crée un tableau pour distinguer chaque commune pour l'affichage dans les listes
         var arRegions=regions.split(`$`);
     }
+    */
     //  * DEPARTMENTS *
+    /*  FINALEMENT PAS UTILISE, GARDE SI S'AVERAIT UTILE...
     let dpts=document.querySelector('#dpts_json');
     // ... si données des Departments (nom+zip) trouvées...
     if(dpts){
@@ -58,6 +61,7 @@ document.addEventListener("DOMContentLoaded", function(event){
         // ... crée un tableau pour distinguer chaque commune pour l'affichage dans les listes
         var arDpts=dpts.split(`$`);
     }
+    */
     //  * CITIES *
     let cities=document.querySelector('#cities_json');
     // ... si données des Communes (nom+zip) trouvées...
@@ -140,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function(event){
     // recherche de tous les éléments Input et Select liés au nom de la commune...
     let htmlCity=document.querySelectorAll(".inputcity");
     let htmlCities=document.querySelectorAll(".cities");
-    if(cities && htmlCity){
+    if(htmlCity && htmlCities){
         // ... si en a trouvé, leur assigne les espions nécessaire à la prise en charge du dynamisme
         if(htmlCity){
             // boucle sur tous les éléments (Input Text) de la Class=inputcity trouvés...
@@ -485,7 +489,10 @@ document.addEventListener("DOMContentLoaded", function(event){
 
         // ** Gestion du filtrage sur l'onglet courant **
         let htmlBtnSwitchArchive=document.querySelector('#btn--show-hide--archive');
-        htmlBtnSwitchArchive.onclick=showhideArchive;
+        if(htmlBtnSwitchArchive){
+            htmlBtnSwitchArchive.onclick=showhideArchive;
+        }
+        // * ne peut-être dans le IF ci-dessus (???) *
         function showhideArchive(){
             // recherche les 'lignes' de Class ARCHIVE, pour la Table affichée
             let btnTabTypeVisible=document.querySelector('.btn--tabtype[shown="Y"]');
@@ -530,37 +537,50 @@ document.addEventListener("DOMContentLoaded", function(event){
             // récupère tous les onglets "voisins"...
             let arBtnTabtype=document.querySelectorAll('.btn--tabtype[parent_id="'+btnTab2Activate.getAttribute('parent_id')+'"]');
             // ... gère les effets visuels des onglets
-            arBtnTabtype.forEach(btnTabType => {
-                if(btnTabType==btnTab2Activate){
-                    btnTabType.style.color='white';
-                    btnTabType.style.backgroundColor='black';
-                    // btnTabType.style.borderBottom='0';
-                    btnTabType.style.boxShadow='0 0 0 0, 0 -4px 4px 0 rgb(140, 140, 140)';
-                    // ... en profite pour gérer l'affichage des tables associées
-                    document.querySelector('.table--tabtype[parent_id="'+btnTab2Activate.id+'"]').style.display="";
-                    btnTabType.setAttribute('shown','Y');
-                    // ... et l'affichage du bouton de filtrage, si données de plus d'1 an
-                    let arRowArchive=document.querySelectorAll('.row--tab.ARCHIVE[parent_id="'+btnTab2Activate.id+'"]');
-                    if(arRowArchive.length>0){
-                        htmlBtnSwitchArchive.style.display="";
+            if(arBtnTabtype){
+                arBtnTabtype.forEach(btnTabType => {
+                    if(btnTabType==btnTab2Activate){
+                        btnTabType.style.color='white';
+                        btnTabType.style.backgroundColor='black';
+                        // btnTabType.style.borderBottom='0';
+                        // btnTabType.style.boxShadow='0 0 0 0, 0 -4px 4px 0 rgb(140, 140, 140)';
+                        // ... en profite pour gérer l'affichage des tables associées
+                        let tblChild=document.querySelector('.table--tabtype[parent_id="'+btnTab2Activate.id+'"]')
+                        if(tblChild){
+                            tblChild.style.display="";
+                        }
+                        btnTabType.setAttribute('shown','Y');
+                        // ... et l'affichage du bouton de filtrage, si données de plus d'1 an
+                        if(htmlBtnSwitchArchive){
+                            let arRowArchive=document.querySelectorAll('.row--tab.ARCHIVE[parent_id="'+btnTab2Activate.id+'"]');
+                            if(arRowArchive.length>0){
+                                htmlBtnSwitchArchive.style.display="";
+                            }
+                            else{
+                                htmlBtnSwitchArchive.style.display="none";
+                            }
+                        }
                     }
                     else{
-                        htmlBtnSwitchArchive.style.display="none";
+                        btnTabType.style.color='black';
+                        btnTabType.style.backgroundColor='lightgray';
+                        // btnTabType.style.borderBottom='0.5px solid black';
+                        // btnTabType.style.boxShadow='0 0 0 0';
+                        // ... en profite pour gérer l'affichage des tables associées
+                        let tblChild=document.querySelector('.table--tabtype[parent_id="'+btnTabType.id+'"]');
+                        if(tblChild){
+                            tblChild.style.display="none";
+                        }
+                        btnTabType.setAttribute('shown','N');
                     }
-                }
-                else{
-                    btnTabType.style.color='black';
-                    btnTabType.style.backgroundColor='lightgray';
-                    // btnTabType.style.borderBottom='0.5px solid black';
-                    btnTabType.style.boxShadow='0 0 0 0';
-                    // ... en profite pour gérer l'affichage des tables associées
-                    document.querySelector('.table--tabtype[parent_id="'+btnTabType.id+'"]').style.display="none";
-                    btnTabType.setAttribute('shown','N');
-                }
-            })
+                })
+            }
             //
-            document.querySelector('#btn--show-hide--archive').innerHTML='<i class="ri-eye-line"></i>&ensp;Récents seulement';
-            showhideArchive();
+            if(htmlBtnSwitchArchive){
+                htmlBtnSwitchArchive.innerHTML='<i class="ri-eye-line"></i>&ensp;Récents seulement';
+                // document.querySelector('#btn--show-hide--archive').innerHTML='<i class="ri-eye-line"></i>&ensp;Récents seulement';
+                showhideArchive();
+            }
         }
     }
 
@@ -647,9 +667,10 @@ document.addEventListener("DOMContentLoaded", function(event){
     //--------------------------------------------------------------
 
 
-    //----------------------------------------------------------------
-    // *** DEBUT - Gestion de la copie d'un' ID dans le Clipboard ***
-    //----------------------------------------------------------------
+    //-----------------------------------------------------------------
+    // *** DEBUT - Gestion de la gestion d'affichage du bouton de  ***
+    // *** création d'une association Raison Sociale / Taux de TVA ***
+    //-----------------------------------------------------------------
     let html_SubmitBtn4Association=document.querySelector('#btn--associate--socialreason-tva');
     if(html_SubmitBtn4Association){
 
@@ -670,8 +691,88 @@ document.addEventListener("DOMContentLoaded", function(event){
             html_SubmitBtn4Association.style.opacity='initial';
         }
     }
-    //--------------------------------------------------------------
-    // *** FIN - Gestion de la copie d'un' ID dans le Clipboard ***
-    //--------------------------------------------------------------
+    //-----------------------------------------------------------------
+    // *** FIN - Gestion de la gestion d'affichage du bouton de    ***
+    // *** création d'une association Raison Sociale / Taux de TVA ***
+    //-----------------------------------------------------------------
+
+
+    //------------------------------------------------------------
+    // *** DEBUT - Gestion de l'affichage filtré (par Région) ***
+    //------------------------------------------------------------
+    let arSelectFilter=document.querySelectorAll('.select--filtered');
+    if(arSelectFilter){
+        arSelectFilter.forEach(element => {
+            // Définit sélectionné par défaut l'option insélectionnable (titre colonne)
+            element.selectedIndex=element.options[0]
+            //
+            element.onchange=function(){
+                let sFilterSelected=this.options[this.selectedIndex];
+                // gère l'affichage des lignes
+                let arTR4Filter=document.querySelectorAll('[parent_id="'+this.id+'"]');
+                arTR4Filter.forEach(element => {
+                    if(sFilterSelected.value==''
+                        || element.classList.contains(this.id+'_'+sFilterSelected.value)
+                        || element.classList.contains(this.id+'_')
+                    ){
+                        element.style.display="table-row";
+                    }
+                    else{
+                        console.log('non');
+                        element.style.display="none";
+                    }
+                });
+                // gère l'affichage de l'élément 'liste déroulante' qui fait office de titre de colonne...
+                if(sFilterSelected.value==''){
+                    // ... sélection de 'ALL' si présent (value='')
+                    this.options[0].innerHTML=this.options[0].getAttribute('default_value');//'Région';
+                }
+                else{
+                    // ... sélection d'une Option
+                    this.options[0].innerHTML=this.options[0].getAttribute('default_value')+' : '+sFilterSelected.innerHTML;
+                }
+                this.selectedIndex=this.options[0]
+            }
+        });
+    }
+    //--------------------------------------------------------
+    // *** FIN - Gestion de l'affichage filtré par Région ***
+    //--------------------------------------------------------
+
+
+    //------------------------------------------------------------
+    // *** DEBUT - Gestion de l'affichage filtré (par Région) ***
+    //------------------------------------------------------------
+    let htmlSwitcher=document.querySelectorAll('.cb--switcher');
+    if(htmlSwitcher){
+        htmlSwitcher.forEach(element => {
+            element.addEventListener('click', switchStatus);
+            switchStatusGO(element);
+        })
+        // 
+        function switchStatus(){
+            switchStatusGO(this);
+        }
+        function switchStatusGO(switcher){
+            let arChildren=document.querySelectorAll('.switcher--target[parent_id="'+switcher.id+'"]');
+            arChildren.forEach(element => {
+                element.disabled = switcher.checked == false;
+            });
+            
+            // spécificité page CLAIM_CREATE
+            let arRadio=document.querySelectorAll('[name="claim_form[priority_departure]"]');
+            if(arRadio){
+                // arRadio.forEach(element => {
+                //     element.disabled = switcher.checked;
+                // })
+                document.querySelector('#claim_form_priority_departure_0').checked=switcher.checked;
+            }
+            // let htmlRadio_0=document.querySelector('#claim_form_priority_departure_0');
+        }
+    }
+    //--------------------------------------------------------
+    // *** FIN - Gestion de l'affichage filtré par Région ***
+    //--------------------------------------------------------
+
 
 });

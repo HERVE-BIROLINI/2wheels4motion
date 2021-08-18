@@ -1,0 +1,107 @@
+{% set departments=getdepartments() %}
+
+<section class="paragraph--large">
+
+    <div class="d-flex flex-row flex-wrap justify-content-between align-items-center">
+        <h2 class="title--h2">
+            {% if route=='remarkableplace_update' %}
+            Mise à jour d'un "lieu remarquable"...
+            {% elseif route=='remarkableplace_create' %}
+            Création d'un "lieu remarquable"...
+            {% endif %}
+        </h2>
+        <div class="d-flex flex-row flex-wrap justify-content-between align-items-center">
+            <a class="btn btn-sm btn--secondary" href="{{ path('admin_remarkableplace_read') }}">
+                <i class="ri-file-list-3-line"></i>&ensp;Retour à la liste
+            </a>
+            &emsp;
+            {% if remarkableplace %}
+                {{ include('remarkableplace/_delete_form.html.twig') }}
+                {% set label=remarkableplace.label %}
+                {% set dept_code=remarkableplace.deptcode %}
+                {% set typeplace_id=remarkableplace.typeplace.id %}
+            {% endif %}
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead class="thead--dark">
+            <tr>
+                <th style="width:2%;"></th>
+                <th style="width:35%;"><label class="required" for="inputlabel">Libellé</label></th>
+                <th>Département</th>
+                <th>Type de lieu</th>
+                <th style="width:15%;"><label>Actions</label></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <form class="mt-4 mb-4" id="formupdate" method="post" novalidate>
+                    <td></td>
+                    <td width="20%">
+                        <input type="text" class="form-control" id="inputlabel" value="{% if remarkableplace %}{{ remarkableplace.label }}{% elseif label is defined %}{{ label }}{% endif %}" name="label" size="50" required/>
+                        {% if error_label is defined and error_label is not null %}
+                        <span class="d-block">
+                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                            <small class="form-error-message">Un libellé doit-être précisé</small>
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if departments is defined and departments is not null %}
+                        <select class="form-control departments" id="claim_form_to_departments"
+                            name="dept" title="departments"
+                        >
+                            <option value="" name="all">... département</option>
+                            {% for department in departments %}
+                            <option value="{{ department.code }}" name="{{ department.code }}" 
+                            {% if dept_code==department.code %}selected="selected"{% endif %}
+                            {#<!-- {% if remarkableplace is defined and remarkableplace is not null and remarkableplace.deptcode==department.code %}selected="selected"{% endif %} -->#}
+                            >
+                            {{ department.name~' ('~department.code~')' }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                            {% if error_dept is defined and error_dept is not null %}
+                        <span class="d-block">
+                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                            <small class="form-error-message">Préciser le département</small>
+                        </span>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if typeplaces is defined and typeplaces is not null %}
+                        <select class="form-control typeplaces" id="claim_form_to_typeplaces"
+                            name="typeplace" title="typeplaces"
+                        >
+                            <option value="" name="all">... type du lieu</option>
+                            {% for obTypeplace in typeplaces %}
+                            <option value="{{ obTypeplace.id }}" name="{{ obTypeplace.id }}" 
+                                {% if typeplace_id==obTypeplace.id %}selected="selected"{% endif %}
+                                {#<!-- {% if remarkableplace is defined and remarkableplace is not null and remarkableplace.typeplace==typeplace %}selected="selected"{% endif %} -->#}
+                            >
+                            {{ obTypeplace.label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                            {% if error_typeplace is defined and error_typeplace is not null %}
+                        <span class="d-block">
+                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                            <small class="form-error-message">Préciser le "type du lieu"</small>
+                        </span>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn--blue mr-2" type="submit" title="Sauvegarder" form="formupdate">
+                            <i class="ri-save-line"></i>&ensp;Sauvegarder
+                        </button>
+                    </td>
+                </form>
+            </tr>
+        </tbody>
+        <tfoot><tr><td colspan="4"></td></tr></tfoot>
+    </table>
+    
+</section>

@@ -238,10 +238,10 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        $verify_password_error=false;
+        // Crée et envoi le formulaire
         $form = $this->createForm(ChangePwdFormType::class, $user);
         $form->handleRequest($request);
-
-        $verify_password_error=false;
 
         if ($form->isSubmitted() && $form->isValid()){
             if(isset($_POST['password-old']) 

@@ -21,7 +21,8 @@ class FlatrateController extends AbstractController
     {
         return $this->render('flatrate/index.html.twig', [
             'controller_name' => 'FlatrateController',
-            'flatrates'  => $flatrateRepository->findAll(),
+            'flatrates' => $flatrateRepository->findBy(array(), array('region_code'=>'asc','price'=>'asc','label'=>'asc')),
+            // 'flatrates'  => $flatrateRepository->findAll(),
         ]);
     }
 }

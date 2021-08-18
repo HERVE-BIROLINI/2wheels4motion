@@ -7,12 +7,11 @@
 <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
 {{ include('flash.html.twig') }}
 
-    
 <form class="container-fluid mt-5 w-75" method="post"> 
     <div class="card--3D-vertical">
         <h1 class="h3 mb-3 font-weight-normal">Enregistrez-vous : <small class="small-title-message">(* champs obligatoire)</small></h1>
 
-        {{ form_start(registrationForm) }}
+        {{ form_start(registrationForm,{attr:{novalidate:"novalidate"}}) }}
         {{ form_end(registrationForm) }}
         <a href="CGU">Consulter les Conditions Générales d'Utilisation</a>
         <br>

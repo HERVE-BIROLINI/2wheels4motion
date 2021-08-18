@@ -5,11 +5,15 @@ namespace App\Controller;
 use App\Entity\Company;
 use App\Entity\Driver;
 use App\Entity\Flatrate;
+use App\Entity\Remarkableplace;
 use App\Entity\Socialreason;
 use App\Entity\Tva;
+use App\Entity\Typeplace;
 use App\Repository\FlatrateRepository;
+use App\Repository\RemarkableplaceRepository;
 use App\Repository\SocialreasonRepository;
 use App\Repository\TvaRepository;
+use App\Repository\TypeplaceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -99,6 +103,352 @@ class AdminController extends AbstractController
 
 
     /**
+     * *****************************************
+     *  PAGE DE GESTION DES LIEUX "TYPE" (CRUD)
+     * *****************************************
+     */
+
+    /**
+     * @Route("/typeplace/create", name="typeplace_create", methods={"GET","POST"})
+     */
+    public function typeplaceCreate(TypeplaceRepository $typeplaceRepository): Response
+    {
+        // test si l'utilisateur N'est PAS encore identifié...
+        if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
+            // ... renvoi vers la page de connection
+            return $this->redirectToRoute('app_login');
+        }
+
+        //
+        $label=null;
+        $error_label=null;
+        //
+        $entityManager=$this->getDoctrine()->getManager();
+        
+        if(isset($_POST['label']) and ($label=$_POST['label'] or true)
+            and !$obTypeplace=$entityManager->getRepository(Typeplace::class)->findOneBy(['label'=>$label])
+            and $label!=''
+            )
+        {
+            $entityManager=$this->getDoctrine()->getManager();
+            $obTypeplace=new Typeplace;
+            $obTypeplace->setLabel($_POST['label']);
+            //
+            $entityManager->persist($obTypeplace);
+            $entityManager->flush();
+
+            // message de confirmation de la création
+            $this->addFlash('success', "La création du nouveau \"type de lieu\" a bien été enregistrée...");
+            //
+            return $this->redirectToRoute('admin_typeplace_read', [
+                'typeplaces'  => $typeplaceRepository->findAll(),
+            ]);
+        }
+        elseif(isset($obTypeplace)){
+            $this->addFlash('danger', "Un \"type de lieu\" avec ce libellé existe déjà...");
+        }
+        //
+        if(isset($label) and $label==''){$error_label=true;$label=null;}
+        //
+        return $this->render('typeplace/update.html.twig', [
+            'route'     => 'typeplace_create',
+            //
+            'typeplace' => null,
+            'label'     => $label,
+            //
+            'error_label'   => $error_label,
+        ]);
+    }
+
+    /**
+     * @Route("/typeplaces/list", name="typeplace_read", methods={"GET","POST"})
+     */
+    public function typeplaceRead(TypeplaceRepository $typeplaceRepository): Response
+    {
+        // test si l'utilisateur N'est PAS encore identifié...
+        if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
+            // ... renvoi vers la page de connection
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render('typeplace/read.html.twig', [
+            'controller_name' => 'AdminController',
+            'typeplaces'  => $typeplaceRepository->findBy(array(), array('label'=>'asc')),
+            // 'typeplaces'  => $typeplaceRepository->findAll(),
+        ]);
+    }
+
+    /**
+     * @Route("/typeplace_{typeplace}/update", name="typeplace_update", methods={"GET","POST"})
+     */
+    public function typeplaceUpdate(Typeplace $typeplace, TypeplaceRepository $typeplaceRepository): Response
+    {
+        // test si l'utilisateur N'est PAS encore identifié...
+        if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
+            // ... renvoi vers la page de connection
+            return $this->redirectToRoute('app_login');
+        }
+        //
+        if(!$obTypeplace=$typeplaceRepository->findOneBy(['id'=>$typeplace])){
+            $obTypeplace=null;
+        }
+
+        //
+        $label=null;
+        $error_label=null;
+        //
+        $entityManager = $this->getDoctrine()->getManager();
+
+        if(isset($_POST['label']) and ($label=$_POST['label'] or true)
+            and (!$obTypeplacefounded=$entityManager->getRepository(Typeplace::class)->findOneBy(['label'=>$label])
+                    or $obTypeplacefounded==$typeplace
+                )
+            and $label!=''
+            )
+        {
+            $obTypeplace->setLabel($_POST['label']);
+
+            $entityManager->persist($obTypeplace);
+            $entityManager->flush();
+
+            // message de confirmation de la création
+            $this->addFlash('success', "La modification du \"type de lieu\" a bien été enregistrée...");
+            //
+            return $this->redirectToRoute('admin_typeplace_read', [
+                // 'controller_name' => 'AdminController',
+                'typeplaces'  => $typeplaceRepository->findAll(),
+            ]);
+        }
+        elseif(isset($obTypeplacefounded)){
+            $this->addFlash('danger', "Un \"type de lieu\" avec ce libellé existe déjà...");
+        }
+        //
+        if(isset($label) and $label==''){$error_label=true;$label=null;}
+        //
+        return $this->render('typeplace/update.html.twig', [
+            // 'controller_name' => 'TypeplaceController',
+            'route'     => 'typeplace_update',
+            //
+            'typeplace' => $obTypeplace,
+            'label'     => $label,
+            //
+            'error_label'   => $error_label,
+        ]);
+    }
+
+    /**
+     * @Route("/typeplace_{typeplace}/delete", name="typeplace_delete", methods={"GET","POST"}, requirements={"typeplace":"\d+"})
+     */
+    public function typeplaceDelete(Request $request, Typeplace $typeplace, TypeplaceRepository $typeplaceRepository): Response
+    {
+        // test si l'utilisateur N'est PAS encore identifié...
+        if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
+            // ... renvoi vers la page de connection
+            return $this->redirectToRoute('app_login');
+        }
+
+        if($this->isCsrfTokenValid('delete'.$typeplace->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($typeplace);
+            $entityManager->flush();
+        }
+
+        // message de confirmation de la création
+        $this->addFlash('success', "La supression du \"type de lieu\" a bien été effectuée...");
+        //
+        return $this->redirectToRoute('admin_typeplace_read', [
+            // 'controller_name' => 'AdminController',
+            'typeplaces'  => $typeplaceRepository->findAll(),
+        ]);
+    }
+
+
+    /**
+     * *************************************************
+     *  PAGE DE GESTION DES LIEUX "REMARQUABLES" (CRUD)
+     * *************************************************
+     */
+
+    /**
+     * @Route("/remarkableplace/create", name="remarkableplace_create", methods={"GET","POST"})
+     */
+    public function remarkableplaceCreate(RemarkableplaceRepository $remarkableplaceRepository): Response
+    {
+        // test si l'utilisateur N'est PAS encore identifié...
+        if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
+            // ... renvoi vers la page de connection
+            return $this->redirectToRoute('app_login');
+        }
+
+        //
+        $label=null;
+        $dept=null;
+        $typeplace=null;
+        $error_label=null;
+        $error_dept=null;
+        $error_typeplace=null;
+        //
+        $entityManager=$this->getDoctrine()->getManager();
+
+        if(isset($_POST['label']) and ($label=$_POST['label'] or true)
+            and ((isset($_POST['dept']) and $dept=$_POST['dept']) or true)
+            and ((isset($_POST['typeplace']) and $typeplace=$_POST['typeplace']) or true)
+            and !$obRemarkableplace=$entityManager->getRepository(Remarkableplace::class)->findOneBy(['label'=>$label])
+            and $label!='' and $dept!='' and $typeplace!=''
+            )
+        {
+            $entityManager=$this->getDoctrine()->getManager();
+            $obRemarkableplace=new Remarkableplace;
+            $obRemarkableplace->setLabel($label);
+            $obRemarkableplace->setDeptCode($dept);
+            $obRemarkableplace->setTypeplace($entityManager->getRepository(Typeplace::class)->findOneBy(['id'=>$typeplace]));
+            //
+            $entityManager->persist($obRemarkableplace);
+            $entityManager->flush();
+
+            // message de confirmation de la création
+            $this->addFlash('success', "La création du nouveau \"lieu\" a bien été enregistrée...");
+            //
+            return $this->redirectToRoute('admin_remarkableplace_read', [
+                'remarkableplaces'  => $remarkableplaceRepository->findAll(),
+            ]);
+        }
+        elseif(isset($obRemarkableplace)){
+            $this->addFlash('danger', "Un \"lieu\" avec ce libellé existe déjà...");
+        }
+        //
+        // dd($dept);
+        if(isset($label) and $label==''){$error_label=true;$label=null;}
+        if(isset($dept) and $dept==''){$error_dept=true;$dept=null;}
+        if(isset($typeplace) and $typeplace==''){$error_typeplace=true;$typeplace=null;}
+        //
+        return $this->render('remarkableplace/update.html.twig', [
+            'route' => 'remarkableplace_create',
+            //
+            'remarkableplace'   => null,
+            'label'             => $label,
+            'dept_code'         => $dept,
+            'typeplace_id'      => $typeplace,
+            'typeplaces'        => $entityManager->getRepository(Typeplace::class)->findAll(),
+            //
+            'error_label'   => $error_label,
+            'error_dept'   => $error_dept,
+            'error_typeplace'   => $error_typeplace,
+        ]);
+    }
+
+    /**
+     * @Route("/remarkableplaces/list", name="remarkableplace_read", methods={"GET","POST"})
+     */
+    public function remarkableplaceRead(RemarkableplaceRepository $remarkableplaceRepository): Response
+    {
+        // test si l'utilisateur N'est PAS encore identifié...
+        if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
+            // ... renvoi vers la page de connection
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render('remarkableplace/read.html.twig', [
+            'controller_name' => 'AdminController',
+            'remarkableplaces'  => $remarkableplaceRepository->findBy(array(), array('dept_code'=>'asc','label'=>'asc','typeplace'=>'asc')),
+            // 'remarkableplaces'  => $remarkableplaceRepository->findAll(),
+        ]);
+    }
+
+    /**
+     * @Route("/remarkableplace_{remarkableplace}/update", name="remarkableplace_update", methods={"GET","POST"})
+     */
+    public function remarkableplaceUpdate(Remarkableplace $remarkableplace, RemarkableplaceRepository $remarkableplaceRepository): Response
+    {
+        // test si l'utilisateur N'est PAS encore identifié...
+        if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
+            // ... renvoi vers la page de connection
+            return $this->redirectToRoute('app_login');
+        }
+        //
+        if(!$obRemarkableplace=$remarkableplaceRepository->findOneBy(['id'=>$remarkableplace])){
+            $obRemarkableplace=null;
+        }
+
+        //
+        $label=null;
+        $error_label=null;
+        $error_dept=null;
+        $error_typeplace=null;
+        //
+        $entityManager = $this->getDoctrine()->getManager();
+
+        if(isset($_POST['label']) and ($label=$_POST['label'] or true)
+            and ((isset($_POST['dept']) and $dept=$_POST['dept']) or true)
+            and ((isset($_POST['typeplace']) and $typeplace=$_POST['typeplace']) or true)
+            and (!$obRemarkableplacefounded=$entityManager->getRepository(Remarkableplace::class)->findOneBy(['label'=>$label])
+                    or $obRemarkableplacefounded==$remarkableplace
+                )
+            and $label!='' and $dept!='' and $typeplace!=''
+            )
+        {
+            $obRemarkableplace->setLabel($_POST['label']);
+            $obRemarkableplace->setDeptCode($dept);
+            $obRemarkableplace->setTypeplace($entityManager->getRepository(Typeplace::class)->findOneBy(['id'=>$typeplace]));
+
+            $entityManager->persist($obRemarkableplace);
+            $entityManager->flush();
+
+            // message de confirmation de la création
+            $this->addFlash('success', "La modification du \"type de lieu\" a bien été enregistrée...");
+            //
+            return $this->redirectToRoute('admin_remarkableplace_read', [
+                // 'controller_name' => 'AdminController',
+                'remarkableplaces'  => $remarkableplaceRepository->findAll(),
+            ]);
+        }
+        elseif(isset($obRemarkableplacefounded)){
+            $this->addFlash('danger', "Un \"lieu\" avec ce libellé existe déjà...");
+        }
+        //
+        if(isset($label) and $label==''){$error_label=true;$label=null;}
+        //
+        return $this->render('remarkableplace/update.html.twig', [
+            // 'controller_name' => 'RemarkableplaceController',
+            'route' => 'remarkableplace_update',
+            //
+            'remarkableplace'   => $remarkableplace,
+            'typeplaces'        => $entityManager->getRepository(Typeplace::class)->findAll(),
+            //
+            'error_label'       => $error_label,
+            'error_dept'        => $error_dept,
+            'error_typeplace'   => $error_typeplace,
+        ]);
+    }
+
+    /**
+     * @Route("/remarkableplace_{remarkableplace}/delete", name="remarkableplace_delete", methods={"GET","POST"}, requirements={"remarkableplace":"\d+"})
+     */
+    public function remarkableplaceDelete(Request $request, Remarkableplace $remarkableplace, RemarkableplaceRepository $remarkableplaceRepository): Response
+    {
+        // test si l'utilisateur N'est PAS encore identifié...
+        if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
+            // ... renvoi vers la page de connection
+            return $this->redirectToRoute('app_login');
+        }
+
+        if($this->isCsrfTokenValid('delete'.$remarkableplace->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($remarkableplace);
+            $entityManager->flush();
+        }
+
+        // message de confirmation de la création
+        $this->addFlash('success', "La supression du \"lieu\" a bien été effectuée...");
+        //
+        return $this->redirectToRoute('admin_remarkableplace_read', [
+            // 'controller_name' => 'AdminController',
+            'remarkableplaces'  => $remarkableplaceRepository->findAll(),
+        ]);
+    }
+
+
+    /**
      * ***********************************
      *  PAGE DE GESTION DES TARIFS (CRUD)
      * ***********************************
@@ -114,27 +464,36 @@ class AdminController extends AbstractController
             // ... renvoi vers la page de connection
             return $this->redirectToRoute('app_login');
         }
-        
-        // if(!$obFlatrate=$flatrateRepository->findOneBy(['id'=>$flatrate])){
-        //     $obFlatrate=null;
-        // }
 
-        if(isset($_POST['label']) and $_POST['label']!=''and $_POST['price']!=''){
-            $entityManager = $this->getDoctrine()->getManager();
-            $obFlatrate=new Flatrate;
-            $obFlatrate->setLabel($_POST['label']);
-            $obFlatrate->setPrice($_POST['price']);
+        //
+        $label=null;
+        $price=null;
+        $error_label=null;
+        $error_price=null;
+        //
+        $entityManager=$this->getDoctrine()->getManager();
+        
+        if(isset($_POST['label']) and ($label=$_POST['label'] or true)
+            and ($price=$_POST['price'] or true)
+            and !$obTypeplace=$entityManager->getRepository(Flatrate::class)->findOneBy(['label'=>$label])
+            and $label!='' and $price!='' and is_numeric($price) and intval($price)!==0
+            )
+        {
+            $entityManager=$this->getDoctrine()->getManager();
+            $obTypeplace=new Flatrate;
+            $obTypeplace->setLabel($_POST['label']);
+            $obTypeplace->setPrice($_POST['price']);
             //
             if(isset($_POST['pickupincluded'])){
-                $obFlatrate->setPickupIncluded(true);
+                $obTypeplace->setPickupIncluded(true);
             }
             else{
-                $obFlatrate->setPickupIncluded(false);
+                $obTypeplace->setPickupIncluded(false);
             }
             //
-            $obFlatrate->setDepartmentCode($_POST['department']);
-            
-            $entityManager->persist($obFlatrate);
+            $obTypeplace->setRegionCode($_POST['region']);
+            //
+            $entityManager->persist($obTypeplace);
             $entityManager->flush();
 
             // message de confirmation de la création
@@ -144,10 +503,22 @@ class AdminController extends AbstractController
                 'flatrates'  => $flatrateRepository->findAll(),
             ]);
         }
-
+        elseif(isset($obTypeplace)){
+            $this->addFlash('danger', "Un tarif avec ce libellé existe déjà...");
+        }
+        //
+        if(isset($label) and $label==''){$error_label=true;$label=null;}
+        if(isset($price) and ($price=='' or !is_numeric($price) or intval($price)==0)){$error_price=true;$price=null;}
+        //
         return $this->render('flatrate/update.html.twig', [
-            // 'controller_name' => 'AdminController',
+            'route'     => 'flatrate_create',
+            //
             'flatrate'  => null,
+            'label'     => $label,
+            'price'     => $price,
+            //
+            'error_label'   => $error_label,
+            'error_price'   => $error_price,
         ]);
     }
 
@@ -164,7 +535,8 @@ class AdminController extends AbstractController
 
         return $this->render('flatrate/read.html.twig', [
             // 'controller_name' => 'AdminController',
-            'flatrates'  => $flatrateRepository->findAll(),
+            'flatrates'  => $flatrateRepository->findBy(array(), array('region_code'=>'asc','price'=>'asc')),
+            // 'flatrates'  => $flatrateRepository->findAll(),
         ]);
     }
 
@@ -176,29 +548,42 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-
             return $this->redirectToRoute('app_login');
         }
-        
-        if(!$obFlatrate=$flatrateRepository->findOneBy(['id'=>$flatrate])){
-            $obFlatrate=null;
+        //
+        if(!$obTypeplace=$flatrateRepository->findOneBy(['id'=>$flatrate])){
+            $obTypeplace=null;
         }
 
-        if(isset($_POST['label'])){
-            $entityManager = $this->getDoctrine()->getManager();
-            $obFlatrate->setLabel($_POST['label']);
-            $obFlatrate->setPrice($_POST['price']);
+        //
+        $label=null;
+        $price=null;
+        $error_label=null;
+        $error_price=null;
+        //
+        $entityManager = $this->getDoctrine()->getManager();
+
+        if(isset($_POST['label']) and ($label=$_POST['label'] or true)
+            and ($price=$_POST['price'] or true)
+            and (!$obTypeplacefounded=$entityManager->getRepository(Flatrate::class)->findOneBy(['label'=>$label])
+                    or $obTypeplacefounded==$flatrate
+                )
+            and $label!='' and $price!='' and is_numeric($price) and intval($price)!==0
+            )
+        {
+            $obTypeplace->setLabel($_POST['label']);
+            $obTypeplace->setPrice($_POST['price']);
             //
             if(isset($_POST['pickupincluded'])){
-                $obFlatrate->setPickupIncluded(true);
+                $obTypeplace->setPickupIncluded(true);
             }
             else{
-                $obFlatrate->setPickupIncluded(false);
+                $obTypeplace->setPickupIncluded(false);
             }
             //
-            $obFlatrate->setDepartmentCode($_POST['department']);
+            $obTypeplace->setRegionCode($_POST['region']);
 
-            $entityManager->persist($obFlatrate);
+            $entityManager->persist($obTypeplace);
             $entityManager->flush();
 
             // message de confirmation de la création
@@ -209,10 +594,23 @@ class AdminController extends AbstractController
                 'flatrates'  => $flatrateRepository->findAll(),
             ]);
         }
-
+        elseif(isset($obTypeplacefounded)){
+            $this->addFlash('danger', "Un tarif avec ce libellé existe déjà...");
+        }
+        //
+        if(isset($label) and $label==''){$error_label=true;$label=null;}
+        if(isset($price) and ($price=='' or !is_numeric($price) or intval($price)==0)){$error_price=true;$price=null;}
+        //
         return $this->render('flatrate/update.html.twig', [
             // 'controller_name' => 'FlatrateController',
-            'flatrate'  => $obFlatrate,
+            'route'     => 'flatrate_update',
+            //
+            'flatrate'  => $obTypeplace,
+            'label'     => $label,
+            'price'     => $price,
+            //
+            'error_label'   => $error_label,
+            'error_price'   => $error_price,
         ]);
     }
 

@@ -52,7 +52,6 @@ class Tva
     public function setValue(int $value): self
     {
         $this->value = $value;
-
         return $this;
     }
 
@@ -64,7 +63,6 @@ class Tva
     public function setComment(string $comment): self
     {
         $this->comment = $comment;
-
         return $this;
     }
 
@@ -82,7 +80,6 @@ class Tva
             $this->socialreasons[] = $socialreason;
             $socialreason->addTva($this);
         }
-
         return $this;
     }
 
@@ -91,7 +88,6 @@ class Tva
         if ($this->socialreasons->removeElement($socialreason)) {
             $socialreason->removeTva($this);
         }
-
         return $this;
     }
 }

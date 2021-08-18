@@ -83,7 +83,7 @@ class DriverTwig extends AbstractExtension
         return $this->entityManager->getRepository(Driver::class)->findOneBy(['id'=>$id]);
     }
     public function getDriversByRegionOrZip($obRegion){
-        $obFGTwig = new FrenchGeographyTwig;
+        $obFGTwig = new FrenchGeographyTwig($this->entityManager);
         if(gettype($obRegion)=='string' and is_numeric($obRegion) and strlen($obRegion)==5){
             $obRegion=$obFGTwig->getRegionByZip($obRegion);
         }
@@ -108,7 +108,7 @@ class DriverTwig extends AbstractExtension
         return $this->entityManager->getRepository(Company::class)->findOneBy(['id'=>$id]);
     }
     public function getCompaniesByRegionOrZip($obRegion){
-        $obFGTwig = new FrenchGeographyTwig;
+        $obFGTwig = new FrenchGeographyTwig($this->entityManager);
         if(gettype($obRegion)=='string' and is_numeric($obRegion) and strlen($obRegion)==5){
             $obRegion=$obFGTwig->getRegionByZip($obRegion);
         }

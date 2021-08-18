@@ -35,7 +35,7 @@ class Flatrate
     /**
      * @ORM\Column(type="string", length=4, nullable=true)
      */
-    private $department_code;
+    private $region_code;
 
     public function getId(): ?int
     {
@@ -78,14 +78,14 @@ class Flatrate
         return $this;
     }
 
-    public function getDepartmentCode(): ?string
+    public function getRegionCode(): ?string
     {
-        return $this->department_code;
+        return $this->region_code;
     }
 
-    public function setDepartmentCode(?string $department_code): self
+    public function setRegionCode(?string $region_code): self
     {
-        $this->department_code = $department_code;
+        $this->region_code = $region_code;
 
         return $this;
     }

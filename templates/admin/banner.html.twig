@@ -5,6 +5,8 @@
     <!-- internal page menu, to navigate to ID -->
     <div id="nav--inpage">
         <a class="btn nav--btn--blue" href="{{ path('admin_pending') }}">Actions en attente</a>
+        <a class="btn nav--btn--blue" href="{{ path('admin_typeplace_read') }}">Les types de lieu</a>
+        <a class="btn nav--btn--blue" href="{{ path('admin_remarkableplace_read') }}">Les lieux remarquables</a>
         <a class="btn nav--btn--blue" href="{{ path('admin_flatrate_read') }}">Les tarifs</a>
         <a class="btn nav--btn--blue" href="{{ path('admin_socialreason_settings') }}">Raisons sociales & TVA</a>
         <a class="btn nav--btn--blue" href="{{ path('admin_registered') }}">Les inscrits</a>
@@ -16,3 +18,6 @@
     
 </section>
 <!-- FIN Profile banner -->
+
+<!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+{{ include('flash.html.twig') }}

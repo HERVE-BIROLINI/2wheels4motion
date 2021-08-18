@@ -10,17 +10,36 @@
             <th class="thead--dark">Jour de la course</th>
             <td>{{ claim.journeydate|date('d/m/Y') }}</td>
         </tr>
+        {% if claim.flatrate is defined and claim.flatrate is not null %}
+        <tr>
+            <th class="thead--dark" style="color:red;">Forfait désiré</th>
+            <td>{{ claim.flatrate.label }}</td>
+        </tr>
+        {% endif %}
         <tr>
             <th class="thead--dark">Prise en charge à l'adresse</th>
+            {% if claim.remarkableplacefrom %}
+            <td>{{ claim.remarkableplacefrom.label }}</td>
+            {% else %}
             <td>{{ claim.fromroad~', '~claim.fromzip~' '~getcitybyzip(claim.fromzip).name }}</td>
+            {% endif %}
         </tr>
         <tr>
+            {% if claim.prioritydeparture %}
+            <th class="thead--dark">RDV prise en charge pour</th>
+            {% else %}
             <th class="thead--dark">Arrivée attendue pour</th>
-            <td>{{ claim.arrivalattime|date('H:i') }}</td>
+            {% endif %}
+            <td>{{ claim.journeytime|date('H:i') }}</td>
+            {#<!-- <td>{{ claim.arrivalattime|date('H:i') }}</td> -->#}
         </tr>
         <tr>
             <th class="thead--dark">A la destination</th>
+            {% if claim.remarkableplaceto %}
+            <td>{{ claim.remarkableplaceto.label }}</td>
+            {% else %}
             <td>{{ claim.toroad~', '~claim.tozip~' '~getcitybyzip(claim.tozip).name }}</td>
+            {% endif %}
         </tr>
         <tr>
             <th class="thead--dark">Commentaires</th>

@@ -1,0 +1,57 @@
+<!-- {#{% set regions=getregions() %}#} -->
+<section class="paragraph--large">
+
+    <div class="d-flex flex-row flex-wrap justify-content-between align-items-center">
+        <h2 class="title--h2">
+            {% if route=='typeplace_update' %}
+            Mise à jour d'un "type de lieu"...
+            {% elseif route=='typeplace_create' %}
+            Création d'un "type de lieu"...
+            {% endif %}
+        </h2>
+        <div class="d-flex flex-row flex-wrap justify-content-between align-items-center">
+            <a class="btn btn-sm btn--secondary" href="{{ path('admin_typeplace_read') }}">
+                <i class="ri-file-list-3-line"></i>&ensp;Retour à la liste
+            </a>
+            &emsp;
+            {% if typeplace %}
+                {{ include('typeplace/_delete_form.html.twig') }}
+            {% endif %}
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead class="thead--dark">
+            <tr>
+                <th style="width:10%;"></th>
+                <th style="width:35%;"><label class="required" for="inputlabel">Libellé</label></th>
+                <th style="width:10%;"></th>
+                <th style="width:15%;"><label>Actions</label></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <form class="mt-4 mb-4" id="formupdate" method="post" novalidate>
+                    <td></td>
+                    <td width="20%">
+                        <input type="text" class="form-control" id="inputlabel" value="{% if typeplace %}{{ typeplace.label }}{% elseif label is defined %}{{ label }}{% endif %}" name="label" size="50" required/>
+                        {% if error_label is defined and error_label is not null %}
+                        <span class="d-block">
+                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                            <small class="form-error-message">Un libellé doit-être précisé</small>
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td></td>
+                    <td>
+                        <button class="btn btn-sm btn--blue mr-2" type="submit" title="Sauvegarder" form="formupdate">
+                            <i class="ri-save-line"></i>&ensp;Sauvegarder
+                        </button>
+                    </td>
+                </form>
+            </tr>
+        </tbody>
+        <tfoot><tr><td colspan="4"></td></tr></tfoot>
+    </table>
+    
+</section>

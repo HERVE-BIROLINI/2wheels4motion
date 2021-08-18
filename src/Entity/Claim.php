@@ -30,27 +30,37 @@ class Claim
     private $journey_date;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $from_road;
 
     /**
-     * @ORM\Column(type="string", length=5)
+     * @ORM\Column(type="string", length=5, nullable=true)
      */
     private $from_zip;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $to_road;
 
     /**
-     * @ORM\Column(type="string", length=5)
+     * @ORM\Column(type="string", length=5, nullable=true)
      */
     private $to_zip;
 
     /**
-     * @ORM\Column(type="time")
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $priority_departure;
+
+    /**
+     * @ORM\Column(type="time", nullable=true)
+     */
+    private $departureat_time;
+
+    /**
+     * @ORM\Column(type="time", nullable=true)
      */
     private $arrivalat_time;
 
@@ -60,12 +70,12 @@ class Claim
     private $comments;
 
     /**
-     * @ORM\Column(type="string", length=128)
+     * @ORM\Column(type="string", length=128, nullable=true)
      */
     private $from_city;
 
     /**
-     * @ORM\Column(type="string", length=128)
+     * @ORM\Column(type="string", length=128, nullable=true)
      */
     private $to_city;
 
@@ -84,6 +94,26 @@ class Claim
      * @ORM\OneToMany(targetEntity=Tender::class, mappedBy="claim")
      */
     private $tenders;
+
+    /**
+     * @ORM\Column(type="time")
+     */
+    private $journey_time;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Remarkableplace::class, inversedBy="claims_from")
+     */
+    private $remarkableplace_from;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Remarkableplace::class, inversedBy="claims_to")
+     */
+    private $remarkableplace_to;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Flatrate::class)
+     */
+    private $flatrate;
 
     public function __construct()
     {
@@ -154,6 +184,26 @@ class Claim
     public function setToZip(string $to_zip): self
     {
         $this->to_zip = $to_zip;
+        return $this;
+    }
+    //
+    public function getPriorityDeparture(): ?bool
+    {
+        return $this->priority_departure;
+    }
+    public function setPriorityDeparture(?bool $priority_departure): self
+    {
+        $this->priority_departure = $priority_departure;
+        return $this;
+    }
+    //
+    public function getDepartureatTime(): ?\DateTimeInterface
+    {
+        return $this->departureat_time;
+    }
+    public function setDepartureatTime(?\DateTimeInterface $departureat_time): self
+    {
+        $this->departureat_time = $departureat_time;
         return $this;
     }
     //
@@ -251,6 +301,48 @@ class Claim
                 $tender->setClaim(null);
             }
         }
+        return $this;
+    }
+    //
+    public function getJourneyTime(): ?\DateTimeInterface
+    {
+        return $this->journey_time;
+    }
+    public function setJourneyTime(\DateTimeInterface $journey_time): self
+    {
+        $this->journey_time = $journey_time;
+        return $this;
+    }
+    //
+    public function getRemarkableplaceFrom(): ?Remarkableplace
+    {
+        return $this->remarkableplace_from;
+    }
+    public function setRemarkableplaceFrom(?Remarkableplace $remarkableplace_from): self
+    {
+        $this->remarkableplace_from = $remarkableplace_from;
+        return $this;
+    }
+    //
+    public function getRemarkableplaceTo(): ?Remarkableplace
+    {
+        return $this->remarkableplace_to;
+    }
+    public function setRemarkableplaceTo(?Remarkableplace $remarkableplace_to): self
+    {
+        $this->remarkableplace_to = $remarkableplace_to;
+        return $this;
+    }
+
+    public function getFlatrate(): ?Flatrate
+    {
+        return $this->flatrate;
+    }
+
+    public function setFlatrate(?Flatrate $flatrate): self
+    {
+        $this->flatrate = $flatrate;
+
         return $this;
     }
 

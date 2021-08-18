@@ -1,0 +1,78 @@
+<!-- /!\ SI ce Template est INCLU plusieures fois dans le même autre Template :
+    - le paramètre SUFFIX est INDISPENSABLE pour les ID...
+    - l'algorithme ci-dessous sera exécuté autant de fois
+        (meilleur moyen de ne pas s'imposer de dépendance, bien que pas très optimal,
+            la modularité de ce Template implique soit une dépendance,
+            soit une répétition du traitement dans le cas de plusieures représentation
+            dans un même Template, ce qui n'est pas l'usage le plus courant,
+            d'où ce parti pris...
+        )
+-->
+
+{% set remarkableplaces=getremarkableplaces() %}
+<!-- /!\ DECLARER LA VARIABLE AVANT , SINON SERA INACCESSIBLE EN DEHORS -->
+{% set arRemarkableplaces=[] %}
+<!-- S'il existe bien dans la base des "Lieux particuliers"... -->
+{% if remarkableplaces %}
+    <!-- ... pour chacun d'entre eux, recherche la localisation REGIONALE... -->
+    {% for obRemarkableplace in remarkableplaces %}
+        {% set sDeptcode=obRemarkableplace.deptcode %}
+        <!-- s'il existe déjà une chaîne d'association 'DeptCode-RegionCode'... -->
+        {% if sRegionsByZip is defined %}
+            <!-- ... inutile d'invoquer "TWIG Extension" => recherche dans la chaîne -->
+            {% set arRegionsByZip=sRegionsByZip|split(sDeptcode~'-') %}
+            <!-- ... si association trouvée => temps traitement gagné -->
+            {% if arRegionsByZip|length > 1 %}
+                <!-- ... ... ajoute le couple dans un nouveau "ARRAY" -->
+                {% set regioncode=arRegionsByZip[1]|split('/')[0] %}
+                {% set arRemarkableplaces= arRemarkableplaces|merge([{regioncode: regioncode, remarkableplace: obRemarkableplace}])  %}
+                
+                <!-- ... si association NON trouvée => temps traitement gagné -->
+            {% else %}
+                <!-- ... ... doit invoquer "TWIG Extension" -->
+                {% set obRegion=getregionbydeptcode(sDeptcode) %}
+                {% set sRegionsByZip=sRegionsByZip ~ "/" ~ sDeptcode ~ '-' ~ obRegion.code %}
+                <!-- ... ... avant de pouvoir ajouter le couple dans l' "ARRAY" -->
+                {% set arRemarkableplaces= arRemarkableplaces|merge([{regioncode: obRegion.code, remarkableplace: obRemarkableplace}]) %}
+            {% endif %}
+        <!-- s'il N'existe PAS ENCORE la chaîne d'association 'DeptCode-RegionCode' (1er passage)... -->
+        {% else %}
+            <!-- ... ... doit aussi invoquer "TWIG Extension" -->
+            {% set obRegion=getregionbydeptcode(sDeptcode) %}
+            {% set sRegionsByZip=sDeptcode ~ '-' ~ obRegion.code %}
+            <!-- ... ... avant de pouvoir créer l' "ARRAY" et d'y ajouter le 1er couple -->
+            {% set arRemarkableplaces= [{regioncode: obRegion.code, remarkableplace: obRemarkableplace}] %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+
+<!-- Si le "ARRAY" d'association {regioncode, oRemarkableplace} a bien été créé... -->
+{% if arRemarkableplaces is defined %}
+<select class="form-control my-1" size="1" position="absolute"
+    {% if suffix is defined %}id="{{ 'select--remarkableplace--'~suffix }}"{% else %}id="select--remarkableplace"{% endif %}
+    {% if suffix is defined %}name="{{ 'remarkableplace--'~suffix }}"{% else %}name="remarkableplace"{% endif %}
+>
+    <option value="">Lieu</option>
+
+    {% for remarkableplace in arRemarkableplaces %}
+        {% set obRemarkableplace=remarkableplace.remarkableplace %}
+        {% set regioncode=remarkableplace.regioncode %}
+
+    <option value="{{ obRemarkableplace.id }}"
+        {% if parent_id is defined %}
+        class="{{ parent_id~'_'~regioncode }}"
+        parent_id={{ parent_id }}
+        {% endif %}
+
+        {% if opt_selected is defined and opt_selected==obRemarkableplace.id %}
+        selected='selected'
+        {% endif %}
+    >
+        {{ obRemarkableplace.label }}
+    </option>
+    {% endfor %}
+</select>
+{% else %}
+<span class="mt-2">Pas de lieu particulier de référencé pour l'heure</span>
+{% endif %}

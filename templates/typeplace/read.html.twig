@@ -1,0 +1,60 @@
+
+{% extends 'base.html.twig' %}
+{% set Title="... des \"types de lieu\"" %}
+{% block title %}{{ parent() }} - {{ Title }}{% endblock %}
+
+{% block body %}
+
+<!-- Admin Controller banner -->
+{{ include('admin/banner.html.twig') }}
+
+<!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+{{ include('flash.html.twig') }}
+
+
+<section class="paragraph--large">
+    <div class="d-flex flex-row flex-wrap justify-content-between">
+        <h2 class="title--h2">Les "types de lieu"...</h2>
+        <a class="btn btn-sm btn--green" href="{{ path('admin_typeplace_create') }}">
+            <i class="ri-add-circle-line"></i>&ensp;Ajouter un nouveau "type de lieu"
+        </a>
+    </div>
+    <table class="table table-striped">
+        <thead class="thead--dark">
+            <tr>
+                <th style="width:25%;"></th>
+                <th style="width:35%;">Libellé</th>
+                <th>Actions
+                    <!-- &nbsp; -->
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for typeplace in typeplaces %}
+            <tr>
+                <td></td>
+                <td>{{ typeplace.label }}</td>
+                <td class="d-flex flex-row">
+                    <a class="btn btn-sm btn--blue" href="{{ path('admin_typeplace_update', {'typeplace': typeplace.id}) }}" title="Modifier" class="mr-2">
+                        <i class="ri-edit-2-line"></i>&ensp;Modifier
+                    </a>
+                    &emsp;
+                    {{ include('typeplace/_delete_form.html.twig') }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            {% if not typeplaces %}
+            <tr>
+                <td colspan="4">
+                    Pas de "type de lieu" référencé actuellement.
+                </td>
+            </tr>
+            {% endif %}
+        </tfoot>
+    </table>
+</section>
+
+
+{% endblock %}

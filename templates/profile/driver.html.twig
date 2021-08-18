@@ -11,12 +11,9 @@
 
     <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
     {{ include('flash.html.twig') }}
-        
-    {#<!-- <section id="regions_json" hidden>{{ JSgetregions() }}</section> -->#}
-    {#<!-- <section id="dpts_json" hidden>{{ JSgetdpts() }}</section> -->#}
-    <section id="cities_json" hidden>
-        {{ JSgetcities() }}
-    </section>
+
+    <!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
+    {{ include('geography/FromJSON4Javascript.html.twig') }}
 
     <div id="div--2hide-ifmodal">
         <!-- Block affiché SSI le pilote demande à choisir parmi les Company "déjà référencée" -->
@@ -40,7 +37,7 @@
                     </div>
                 </div>
 
-                <!-- rangée de boutons : Mise à jour / Modification MdP / Création compte Driver -->
+                <!-- rangée de bouton(s) : Mise à jour / Modification MdP / Création compte Driver -->
                 <div class="btns--row">
                     <button class="btn btn-sm btn--blue" type="submit" form="formprofiledriver">
                         <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
@@ -88,8 +85,20 @@
                         <td>{{ claim.id }}</td>
                         <td>{{ claim.claimdatetime|date('d/m/Y') }}</td>
                         <td>{{ claim.journeydate|date('d/m/Y') }}</td>
-                        <td>{{ getcitybyzip(claim.fromzip).name }}</td>
-                        <td>{{ getcitybyzip(claim.tozip).name }}</td>
+                        <td>
+                            {% if claim.remarkableplacefrom %}
+                                {{ claim.remarkableplacefrom.label }}
+                            {% else %}
+                                {{ getcitybyzip(claim.fromzip).name }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if claim.remarkableplaceto %}
+                                {{ claim.remarkableplaceto.label }}
+                            {% else %}
+                                {{ getcitybyzip(claim.tozip).name }}
+                            {% endif %}
+                        </td>
                         <td>
                             <div class="d-flex flex-row flex-wrap align-items-center">
                                 <button class="btn btn-sm btn--blue btn--showmodal" id="{{ 'btn--showmodal'~claim.id }}" data_id="{{ claim.id }}" data_type="claim">
@@ -101,9 +110,9 @@
                     {% endfor %}
                 </tbody>
                 <tfoot>
-                    {% if not app.user.customer or app.user.customer.getclaims|length == 0 %}
+                    {% if not app.user.driver or app.user.driver.getclaims|length == 0 %}
                     <tr>
-                        <td colspan="6">Vous n'avez fait encore aucune demande...</td>
+                        <td colspan="6">Vous n'avez reçu encore aucune demande...</td>
                     </tr>
                     {% endif %}
                 </tfoot>
@@ -127,7 +136,7 @@
                         {% else %}#}
                     <tr class="row--tab row--tender TOUTES" parent_id="btn--tabtype--tender">
                         {#{% endif %}#}
-                        <td></td>
+                        <td>A DEVELOPPER</td>
                         <td></td>
                         <td></td>
                         <td></td>                    
@@ -137,7 +146,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="5">Pas de devis reçu...</td>
+                        <td colspan="5">Pas de devis envoyé...</td>
                     </tr>
                 </tfoot>
             </table>
@@ -154,25 +163,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% if app.user.customer %}
-                        {% for claim in app.user.customer.getclaims %}
+                    {#{% if app.user.customer %}
+                        {% for claim in app.user.customer.getclaims %}#}
                             {#{% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
                     <tr class="row--tab row--order ARCHIVE" parent_id="btn--tabtype--order">
                         {% else %}#}
                     <tr class="row--tab row--order TOUTES" parent_id="btn--tabtype--order">
                             {#{% endif %}#}
-                        <td></td>
+                            <td>A DEVELOPPER</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         <td> Les boutons !! </td>
                     </tr>
-                        {% endfor %}
-                    {% endif %}
+                        {#{% endfor %}
+                    {% endif %}#}
                 </tbody>
                 <tfoot>
-                    {% if app.user.customer and app.user.customer.getclaims|length == 0 %}
+                    {#{% if app.user.customer and app.user.customer.getclaims|length == 0 %}#}
                     <tr>
-                        <td colspan="4">Vous n'avez encore pas bénéficié des services des pilotes de l'Annuaire...</td>
+                        <td colspan="4">Vous n'avez encore pas effectué de course grâce à l'annuaire...</td>
                     </tr>
-                    {% endif %}
+                    {#{% endif %}#}
                 </tfoot>
             </table>
         </div>

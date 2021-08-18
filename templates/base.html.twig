@@ -31,11 +31,13 @@
         
         <!-- Ruban horizontal pour le Header -->
         <header id="section--header">
-            {% if app.user %}
             <div class="align-self-end mt-1 mr-3">
+                {% if app.user %}
                 <b>Bonjour et bienvenue {{ app.user.firstname }}</b>
+                {% else %}
+                <b style="color:red;font-size:1.5em;">Bonjour, vous n'êtes pas connecté</b>
+                {% endif %}
             </div>
-            {% endif %}
             <!-- Container nécessaire pour occuper 100% de la largeur du Header -->
             <div class="container--nav">
                 <!-- DEBUT Logo & Marque -->

@@ -5,9 +5,30 @@
 {% block body %}
 
 <!-- Driver Controller banner -->
-{{ include('driver/banner.html.twig') }}
+{{ include('driver/_banner.html.twig') }}
 
 <section class="paragraph--large">
+
+    <!-- Informations... -->
+    <p>
+        Si vous êtes vous-même détenteur de la carte professionnelle de conducteur VMDTR,
+        que vous êtes immatriculé au répertoire des métiers, et disposez de votre propre véhicule,
+        enregistrez-vous dans cet annuaire afin d'être référencé et de profiter d'une plus large visibilité.
+        Vous recevrez des demandes de courses par courriel, ou pourrez même être directement contacté
+        par toute personne consultant cet annuaire dans le but de trouver un moto-taxi.
+        <br>
+        <h5> Plus nous serons de conducteurs référencés, plus la visibilité de cet annuaire et son utilisation pour nous trouver se fera...</h5>
+    </p>
+    <p>
+        (pour vous renseigner à propos de l'immatriculation au répertoire des métiers,
+        rendez-vous sur le site des 
+        <a href="https://www.service-public.fr/professionnels-entreprises/vosdroits/F23264" target="_blanck">
+            services publics
+        </a>
+        )
+    </p>
+
+
 {% if drivers is defined and drivers|length > 0 %}
 
     <!-- Récupère les OBJETS issus de JSON pour les Regions et Depts -->
@@ -35,48 +56,8 @@
         <div class="d-flex flex-row align-items-center">
             <h2 class="title--h2">Les pilotes...</h2>
             &emsp;
-            <!-- DEBUT buttons sélection filtre Region/Dept. -->
-            <div class="d-flex flex-row">
-                <!-- ... régions -->
-                <div class="btn-group dropdown" name="region">
-                    <button class="btn btn-sm btn--secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset--Region" data-toggle="dropdown">
-                        Région 
-                        {% if region %}
-                            {{ ' ('~region.name~')' }}
-                        {% endif %}
-                    </button>
-                    <div class="dropdown-menu">
-                        <button class="dropdown-item" type="submit" name="region" value="all">TOUTES</button>
-                        <div class="dropdown-divider"></div>
-                        {% for obRegion in regions %}
-                        <button class="dropdown-item" type="submit" name="region" value="{{ obRegion.code }}"
-                            {% if region and region.name==obRegion.name %}selected="selected"{% endif %}
-                        >
-                            {{ obRegion.name }}
-                        </button>
-                        {% endfor %}
-                    </div>
-                </div>
-                <!-- ... départements -->
-                <div class="btn-group dropdown">
-                    <button class="btn btn-sm btn--secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset--Department" data-toggle="dropdown">
-                        Dépt.
-                        {% if dept %}
-                            {{ ' ('~dept.name~')' }}
-                        {% endif %}
-                    </button>
-                    <div class="dropdown-menu">
-                        <button class="dropdown-item" type="submit" name="dept" value="all">TOUS</button>
-                        <div class="dropdown-divider"></div>
-                        {% for dept in depts %}
-                            {% if region is null or dept.region_code==region.code %}
-                        <button class="dropdown-item" type="submit" name="dept" value="{{ dept.code }}">{{ dept.name~' ('~dept.code~')' }}</button>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            <!-- FIN buttons sélection filtre Region/Dept. -->
+            <!-- Boutons sélection filtre Region/Dept. -->
+            {{ include('geography/_filterbuttons_php.html.twig', {regions: regions, depts: depts}) }}
         </div>
     </form>
     <!-- ##### ^ FIN BOUTON FILTRAGE PAR REGION/DEPARTEMENT ^ ##### -->
@@ -89,82 +70,14 @@
             {% set oCompany=oDriver.company %}
             {% set oDept=getdepartmentbycode(oCompany.zip|slice(0,2)) %}
             {% set oRegion=getregionbycode(oDept.region_code) %}
-
             {% if oCompany.isconfirmed 
                 and (region is null or region.code==oDept.region_code)
                 and (dept is null or dept is not defined or dept.code==oCompany.zip|slice(0,2))
             %}
             
-            <!-- ##### v DEBUT CARTE PILOTE v ##### -->
-                {% if counter > 2 %}
-            <div class="card--3D-vertical col-12 col-md-3" style="min-width:18em;max-width:40em;">
-                {% elseif counter == 2 %}
-            <div class="card--3D-vertical col-12 col-md-5" style="min-width:16em;max-width:50em;">
-                {% elseif counter == 1 %}
-            <div class="card--3D-vertical col-12" style="min-width:10em;max-width:40em;">
-                {% endif %}
-                <div class="card--vertical pb-5">
-                    <!-- 1ère rangée : chauffeur -->
-                    <div class="d-flex flex-row flex-wrap mb-1"
-                        style="width:95%;justify-content:space-between;"
-                    >
-                        <!-- Bloc image portrait -->
-                        <div class="mr-2">
-                            {% set oPortrait=getuserportrait(oUser) %}
-                            {% if oPortrait %}
-                            <img class="img--profile" src="{{ asset(oPortrait.pathname) }}" alt="Photo de profil">
-                            {% else %}                    
-                            <img class="img--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
-                            {% endif %}
-                        </div>
-                        <!-- Bloc notation + id user -->
-                        <div>
-                            <div class="row--stars">
-                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
-                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
-                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
-                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
-                                <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
-                            </div>
-                            <h5 class="mt-1" style='font-weight:bolder;'>{{ oUser.firstname~' '~oUser.lastname }}</h5>
-                            <small>{{ 'Inscrit depuis le '~oUser.registrationdate|date('d-m-Y') }}</small>
-                            <br>
-                            <small>{{ 'Nb de courses effectuées : XXX' }}</small>
-                        </div>
-                    </div>
-                    <!-- 2nde rangée : photo carte VMDTR -->
-                    {% set oVMDTR=getdrivercard(oUser) %}
-                    {% if oVMDTR %}
-                    <img style='width:95%;' src="{{ asset(oVMDTR.pathname) }}" alt="Carte VMDTR">
-                    {% else %}                    
-                    <img style='width:95%;' src="{{ asset(sImgPath ~'no-image.png') }}" alt="Carte VMDTR">
-                    {% endif %}
-                    <!-- 3ème rangée : Bloc Company -->
-                    <div class="mt-2" style='width:95%;'>
-                        <h5 class="mt-1" style='font-weight:bolder;'>{{ oCompany.name }}</h5>
-                        <h6>{{ 'Région '~oRegion.name }}</h6>
-                        <h6>{{ 'Domiciliation sur '~getcitybyzip(oCompany.zip).name~' ('~oCompany.zip~')' }}</h6>
-                    </div>
-                </div>
-                <!-- Footer proposant les liens de contact -->
-                <div class="card--footer-horizontal">
-                    Contacter le pilote :
-                    <!-- &emsp;
-                    <a href="{#{{ path('driver_profile', {'id': oDriver.id}) }}#}" title="Voir sa fiche" class="mr-2">
-                        <i class="ri-eye-line"></i>
-                    </a> -->
-                    &emsp;
-                    <a href="{{ 'mailto:' ~ oUser.email }}" title="Lui envoyer un courriel">
-                        <i class="ri-mail-send-line"></i>
-                    </a>
-                    &ensp;
-                    <a href="{{ 'tel:' ~ oUser.phone }}" title="Lui téléphoner" class="ml-2">
-                        <i class="ri-phone-line"></i>
-                    </a>
-                </div>
-            </div>
-            <!-- ##### ^ FIN CARTE PILOTE ^ ##### -->
-
+            <!-- Carte pilote -->
+            {{ include('driver/_card_full.html.twig', {obUser: oUser, obCompany: oCompany, obRegion: oRegion}) }}
+            
             {% endif %}
         {% endfor %}
         </div>
@@ -173,26 +86,6 @@
     {% endif %}
 
 {% endif %}
-</section>
-
-<section class="paragraph--large">
-    <p>
-        Si vous êtes vous-même détenteur de la carte professionnelle de conducteur VMDTR,
-        que vous êtes immatriculé au répertoire des métiers, et disposez de votre propre véhicule,
-        enregistrez-vous dans cet annuaire afin d'être référencé et de profiter d'une plus large visibilité.
-        Vous recevrez des demandes de courses par courriel, ou pourrez même être directement contacté
-        par toute personne consultant cet annuaire dans le but de trouver un taxi-moto.
-        <br>
-        <h5> Plus nous serons de conducteurs référencés, plus la visibilité de cet annuaire et son utilisation pour nous trouver se fera...</h5>
-    </p>
-    <p>
-        (pour vous renseigner à propos de l'immatriculation au répertoire des métiers,
-        rendez-vous sur le site des 
-        <a href="https://www.service-public.fr/professionnels-entreprises/vosdroits/F23264" target="_blanck">
-            services publics
-        </a>
-        )
-    </p>
 </section>
 
 {% endblock %}

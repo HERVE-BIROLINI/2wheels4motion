@@ -5,26 +5,10 @@
 
 {% block body %}
 
-    <!-- DEBUT Homepage banner -->
-    <section class="homepage--banner" id="banner" style="background-image:url({{ asset(sImgPath ~'banner/honda_gl1800_2018_deux_models-750x410.jpg') }});">
-        <H1>L'ANNUAIRE DES TAXIS-MOTO DE FRANCE</H1>
-        <a class="btn btn--ordering" href="{{ path('claim_create') }}">
-            <i class="fas fa-motorcycle"></i>&nbsp;Commander une course
-        </a>
-        <!-- internal page menu, to navigate to ID -->
-        <div id="nav--inpage">
-            <a class="btn nav--btn--white" href="#section--services">A votre service</a>
-            <a class="btn nav--btn--white" href="#section--advices">L'avis des utilisateurs</a>
-            <a class="btn nav--btn--white" href="#section--pro">Professionnalisme</a>
-            <a class="btn nav--btn--white" href="#section--equipments">Les équipements passager</a>
-            <a class="btn nav--btn--white" href="#section--bikes">Les motos</a>
-            <a class="btn nav--btn--white" href="#section--luggages">Les bagages</a>
-        </div>
-    </section>
-    <!-- FIN Homepage banner -->
+    {{ include('homepage/_banner.html.twig') }}
 
     <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
-    {{ include('flash.html.twig') }}
+    {{ include('_flash.html.twig') }}
 
     <!-- Job description -->
     <!--------------------->
@@ -34,15 +18,112 @@
             <p class="col-md-12 col-lg-8">
                 Vous avez besoin d'effectuer des transferts, sans risquer d'être en retard ? Votre temps est précieux et vous voudriez optimiser vos temps de trajets ?
                 Assurez-vous les services d'un professionnel pour tous vos déplacements, et passez au moto-taxi...
+                <br>
+                Quelques exemples de temps de trajets pour mieux vous convaincre :
+                <br>&emsp;Paris - Orly : entre 20 et 30 min.
+                <br>&emsp;Paris - CDG : entre 25 et 40 min.
+                <br>&emsp;traverser de Paris: entre 15 et 25 min.
+                <br>&emsp;La défense - Orly: entre 25 et 35 min.
+                <br>&emsp;La défense - CDG: entre 30 et 40 min.
+                <br><br>
+                Inscivez-vous dès maintenant ici &ensp; <a href="{{ path('registration_user') }}"><i class="ri-profile-line" style="font-size:1.1em;"></i></a> ,
+                et formuler votre commande de course, qui sera directement et automatiquement transmise aux pilotes exerçant dans la région concernée.
+                <br><a href="{{ path('homepage_manual') }}">(l'Annuaire, mode d'emploi)</a>
             </p>
             <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/embouteillage.jpg') }}" alt="Photo d'un embouteillage">
         </div>
     </section>
     <!-- -->
 
+    <!-- Professionnals listing presentation -->
+    <!----------------------------------------->
+    <section class="paragraph--large" id="section--pro">
+        <h2 class="title--h2">Des professionnels sur qui compter...</h2>
+        <div class="card--3D-horizontal">
+            <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/Vignette-VMDTR.png') }}" alt="Photo d'une vignette VMDTR">
+            <p class="col-md-12 col-lg-8">
+                Tous les pilotes référencés sont des auto-entrepreneurs, réunissant toutes les conditions d'exercice de la profession de Transports Publics Particuliers de Personnes (T3P).
+                Cela signifie que tous ont suivi la formation de chauffeur professionnel VMDTR, et ont justifié la détention et la validité des documents ci-dessous :
+                <br>- carte pro
+                <br>- visite médicale
+                <br>- une assurance spécifique transport de personnes à titre onéreux est obligatoire
+                <br><br>
+                Tous se doivent d'être en capacité de présenter ces justificarifs, sur simple demande... 
+            </p>
+            <a href="https://www.economie.gouv.fr/dgccrf/Publications/Vie-Pratique/Fiches-pratiques/taxis-vtc-loti-motos-pro" target="_blank">
+                Pour obtenir plus d'information, consulter le site de la Direction Générale de la Concurrence,
+                de la Consommation et de la Répression des Fraudes (DGCCRF)
+            </a>
+        </div>
+    </section>
+    <!-- ... équipements -->
+    <section class="paragraph--large" id="section--equipments">
+        <h2 class="title--h2">Les équipements indispensables...</h2>
+        <div class="card--3D-horizontal" style="justify-content:center;">
+            <div class="d-flex flex-column">
+                <div class="d-flex flex-column align-items-center">
+                    <br>
+                    Pour vous garantir une totale protection contre la COVID-19, tous les équipements sont désinfectés 
+                    après chaque utilisation.
+                    <br><br>
+                    <div class="d-flex flex-row w-50 align-items-center justify-content-around">
+                        <img class="img--H50" src="{{ asset(sImgPath ~'misc/covid19.png') }}" alt="Photo d'une charlotte">
+                        <img class="img--H50" src="{{ asset(sImgPath ~'homepage/covid1.png') }}" alt="Photo des picto covid19">
+                        <img class="img--H50" src="{{ asset(sImgPath ~'homepage/covid3.png') }}" alt="Photo des picto covid19">
+                    </div>
+                </div>
+                <p class="justify-self-start">
+                    <br>- Charlotte
+                    <br>- casque
+                    <br>- gants
+                    <br>- veste avec airbag...
+                </p>
+            </div>
+            <br>
+            <div class="card--horizontal">
+                <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/charlotte.jpg') }}" alt="Photo d'une charlotte">
+                <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/casque.jpg') }}" alt="Photo d'un casque">
+                <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/gants.jpg') }}" alt="Photo de gants">
+                <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/veste-airbag.jpg') }}" alt="Photo d'une veste">
+            </div>
+        </div>
+    </section>
+    <!-- -->
+    <section class="paragraph--large" id="section--bikes">
+        <h2 class="title--h2">Les motos</h2>
+        <div class="card--3D-horizontal" style="justify-content: center;">
+            <p>
+                La profession impose une catégorie de moto. De plus, celles-ci doivent avoir moins de 5 ans.
+                <br>Exemples de machines les plus utilisées :
+                <br>- Honda Goldwing
+                <br>- BMW K1600B
+                <br>- BMW C-Evolution (électrique, idéal pour les trajets urbains)
+                <br>
+                <br>Toutes les machines proposent une jupes de protection en cas de pluie, et d'un porte-paquet.
+            </p>
+            <div class="card--horizontal">
+                <img class="card--imgrectangular" style="width:340px;" src="{{ asset(sImgPath ~'homepage/honda gold wing gl1800.png') }}" alt="Photo Honda Goldwing 1800">
+                <img class="card--imgrectangular" style="width:275px;" src="{{ asset(sImgPath ~'homepage/BMW K1600GTL Exclusive.png') }}" alt="Photo BMW K1600GTL Exclusive">
+                <img class="card--imgrectangular" style="width:340px;" src="{{ asset(sImgPath ~'homepage/c-evolution.png') }}" alt="Photo BMW C-Evolution">
+            </div>
+        </div>
+    </section>
+    <!-- -->
+    <section class="paragraph--large" id="section--luggages">
+        <h2 class="title--h2">Les bagages</h2>
+        <div class="card--3D-horizontal" style="justify-content: center;">
+            <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/luggages.jpg') }}" alt="Photo d'une vignette VMDTR">
+            <p class="col-md-12 col-lg-8">
+                Les motos sont bien souvent équipées d'un porte-paquet permettant le transport d'une valise cabine,
+                d'une scoche d'ordinateur portable...
+                N'hésitez pas à communiquer avec le pilote sur votre besoin et ses possibilités.
+            </p>
+        </div>
+    </section>
+
     <!-- Les (3 max.) derniers Avis sur l'Annuaire -->
     <!----------------------------------------------->
-    <section class="paragraph--large" id="section--advices">
+    <section class="paragraph--large" id="section--reviews">
         {#{% if siteadvices_last is defined %}#}
         <h2 class="title--h2">L'avis des utilisateurs de l'annuaire</h2>
         <div class="card--inset">
@@ -158,79 +239,5 @@
             {#{% endfor %}#}
         </div>
         {#{% endif %}#}
-    </section>
-
-    <!-- Professionnals listing presentation -->
-    <!----------------------------------------->
-    <section class="paragraph--large" id="section--pro">
-        <h2 class="title--h2">Des professionnels sur qui compter...</h2>
-        <div class="card--3D-horizontal">
-            <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/Vignette-VMDTR.png') }}" alt="Photo d'une vignette VMDTR">
-            <p class="col-md-12 col-lg-8">
-                Tous les pilotes référencés sont des auto-entrepreneurs, réunissant toutes les conditions d'exercice de la profession de transport de personne.
-                Cela signifie que tous ont suivi la formation VMDTR, et ont justifié la détention et la validité des documents ci-dessous :
-                <br>- carte pro
-                <br>- visite médicale
-                <br>- une assurance spécifique transport de personnes à titre onéreux est obligatoire
-                <br><br>
-                Tous se doivent d'être en capacité de présenter ces justificarifs, sur simple demande... 
-            </p>
-            <a href="https://www.economie.gouv.fr/dgccrf/Publications/Vie-Pratique/Fiches-pratiques/taxis-vtc-loti-motos-pro" target="_blank">
-                Pour obtenir plus d'information, consulter le site de la Direction Générale de la Concurrence,
-                de la Consommation et de la Répression des Fraudes (DGCCRF)
-            </a>
-        </div>
-    </section>
-    <!-- -->
-    <section class="paragraph--large" id="section--equipments">
-        <h2 class="title--h2">Les équipements indispensables...</h2>
-        <div class="card--3D-horizontal" style="justify-content:center;">
-            <p>
-                <br>- Charlotte
-                <br>- casque
-                <br>- gants
-                <br>- veste avec airbag...
-                <br><br>
-                <img style="height:2em;width:2em;" src="{{ asset(sImgPath ~'misc/covid19.png') }}" alt="Photo d'une charlotte">
-                &emsp;
-                Pour vous garantir une totale protection contre la COVID-19, tous les équipements sont désinfectés 
-                après chaque utilisation.
-            </p>
-            <div class="card--horizontal">
-                <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/charlotte.jpg') }}" alt="Photo d'une charlotte">
-                <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/casque.jpg') }}" alt="Photo d'un casque">
-                <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/gants.jpg') }}" alt="Photo de gants">
-                <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/veste-airbag.jpg') }}" alt="Photo d'une veste">
-            </div>
-        </div>
-    </section>
-    <!-- -->
-    <section class="paragraph--large" id="section--bikes">
-        <h2 class="title--h2">Les motos</h2>
-        <div class="card--3D-horizontal" style="justify-content: center;">
-            <p>
-                La profession impose une catégorie de moto. De plus, celles-ci doivent avoir moins de 5 ans.
-                <br>- Honda Goldwing
-                <br>- BMW K1600B
-                <br>
-                Toutes les machines proposent une jupes de protection en cas de pluie, et d'un porte-paquet
-            </p>
-            <div class="card--horizontal">
-                <img class="card--imgrectangular" style="width:340px;" src="{{ asset(sImgPath ~'homepage/honda_gl1800_topbox_dct_studio-750x410_grey.jpg') }}" alt="Photo Honda Goldwing">
-                <img class="card--imgrectangular" style="width:275px;" src="{{ asset(sImgPath ~'homepage/BMW K1600GTL Exclusive.png') }}" alt="Photo d'un embouteillage">
-            </div>
-        </div>
-    </section>
-    <!-- -->
-    <section class="paragraph--large" id="section--luggages">
-        <h2 class="title--h2">Les bagages</h2>
-        <div class="card--3D-horizontal" style="justify-content: center;">
-            <img class="card--imgsquare" src="{{ asset(sImgPath ~'homepage/luggages.jpg') }}" alt="Photo d'une vignette VMDTR">
-            <p class="col-md-12 col-lg-8">
-                Les motos sont bien souvent équipées d'un porte-paquet permettant le transport d'une valise cabine,
-                d'une scoche d'ordinateur portable...
-                N'hésitez pas à communiquer avec le pilote sur votre besoin et ses possibilités.
-            </p>
-        </div>
     </section>
 {% endblock %}

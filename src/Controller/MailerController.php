@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Claim;
+use App\Entity\Tender;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 
 /**
- * @Route("/", name="mailer_")
+ * @Route("/mailer", name="mailer_")
  */
 class MailerController extends AbstractController
 {
@@ -24,7 +25,7 @@ class MailerController extends AbstractController
     }
 
     /**
-     * @Route("/mailer", name="register")
+     * @Route("/", name="register")
      */
     public function confirmationregister(): Response
     {
@@ -32,10 +33,10 @@ class MailerController extends AbstractController
             'controller_name' => 'MailerController',
         ]);
     }
-    /**
-     * @Route("/mailer/claim{id}", name="claim")
-     */
 
+    /**
+     * @Route("/claim{id}", name="claim")
+     */
     public function sendClaimEmails(Claim $obClaim)
     {
         $obCustomer=$obClaim->getCustomer();
@@ -116,6 +117,38 @@ class MailerController extends AbstractController
         // puis, renvoi à la page du tableau de bord du Customer
         $this->addFlash('success', "Votre demande a bien été transmise à ".$obClaim->getDrivers()->count()." pilote(s) référencé(s) dans la région de votre demande...");
         return $this->redirectToRoute('profile_customer');
+    }
+    
+    /**
+     * @Route("/tender{id}", name="tender")
+     */
+    public function sendTenderEmails(Tender $obTender)
+    {
+        
+        // Instanciation de l'objet permettant l'envoi du courriel
+        $tenderEmail=new TemplatedEmail();
+        // Transmission des deonnées personnel de Customer
+        $context = $tenderEmail->getContext();
+        $context['tender']  = $obTender;
+        $context['claim']   = $obTender->getClaim();
+        $context['driver']  = $obTender->getDriver();
+        $context['company'] = $obTender->getDriver()->getCompany();
+        $context['user']    = $obTender->getClaim()->getCustomer()->getUser();
+        $context['customer']= $obTender->getClaim()->getCustomer();
+        
+        //
+        $tenderEmail->context($context)
+            ->from(new Address('twowheelsformotion@gmail.com', '2Wheels4Motion - Annuaire Moto-taxi'))
+            ->to($obTender->getClaim()->getCustomer()->getUser()->getEmail())
+            ->subject("Devis en réponse à votre demande de course Moto-taxi")
+            // ->text('text') //ou htmlTemplate au choix !!
+            ->htmlTemplate('mailer/Tender2Customer_email.html.twig')
+        ;
+        $this->mailer->send($tenderEmail);
+
+        // puis, renvoi à la page du tableau de bord du Driver
+        $this->addFlash('success', "Votre devis a bien été transmis au client...");
+        return $this->redirectToRoute('profile_driver');
     }
 
     

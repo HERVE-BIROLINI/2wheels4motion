@@ -22,7 +22,7 @@ class Tender
     /**
      * @ORM\Column(type="string", length=128)
      */
-    private $tendernumber;
+    private $number;
 
     /**
      * @ORM\Column(type="datetime")
@@ -35,12 +35,12 @@ class Tender
     private $rdvat_time;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $comments;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="decimal", precision=5, scale=1)
      */
     private $price;
 
@@ -51,53 +51,85 @@ class Tender
     private $claim;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Driver::class, mappedBy="tenders")
+     * @ORM\ManyToOne(targetEntity=Driver::class, inversedBy="tender")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $drivers;
+    private $driver;
 
+    /**
+     * @ORM\Column(type="time")
+     */
+    private $arrivalat_datetime;
+
+    /**
+     * @ORM\Column(type="decimal", precision=5, scale=1)
+     */
+    private $distance;
+
+    /**
+     * @ORM\Column(type="decimal", precision=3, scale=1)
+     */
+    private $priceperkm;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $pickupcost;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Tva::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $tva;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Flatrate::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $flatrate;
+
+    //
     public function __construct()
     {
         $this->drivers = new ArrayCollection();
     }
 
+    //
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getTendernumber(): ?string
+    //
+    public function getNumber(): ?string
     {
-        return $this->tendernumber;
+        return $this->number;
     }
-
-    public function setTendernumber(string $tendernumber): self
+    public function setNumber(string $number): self
     {
-        $this->tendernumber = $tendernumber;
-
+        $this->number = $number;
         return $this;
     }
 
+    //
     public function getTenderDatetime(): ?\DateTimeInterface
     {
         return $this->tender_datetime;
     }
-
     public function setTenderDatetime(\DateTimeInterface $tender_datetime): self
     {
         $this->tender_datetime = $tender_datetime;
-
         return $this;
     }
 
+    //
     public function getRdvatTime(): ?\DateTimeInterface
     {
         return $this->rdvat_time;
     }
-
     public function setRdvatTime(\DateTimeInterface $rdvat_time): self
     {
         $this->rdvat_time = $rdvat_time;
-
         return $this;
     }
 
@@ -106,61 +138,109 @@ class Tender
         return $this->comments;
     }
 
+    //
     public function setComments(string $comments): self
     {
         $this->comments = $comments;
-
         return $this;
     }
-
     public function getPrice(): ?int
     {
         return $this->price;
     }
 
+    //
     public function setPrice(int $price): self
     {
         $this->price = $price;
-
         return $this;
     }
 
+    //
     public function getClaim(): ?Claim
     {
         return $this->claim;
     }
-
     public function setClaim(?Claim $claim): self
     {
         $this->claim = $claim;
-
         return $this;
     }
 
-    /**
-     * @return Collection|Driver[]
-     */
-    public function getDrivers(): Collection
+    //
+    public function getDriver(): ?Driver
     {
-        return $this->drivers;
+        return $this->driver;
     }
-
-    public function addDriver(Driver $driver): self
+    public function setDriver(?Driver $driver): self
     {
-        if (!$this->drivers->contains($driver)) {
-            $this->drivers[] = $driver;
-            $driver->addTender($this);
-        }
-
+        $this->driver = $driver;
         return $this;
     }
 
-    public function removeDriver(Driver $driver): self
+    //
+    public function getArrivalatDatetime(): ?\DateTimeInterface
     {
-        if ($this->drivers->removeElement($driver)) {
-            $driver->removeTender($this);
-        }
+        return $this->arrivalat_datetime;
+    }
+    public function setArrivalatDatetime(\DateTimeInterface $arrivalat_datetime): self
+    {
+        $this->arrivalat_datetime = $arrivalat_datetime;
+        return $this;
+    }
 
+    //
+    public function getDistance(): ?string
+    {
+        return $this->distance;
+    }
+    public function setDistance(string $distance): self
+    {
+        $this->distance = $distance;
+        return $this;
+    }
+
+    //
+    public function getPriceperkm(): ?int
+    {
+        return $this->priceperkm;
+    }
+    public function setPriceperkm(int $priceperkm): self
+    {
+        $this->priceperkm = $priceperkm;
+        return $this;
+    }
+
+    //
+    public function getPickupcost(): ?int
+    {
+        return $this->pickupcost;
+    }
+    public function setPickupcost(int $pickupcost): self
+    {
+        $this->pickupcost = $pickupcost;
+        return $this;
+    }
+
+    //
+    public function getTva(): ?Tva
+    {
+        return $this->tva;
+    }
+    public function setTva(?Tva $tva): self
+    {
+        $this->tva = $tva;
+        return $this;
+    }
+
+    //
+    public function getFlatrate(): ?Flatrate
+    {
+        return $this->flatrate;
+    }
+    public function setFlatrate(?Flatrate $flatrate): self
+    {
+        $this->flatrate = $flatrate;
         return $this;
     }
 }

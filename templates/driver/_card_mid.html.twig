@@ -1,0 +1,148 @@
+
+            <!-- LA "carte utilisateur" à itérer -->
+            <!-- ... cas de Modale des détails d'une demande (Claim) -->
+            {% if obClaim is defined %}
+            <div class="card--3D-vertical col-12 pt-4">
+                <div class="d-flex flex-row flex-wrap pl-3">
+            {% else %}
+            <div class="card--3D-horizontal col-12 pt-4">
+            {% endif %}
+
+                <!-- ... photo / notation -->
+                <div class="d-flex flex-row flex-wrap col-12"><!-- col-xl-3 -->
+                    <!-- ... photo -->
+                    <div class="d-flex flex-row col-2 justify-content-center">
+                        {% set oPortrait=getuserportrait(obDriver.user) %}
+                        {% if oPortrait %}
+                        <img class="img--profile justify-self-start" src="{{ asset(getuserportrait(obDriver.user).pathname) }}" alt="Photo de profil">
+                        {% else %}
+                        <img class="img--profile justify-self-start" src="{{ asset(sImgPath ~'misc/no-image.png') }}" alt="Photo de profil">
+                        {% endif %}
+                    </div>
+                    &emsp;
+                    <!-- ... notation -->
+                    <div class="col-8">
+                        <!-- indication du statut courant sur l'Annuaire -->
+                        <div class="d-flex flex-row">
+                            <b>Vérifié :</b>
+                            &ensp;
+                            {% if obDriver.isverified %}
+                            <img class="img--boolean"
+                                src="{{ asset(sImgPath ~'misc/true.png') }}"
+                                alt="image pour booléen TRUE"
+                            >
+                            {% else %}
+                            <img class="img--boolean"
+                                src="{{ asset(sImgPath ~'misc/false.png') }}"
+                                alt="image pour booléen FALSE"
+                            >
+                            {% endif %}
+                        </div>
+                        <!-- indication du nombre de courses effectuées par l'Annuaire -->
+                        <div class="d-flex flex-row flax-wrap">
+                            <b> Courses :</b>
+                            &ensp;
+                            {% if obDriver.isverified %}
+                            x (total Driver)
+                            {% else %}
+                            x (total Driver)
+                            {% endif %}
+                        </div>
+                        <!-- indication de la moyenne des notes reçues par les Customers -->
+                        <div><b>Notation :</b></div>
+                        <div class="row--stars">
+                            <!-- class="d-flex flex-row justify-content-start" -->
+                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                            <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="Etoile notation">
+                        </div>
+                    </div>
+                </div>
+                <!-- ... coordonnées -->
+                <div class="d-flex flex-row flex-wrap justify-content-between mt-2 col-12"><!-- card--horizontal col-xl-9 -->
+                    <!-- ... colonne Nom / Courriel -->
+                    <div class="d-flex flex-row flex-wrap m-0 p-0 col-12"><!-- col-xl-6 -->
+                        <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                            <b class="col-md-12 col-lg-6 col-xl-12">Nom :</b><!-- col-lg-12 -->
+                            <span class="pl-4 col-md-12 col-lg-6 col-xl-12"><!-- col-lg-12 -->
+                                {{ obDriver.user.lastname~' '~obDriver.user.firstname }}</span>
+                            <!-- <div class="col-sm-12 col-md-6 col-lg-12"><b>Nom :</b></div>
+                            <div class="pl-4 col-sm-12 col-md-6 col-lg-12">{{ obDriver.user.lastname~' '~obDriver.user.firstname }}</div> -->
+                        </div>
+                        <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                            <b class="col-md-12 col-lg-6 col-xl-12">Courriel :</b>
+                            <a class="pl-4 col-md-12 col-lg-6 col-xl-12" href="{{ 'mailto:' ~ obDriver.user.email }}">
+                                {{ obDriver.user.email }}
+                            </a>
+                            {#<!-- <div class="col-sm-12 col-md-6 col-lg-12"><b>Courriel :</b></div>
+                            <div class="pl-4 col-sm-12 col-md-6 col-lg-12">
+                                <a href="{{ 'mailto:' ~ obDriver.user.email }}">
+                                    {{ obDriver.user.email }}
+                                </a>
+                            </div> -->#}
+                        </div>
+                    </div>
+                    <!-- ... colonne Téléphone / Moto -->
+                    <div class="d-flex flex-row flex-wrap m-0 p-0 col-12"><!-- col-xl-6 -->
+                        <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                            <b class="col-md-12 col-lg-6 col-xl-12">Téléphone :</b>
+                            <a class="pl-4 col-md-12 col-lg-6 col-xl-12" href="{{ 'tel:' ~obDriver.user.phone }}">
+                                {{ obDriver.user.phone }}
+                            </a>
+                            {#<!-- <div class="col-sm-12 col-md-6 col-lg-12"><b>Téléphone :</b></div>
+                            <div class="pl-4 col-sm-12 col-md-6">
+                                <a href="{{ 'tel:' ~obDriver.user.phone }}">
+                                    {{ obDriver.user.phone }}
+                                </a>
+                            </div> -->#}
+                        </div>
+                        <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                            <b class="col-md-12 col-lg-6 col-xl-12">Modèle moto :</b>
+                            <span class="pl-4 col-md-12 col-lg-6 col-xl-12">{{ obDriver.motomodel }}</span>
+                            {#<!-- <div class="col-sm-12 col-md-6 col-lg-12"><b>Modèle moto :</b></div>
+                            <div class="pl-4 col-sm-12 col-md-6 col-lg-12">{{ obDriver.motomodel }}</div> -->#}
+                        </div>
+                    </div>
+                    &ensp;
+                    {#
+                    <!-- bouton de suppression de la Claim -->
+                    <button class="btn btn-sm btn--blue mt-2" id="btn--send-tender" data_id="{{ claim.id }}" data_type="claim">
+                        <i class="ri-file-shred-line"></i>&ensp;Annuler la demande (A DEVELOPPER OU PAS)
+                    </button>
+                    #}
+                </div>
+
+            {% if obClaim is defined %}
+                </div>
+                <div class="d-flex flex-row flex-wrap pl-3">
+                    <b><u>Prise en compte par le pilote :</u></b>&emsp;
+                    {% set status=getstatus4claimanddriver(obClaim, obDriver) %}
+                    {% if status %}
+                        {% if status.tender %}
+                            <!-- VOIR devis (Tender) -->
+                            {% for tender in obClaim.tenders %}
+                                {% if tender.driver==obDriver %}
+                            &emsp;
+                            <h4 style='font-style:italic;'>Devis envoyé le {{ tender.tenderdatetime|date('d/m/Y') }}</h4>
+                            &emsp;
+                            <a class="btn btn-sm btn--action"
+                                href="{{ path('tender_read', {'id':tender.id}) }}"
+                            >
+                                <i class="far fa-eye" title="Voir le devis"></i>
+                            </a>
+                                {% endif %}
+                            {% endfor %}
+                            {% else %}
+                                {% set obStatus=getstatus4claimanddriver(obClaim, driver) %}
+                                {% if obStatus and obStatus.isread %}
+                            A été lu
+                                {% else %}
+                            Non lu
+                                {% endif %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endif %}
+            </div>

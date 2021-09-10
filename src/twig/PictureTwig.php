@@ -3,15 +3,11 @@
 namespace App\Twig;
 
 use App\Entity\Picture;
-// use App\Entity\User;
-// use App\Tools\DBTools;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 use App\Entity\Picturelabel;
-// use App\Repository\PicturelabelRepository;
 use Doctrine\ORM\EntityManagerInterface;
-// use Doctrine\Persistence\ManagerRegistry;
 
 class PictureTwig extends AbstractExtension
 {
@@ -73,7 +69,7 @@ class PictureTwig extends AbstractExtension
     //     $picturelabels=$obPDO->execSqlQuery("select * from picturelabel");
     //     //
     //     // if(!isset($picturelabels[0])){
-    //     //     $picturelabels=array(['pathname'=>'no-image.png']);
+    //     //     $picturelabels=array(['pathname'=>'misc/no-image.png']);
     //     // }
     //     return $picturelabels;
     // }

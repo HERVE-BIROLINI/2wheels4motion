@@ -1,10 +1,10 @@
 {
     "name": "herve-birolini/2wheels4motion",
-    "description": "Annuaire des taxi-moto ind\u0000pendants de France",
+    "description": "Annuaire des motos-taxis ind\u0000pendants de France",
     "authors": [
         {
             "name": "Birolini Hervé",
-            "email": "twowheelsformotion@outlook.fr"
+            "email": "twowheelsformotion@gmail.com"
         }
     ],
     "type": "project",

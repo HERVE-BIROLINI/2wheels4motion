@@ -1,0 +1,136 @@
+<body>
+    <div style="margin:3em;">
+        <!-- style="margin:3em;" -->
+        <!-- ** EN-TETE ** -->
+        <div style="width:100%;display:flex;flex-direction:row;flex-wrap:wrap;margin-top:1em;">
+            
+            <!--  * TRANSPORTEUR * -->
+            <div>
+                <h3><u>Transporteur :</u></h3>
+                <u>- Chauffeur (VMDTR) :</u>
+                <div>{{ driver.user.firstname~' '~driver.user.lastname }}</div>
+                <div>{{ 'Carte pro. n° : '~driver.vmdtrnumber }}</div>
+                <div>{{ company.road }}</div>
+                <div>{{ company.zip~' '~company.city }}</div>
+                <div>{{ 'Tél. : '~driver.user.phone }}</div>
+                <div>{{ ' @ : '~driver.user.email }}</div>
+                <!--  -->
+                <div style='margin-top:10px;'>
+                    <u>- Entreprise (T3P) :</u>
+                    <div>{{ company.name }}</div>
+                    <div>{{ 'SIREN : '~company.siren~' '~company.nic }}</div>
+                </div>
+            </div>
+    
+            <!-- ** TITRE ** -->
+            <div style='width:15%;'></div>
+
+            <!--  * CLIENT * -->
+            <div>
+                <h3><u>Client :</u></h3>
+                <div>{{ customer.user.firstname~' '~customer.user.lastname }}</div>
+                <div>{{ customer.road }}</div>
+                <div>{{ customer.zip~' '~customer.city }}</div>
+                <div>{{ 'Tél. : '~customer.user.phone }}</div>
+                <div>{{ ' @ : '~customer.user.email }}</div>
+            </div>
+        </div>
+    
+        <!-- ** TITRE ** -->
+        <div style='margin-left:2em;margin-right:1.5em;padding-top:5em;width:100%;justify-content:center;'>
+            <h2>Devis n° {{ tender.number }},<br>
+                fait le {{ tender.tenderdatetime|date('d/m/Y') }}
+            </h2>
+        </div>
+        
+        <!-- ** CORPS ** -->
+        <!--  * DEMANDE DE RESERVATION D'ORIGINE * -->
+        <h2 style="margin-top:2em;margin-bottom:0.5em;"><u>Réservation :</u></h2>
+        <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;padding-left:2em;">Effectuée le :&emsp;<b>{{ claim.claimdatetime|date('d/m/Y') }}</b></div>
+        <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;padding-left:2em;">à :&emsp;<b>{{ claim.claimdatetime|date('H:i') }}</b></div>
+        <div style="padding-left:-4em;"><i>Demande de course #{{ claim.id }}, faite à partir de l'Annuaire des motos-taxis de France (<a href="https://www.2Wheels4Motion.fr">2Wheels4Motion.fr</a>)</i></div>
+        
+        <!--  * PRISE EN CHARGE * -->
+        <h2 style="margin-top:1em;margin-bottom:0.5em;"><u>Prise en charge :</u></h2>
+        <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;padding-left:2em;">le :&emsp;<b>{{ claim.journeydate|date('d/m/Y') }}</b></div>
+        <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;padding-left:2em;">
+            à :&emsp;
+            <b id="preview--departureattime" twin_id="driver--departureattime">{{ tender.rdvattime|date('H:i') }}</b>
+        </div>
+        <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;padding-left:2em;">
+            de/du :&emsp;
+            {% if claim.remarkableplacefrom != null %}
+            <b>{{ claim.remarkableplacefrom.label }}</b>
+            {% else %}
+            <b>{{ claim.fromroad~', '~claim.fromzip~' '~claim.fromcity }}</b>
+            {% endif %}
+        </div>
+        <!--  * DESTINATION * -->
+        <h2 style="margin-top:1em;margin-bottom:0.5em;"><u>Destination :</u></h2>
+        <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;padding-left:2em;">
+            vers :&emsp;
+            {% if claim.remarkableplaceto != null %}
+            <b>{{ claim.remarkableplaceto.label }}</b>
+            {% else %}
+            <b>{{ claim.toroad~', '~claim.tozip~' '~claim.tocity }}</b>
+            {% endif %}
+        </div>
+        <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;padding-left:2em;">
+            pour une arrivée à :&emsp;
+            <b id="preview--arrivalattime" twin_id="driver--arrivalattime">{{ tender.arrivalatdatetime|date('H:i') }}</b>
+        </div>
+        <!--  ** CHIFFRAGE ** -->
+        <h2 style="margin-top:1em;margin-bottom:0.5em;"><u>Chiffrage de la course :</u></h2>
+        <!--  FORFAIT -->
+        <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;padding-left:2em;">
+            <span id='preview--flatrate-title'>Forfait :&ensp;</span>
+            <b id="preview--flatrate">{{ tender.flatrate.label }}</b>
+        </div>
+        <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;padding-left:2em;margin-bottom:1em;">
+            <b id="preview--comments" twin_id="driver--comments">{{ tender.comments }}</b>
+        </div>
+            {% if (tender.flatrate is defined and tender.flatrate!=false and tender.flatrate.label
+                    and (tender.flatrate.label starts with 'par km' == true)
+                )
+            %}
+        <div id="preview--flatrate-km"
+            style="display:flex;flex-direction:row;flex-wrap:wrap;padding-left:2em;width:100%;"
+        >
+            {% else %}
+        <div id="preview--flatrate-km"
+            style="display:flex;flex-direction:row;flex-wrap:wrap;padding-left:2em;display:none;"
+        >
+            {% endif %}
+            <!-- "Evaluation" du kilométrage -->
+            <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;width:100%;">
+                Nombre de kilomètres :&emsp;
+                <b id="preview--racedistance" twin_id="driver--racedistance">{{ tender.distance }}</b>
+            </div>
+    
+            <!-- Prix du kilomètre -->
+            <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;width:100%;">
+                Prix du kilomètre :&emsp;
+                <b id="preview--priceperkm" twin_id="driver--priceperkm">{{ tender.priceperkm }}</b><b>&ensp;&euro;</b>
+            </div>
+            <!-- Coût de la prise en charge -->
+            <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;width:100%;">
+                Coût de la prise en charge :&emsp;
+                <b id="preview--pickupcost" twin_id="driver--pickupcost">{{ tender.pickupcost }}</b><b>&ensp;&euro;</b>
+            </div>
+        </div>
+        <!-- TVA -->
+        <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;width:100%;">
+            TVA (incluse) :&emsp;
+            <b id="preview--tva" twin_id="driver--racetva">
+                {{ tender.tva.comment }}
+            </b>
+        </div>
+        <hr>
+        <!-- Prix (TOTAL) -->
+        <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;font-size:1.5em;width:100%;">
+            Prix de la course :&emsp;
+            <b id="preview--raceprice" twin_id="driver--raceprice">{{ tender.price }}</b>
+            <b>&ensp;&euro;</b>
+        </div>
+    </div>
+</body>

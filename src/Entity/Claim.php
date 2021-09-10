@@ -115,10 +115,16 @@ class Claim
      */
     private $flatrate;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ClaimStatus::class, mappedBy="claim", orphanRemoval=true)
+     */
+    private $claimStatuses;
+
     public function __construct()
     {
         $this->drivers = new ArrayCollection();
         $this->tenders = new ArrayCollection();
+        $this->claimStatuses = new ArrayCollection();
     }
 
     //
@@ -342,6 +348,36 @@ class Claim
     public function setFlatrate(?Flatrate $flatrate): self
     {
         $this->flatrate = $flatrate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ClaimStatus[]
+     */
+    public function getClaimStatuses(): Collection
+    {
+        return $this->claimStatuses;
+    }
+
+    public function addClaimStatus(ClaimStatus $claimStatus): self
+    {
+        if (!$this->claimStatuses->contains($claimStatus)) {
+            $this->claimStatuses[] = $claimStatus;
+            $claimStatus->setClaim($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClaimStatus(ClaimStatus $claimStatus): self
+    {
+        if ($this->claimStatuses->removeElement($claimStatus)) {
+            // set the owning side to null (unless already changed)
+            if ($claimStatus->getClaim() === $this) {
+                $claimStatus->setClaim(null);
+            }
+        }
 
         return $this;
     }

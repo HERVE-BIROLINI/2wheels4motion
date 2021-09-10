@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+{% set Title="Accueil" %}
+
+{% block title %}{{ parent() }} - {{ Title }}{% endblock %}
+
+{% block body %}
+
+    {{ include('homepage/_banner.html.twig') }}
+
+    <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+    {{ include('_flash.html.twig') }}
+
+    
+{% endblock %}

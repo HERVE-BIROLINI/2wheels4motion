@@ -2,6 +2,7 @@
 
 namespace App\Twig;
 
+use App\Entity\ClaimStatus;
 use App\Entity\Driver;
 use App\Entity\Company;
 use App\Entity\Socialreason;
@@ -54,6 +55,9 @@ class DriverTwig extends AbstractExtension
             new TwigFunction('getdriverbyid', [$this, 'getDriverById']),
             new TwigFunction('getdriversbyregionorzip', [$this, 'getDriversByRegionOrZip']),
             new TwigFunction('getdriversbycompany', [$this, 'getDriversByCompany']),
+            // fonctions de manipulations des objets Claim et Claim_Status
+            new TwigFunction('getclaims4driver', [$this, 'getClaims4Driver']),
+            new TwigFunction('getstatus4claimanddriver', [$this, 'getStatus4ClaimAndDriver']),
             // fonctions de manipulations de l'objet Company
             new TwigFunction('getallcompanies', [$this, 'getAllCompanies']),
             new TwigFunction('getcompanybyid', [$this, 'getCompanyById']),
@@ -99,6 +103,24 @@ class DriverTwig extends AbstractExtension
     }
     public function getDriversByCompany($id){
         return $this->entityManager->getRepository(Driver::class)->findBy(['company'=>$id]);
+    }
+    // fonctions de manipulations des Class Claim, Claim_Status
+    public function getClaims4Driver($driver, $bWithArchived){
+        $arAllClaims=$this->entityManager->getRepository(ClaimStatus::class)->findBy(['driver'=>$driver]);
+        $arResult=[];
+        foreach($arAllClaims as $claimStatus){
+            
+            if($bWithArchived || !$claimStatus->getIsarchived() || $claimStatus->getIsarchived()==false || $claimStatus->getIsarchived()==0){
+            // $obStatus=$claimStatus->getStatus();
+            // $statusValue=$obStatus->getValue();
+            // if($bWithArchived || ($statusValue<4 && !$bWithArchived)){
+                array_push($arResult, $claimStatus->getClaim());
+            }
+        }
+        return $arResult;
+    }
+    public function getStatus4ClaimAndDriver($claim, $driver){
+        return $this->entityManager->getRepository(ClaimStatus::class)->findOneBy(['claim'=>$claim,'driver'=>$driver]);
     }
     // fonctions de manipulations de l'objet Company
     public function getAllCompanies(){

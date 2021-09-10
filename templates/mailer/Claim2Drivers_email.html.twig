@@ -1,7 +1,8 @@
-
+{# ??????
 {% if flatrate is defined and flatrate is not null %}
 {{ flatrate }}
 {% endif %}
+#}
 
 <div style='display:flex;flex-direction:row;justify-content:space-between'>
     <div>
@@ -11,7 +12,10 @@
         <div>{{ phone }}</div>
         <div>{{ user_email }}</div>
     </div>
-    <div style='display:flex;flex-direction:column;justify-content:end;'>
+    <div style='margin-left:2em;margin-right:1.5em;font-size:2em;font-weight:bolder;justify-content:center;'>
+        Demande de course
+    </div>
+    <div style='display:flex;flex-direction:column;justify-content:center;align-items:center;'>
         Demande envoyée via 2Wheels4Motion,<br>
         l'Annuaire des VMDTR français,<br>
         le {{ claim_datetime }}

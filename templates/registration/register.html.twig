@@ -5,7 +5,7 @@
 {% block body %}
 
 <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
-{{ include('flash.html.twig') }}
+{{ include('_flash.html.twig') }}
 
 <form class="container-fluid mt-5 w-75" method="post"> 
     <div class="card--3D-vertical">
@@ -18,13 +18,13 @@
 
         <div class="btns--row">
             <button type="submit" class="btn btn-sm btn--blue">
-                <i class="ri-record-circle-line"></i>&ensp;Créer le compte
+                <i class="ri-profile-line"></i>&ensp;Créer le compte
             </button>
             {% if app.user is null %}
             <div class="d-flex flex-row flex-wrap justify-content-between align-items-center">
                 Vous avez déjà un compte ?
                 &ensp;
-                <a class="btn btn-sm btn--secondary" href="{{ path('app_login') }}">
+                <a class="btn btn-sm btn--secondary" href="{{ path('security_login') }}">
                     <i class="ri-login-box-line"></i>&ensp;Se connecter
                 </a>
             </div>

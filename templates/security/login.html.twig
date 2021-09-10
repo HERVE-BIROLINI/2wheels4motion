@@ -5,12 +5,12 @@
 {% block body %}
 
 <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
-{{ include('flash.html.twig') }}
+{{ include('_flash.html.twig') }}
 
 {% if app.user %}
     <div class="p-3 mb-2 bg-success text-white">
         Vous êtes connecté en tant que ' {{ app.user.firstname }} {{ app.user.lastname }} ',
-        avec l'adresse électronique ' {{ app.user.username }} '. <a href="{{ path('app_logout') }}" class="text-danger">- Logout -</a>
+        avec l'adresse électronique ' {{ app.user.username }} '. <a href="{{ path('security_logout') }}" class="text-danger">- Logout -</a>
     </div>
 {% endif %}
 
@@ -63,8 +63,8 @@
             <div class="d-flex justify-content-between align-items-center">
                 Pas encore de compte ?
                 &ensp;
-                <a class="btn btn-sm btn--secondary" href="{{ path('registration_user') }}">
-                    <i class="ri-record-circle-line"></i>&ensp;Créer un compte
+                <a class="btn btn-sm btn--orange" href="{{ path('registration_user') }}">
+                    <i class="ri-profile-line"></i>&ensp;Créer un compte
                 </a>
             </div>
             {% endif %}

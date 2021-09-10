@@ -38,7 +38,7 @@ class RegistrationFormType extends AbstractType
             ])
             // 
             ->add('lastname',TextType::class,[
-                'label'         =>  "Votre nom de famille :",
+                'label'         =>  "Votre nom :",
                 'attr'          =>  ['placeholder'=>"ex: Doe"],
                 'required'      =>  true,
                 'constraints'   =>  [
@@ -51,7 +51,7 @@ class RegistrationFormType extends AbstractType
             ])
             //
             ->add('email',EmailType::class,[
-                'label' =>  "Votre adresse eMail :",
+                'label' =>  "Votre courriel :",
                 'attr'  =>  ['placeholder'=>"ex: mon@email.fr"],
                 // ICI surcharge des sécurités côté FRONT pour :
                 //  1. guider l'utilisateur (UX)
@@ -137,7 +137,7 @@ class RegistrationFormType extends AbstractType
             //
             ->add('hasagreetoterms', CheckboxType::class, [
                 // 'label' => "Accepter les conditions d'utilisation de l'Annuaire",
-                'label' => "En cochant cette case, j'accepte et je reconnais avoir pris connaissance des CONDITIONS GÉNÉRALES DE VENTE et de LA NOTICE DONNÉES PERSONNELLES",
+                'label' => "En cochant cette case, je reconnais avoir pris connaissance des CONDITIONS GÉNÉRALES D'UTILISATION' et les accepter.",
                 // 'mapped' => false,
                 'constraints' => [
                     new IsTrue([

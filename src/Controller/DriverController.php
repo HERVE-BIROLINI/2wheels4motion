@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\ClaimStatus;
 use App\Entity\Driver;
+use App\Entity\Status;
 // use App\Entity\User;
 use App\Repository\DriverRepository;
 use App\Twig\FrenchGeographyTwig;
@@ -26,7 +28,6 @@ class DriverController extends AbstractController
         $obFGTwig=new FrenchGeographyTwig($entityManager);
         if(isset($_POST['region']) and $_POST['region']!="all")
         {
-            // $region=$_POST['region'];
             $region=$obFGTwig->getRegionByCode($_POST['region']);
         }
         else{
@@ -36,8 +37,7 @@ class DriverController extends AbstractController
         if(isset($_POST['dept'])
             and ($dept=$obFGTwig->getDepartmentByCode($_POST['dept']) or true)
             and $dept
-            )
-        {
+        ){
             $region=$obFGTwig->getRegionByCode($dept->region_code);
         }
         else{
@@ -53,9 +53,52 @@ class DriverController extends AbstractController
         ]);
     }
 
-    /**NON UTILISE
-     * @Route("{id}/presentation", name="profile")
+    /**
+     * @Route("/switchclaimstatusviewed{id}", name="switchclaimstatus_viewed")
      */
+    public function switchClaimStatus_viewed(ClaimStatus $claimStatus){
+        
+        // Pour les lectures et enregistrements dans la BdD
+        $entityManager=$this->getDoctrine()->getManager();
+
+        if($claimStatus->getIsread()){
+            $claimStatus->setIsread(false);
+        }else{
+            $claimStatus->setIsread(true);
+        }
+        //
+        $entityManager->persist($claimStatus);
+        // "remplissage" de la BdD
+        $entityManager->flush();
+        // retour à la page
+        return $this->redirect($_SERVER['HTTP_REFERER']);
+    }
+
+    /**
+     * @Route("/switchclaimstatusarchived{id}", name="switchclaimstatus_archived")
+     */
+    public function switchClaimStatus_archived(ClaimStatus $claimStatus){
+        
+        // Pour les lectures et enregistrements dans la BdD
+        $entityManager=$this->getDoctrine()->getManager();
+
+        if($claimStatus->getIsarchived()){
+            $claimStatus->setIsarchived(false);
+        }else{
+            $claimStatus->setIsarchived(true);
+        }
+        //
+        $entityManager->persist($claimStatus);
+        // "remplissage" de la BdD
+        $entityManager->flush();
+        // retour à la page
+        return $this->redirect($_SERVER['HTTP_REFERER']);
+    }
+
+    /* NON UTILISE
+    /**
+     * @Route("{id}/presentation", name="profile")
+     * /
     public function profiledriver(Driver $obDriver = null, DriverRepository $drivers
     ): Response
     {
@@ -71,15 +114,18 @@ class DriverController extends AbstractController
             // 'oDriver' => $obDriver,
         ]);
     }
+    */
 
 
-    // /**
-    //  * @Route("s", name="index")
-    //  */
-    // public function index(DriverRepository $drivers): Response
-    // {
-    //     return $this->render('driver/index.html.twig', [
-    //         'controller_name' => 'DriverController'
-    //     ]);
-    // }
+    /* NON UTILISE
+    /**
+     * @Route("s", name="index")
+     * /
+    public function index(DriverRepository $drivers): Response
+    {
+        return $this->render('driver/index.html.twig', [
+            'controller_name' => 'DriverController'
+        ]);
+    }
+    */
 }

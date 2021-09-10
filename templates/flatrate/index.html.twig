@@ -6,18 +6,18 @@
 {% block body %}
 
 <!-- Flatrate Controller banner -->
-{{ include('flatrate/banner.html.twig') }}
+{{ include('flatrate/_banner.html.twig') }}
 
 <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
-{{ include('flash.html.twig') }}
+{{ include('_flash.html.twig') }}
 
 <section class="paragraph--large">
     <h2 class="title--h2">Vous servir... au juste prix !</h2>
     <div class="card--3D-horizontal">
         <p class="col-md-12 col-lg-8">
-            Les tarifs présentés ici sont indicatifs, ils sont déterminés sur la base de ceux pratiqués par l'ensemble de la profession, quelque soit la région.
+            Les tarifs présentés ici sont <u>indicatifs</u>, ils sont déterminés sur la moyenne de ceux pratiqués par l'ensemble de la profession, pour la région associée.
             Ils ont été proposés par les professionnels référencés dans cet annuaire, selon leurs habitudes.
-            Suite à votre demande, les pilotes vous proposeront un devis détaillé pouvant légèrement varié par rapport à la grille tarifaire ci-dessous, selon les heures, vos bagages, etc... 
+            Suite à votre demande, les pilotes vous proposeront un devis détaillé pouvant légèrement varier par rapport à la grille tarifaire ci-dessous, selon les heures, vos bagages, etc... 
             <br>
             Concernant les modes de paiement, tous les chauffeurs ne disposent pas d'appareils permettant les paiement par carte bancaire.
             Pensez à communiquer préalablement afin de vous munir du mode de paiement qui conviendra.
@@ -35,7 +35,7 @@
         <thead class="thead--dark">
             <tr>
                 <th style="width:5%;"></th>
-                <th>{{ include('geography/selectregion.html.twig', {id:'select--region'}) }}</th>
+                <th>{{ include('geography/_selectregion.html.twig', {id:'select--region'}) }}</th>
                 <th>Libellé</th>
                 <th>Prix (euros)</th>
                 <th>Prise en charge incluse</th>
@@ -43,7 +43,7 @@
         </thead>
         <tbody>
             {% for flatrate in flatrates %}
-            <tr class="row--flatrate tr--filtered {{ 'select--region_'~flatrate.regioncode }}"
+            <tr class="tr--filtered {{ 'select--region_'~flatrate.regioncode }}"
                 parent_id="select--region"
             >
                 <td></td>

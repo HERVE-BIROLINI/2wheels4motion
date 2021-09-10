@@ -1,0 +1,49 @@
+{% if regions is not defined or regions is null %}
+    {% set regions=getregions() %}
+{% endif %}
+{% if depts is not defined or depts is null %}
+    {% set depts=getdepartments() %}
+{% endif %}
+
+<!-- DEBUT buttons sélection filtre Region/Dept. -->
+<div class="d-flex flex-row">
+    <!-- ... régions -->
+    <div class="btn-group dropdown" name="region">
+        <button class="btn btn-sm btn--secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset--Region" data-toggle="dropdown">
+            Région 
+            {% if region is defined and region != null %}
+                {{ ' ('~region.name~')' }}
+            {% endif %}
+        </button>
+        <div class="dropdown-menu">
+            <button class="dropdown-item" type="submit" name="region" value="all">TOUTES</button>
+            <div class="dropdown-divider"></div>
+            {% for obRegion in regions %}
+            <button class="dropdown-item" type="submit" name="region" value="{{ obRegion.code }}"
+                {% if region is defined and region != null and region.name==obRegion.name %}selected="selected"{% endif %}
+            >
+                {{ obRegion.name }}
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- ... départements -->
+    <div class="btn-group dropdown">
+        <button class="btn btn-sm btn--secondary dropdown-toggle ml-2" type="button" id="dropdownMenuOffset--Department" data-toggle="dropdown">
+            Dépt.
+            {% if dept is defined and dept != null %}
+                {{ ' ('~dept.name~')' }}
+            {% endif %}
+        </button>
+        <div class="dropdown-menu">
+            <button class="dropdown-item" type="submit" name="dept" value="all">TOUS</button>
+            <div class="dropdown-divider"></div>
+            {% for dept in depts %}
+                {% if region is not defined or region is null or dept.region_code==region.code %}
+            <button class="dropdown-item" type="submit" name="dept" value="{{ dept.code }}">{{ dept.name~' ('~dept.code~')' }}</button>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- FIN buttons sélection filtre Region/Dept. -->

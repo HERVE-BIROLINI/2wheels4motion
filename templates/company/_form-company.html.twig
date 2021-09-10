@@ -1,5 +1,5 @@
 <!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
-{{ include('geography/FromJSON4Javascript.html.twig') }}
+{{ include('geography/_FromJSON4Javascript.html.twig') }}
 
 {% if company is defined and company is not null %}
     {% set name = company.name %}
@@ -38,7 +38,7 @@
         <button class="btn btn-sm btn--secondary align-self-end" type="button" id="btn--companies2choice"
             style="border-bottom-left-radius:0;border-bottom-right-radius:0;"
         >
-            <i class="ri-search-line"></i>&ensp;Entreprises référencées
+            <i class="fas fa-search"></i>&ensp;Entreprises référencées
         </button>
         {% endif %}
     </div>
@@ -48,7 +48,7 @@
     <div class="block--datas-horizontal p-3" id="block--company-T3P">
         <!-- nom de l'entreprise -->
         <div class="col-12">
-            <label class="required" for="inputname">Nom :</label>
+            <label class="required" for="inputname">Dénomination sociale :</label>
             <input type="text" name="name" id="inputname" class="form-control"
                 {% if name is defined and name is not null %}
                 value="{{ name }}"

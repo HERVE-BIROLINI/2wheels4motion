@@ -5,7 +5,7 @@
 {% block body %}
 
     <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
-    {{ include('flash.html.twig') }}
+    {{ include('_flash.html.twig') }}
 
     <div class="paragraph--large" method="post"> 
         <h1 class="title--h2">Enregistrez-vous : <small class="small-title-message">(* champs obligatoire)</small></h1>
@@ -61,7 +61,7 @@
                     </button>
                     <!--  form="formregistrationdriver" -->
                     <a class="btn btn-bg btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
-                        <i class="ri-close-fill"></i>&ensp;Annuler
+                        <i class="fas fa-times"></i>&ensp;Annuler
                     </a>
                 </div>
                 <!-- <a href="https://www.francecompetences.fr/recherche/rs/3864/">Consulter les Conditions Générales d'Utilisation</a> -->

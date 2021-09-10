@@ -56,7 +56,7 @@ class RegistrationController extends AbstractController
         if($this->getUser()){
             // ... si oui, lui propose de se reconnecter
             // (qui renverra à l'accueil...)
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         $user = new User();
@@ -74,7 +74,7 @@ class RegistrationController extends AbstractController
                 )
             );
             //
-            $user->setRegistrationDate(new DateTime('NOW'));
+            $user->setRegistrationDate(new DateTime('now'));
             // $user->setHasagreetoterms(0);
 
             // Effectue les enregistrements dans la BdD
@@ -117,7 +117,7 @@ class RegistrationController extends AbstractController
         if(!$this->getUser() or $this->getUser()!==$user
             or $this->getUser()->getDriver()
         ){
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         // Pour les accès à la BdD
@@ -445,7 +445,7 @@ class RegistrationController extends AbstractController
     // Invoquée lors de la vérification de l'adresse email,
     // via le lien d'authentification contenu dans l'email
     /**
-     * @Route("/verify/email", name="app_verify_email")
+     * @Route("/verify_email", name="app_verify_email")
      */
     public function verifyUserEmail(Request $request): Response
     {
@@ -464,7 +464,19 @@ class RegistrationController extends AbstractController
         // @TODO Change the redirect on success and handle or remove the flash message in your templates
         // $this->addFlash('verify_email_error', 'Votre adresse électronique a été vérifiée.');
         $this->addFlash('success', 'Votre adresse électronique a été vérifiée.');
-        return $this->redirectToRoute('app_login');
+        return $this->redirectToRoute('security_login');
         // return $this->redirectToRoute('app_register');
+    }
+
+
+    static function getIp(){
+        if(!empty($_SERVER['HTTP_CLIENT_IP'])){
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        }elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }else{
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+        return $ip;
     }
 }

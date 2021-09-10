@@ -6,12 +6,12 @@
 {% block body %}
 
     <!-- ##### v DEBUT DES ELEMENTS PRINCIPAUX DE LA PAGE v ##### -->
-
+<div id="div--2hide-ifmodal">
     <!-- Admin Controller banner -->
-    {{ include('admin/banner.html.twig') }}
+    {{ include('admin/_banner.html.twig') }}
 
 
-    <div class="paragraph--large" id="div--2hide-ifmodal">
+    <div class="paragraph--large">
 
         <!-- Tableau des actions attendues concernant les demandes de référencement... -->
         <!-- ... des T3P -->
@@ -53,7 +53,7 @@
                         <td>{{ obCompany.city }}</td>
                         <td>
                             <a class="btn btn-sm btn--blue mr-2" href="{{ path('admin_company_confirm', {'company': obCompany.id}) }}" title="Modifier">
-                                <i class="ri-award-fill"></i>&ensp;Confirmer
+                                <i class="fas fa-award"></i>&ensp;Confirmer
                             </a>
                         </td>
                     </tr>
@@ -106,7 +106,7 @@
                         <td>{{ obDriver.company.name }}</td>
                         <td class="d-flex flex-row">
                             <a class="btn btn-sm btn--blue" href="{{ path('admin_driver_confirm', {'driver': obDriver.id}) }}" title="Modifier" class="mr-2">
-                                <i class="ri-award-fill"></i>&ensp;Confirmer
+                                <i class="fas fa-award"></i>&ensp;Confirmer
                             </a>
                         </td>
                     </tr>
@@ -125,6 +125,7 @@
             </table>
         </div>
 
+        {#
         <!-- Tableau des Company "référencées" -->
         {% set allcompaniesknown=getknowncompanies() %}
         <div class="paragraph--large">
@@ -193,9 +194,10 @@
                 </tfoot>
             </table>
         </div>
+        #}
 
     </div>
-
+</div>
     <!-- ##### ^ FIN DES ELEMENTS PRINCIPAUX DE LA PAGE ^ ##### -->
 
     <!-- ------------------------------------------------------ -->
@@ -205,9 +207,13 @@
     <!-- Modal d'affichage des photos du Driver -->
     {% if alldriversunverified is defined and alldriversunverified is not empty %}
         {% for obDriver in alldriversunverified %}
-        <div class="modal--big p-5" id="{{ 'modal--vmdtr--'~obDriver.id }}" style="display:none;">
-            <h3 class="pb-1">{{ 'Pilote VMDTR : (carte Pro. #'~obDriver.vmdtrnumber~')' }}</h3>
+        <div class="modal--big-css p-5" id="{{ 'modal--vmdtr--'~obDriver.id }}" style="display:none;">
             
+            <!-- Bouton "fixe" à afficher en même temps que toute Modale, pour fermeture de celle-ci -->
+            <div class="btn--circle btn--hidemodal modal--closing" parent_id="{{ 'modal--vmdtr--'~obDriver.id }}">X</div>
+            
+            <h3 class="pb-1">{{ 'Pilote VMDTR : (carte Pro. #'~obDriver.vmdtrnumber~')' }}</h3>
+        
             <div>
                 {% set oVMDTR=getdrivercard(obDriver.user) %}
                 {% set oPortrait=getuserportrait(obDriver.user) %}
@@ -215,7 +221,7 @@
                 {% if oPortrait %}
                 <img style='width:15%;' src="{{ asset(oPortrait.pathname) }}" alt="Portrait pilote">
                 {% else %}                    
-                <img style='width:15%;' src="{{ asset(oPortrait.pathname) }}" alt="Portrait pilote">
+                <img style='width:15%;' src="{{ asset(sImgPath ~'misc/no-image.png') }}" alt="Portrait pilote">
                 {% endif %}
 
                 &ensp;
@@ -223,7 +229,7 @@
                 {% if oVMDTR %}
                 <img style='width:75%;' src="{{ asset(oVMDTR.pathname) }}" alt="Carte VMDTR">
                 {% else %}                    
-                <img style='width:75%;' src="{{ asset(sImgPath ~'no-image.png') }}" alt="Carte VMDTR">
+                <img style='width:75%;' src="{{ asset(sImgPath ~'misc/no-image.png') }}" alt="Carte VMDTR">
                 {% endif %}
 
             </div>
@@ -231,38 +237,41 @@
             <button class="btn btn-sm btn--secondary mt-5 btn--hidemodal"
                 parent_id="{{ 'modal--vmdtr--'~obDriver.id }}"
             >
-                <i class="ri-close-fill"></i>&ensp;Fermer
+                <i class="fas fa-times"></i>&ensp;Fermer
             </button>
         </div>
         {% endfor %}
     {% endif %}
 
+
+    <!--  ***** ABANDONNE ***** -->
     <!-- Modal d'affichage des "cartes" pilotes "rattachés" à une T3P -->
+    <!-- {#
     {% if allcompaniesknown is defined and allcompaniesknown is not empty %}
         {% for obCompany in allcompaniesknown %}
             {% set arDrivers= getdriversbycompany(obCompany) %}
             {% if arDrivers|length > 0 %}
-        <div class="modal--big p-5" id="{{ 'modal--t3p--'~obCompany.id }}" style="display:none;">
+        <div class="modal--big-css p-5" id="{{ 'modal--t3p--'~obCompany.id }}" style="display:none;">
             <h3 class="pb-1">{{ 'Société T3P : '~obCompany.name }}</h3>
-            
+            #} -->
             <!-- Les "cartes" des utilisateurs destinataires de la demande... -->
             <!-- ... la rangée "cartes" des utilisateurs destinataires de la demande... -->
-            <div class="d-flex flex-column align-items-center">
+            <!-- {#<div class="d-flex flex-column align-items-center">
                 {% for obDriver in arDrivers %}
-                    {{ include('driver/card.html.twig', {obDriver: obDriver}) }}
+                    {{ include('driver/_card_mid.html.twig', {obDriver: obDriver}) }}
                 {% endfor %}
             </div>
 
             <button class="btn btn-sm btn--secondary mt-5 btn--hidemodal"
                 parent_id="{{ 'modal--t3p--'~obCompany.id }}"
             >
-                <i class="ri-close-fill"></i>&ensp;Fermer
+                <i class="fas fa-times"></i>&ensp;Fermer
             </button>
         </div>
             {% endif %}
         {% endfor %}
     {% endif %}
-
+#} -->
     <!-- ##### v FIN DES MODALES v ##### -->
 
 {% endblock %}

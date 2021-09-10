@@ -4,14 +4,29 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    # BIROLINI : Déclaration du chemin complet correspondant à ASSET (Twig)
-    # ( appel : $this->getParameter('asset_path') )
+    # BIROLINI : Déclaration du chemin complet correspondant à ASSET
+    # ( appel : 
+    #       déclarations:   use Symfony\Component\DependencyInjection\ContainerInterface;
+    #                       Private $container;
+    #       instanciation:  function _construct(ContainerInterface $container)
+    #                       $this->container=$container;
+    #       récupération:   $this->container->getParameter('var_name')
+    # )
+    #   NE MARCHE PAS
     asset_path_dev: '%kernel.project_dir%/assets/'
     asset_path_prod: '%kernel.project_dir%/public/build/'
-    array_imgfiles_user_path: ['images/','uploads/','user/']
-    # Impossible car erreur à cause du 1er @...
+
+    #  **** ABANDONNE ****
+    # array_imgfiles_user_path: ['images/','uploads/','user/']
+    
+    #  **** Impossible car erreur à cause du 1er @... ****
     # pattern_road: "@[a-zA-Z\'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ \d-]@ig"
     # pattern_city: "@[a-zA-Z\'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ -]@ig"
+    
+    # **** BIROLINI : récupère la variable d'envirronement déclarée dans .ENV ****
+    #   NE MARCHE PAS
+    # # ( appel : $this->container->getParameter('API_GMAPS_KEY') )
+    # API_GMAPS_KEY: '%env(API_GMAPS_KEY)%'
 
 services:
     # default configuration for services in *this* file
@@ -37,3 +52,7 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # BIROLINI : NE marche pas !!
+    # App\Twig\FrenchGeographyTwig:
+    #     arguments: [$logger: '@logger', $api_gmaps_key: '%api_gmaps_key%']

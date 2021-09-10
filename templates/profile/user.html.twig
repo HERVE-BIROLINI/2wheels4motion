@@ -5,13 +5,13 @@
 
 {% block body %}
 
-    {{ include('profile/banner.html.twig') }}
+    {{ include('profile/_banner.html.twig') }}
 
     <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
-    {{ include('flash.html.twig') }}
+    {{ include('_flash.html.twig') }}
     
     {% if app.user %}
-    <div class="paragraph--large">
+    <div class="paragraph--large" id="">
         <form class="card--3D-vertical" method="post">
             <!-- Rangée titre + photo Avatar-->
             <div class="d-flex flew-row flex-wrap justify-content-between align-items-center w-100">
@@ -27,12 +27,12 @@
                         {% if obUserportrait is defined and obUserportrait is not null %}
                         <img class="imgbtn--profile" src="{{ asset(obUserportrait.pathname) }}" alt="Photo de profil">
                         {% else %}                    
-                        <img class="imgbtn--profile" src="{{ asset(sImgPath ~'no-image.png') }}" alt="Photo de profil">
+                        <img class="imgbtn--profile" src="{{ asset(sImgPath ~'misc/no-image.png') }}" alt="Photo de profil">
                         {% endif %}
                     </a>
                     <!-- <br> -->
-                    <a class="btn btn-sm btn--secondary w-100 rounded-0" href="{{ path('profile_changepicture', {'id': app.user.id }) }}">
-                        <i class="ri-file-upload-line"></i>&ensp;Modifier
+                    <a class="btn btn-sm btn--secondary rounded-0" href="{{ path('profile_changepicture', {'id': app.user.id }) }}">
+                        <i class="fas fa-upload"></i>&ensp;Modifier
                     </a>
                 </div>
             </div>

@@ -6,13 +6,13 @@
 {% block body %}
 
 <!-- Claim Controller banner -->
-{{ include('claim/banner.html.twig') }}
+{{ include('claim/_banner.html.twig') }}
 
 <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
-{{ include('flash.html.twig') }}
+{{ include('_flash.html.twig') }}
 
 <!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
-{{ include('geography/FromJSON4Javascript.html.twig') }}
+{{ include('geography/_FromJSON4Javascript.html.twig') }}
 
 <div class="paragraph--large" method="post">
 
@@ -26,10 +26,11 @@
             <legend>Adresse personnelle :</legend>
             <div class="block--datas-horizontal">
                 <div class="col-12 col-md-5">
-                    <label class="required" for="inputroad">N° et Voie :</label>
+                    <!-- <label class="required" for="inputroad">N° et Voie :</label> -->
                     <input type="text" class="form-control" id="inputroad"
                         {% if customer_road is not null %}value="{{ customer_road }}"{% endif %}
-                        name="customer_road" required
+                        placeholder="N° et voie" name="customer_road"
+                        required
                     ><!-- autofocus> -->
                     {% if error_customer_road %}
                     <span class="d-block">
@@ -41,10 +42,10 @@
                 </div>
                 &nbsp;
                 <div class="col-12 col-md-3">
-                    <label class="required" for="inputcity">Commune :</label>
+                    <!-- <label class="required" for="inputcity">Commune :</label> -->
                     <input type="text" class="form-control inputcity" id="inputcity"
                         {% if customer_city is not null %}value="{{ customer_city }}"{% endif %}
-                        name="customer_city" pattern="[a-zA-Z]"
+                        placeholder="Ville" name="customer_city" pattern="[a-zA-Z]"
                         required
                     >
                     <select class="form-control cities" id="inputcities"
@@ -61,7 +62,7 @@
                 </div>
                 &nbsp;
                 <div class="col-12 col-md-3">
-                    <label class="required" for="inputzip">Code postal :</label>
+                    <!-- <label class="required" for="inputzip">Code postal :</label> -->
                     <input type="text" class="form-control" id="inputzip"
                         {% if customer_zip is not null %}value="{{ customer_zip }}"{% endif %}
                         name="customer_zip" style="display:none;"
@@ -69,7 +70,8 @@
                     <!-- -->
                     <input type="text" class="form-control inputzip" id="inputzip2"
                         {% if customer_zip is not null %}value="{{ customer_zip }}"{% endif %}
-                        name="customer_zip" disabled
+                        placeholder="Code postal" name="customer_zip"
+                        disabled
                     >
                     {#{% if error_customer_zip %}#}
                     <!-- <span class="d-block">
@@ -106,11 +108,14 @@
                         {{ form_errors(claimForm.journey_date) }}
                         
                     </div>
-                    &nbsp;
                     <!-- horaire -->
+                    &nbsp;
                     <div class="d-flex flex-column justify-content-center">
+                        <!-- Priorité -->
                         <label class="required" for="claim_form_priority_departure_0">Priorité à l'horaire :</label>
-                        {{ form_widget(claimForm.priority_departure.0) }}
+                        {{ form_widget(claimForm.priority_departure.0,
+                            {attr:{class:'switcher--checked', parent_id:'cb--flatrate'}}
+                        )}}
                         {{ form_widget(claimForm.priority_departure.1) }}
                         {#<!-- {% if error_priority is defined %}
                         <span class="d-block">
@@ -123,56 +128,58 @@
                         <!-- heure -->
                         &nbsp;
                         <div class="d-flex flex-column justify-content-center">
-                            {#{{ form_row(claimForm.journey_time) }}#}
                             <label class="required" for="claim_form_journey_time_hour">Heure :</label>
+                            
+                            {#{{ form_row(claimForm.journey_time) }}#}
                             <!-- <div class="d-flex flex-row align-items-center"> -->
                             <div class="block--date align-items-center">
+                                <!-- <input class="form-control" type="time" id="claim_form_journey_time" name="claim_form[journey_time]"> -->
                                 {{ form_widget(claimForm.journey_time.hour)}}
-                                &nbsp;:&nbsp;
+                                &emsp;:&emsp;
                                 {{ form_widget(claimForm.journey_time.minute)}}
+                                
                             </div>
                             
-                            {#{{ form_help(claimForm.journey_time)}}#}
                             {% if error_time is defined and error_time is not null %}
                             <span class="d-block">
                                 <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
                                 <small class="form-error-message">L'heure ne laisse pas assez de marge</small>
                             </span>
                             {% endif %}
-                            {{ form_errors(claimForm.journey_time) }}
+                            {#{{ form_help(claimForm.journey_time)}}
+                            {{ form_errors(claimForm.journey_time) }}#}
                         </div>
                     </div>
-                </div>
                         
-                <!-- Forfait mise à disposition -->
-                &nbsp;
-                <div class="d-flex flex-row col-12">
-                    <div class="d-flex flex-row col-6 align-items-center">
-                        <input class='cb--switcher' id="cb--flatrate" type="checkbox"
-                        {% if claim is defined and claim.flatrate is not null %}
-                        checked
-                        {% endif %}
+                    <!-- Forfait mise à disposition -->
+                    &nbsp;
+                    <div class="d-flex flex-row col-12">
+                        <div class="d-flex flex-row col-6 align-items-center">
+                            <input class='cb--switcher' id="cb--flatrate" type="checkbox"
+                            {% if claim is defined and claim.flatrate is not null %}
+                            checked
+                            {% endif %}
+                            >
+                            &ensp;
+                            <label class='mt-2' for="cb--flatrate">Mise à disposition</label>
+                        </div>
+                        <!-- <div> -->
+                        <select class="form-control switcher--disabled col-6" parent_id="cb--flatrate"
+                            id="select--flatrate" size="1" position="absolute" name="flatrate"
                         >
-                        &ensp;
-                        <label class='mt-2' for="cb--flatrate">Mise à disposition</label>
+                        {% for obFlatrate in flatrates %}
+                            {% if obFlatrate.label starts with 'Mise à disposition' %}
+                        <option value="{{ obFlatrate.id }}"
+                            {% if claim is defined and claim.flatrate is not null and claim.flatrate.id==obFlatrate.id %}
+                            selected='selected'
+                            {% endif %}
+                        >
+                            {{ obFlatrate.label }}
+                        </option>
+                            {% endif %}
+                        {% endfor %}
+                        </select>
                     </div>
-                    <!-- <div> -->
-                    <select class="form-control switcher--target col-6" parent_id="cb--flatrate"
-                        id="select--flatrate" size="1" position="absolute" name="flatrate"
-                    >
-                    {% for obFlatrate in flatrates %}
-                        {% if obFlatrate.label starts with 'Mise à disposition' %}
-                    <option value="{{ obFlatrate.id }}"
-
-                        {% if claim is defined and claim.flatrate is not null and claim.flatrate.id==obFlatrate.id %}
-                        selected='selected'
-                        {% endif %}
-                    >
-                        {{ obFlatrate.label }}
-                    </option>
-                        {% endif %}
-                    {% endfor %}
-                    </select>
                 </div>
             </fieldset>
 
@@ -188,7 +195,7 @@
                             default
                             {% endif %}
                         >
-                            Lieu particulier
+                            Lieu particulier&emsp;<i class="fas fa-plane-arrival"></i>&nbsp;<i class="fas fa-train"></i>
                         </div>
                     </div>
                     <!-- block 'adressfrom' -->
@@ -196,7 +203,7 @@
                         <div class="d-flex flex-column justify-content-center w-100">
                             <!-- Road -->
                             <div class="d-flex flex-column justify-content-center w-100">
-                                <label class="required" for="claim_form_from_road">N° et Voie :</label>
+                                <!-- <label class="required" for="claim_form_from_road">N° et Voie :</label> -->
                                 {{ form_widget(claimForm.from_road) }}
                                 {{ form_errors(claimForm.from_road) }}
                                 {{ form_help(claimForm.from_road) }}
@@ -207,7 +214,7 @@
                                 <div class="d-flex flex-row" style="margin-left:-1em;margin-right:-1em;">
                                     <!-- ... City... -->
                                     <div class="col-8">
-                                        <label class="required" for="claim_form_from_city">Ville :</label>
+                                        <!-- <label class="required" for="claim_form_from_city">Ville :</label> -->
                                         {{ form_widget(claimForm.from_city) }}
                                         <select class="form-control cities" id="claim_form_from_cities"
                                             name="cities" title="cities"
@@ -219,13 +226,14 @@
                                     </div>
                                     <!-- ... Zip... -->
                                     <div class="col-4">
-                                        <label class="required">CP :</label>
+                                        <!-- <label class="required">CP :</label> -->
                                         <div style="display:none;">
                                             {{ form_widget(claimForm.from_zip) }}
                                         </div>
                                         <input type="text" class="form-control zipcode claim_form_from_zip" id="claim_form_from_zip2"
+                                            placeholder="Code postal" title="zipcode"
                                             {% if fromZip %} value='{{ fromZip }}'{% endif %}
-                                            title="zipcode" disabled
+                                            disabled
                                         >
                                     </div>
                                 </div>
@@ -234,8 +242,15 @@
                     </div>
                     <!-- block 'remarkableplacefrom' -->
                     <div class="block--datas-vertical table--tabtype" parent_id="btn--tabtype--remarkableplacefrom">
-                        {{ include('geography/selectregion.html.twig', {id:'select--region--from'}) }}
-                        {{ include('remarkableplace/selectremarkableplace.html.twig', {opt_selected: remarkableplace_from, suffix:'from',parent_id:'select--region--from'}) }}
+                        {{ include('geography/_selectregion.html.twig', {id:'select--region--from'})}}
+                        <br>
+                        {{ include('remarkableplace/_selectremarkableplace.html.twig',
+                            {opt_selected: remarkableplace_from,
+                                class:'select--filter--back',
+                                suffix:'from',
+                                parent_id:'select--region--from'
+                            }
+                        )}}
                     </div>
                     {% if error_fromzip is defined and error_fromzip is not null %}
                     <span class="d-block">
@@ -255,14 +270,14 @@
                         default
                         {% endif %}
                     >
-                        Lieu particulier
+                        Lieu particulier&emsp;<i class="fas fa-plane-departure"></i>&nbsp;<i class="fas fa-train"></i>
                     </div>
                     </div>
                     <!-- block 'adressto' -->
                     <div class="block--datas-vertical table--tabtype" parent_id="btn--tabtype--adressto">
                         <!-- Road -->
                         <div class="d-flex flex-column justify-content-center w-100">
-                            <label class="required" for="claim_form_to_road">N° et Voie :</label>
+                            <!-- <label class="required" for="claim_form_to_road">N° et Voie :</label> -->
                             {#{{ form_label(claimForm.to_road) }}#}
                             {{ form_widget(claimForm.to_road) }}
                             {{ form_errors(claimForm.to_road) }}
@@ -274,7 +289,7 @@
                             <div class="d-flex flex-row" style="margin-left:-1em;margin-right:-1em;">
                                 <!-- ... City... -->
                                 <div class="col-8">
-                                    <label class="required" for="claim_form_to_city">Ville :</label>
+                                    <!-- <label class="required" for="claim_form_to_city">Ville :</label> -->
                                     {{ form_widget(claimForm.to_city) }}
                                     <select class="form-control cities" id="claim_form_to_cities"
                                         name="cities" title="cities"
@@ -286,13 +301,14 @@
                                 </div>
                                 <!-- ... Zip... -->
                                 <div class="col-4">
-                                    <label class="required">CP :</label>
+                                    <!-- <label class="required">CP :</label> -->
                                     <div  style="display:none;">
                                         {{ form_widget(claimForm.to_zip) }}
                                     </div>
                                     <input type="text" class="form-control claim_form_to_zip" id="claim_form_to_zip2"
-                                        title="zipcode"
-                                        {% if toZip %} value='{{ toZip }}'{% endif %} disabled
+                                        placeholder="Code postal" title="zipcode"
+                                        {% if toZip %} value='{{ toZip }}'{% endif %}
+                                        disabled
                                     >
                                 </div>
                             </div>
@@ -300,8 +316,15 @@
                     </div>
                     <!-- block 'remarkableplacefrom' -->
                     <div class="block--datas-vertical table--tabtype" parent_id="btn--tabtype--remarkableplaceto">
-                        {{ include('geography/selectregion.html.twig', {id:'select--region--to'}) }}
-                        {{ include('remarkableplace/selectremarkableplace.html.twig', {opt_selected: remarkableplace_to, suffix:'to',parent_id:'select--region--to'}) }}
+                        {{ include('geography/_selectregion.html.twig', {id:'select--region--to'}) }}
+                        <br>
+                        {{ include('remarkableplace/_selectremarkableplace.html.twig',
+                            {opt_selected: remarkableplace_to,
+                                class:'select--filter--back',
+                                suffix:'to',
+                                parent_id:'select--region--to'
+                            }
+                        )}}
                     </div>
                     {% if error_tozip is defined and error_tozip is not null %}
                     <span class="d-block">
@@ -316,16 +339,18 @@
 
         <!-- Zone de saisie des commentaires -->
         &emsp;
-        {{ form_row(claimForm.comments) }}
+        {{ form_widget(claimForm.comments) }}
+        {{ form_errors(claimForm.comments) }}
+        {{ form_help(claimForm.comments) }}
+        <!-- {#{{ form_row(claimForm.comments) }}#} -->
         
         <!-- Boutons de sortie -->
-        {#<!-- &ensp; -->#}
         <div class="btns--row">
             <button class="btn btn-sm btn--blue" type="submit">
-                <i class="ri-send-plane-line"></i>&ensp;Envoyer la demande
+                <i class="far fa-paper-plane"></i>&ensp;Envoyer la demande
             </button>
             <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
-                <i class="ri-close-fill"></i>&ensp;Annuler
+                <i class="fas fa-times"></i>&ensp;Annuler
             </a>
         </div>
         

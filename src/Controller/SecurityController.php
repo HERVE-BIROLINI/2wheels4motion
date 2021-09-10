@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+/**
+ * @Route("/security", name="security_")
+ */
 class SecurityController extends AbstractController
 {
     private $emailVerifier;
@@ -20,7 +23,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/login", name="app_login")
+     * @Route("/login", name="login")
      */
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -43,9 +46,14 @@ class SecurityController extends AbstractController
                 return $this->redirectToRoute('mailer_register');
 
             }
-            // ... si au contraire est déjà validé, retourne à l'accueil
+            // ... si au contraire est déjà validé, affiche le tableau de bord de l'utilisateur
             else{
-                return $this->redirectToRoute('homepage');
+                return $this->render('profile/user.html.twig', [
+                    'error_firstname'   => null,
+                    'error_lastname'    => null,
+                    'error_phone'       => null,
+                ]);
+                // return $this->redirectToRoute('homepage');
             }
         }
 
@@ -60,7 +68,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/logout", name="app_logout")
+     * @Route("/logout", name="logout")
      */
     public function logout()
     {
@@ -69,7 +77,7 @@ class SecurityController extends AbstractController
         // tu peux écrire ce que tu veux là-dedans,
         // c'est ce qui est défini dans Config/Packages/SECURITY.YAML
         // qui sera lu et exécuté !...
-        // Actuellement, renvoi vers 'app_login'
+        // Actuellement, renvoi vers 'security_login'
         //
         // throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }

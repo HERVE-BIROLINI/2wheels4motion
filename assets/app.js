@@ -9,13 +9,15 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'remixicon/fonts/remixicon.css';
 import './styles/app.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
-// start the Stimulus application
 import './bootstrap';
 import 'jquery';
 import 'popper.js';
 import 'bootstrap';
+// start the Stimulus application
 import { identifierForContextKey } from 'stimulus/webpack-helpers';
+// import '@fortawesome/fontawesome-free/js/all.js';
 
 
 document.addEventListener("DOMContentLoaded", function(event){
@@ -83,38 +85,50 @@ document.addEventListener("DOMContentLoaded", function(event){
     //-----------------------------------
     // *** DEBUT - Gestion du scroll ***
     //-----------------------------------
+    var lastScrollTop=0;
     // - ... Récupère la hauteur par l'appel d'une fonction, besoin d'être dynamique...
-    // function getHeight(){return document.documentElement.scrollHeight;};
-    // function getInnerHeight(){return window.innerHeight?window.innerHeight:document.documentElement.clientHeight;};
+    function getHeight(){return document.documentElement.scrollHeight;};
+    function getInnerHeight(){return window.innerHeight?window.innerHeight:document.documentElement.clientHeight;};
     function getScrollTop(){return Math.max(document.body.scrollTop,document.documentElement.scrollTop);};
     // - Fonction d'analyse de la progression du scroll et de création des nouveaux éléments
     function scrollActing() {
-        // si le header venait à disparaître, le "fixe" en haut de page.
-        var htmlHeader=document.querySelector("#section--header");
-        // var htmlHeader=document.getElementById("section--header");
-        // htmlHeader.setAttribute("style","position:fixed;width:100%;top:0;z-index: 99;");
-        var iHeaderHeight=Math.round(htmlHeader.offsetHeight);
-        if(Math.round(getScrollTop())>=iHeaderHeight-(iHeaderHeight*0.25)){
-            // htmlHeader.style.opacity=0.75;
-            htmlHeader.setAttribute("style","position:fixed;width:100%;top:0;z-index: 99;opacity:0.75");
+        // * si le header venait à disparaître, le "fixe" en haut de page *
+        let htmlHeader=document.querySelector("#section--header");
+        let iHeaderHeight=Math.round(htmlHeader.offsetHeight);
+        //
+        if(Math.round(getScrollTop())>=iHeaderHeight * 0.66
+            && (getHeight()-getInnerHeight())>Math.round(getScrollTop())+iHeaderHeight
+        ){
+            htmlHeader.setAttribute("style","width:100%;position:fixed;top:0;z-index: 99;opacity:0.95");
         }
-        else if(Math.round(getScrollTop())<iHeaderHeight){
-            // htmlHeader.style.opacity=1;
+        else if(Math.round(getScrollTop())<iHeaderHeight * 0.66){
             htmlHeader.removeAttribute("style");
         }
         // lorsque le slider arrive en bas...
         // if(Math.round(getScrollTop()+getInnerHeight())===Math.round(getHeight())){}
         // else{}
+
+        // * analyse le sens de déroulement du scroll pour la gestion de l'affichage du bouton Uptotop *
+        let currentScrollTop=window.pageYOffset //|| document.documentElement.scrollTop;
+        if (currentScrollTop > lastScrollTop){
+            document.querySelector('#uptotop').style.display=''
+        } else {
+            document.querySelector('#uptotop').style.display='none'
+        }
+        lastScrollTop=currentScrollTop <= 0 ? 0 : currentScrollTop; // For Mobile or negative scrolling
+
     };
     // * Pose de l'espion du mouvement de scrolling *
-    // window.addEventListener('scroll',scrollActing);
+    // (exception faite si absence de #Banner)
+    let htmlBanner=document.querySelector('#banner');
+    if(htmlBanner !== null){
+        window.addEventListener('scroll',scrollActing);
+    }
     //---------------------------------
     // *** FIN - Gestion du scroll ***
     //---------------------------------
 
     
-    //  LE FICHIER IMAGE CHOISI PAR UTILISATEUR N'ETANT PAS ENCORE UPLOADE,
-    //  NE MARCHERA PAS !!!
     //----------------------------------------------------------------------------------
     // *** DEBUT - Gestion du non-affichage d'une image suite à l'Upload en attente ***
     //----------------------------------------------------------------------------------
@@ -235,10 +249,10 @@ document.addEventListener("DOMContentLoaded", function(event){
                 }
                 else{
                     // tri dans l'ordre alphabétique et affiche la liste des possibilités
-                    let newOption = new Option ('Sélectionnez votre commune', '');
+                    let newOption=new Option ('Sélectionnez votre commune', '');
                     htmlCities.options.add(newOption);
                     for (let city of arZip.sort()){
-                        let newOption = new Option (city, city);
+                        let newOption=new Option (city, city);
                         htmlCities.options.add(newOption);
                     }
                     // affiche la liste...
@@ -325,17 +339,17 @@ document.addEventListener("DOMContentLoaded", function(event){
     // *** DEBUT - Gestion de la sélection d'une COMPANY existante ***
     //-----------------------------------------------------------------
     // action sur le bouton de choix d'une entreprise existante (MODAL, aussi...)
-    let btnCompanies2Choice = document.querySelector('#btn--companies2choice');
+    let btnCompanies2Choice=document.querySelector('#btn--companies2choice');
     if(btnCompanies2Choice){
         //
         btnCompanies2Choice.addEventListener('click', showKnownCompanies);
         function showKnownCompanies(){
-            document.getElementById('blk--company2create').style.display = 'none';
-            document.getElementById('blk--companies2choice').style.display = 'block';
+            document.getElementById('blk--company2create').style.display='none';
+            document.getElementById('blk--companies2choice').style.display='block';
         }
 
         //
-        let arBtnCompaniesKnown = document.querySelectorAll('.companyknown');
+        let arBtnCompaniesKnown=document.querySelectorAll('.companyknown');
         for(let btnCompaniesKnown of arBtnCompaniesKnown){
             btnCompaniesKnown.addEventListener('click', showSubmitButton);
         }
@@ -346,10 +360,10 @@ document.addEventListener("DOMContentLoaded", function(event){
         }
 
         // gestion du retour par le bouton d'annulation
-        document.querySelector('#btn--companies-exit').onclick = goBackNewCompanyWithoutChoosen;
+        document.querySelector('#btn--companies-exit').onclick=goBackNewCompanyWithoutChoosen;
         function goBackNewCompanyWithoutChoosen(){
-            document.getElementById('blk--company2create').style.display = '';
-            document.getElementById('blk--companies2choice').style.display = 'none';
+            document.getElementById('blk--company2create').style.display='';
+            document.getElementById('blk--companies2choice').style.display='none';
         }
 
     }
@@ -358,43 +372,50 @@ document.addEventListener("DOMContentLoaded", function(event){
     //---------------------------------------------------------------
 
 
-    //-------------------------------------------------------
-    // *** DEBUT - Gestion de la sélection d'un FLATRATE ***
-    //-------------------------------------------------------
-    // définition des variables...
-    // ... les boutons...
-    let btnFlatrateToggle = document.querySelector('#btn--FlatrateToggle');
-    if(btnFlatrateToggle){
-
-        // ** Gestion affichage/masquage de la liste de choix des forfaits **
-        // ** (et des boutons de filtrage)                                 **
-        // ... les boutons
-        let btnFlatrate_Expand = document.querySelector('#btn--expand');
-        let btnFlatrate_Collapse = document.querySelector('#btn--collapse');
-        // ... LA Div
-        let divFlatrates = document.getElementById("blk--flatrates");
-        
+    //----------------------------------------------------------------
+    // *** DEBUT - Gestion de l'affichage du Tableau des FLATRATE ***
+    //----------------------------------------------------------------
+    //  ** Gestion DOM du Tableau de choix d'un tarif à la création d'un Tender **
+    //      (les boutons + et - pour afficher/masquer le tableau des Forfaits)
+    let divFlatrateToggle=document.querySelector('#blk--FlatrateToggles');
+    if(divFlatrateToggle){
+        //   * Gestion affichage/masquage de la liste de choix des forfaits *
+        //   * (et des boutons de filtrage)                                 *
+        // ... Les boutons
+        let btnFlatrate_Expand=document.querySelector('#btn--expand');
+        let btnFlatrate_Collapse=document.querySelector('#btn--collapse');
+        // ... LE Label
+        let lblFlatrates=document.getElementById("lbl--FlatrateToggles");
+        // ... LA Table
+        let tblFlatrates=document.getElementById("tbl--flatrates");
+        //
+        divFlatrateToggle.onclick=showhideFlatrates;
+        //
         function showhideFlatrates(){
-            if(getComputedStyle(divFlatrates).display != "none"){
-                divFlatrates.style.display = "none";
+            if(getComputedStyle(tblFlatrates).display!="none"){
+                tblFlatrates.style.display="none";
                 //
-                btnFlatrate_Expand.style.display = "block";
-                btnFlatrate_Collapse.style.display = "none";
+                btnFlatrate_Expand.style.display="block";
+                btnFlatrate_Collapse.style.display="none";
+                //
+                lblFlatrates.innerHTML="Afficher la liste";
             } else {
-                divFlatrates.style.display = "block";
+                tblFlatrates.style.display="block";
                 //
-                btnFlatrate_Expand.style.display = "none";
-                btnFlatrate_Collapse.style.display = "block";
+                btnFlatrate_Expand.style.display="none";
+                btnFlatrate_Collapse.style.display="block";
+                //
+                lblFlatrates.innerHTML="Masquer la liste";
             }
         };
-        btnFlatrateToggle.onclick = showhideFlatrates;
         showhideFlatrates();
         
+        /* ABANDONNE
         // ** Gestion des actions sur les boutons de filtrage **
-        let arBtnFiltreRegion = document.getElementsByClassName("btn--filtre-region");
-        let arBtnFiltreDept = document.getElementsByClassName("btn--filtre-dept");
-        let arRowFlatrate = document.getElementsByClassName("row--flatrate");
-        document.querySelector('#foot--flatrate').style.display = "none";
+        let arBtnFiltreRegion=document.getElementsByClassName("btn--filtre-region");
+        let arBtnFiltreDept=document.getElementsByClassName("btn--filtre-dept");
+        let arRowFlatrate=document.getElementsByClassName("row--flatrate");
+        document.querySelector('#foot--flatrate').style.display="none";
 
         function showhideByRegions(){
             // let btnFiltreRegion= document.getElementsByClassName("dropdownMenuOffset--region");
@@ -403,24 +424,24 @@ document.addEventListener("DOMContentLoaded", function(event){
             let bOneMinimum=false;
             arRowFlatrate.forEach(element => {
                 if(this.innerHTML=='TOUTES'){
-                    element.style.display = "flex";
+                    element.style.display="flex";
                     bOneMinimum=true;
                 }
                 else if(element.className.includes(this.innerHTML)){
-                    element.style.display = "flex";
+                    element.style.display="flex";
                     bOneMinimum=true;
                 }
                 else{
-                    element.style.display = "none";
+                    element.style.display="none";
                 }
             });
             //
             if(bOneMinimum){
-                document.querySelector('#head--flatrate').style.display = "flex";
-                document.querySelector('#foot--flatrate').style.display = "none";
+                document.querySelector('#head--flatrate').style.display="flex";
+                document.querySelector('#foot--flatrate').style.display="none";
             }
             else{
-                document.querySelector('#foot--flatrate').style.display = "flex";
+                document.querySelector('#foot--flatrate').style.display="flex";
             }
         };
         function showhideByDepts(){
@@ -429,36 +450,38 @@ document.addEventListener("DOMContentLoaded", function(event){
             let bOneMinimum=false;
             arRowFlatrate.forEach(element => {
                 if(this.innerHTML=='TOUTES'){
-                    element.style.display = "flex";
+                    element.style.display="flex";
                     bOneMinimum=true;
                 }
                 else if(element.className.includes(this.innerHTML)){
-                    element.style.display = "flex";
+                    element.style.display="flex";
                     bOneMinimum=true;
                 }
                 else{
-                    element.style.display = "none";
+                    element.style.display="none";
                 }
             });
             //
             if(bOneMinimum){
-                document.querySelector('#head--flatrate').style.display = "flex";
-                document.querySelector('#foot--flatrate').style.display = "none";
+                document.querySelector('#head--flatrate').style.display="flex";
+                document.querySelector('#foot--flatrate').style.display="none";
             }
             else{
-                document.querySelector('#foot--flatrate').style.display = "flex";
+                document.querySelector('#foot--flatrate').style.display="flex";
             }
         };
         arBtnFiltreRegion.forEach(element => {
-            element.onclick = showhideByRegions;
+            element.onclick=showhideByRegions;
         });
         arBtnFiltreDept.forEach(element => {
-            element.onclick = showhideByDepts;
+            element.onclick=showhideByDepts;
         });
+        */
 
+        /*
         // ** gestion liste des départements suite à sélection d'une région **
-// console.log(arDpts);
-// console.log(document.querySelectorAll('.btn--filtre-region'));
+    // console.log(arDpts);
+    // console.log(document.querySelectorAll('.btn--filtre-region'));
         // document.querySelectorAll('.btn--filtre-region').forEach(element => {
         //     element.addEventListener('click', applyRegionFilterOnDpts);
         // });
@@ -469,15 +492,245 @@ document.addEventListener("DOMContentLoaded", function(event){
         // };
 
         // ** Gestion des actions sur les boutons de filtrage **
-        // let arBtnFlatrates = document.querySelectorAll('.flatrate');
+        // let arBtnFlatrates=document.querySelectorAll('.flatrate');
 
         // for(let btnFlatratesKnown of arBtnFlatratesKnown){
         //     btnFlatratesKnown.addEventListener('click', showSubmitButton);
         // }
+        */
     }
-    //-----------------------------------------------------
-    // *** FIN - Gestion de la sélection d'un FLATRATE ***
-    //-----------------------------------------------------
+    //--------------------------------------------------------------
+    // *** FIN - Gestion de l'affichage du Tableau des FLATRATE ***
+    //--------------------------------------------------------------
+
+
+    //-----------------------------------------------------------------------
+    // *** DEBUT - Gestion du calcul des Tender et affichage des Preview ***
+    //-----------------------------------------------------------------------
+    //  ** Gestion sélection d'un tarif à la création d'un Tender, remplissage des champs... **
+    // ... Les boutons de radio
+    let arRadioButtonsFlatrate=document.querySelectorAll('.rb--flatrate');
+    // ... Le champs DESCRIPTION
+    // let htmlRaceDesc=document.querySelector('#driver--comments[parent_id="rb--flatrate"]');
+    // ... Le champs PRIX TOTAL
+    let htmlRacePrice=document.querySelector('#driver--raceprice[parent_id="rb--flatrate"]');
+    // ... Le champs PRIX UNITAIRE
+    let htmlPricePerKm=document.querySelector('#driver--priceperkm[parent_id="rb--flatrate"]');
+    //   * - Calcul suite au choix d'un forfait dans le Tableau - *
+    if(arRadioButtonsFlatrate && htmlRacePrice ){// && htmlRaceDesc){
+        arRadioButtonsFlatrate.forEach(flatrate => {
+            flatrate.onclick=function(){
+                // htmlRaceDesc.value=flatrate.getAttribute('label');
+                // si choix du prix au kilomètre...
+                if(flatrate.getAttribute('label').indexOf("par km") >= 0){
+                    // ... le prix "au kilomètre" est renvoyé à l'Input "Prix du kilomètre"
+                    htmlPricePerKm.value=flatrate.getAttribute('price');
+                    // (traitement d'éventuels jumeaux de l'Input PricePerKm)
+                    let arPricePerKm=document.querySelectorAll('[twin_id="'+htmlPricePerKm.id+'"]');
+                    if(arPricePerKm){
+                        arPricePerKm.forEach(html => {
+                            html.innerHTML=htmlPricePerKm.value;
+                        })
+                    }
+                    // ... le résultat du calcul est renvoyé à l'Input "Prix de la course"
+                    calculTotal()
+                    // les éléments spécifiques au calcul par km sont affichés
+                    let htmlDivMultiplier=document.querySelector('#div--multiplier-TotalPrice');
+                    if(htmlDivMultiplier){
+                        htmlDivMultiplier.style.display="";
+                    }
+                    // les éléments spécifiques au calcul par km sont affichés
+                    let htmlDivPreviewFlatrate=document.querySelector('#preview--flatrate-km');
+                    console.log(htmlDivPreviewFlatrate);
+                    if(htmlDivPreviewFlatrate){
+                        htmlDivPreviewFlatrate.style.display="";
+                    }
+                    // les titre "FORFAIT" est caché sur le Preview
+                    let htmlFlatrateTitle=document.querySelector('#preview--flatrate-title');
+                    if(htmlFlatrateTitle){
+                        htmlFlatrateTitle.style.display="none";
+                    }
+                // si choix d'un forfait...
+                }else{
+                    // ... le prix est renvoyé à l'Input "Prix de la course"
+                    htmlRacePrice.value=flatrate.getAttribute('price');
+                    // (traitement d'éventuels jumeaux de l'Input RacePrice)
+                    let arInput_RacePrice_twin=document.querySelectorAll('[twin_id="'+htmlRacePrice.id+'"]');
+                    if(arInput_RacePrice_twin){
+                        arInput_RacePrice_twin.forEach(htmlTwin => {
+                            htmlTwin.innerHTML=htmlRacePrice.value;
+                        })
+                    }
+                    // les éléments spécifiques au calcul par km sont cachés
+                    let htmlDivMultiplier=document.querySelector('#div--multiplier-TotalPrice');
+                    if(htmlDivMultiplier){
+                        htmlDivMultiplier.style.display="none";
+                    }
+                    // les éléments spécifiques au calcul par km sont affichés
+                    let htmlDivPreviewFlatrate=document.querySelector('#preview--flatrate-km');
+                    if(htmlDivPreviewFlatrate){
+                        htmlDivPreviewFlatrate.style.display="none";
+                    }
+                    // les titre "FORFAIT" est caché sur le Preview
+                    let htmlFlatrateTitle=document.querySelector('#preview--flatrate-title');
+                    if(htmlFlatrateTitle){
+                        htmlFlatrateTitle.style.display="";
+                    }
+                }
+                // adapte le texte correspondant au Forfait choisi dans le tableau
+                let htmlPreviewFlatrate=document.querySelector('#preview--flatrate');
+                if(htmlPreviewFlatrate){
+                    console.log(htmlPreviewFlatrate);
+                    htmlPreviewFlatrate.innerHTML=flatrate.getAttribute('label');
+                }
+            }
+        });
+    }
+
+    //  ** Gestion du TOTAL du tarif suite à la modification d'une "donnée"... **
+    let htmlInput_TotalPrice=document.querySelector('[parent_class="input--multiplier-TotalPrice"]');
+    //   * ... à la modification d'un des multiplicateurs ( * , multiply ) *
+    let arInput_Multiplier4TotalPrice=document.querySelectorAll('.input--multiplier-TotalPrice');
+    if(arInput_Multiplier4TotalPrice){
+        arInput_Multiplier4TotalPrice.forEach(htmlInput => {
+            htmlInput.onchange=function(){
+                calculTotal();
+                let arInput_Multiplier4TotalPrice_twin=document.querySelectorAll('[twin_id="'+this.id+'"]');
+                if(arInput_Multiplier4TotalPrice_twin){
+                    arInput_Multiplier4TotalPrice_twin.forEach(htmlTwin => {
+                        if(this.value==''){
+                            htmlTwin.innerHTML='??';
+                            htmlTwin.style.color='red';
+                        }else{
+                            htmlTwin.innerHTML=this.value;
+                            htmlTwin.style.color='';
+                        }
+                    })
+                }
+            }
+        })
+    }
+    //   * ... à la modification d'un des contributeurs ( + , add ) *
+    let arInput_2AddAtTotalPrice=document.querySelectorAll('.input--contributor-TotalPrice');
+    if(arInput_2AddAtTotalPrice){
+        arInput_2AddAtTotalPrice.forEach(htmlInput_2AddAtTotalPrice => {
+            htmlInput_2AddAtTotalPrice.onchange=function(){
+                console.log('--- chgt +');
+                calculTotal();
+                let arInput_2AddAtTotalPrice_twin=document.querySelectorAll('[twin_id="'+this.id+'"]');
+                if(arInput_2AddAtTotalPrice_twin){
+                    arInput_2AddAtTotalPrice_twin.forEach(htmlTwin => {
+                        if(this.value==''){
+                            htmlTwin.innerHTML='??';
+                            htmlTwin.style.color='red';
+                        }else{
+                            htmlTwin.innerHTML=this.value;
+                            htmlTwin.style.color='';
+                        }
+                    })
+                }
+            }
+        })
+    }
+
+    //   * ... à la modification DIRECTE du TOTAL *
+    if(htmlRacePrice){
+        htmlRacePrice.onchange=function(){
+            let arInput_RacePrice_twin=document.querySelectorAll('[twin_id="'+this.id+'"]');
+            if(arInput_RacePrice_twin){
+                arInput_RacePrice_twin.forEach(htmlTwin => {
+                    if(this.value==''){
+                        htmlTwin.innerHTML='??';
+                        htmlTwin.style.color='red';
+                    }else{
+                        htmlTwin.innerHTML=this.value;
+                        htmlTwin.style.color='';
+                    }
+                })
+            }
+        }
+    }
+
+    //   ** Les fonctions de calcul **
+    function calculTotal(){
+        let iResult=1;
+        // les '*'
+        arInput_Multiplier4TotalPrice.forEach(element => {
+            if(element.value>0){
+                iResult = iResult * element.value;
+            }
+        })
+        // les '+'
+        arInput_2AddAtTotalPrice.forEach(element => {
+            if(element.value>0){
+                iResult = parseInt(iResult) + parseInt(element.value);
+            }
+        })
+        htmlInput_TotalPrice.value=iResult;
+        // (traitement d'éventuels jumeaux du TOTAL)
+        let arInput_TotalPrice=document.querySelectorAll('[twin_id="'+htmlInput_TotalPrice.id+'"]');
+        if(arInput_TotalPrice){
+            arInput_TotalPrice.forEach(html => {
+                html.innerHTML=htmlInput_TotalPrice.value;
+                html.style.color='';
+            })
+        }
+    }
+
+    // ... Le champs DepartureAtTime
+    let htmlDepartureAtTime=document.querySelector('#driver--departureattime');
+    if(htmlDepartureAtTime){
+        htmlDepartureAtTime.onchange=function(){
+            let arDepartureAtTime_twin=document.querySelectorAll('[twin_id="'+this.id+'"]');
+            if(arDepartureAtTime_twin){
+                arDepartureAtTime_twin.forEach(htmlTwin => {
+                    htmlTwin.innerHTML=this.value;
+                    htmlTwin.style.color='';
+                })
+            }
+        }
+    }
+    // ... Le champs ArrivalAtTime
+    let htmlArrivalAtTime=document.querySelector('#driver--arrivalattime');
+    if(htmlArrivalAtTime){
+        htmlArrivalAtTime.onchange=function(){
+            let arArrivalAtTime_twin=document.querySelectorAll('[twin_id="'+this.id+'"]');
+            if(arArrivalAtTime_twin){
+                arArrivalAtTime_twin.forEach(htmlTwin => {
+                    htmlTwin.innerHTML=this.value;
+                    htmlTwin.style.color='';
+                })
+            }
+        }
+    }
+    // ... Le champs TVA
+    let htmlTva=document.querySelector('#driver--racetva');
+    if(htmlTva){
+        htmlTva.onchange=function(){
+            let arTva_twin=document.querySelectorAll('[twin_id="'+this.id+'"]');
+            if(arTva_twin){
+                arTva_twin.forEach(htmlTwin => {
+                    htmlTwin.innerHTML=this.options[this.selectedIndex].innerHTML;
+                })
+            }
+        }
+    }
+    // ... Le champs Commentaires
+    let htmlComments=document.querySelector('#driver--comments');
+    if(htmlComments){
+        htmlComments.onchange=function(){
+            let arComments_twin=document.querySelectorAll('[twin_id="'+this.id+'"]');
+            if(arComments_twin){
+                arComments_twin.forEach(htmlTwin => {
+                    htmlTwin.innerHTML=this.value;
+                })
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------
+    // *** FIN - Gestion du calcul des Tender et affichage des Preview ***
+    //---------------------------------------------------------------------
 
 
     //------------------------------------------------------------------------
@@ -487,6 +740,8 @@ document.addEventListener("DOMContentLoaded", function(event){
     let arRowTabtype=document.querySelectorAll('.row--tabtype');
     if(arRowTabtype.length>0){
 
+        /*
+        -- || ABANDONNEE (archivage dans la base) || --
         // ** Gestion du filtrage sur l'onglet courant **
         let htmlBtnSwitchArchive=document.querySelector('#btn--show-hide--archive');
         if(htmlBtnSwitchArchive){
@@ -501,29 +756,30 @@ document.addEventListener("DOMContentLoaded", function(event){
             let btnSwitch=document.querySelector('#btn--show-hide--archive');
             if(btnSwitch.innerHTML.includes('Afficher')){
             // if(this.innerHTML.endswith('toutes')){
-                btnSwitch.innerHTML='<i class="ri-eye-line"></i>&ensp;Récents seulement';
+                btnSwitch.innerHTML='<i class="far fa-eye"></i>&ensp;Récents seulement';
                 //
                 trTabTypeVisible.forEach(tr => {
                     tr.style.display="";
                 })
             }
             else{
-                btnSwitch.innerHTML='<i class="ri-eye-line"></i>&ensp;Afficher tout';
+                btnSwitch.innerHTML='<i class="far fa-eye"></i>&ensp;Afficher tout';
                 //
                 trTabTypeVisible.forEach(tr => {
                     tr.style.display="none";
                 })
             }
         }
+        */
     
         // ** Pour chaque Block multi-tab **
         arRowTabtype.forEach(rowTabtype => {
             // "colle" un espion à chaque élément associé
             let arBtnTabtype=document.querySelectorAll('.btn--tabtype[parent_id="'+rowTabtype.id+'"]');
             arBtnTabtype.forEach(btnTabType => {
-                btnTabType.onclick = showhideTable;
+                btnTabType.onclick=showhideTable;
                 //
-                if(btnTabType.getAttribute('default') != null){
+                if(btnTabType.getAttribute('default')!=null){
                     activeTab(btnTabType);
                 }
             });
@@ -540,18 +796,22 @@ document.addEventListener("DOMContentLoaded", function(event){
             if(arBtnTabtype){
                 arBtnTabtype.forEach(btnTabType => {
                     if(btnTabType==btnTab2Activate){
-                        btnTabType.style.color='white';
-                        btnTabType.style.backgroundColor='black';
-                        // btnTabType.style.borderBottom='0';
-                        // btnTabType.style.boxShadow='0 0 0 0, 0 -4px 4px 0 rgb(140, 140, 140)';
+                        // test & background
+                        btnTabType.style.color='black';
+                        btnTabType.style.fontWeight ='bold';
+                        btnTabType.style.backgroundColor='white';
+                        // borders
+                        btnTabType.style.borderBottom='0';
+                        btnTabType.style.boxShadow='0 0 0 0, 0 -4px 4px 0 rgb(140, 140, 140)';
                         // ... en profite pour gérer l'affichage des tables associées
                         let tblChild=document.querySelector('.table--tabtype[parent_id="'+btnTab2Activate.id+'"]')
                         if(tblChild){
                             tblChild.style.display="";
                         }
                         btnTabType.setAttribute('shown','Y');
+                        /* -- || ABANDONNEE (archivage dans la base) || --
                         // ... et l'affichage du bouton de filtrage, si données de plus d'1 an
-                        if(htmlBtnSwitchArchive){
+                        if(typeof htmlBtnSwitchArchive !== 'undefined'){
                             let arRowArchive=document.querySelectorAll('.row--tab.ARCHIVE[parent_id="'+btnTab2Activate.id+'"]');
                             if(arRowArchive.length>0){
                                 htmlBtnSwitchArchive.style.display="";
@@ -560,12 +820,16 @@ document.addEventListener("DOMContentLoaded", function(event){
                                 htmlBtnSwitchArchive.style.display="none";
                             }
                         }
+                        */
                     }
                     else{
+                        // test & background
                         btnTabType.style.color='black';
-                        btnTabType.style.backgroundColor='lightgray';
-                        // btnTabType.style.borderBottom='0.5px solid black';
-                        // btnTabType.style.boxShadow='0 0 0 0';
+                        btnTabType.style.fontWeight ='normal';
+                        btnTabType.style.backgroundColor="rgb(233, 236, 239)";
+                        // borders
+                        btnTabType.style.borderBottom='0.5px solid black';
+                        btnTabType.style.boxShadow='0 0 0 0';
                         // ... en profite pour gérer l'affichage des tables associées
                         let tblChild=document.querySelector('.table--tabtype[parent_id="'+btnTabType.id+'"]');
                         if(tblChild){
@@ -575,15 +839,15 @@ document.addEventListener("DOMContentLoaded", function(event){
                     }
                 })
             }
-            //
+            /* -- || ABANDONNEE (archivage dans la base) || --
             if(htmlBtnSwitchArchive){
-                htmlBtnSwitchArchive.innerHTML='<i class="ri-eye-line"></i>&ensp;Récents seulement';
-                // document.querySelector('#btn--show-hide--archive').innerHTML='<i class="ri-eye-line"></i>&ensp;Récents seulement';
+                htmlBtnSwitchArchive.innerHTML='<i class="far fa-eye"></i>&ensp;Récents seulement';
+                // document.querySelector('#btn--show-hide--archive').innerHTML='<i class="far fa-eye"></i>&ensp;Récents seulement';
                 showhideArchive();
             }
+            */
         }
     }
-
     //----------------------------------------------------------------------
     // *** FIN - Gestion de l'affichage des pages relatives aux onglets ***
     //----------------------------------------------------------------------
@@ -592,46 +856,106 @@ document.addEventListener("DOMContentLoaded", function(event){
     //----------------------------------------------------
     // *** DEBUT - Gestion de l'affichage des modales ***
     //----------------------------------------------------
-    let arBtnShowModal = document.querySelectorAll('.btn--showmodal');
+    // DESCRIPTION DU FONCTIONNEMENT
+    // - le bouton d'affichage d'une modale se doit d'être défini tel que :
+    //      class:              'btn--showmodal'
+    //      attr:               data_type=
+    //      attr:               data_id=
+    // - la modale associée se doit d'être définie tel que :
+    //      id:                 'modal--{data_type}--{data_id}'
+    // - le bouton de masquage d'une modale... :
+    //      class:              'btn--hidemodal'
+    //      attr:               parent_id={modal_id}='modal--{data_type}--{data_id}'
+    // - tous les containers à masquer... :
+    //      id et/ou class:     'div--2hide-ifmodal'
+    let arBtnShowModal=document.querySelectorAll('.btn--showmodal');
     if(arBtnShowModal.length>0){
         arBtnShowModal.forEach(btn => {
             btn.onclick=showModal;
         })
 
         function showModal(){
-            document.querySelector('#div--2hide-ifmodal').style.display="none";
-            document.querySelector('#modal--'+this.getAttribute('data_type')+'--'+this.getAttribute('data_id')).style.display="";
-            //
-            document.querySelector('#btn--modal--closing').style.display="";
-            //
-            document.querySelector('#section--header').classList.add("disabledelements");
-            document.querySelector('#banner').classList.add("disabledelements");
+            // Cache TOUS les containers pouvant exister
+            let htmlMainItem2Hide=document.querySelector('#div--2hide-ifmodal');
+            if(htmlMainItem2Hide){
+                htmlMainItem2Hide.style.display="none";
+            }
+            let arMainItems=document.querySelectorAll('.div--2hide-ifmodal');
+            if(arMainItems.length>0){
+                arMainItems.forEach(htmMainItem => {
+                    htmMainItem.style.display="none";
+                });
+            }
+            // Affiche LA modale se devant d'exister selon les règles de conception
+            let htmlModal2Show=document.querySelector('#modal--'+this.getAttribute('data_type')+'--'+this.getAttribute('data_id'));
+            if(htmlModal2Show){
+                htmlModal2Show.style.display="";
+            }
+            // Affiche le Bouton X de fermeture si celui-ci n'est pas défini sur la modale,
+            // mais en position fixe dans le BASE.html.twig ...
+            let htmlBtnClosingOfModal=document.querySelector('#btn--closing--modal--'+this.getAttribute('data_type')+'--'+this.getAttribute('data_id'));
+            if(htmlBtnClosingOfModal){
+                htmlBtnClosingOfModal.style.display="";
+            }
+            let htmlBtnClosing=document.querySelector('#btn--modal--closing');
+            if(htmlBtnClosing){
+                htmlBtnClosing.style.display="";
+            }
+            // Désactive le HEADER et le BANNER, pour interdire les actions qu'ils proposent
+            let htmHeader=document.querySelector('#section--header');
+            if(htmHeader){
+                htmHeader.classList.add("disabledelements");
+            }
+            let htmlBanner=document.querySelector('#banner');
+            if(htmlBanner){
+                htmlBanner.classList.add("disabledelements");
+            }
         }
     }
     // Gestion de l'action sur le bouton FERMER des Modal
-    let arBtnHideModal = document.querySelectorAll('.btn--hidemodal');
+    let arBtnHideModal=document.querySelectorAll('.btn--hidemodal');
     if(arBtnHideModal.length>0){
         arBtnHideModal.forEach(btn => {
             btn.onclick=hideModal;
         })
 
         function hideModal(){
-            let htmlModalShown = document.querySelector('#'+this.getAttribute('parent_id'));
+            // RE-affiche TOUS les containers pouvant exister
+            let htmlMainItem2Hide=document.querySelector('#div--2hide-ifmodal');
+            if(htmlMainItem2Hide){
+                htmlMainItem2Hide.style.display="";
+            }
+            let arMainItems=document.querySelectorAll('.div--2hide-ifmodal');
+            if(arMainItems.length>0){
+                arMainItems.forEach(htmMainItem => {
+                    htmMainItem.style.display="";
+                });
+            }
+            // RE-cache LA modale se devant d'exister selon les règles de conception
+            let htmlModalShown=document.querySelector('#'+this.getAttribute('parent_id'));
+            // ... si elle existe, la ferme...
             if(htmlModalShown){
                 htmlModalShown.style.display="none";
             }
-            else{
-                let arModal=document.querySelectorAll('.modal--big');
-                arModal.forEach(htmlModal => {
-                    htmlModal.style.display="none";
-                });
+            // RE-cache le Bouton X de fermeture SI celui-ci n'est pas défini sur la modale,
+            // mais en position fixe dans le BASE.html.twig ...
+            let htmlBtnClosingOfModal=document.querySelector('#btn--closing--modal--'+this.getAttribute('data_type')+'--'+this.getAttribute('data_id'));
+            if(htmlBtnClosingOfModal){
+                htmlBtnClosingOfModal.style.display="none";
             }
-            //
-            document.querySelector('#btn--modal--closing').style.display="none";
-            document.querySelector('#div--2hide-ifmodal').style.display="";
-            //
-            document.querySelector('#section--header').classList.remove("disabledelements");
-            document.querySelector('#banner').classList.remove("disabledelements");
+            let htmlBtnClosing=document.querySelector('#btn--modal--closing');
+            if(htmlBtnClosing){
+                htmlBtnClosing.style.display="none";
+            }
+            // Re-active le HEADER et le BANNER, pour libérer les actions qu'ils proposent
+            let htmHeader=document.querySelector('#section--header');
+            if(htmHeader){
+                htmHeader.classList.remove("disabledelements");
+            }
+            let htmlBanner=document.querySelector('#banner');
+            if(htmlBanner){
+                htmlBanner.classList.remove("disabledelements");
+            }
         }
     }
     //--------------------------------------------------
@@ -643,14 +967,13 @@ document.addEventListener("DOMContentLoaded", function(event){
     // *** DEBUT - Gestion de la copie d'un' ID dans le Clipboard ***
     //----------------------------------------------------------------
     // /!\ La copie dans le presse-papiers ne fonctionne pas si il y a enchaînement avec HREF
-    let arHtml_CopyId2Clipboard = document.querySelectorAll('.html--copyidtoclipboard');
+    let arHtml_CopyId2Clipboard=document.querySelectorAll('.html--copyidtoclipboard');
     if(arHtml_CopyId2Clipboard.length>0){
         arHtml_CopyId2Clipboard.forEach(html => {
-            html.onclick = copyId2Clipboard;
+            html.onclick=copyId2Clipboard;
         })
 
         function copyId2Clipboard(){
-            // console.log(this.id);
             navigator.permissions.query({name: "clipboard-write"}).then(result => {
                 if (result.state == "granted" || result.state == "prompt") {
                     navigator.clipboard.writeText(this.id)
@@ -697,52 +1020,101 @@ document.addEventListener("DOMContentLoaded", function(event){
     //-----------------------------------------------------------------
 
 
-    //------------------------------------------------------------
-    // *** DEBUT - Gestion de l'affichage filtré (par Région) ***
-    //------------------------------------------------------------
+    //---------------------------------------------------------
+    // ***      DEBUT - Gestion de l'affichage filtré      ***
+    // *** (Liste déroulante, Tableau, ... tout conteneur) ***
+    //---------------------------------------------------------
     let arSelectFilter=document.querySelectorAll('.select--filtered');
     if(arSelectFilter){
         arSelectFilter.forEach(element => {
             // Définit sélectionné par défaut l'option insélectionnable (titre colonne)
             element.selectedIndex=element.options[0]
-            //
+            element.onchange=goFiltering;
+        });
+
+        function goFiltering(){
+            funSelectOption(this);
+        }
+    }
+
+    function funSelectOption(htmlSelectFilter){
+        let sFilterSelected=htmlSelectFilter.options[htmlSelectFilter.selectedIndex];
+        // gère l'affichage des lignes
+        let arContainer2ApplyFilter=document.querySelectorAll('[parent_id="'+htmlSelectFilter.id+'"]');
+        arContainer2ApplyFilter.forEach(element => {
+            if(sFilterSelected.value==''
+                || element.classList.contains(htmlSelectFilter.id+'_'+sFilterSelected.value)
+                || element.classList.contains(htmlSelectFilter.id+'_')
+            ){
+                element.style.display="table-row";
+            }
+            else{
+                element.style.display="none";
+
+                // Si l'élément précédemment sélectionné est exclu par le filtre,
+                // affiche le 1er élément de la liste filtrée (souvent un Placeholder)
+                try {
+                    let optionsProperty=element.parentNode.options
+                    if(optionsProperty[element.parentNode.selectedIndex]==element){
+                        element.parentNode.selectedIndex=0;
+                    }
+                } catch (error) {}
+            }
+        });
+        // gère l'affichage de l'élément 'liste déroulante' qui fait office de titre de colonne...
+        if(sFilterSelected.value==''){
+            // ... sélection de 'ALL' si présent (value='')
+            htmlSelectFilter.options[0].innerHTML=htmlSelectFilter.options[0].getAttribute('default_value');//'Région';
+        }
+        else{
+            // ... sélection d'une Option
+            htmlSelectFilter.options[0].innerHTML=htmlSelectFilter.options[0].getAttribute('default_value')+' : '+sFilterSelected.innerHTML;
+        }
+        htmlSelectFilter.selectedIndex=htmlSelectFilter.options[0];
+        //
+    }
+    //---------------------------------------------------------
+    // ***       FIN - Gestion de l'affichage filtré       ***
+    // *** (Liste déroulante, Tableau, ... tout conteneur) ***
+    //---------------------------------------------------------
+
+
+    //-------------------------------------------------------------------------
+    // *** DEBUT - Gestion de l'affichage du filtre, si sélection inversée ***
+    //-------------------------------------------------------------------------
+    let arSelectBackFilter=document.querySelectorAll('.select--filter--back');
+    if(arSelectBackFilter){
+        arSelectBackFilter.forEach(element => {
             element.onchange=function(){
                 let sFilterSelected=this.options[this.selectedIndex];
-                // gère l'affichage des lignes
-                let arTR4Filter=document.querySelectorAll('[parent_id="'+this.id+'"]');
-                arTR4Filter.forEach(element => {
-                    if(sFilterSelected.value==''
-                        || element.classList.contains(this.id+'_'+sFilterSelected.value)
-                        || element.classList.contains(this.id+'_')
-                    ){
-                        element.style.display="table-row";
+                let sParent_id=sFilterSelected.getAttribute('parent_id');
+                let sFilter=sFilterSelected.getAttribute('class');
+                let htmlSelectFilter=document.querySelector('#'+sParent_id);
+                //
+                if(sParent_id){
+                    let sSelectFilter=sFilter.substring(sParent_id.length+1)
+                    // affiche le bon filtre correspondant à l'option choisi dans la liste filtrée
+                    htmlSelectFilter.forEach(element => {
+                        if(element.value==sSelectFilter){
+                            htmlSelectFilter.selectedIndex=element.index;
+                        }
+                    });
+                    //
+                    if(funSelectOption){
+                        funSelectOption(htmlSelectFilter);
                     }
-                    else{
-                        console.log('non');
-                        element.style.display="none";
-                    }
-                });
-                // gère l'affichage de l'élément 'liste déroulante' qui fait office de titre de colonne...
-                if(sFilterSelected.value==''){
-                    // ... sélection de 'ALL' si présent (value='')
-                    this.options[0].innerHTML=this.options[0].getAttribute('default_value');//'Région';
                 }
-                else{
-                    // ... sélection d'une Option
-                    this.options[0].innerHTML=this.options[0].getAttribute('default_value')+' : '+sFilterSelected.innerHTML;
-                }
-                this.selectedIndex=this.options[0]
             }
         });
     }
-    //--------------------------------------------------------
-    // *** FIN - Gestion de l'affichage filtré par Région ***
-    //--------------------------------------------------------
+    //-----------------------------------------------------------------------
+    // *** FIN - Gestion de l'affichage du filtre, si sélection inversée ***
+    //-----------------------------------------------------------------------
 
 
-    //------------------------------------------------------------
-    // *** DEBUT - Gestion de l'affichage filtré (par Région) ***
-    //------------------------------------------------------------
+    //------------------------------------------------------
+    // *** DEBUT - Gestion de l'activation par Checkbox ***
+    //------------------------------------------------------
     let htmlSwitcher=document.querySelectorAll('.cb--switcher');
     if(htmlSwitcher){
         htmlSwitcher.forEach(element => {
@@ -754,25 +1126,25 @@ document.addEventListener("DOMContentLoaded", function(event){
             switchStatusGO(this);
         }
         function switchStatusGO(switcher){
-            let arChildren=document.querySelectorAll('.switcher--target[parent_id="'+switcher.id+'"]');
-            arChildren.forEach(element => {
-                element.disabled = switcher.checked == false;
+            // ... pour tous les "enfants" activables (propriété DISABLED)
+            let arChildren_disabled=document.querySelectorAll('.switcher--disabled[parent_id="'+switcher.id+'"]');
+            arChildren_disabled.forEach(element => {
+                element.disabled=switcher.checked == false;
             });
-            
-            // spécificité page CLAIM_CREATE
-            let arRadio=document.querySelectorAll('[name="claim_form[priority_departure]"]');
-            if(arRadio){
-                // arRadio.forEach(element => {
-                //     element.disabled = switcher.checked;
-                // })
-                document.querySelector('#claim_form_priority_departure_0').checked=switcher.checked;
+            // ... pour tous les "enfants" sélectionnables (propriété CHECKED)
+            let arChildren_checked=document.querySelectorAll('.switcher--checked[parent_id="'+switcher.id+'"]');
+            if(arChildren_checked){
+                arChildren_checked.forEach(element => {
+                    if(switcher.checked || element.id.indexOf('_form_')<0){
+                        element.checked=switcher.checked;
+                    }
+                })
             }
-            // let htmlRadio_0=document.querySelector('#claim_form_priority_departure_0');
         }
     }
-    //--------------------------------------------------------
-    // *** FIN - Gestion de l'affichage filtré par Région ***
-    //--------------------------------------------------------
+    //----------------------------------------------------
+    // *** FIN - Gestion de l'activation par Checkbox ***
+    //----------------------------------------------------
 
 
 });

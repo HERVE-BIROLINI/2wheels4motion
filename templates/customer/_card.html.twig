@@ -1,0 +1,43 @@
+{% if obUser is not defined %}
+    {% set obUser=app.user %}
+{% endif %}
+    <div class="card--3D-horizontal col-12">
+        <!-- ... photo -->
+        {% set obUserPortrait=getuserportrait(obUser) %}
+        <!-- {#{% set obUserPortrait=getuserportrait(claim.customer.user) %}#} -->
+        <div class="d-flex flex-row justify-content-center mb-2 col-12 col-md-3 col-xl-12">
+            <img class="img--profile justify-self-start" alt="Photo de profil"
+                {% if obUserPortrait %}
+                src="{{ asset(obUserPortrait.pathname) }}"
+                {% else %}
+                src="{{ asset(sImgPath ~'misc/no-image.png') }}"
+                {% endif %}
+            >
+        </div>
+        <!-- ... coordonnées -->
+        <div class="d-flex flex-column justify-content-center col-12 col-md-9 col-xl-12">
+            <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                <b class="col-12 col-md-4 col-xl-12">Nom :</b>
+                <span class="pl-4 col-12 col-md-8 col-xl-12">
+                    {{ obUser.lastname~' '~obUser.firstname }}
+                    <!-- {#{{ claim.customer.user.lastname~' '~claim.customer.user.firstname }}#} -->
+                </span>
+            </div>
+            <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                <b class="col-12 col-md-4 col-xl-12">Courriel :</b>
+                <a class="pl-4 col-12 col-md-8 col-xl-12" href="{{ 'mailto:' ~ obUser.email }}">
+                    {{ obUser.email }}
+                    <!-- {#<a class="pl-4 col-12 col-md-8 col-xl-12" href="{{ 'mailto:' ~ claim.customer.user.email }}">#} -->
+                    <!-- {#{{ claim.customer.user.email }}#} -->
+                </a>
+            </div>
+            <div class="d-flex flex-row flex-wrap justify-content-between col-12">
+                <b class="col-12 col-md-6 col-xl-12">Téléphone :</b>
+                <a class="pl-4 col-12 col-md-6 col-xl-12" href="{{ 'tel:' ~obUser.phone }}">
+                    {{ obUser.phone }}
+                    <!-- {#<a class="pl-4 col-12 col-md-6 col-xl-12" href="{{ 'tel:' ~claim.customer.user.phone }}">#} -->
+                    <!-- {#{{ claim.customer.user.phone }}#} -->
+                </a>
+            </div>
+        </div>
+    </div>

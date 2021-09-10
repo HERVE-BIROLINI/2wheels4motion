@@ -1,6 +1,6 @@
 <!-- settings variables for Icon managing -->
 {% set sImgPath="build/images/" %}
-{% set sFaviconFullname=sImgPath ~ "banner/favicon.png" %}
+{% set sFaviconFullname=sImgPath ~ "banner/logo.png" %}
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -9,28 +9,43 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- -->
-        <meta name="description" content="Annuaire moto-taxi taxi-moto toute la France"/>
+        <meta name="description" content="Annuaire moto-taxi taxi-moto motos-taxis taxis-motos France"/>
         <meta name="author" content="BIROLINI Herve"/>
         
-        <link rel="icon" type="image/png" href="{{ asset(sFaviconFullname) }}"/>
+        <link rel="SHORTCUT ICON" type="image/png" href="{{ asset(sImgPath ~ 'banner/favicon.png') }}"/>
+        <!-- <link rel="icon" type="image/png" href="{{ asset(sFaviconFullname) }}"/> -->
         <title>{% block title %}2 Wheels 4 Motion{% endblock %}</title>
+        
+
+        <!-- API Google MAPS (INUTILE) -->        
+        <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+        <script src="https://www.gstatic.com/external_hosted/handlebars/v4.7.6/handlebars.min.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> -->
+        <!-- <link href="locatorplus.css" rel="stylesheet"> -->
+        <!-- <script src="locatorplus.js"></script> -->
+
+
         {# Run `composer require symfony/webpack-encore-bundle`
             and uncomment the following Encore helpers to start using Symfony UX
         #}
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
-        <!-- LINK nécessaire pour bénéficier de la balise I, de CDN Font Awesome -->
-        <!-- <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/> -->
     </head>
 
     <body>
 
         <!-- Bouton "fixe" à afficher en même temps que toute Modale, pour fermeture de celle-ci -->
-        <div class="btn--circle btn--hidemodal modal--closing" id="btn--modal--closing" style="display:none;">X</div>
+        <!-- <div class="btn--circle btn--hidemodal modal--closing" id="btn--modal--closing" style="display:none;">X</div> -->
         
         <!-- Ruban horizontal pour le Header -->
+        {% if controller_func is defined and 
+            (controller_func=='ChangePicture' or controller_func=='ChangePwd')
+        %}
+        <header class="disabledelements" id="section--header">
+        {% else %}
         <header id="section--header">
+        {% endif %}
             <div class="align-self-end mt-1 mr-3">
                 {% if app.user %}
                 <b>Bonjour et bienvenue {{ app.user.firstname }}</b>
@@ -42,7 +57,7 @@
             <div class="container--nav">
                 <!-- DEBUT Logo & Marque -->
                 <div id="nav--brand">
-                    <a href="{{ path('homepage') }}"><img class="nav--logo" src="{{ asset(sFaviconFullname) }}" alt="logo annuaire moto-taxi"></img></a>
+                    <a href="{{ path('homepage_index') }}"><img class="nav--logo" src="{{ asset(sFaviconFullname) }}" alt="logo annuaire moto-taxi"></img></a>
                     <div class="nav--words">
                         <h4>2Wheels4Motion:</h4>
                         <h5 class="ml-2">"Les transferts qui (r)assurent"</h5>
@@ -59,8 +74,8 @@
                         <!-- Menus 'permanents' -->
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown">
-                                <a class="nav-link" href="{{ path('homepage') }}">
-                                    Le Taxi-moto
+                                <a class="nav-link" href="{{ path('homepage_index') }}">
+                                    Le moto-taxi
                                 </a>
                             </li>
                             <li class="nav-item dropdown">
@@ -83,7 +98,8 @@
                             <!-- page(s) profil utilisateur -->
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ path('profile_user', {'id': app.user.id}) }}">
-                                    <i class="ri-profile-line"></i>&ensp;{{ app.user.firstname }} {{ app.user.lastname }}
+                                    <i class="ri-account-circle-line"></i>
+                                    &ensp;{{ app.user.firstname }} {{ app.user.lastname }}
                                 </a>
                             </li>
                             <!-- page(s) profil administrateur -->
@@ -100,17 +116,17 @@
                             {% endif %}
                             <!-- Lien de déconnexion -->
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_logout') }}">
+                                <a class="nav-link" href="{{ path('security_logout') }}">
                                     <i class="ri-logout-circle-r-line"></i>&ensp;Déconnexion
                                 </a>
-                                <!-- <a class="nav-link" href="{#{{ path('app_logout') }}#}">Déconnexion</a> -->
+                                <!-- <a class="nav-link" href="{#{{ path('security_logout') }}#}">Déconnexion</a> -->
                             </li>
                         </ul>
                         <!-- Si l'utilisateur N'est PAS encore identifié -->
                         {% else %}
                         <ul class="navbar-nav ml-0">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_login') }}">
+                                <a class="nav-link" href="{{ path('security_login') }}">
                                     <i class="ri-login-box-line"></i>&ensp;Connexion
                                 </a>
                             </li>
@@ -127,8 +143,15 @@
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
+
+            <!-- API Google MAPS (INUTILE) -->
+            <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&callback=initMap&libraries=places,geometry&channel=GMPSB_locatorplus_v4_cABCDE" async defer></script> -->
         {% endblock %}
 
-        <div class="btn--circle" id="uptotop"><a href="#section--header" title="title"><i class="ri-arrow-up-line"></i></a></div>
+        <div class="btn--action" id="uptotop" style='display:none;'><a href="#banner" title="title"><i class="ri-arrow-up-line"></i></a></div>
     </body>
+
+    <footer style="display:flex;flex:row;height:75px;font-weight: bolder;background-color: rgb(92, 89, 89);color:white;justify-content: center;align-items:center;">
+        FOOTER de merde !....
+    </footer>
 </html>

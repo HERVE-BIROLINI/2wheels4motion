@@ -38,7 +38,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         $entityManager=$this->getDoctrine()->getManager();
@@ -59,7 +59,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         $entityManager = $this->getDoctrine()->getManager();
@@ -84,7 +84,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         $entityManager = $this->getDoctrine()->getManager();
@@ -116,7 +116,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         //
@@ -168,7 +168,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         return $this->render('typeplace/read.html.twig', [
@@ -186,7 +186,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
         //
         if(!$obTypeplace=$typeplaceRepository->findOneBy(['id'=>$typeplace])){
@@ -244,7 +244,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         if($this->isCsrfTokenValid('delete'.$typeplace->getId(), $request->request->get('_token'))) {
@@ -277,7 +277,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         //
@@ -345,7 +345,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         return $this->render('remarkableplace/read.html.twig', [
@@ -363,7 +363,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
         //
         if(!$obRemarkableplace=$remarkableplaceRepository->findOneBy(['id'=>$remarkableplace])){
@@ -429,7 +429,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         if($this->isCsrfTokenValid('delete'.$remarkableplace->getId(), $request->request->get('_token'))) {
@@ -462,7 +462,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         //
@@ -530,7 +530,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         return $this->render('flatrate/read.html.twig', [
@@ -548,7 +548,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
         //
         if(!$obTypeplace=$flatrateRepository->findOneBy(['id'=>$flatrate])){
@@ -622,7 +622,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         if($this->isCsrfTokenValid('delete'.$flatrate->getId(), $request->request->get('_token'))) {
@@ -655,7 +655,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
         
         //
@@ -694,7 +694,7 @@ class AdminController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$this->getUser() or !in_array("ROLE_ADMIN",$this->getUser()->getRoles())){
             // ... renvoi vers la page de connection
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
         
         //

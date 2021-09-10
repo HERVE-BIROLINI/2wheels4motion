@@ -1,0 +1,762 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commandez votre prochaine course{% endblock %}
+
+{% block body %}
+
+<!-- Claim Controller banner -->
+{{ include('claim/_banner.html.twig') }}
+
+<!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+{{ include('_flash.html.twig') }}
+
+
+<!-- ***** EDITEUR DU DEVIS ***** -->
+<!-- **************************** -->
+<form class="paragraph--large div--2hide-ifmodal" id="form--tender" name="form--tender" method="post" novalidate>
+
+    {% set customer=claim.customer %}
+    <!-- Défini des variables de manipulation des données suite à retour dans le formulaire -->
+    {% if driver_flatratechoosen is defined and driver_flatratechoosen!=null %}
+        {% set flatrate_selected=driver_flatratechoosen %}
+    {% elseif claim.flatrate is defined %}
+        {% set flatrate_selected=claim.flatrate %}
+    {% else %}
+        {{ dump('/!\ DEBUG /!\ : POURQUOI NI driver_flatratechoosen NI claim.flatrate NE SEMBLENT DEFINIS ???') }}
+    {% endif %}
+    <!-- instanciation de la variable pour maintien "en vie" hors boucle... -->
+    {% set priceperkm=null %}
+    <!-- instanciation des variables pour la fenêtre de PREVIEW... -->
+    {% set preview_departureattime='??' %}
+    {% set preview_arrivalattime='??' %}
+    {% set preview_flatratelabel='??' %}
+    {% set preview_comments=null %}
+    {% set preview_racedistance='??' %}
+    {% set preview_priceperkm=null %}
+    {% set preview_pickupcost=null %}
+    {% set preview_tvalabel='??' %}
+    {% set preview_raceprice='??' %}
+
+    <!-- ** EN-TETE ** -->
+    <div style="width:100%;display:flex;flex-direction:row;flex-wrap:wrap;margin-top:1em;justify-content:space-evenly;">
+        <!--  * TRANSPORTEUR * -->
+        <div class='col-12 col-md-7' style="display:flex;flex-direction:column;width:60%;font-weight:bolder;">
+            <h3><u>Transporteur :</u></h3>
+            <div class='mb-3' style="display:flex;flex-direction:row;flex-wrap:wrap;">
+                <div class='col-12 col-xl-7 mb-3' style="display:flex;flex-direction:column;padding-inline:1em;">
+                    <!-- <h3><u>Société de transport (T3P) :</u></h3><br> -->
+                    <u>- Chauffeur (VMDTR) :</u>
+                    {{ user.firstname~' '~user.lastname }}<br>
+                    {{ 'Carte pro. n° : '~driver.vmdtrnumber }}<br>
+                    {{ company.road }}<br>
+                    {{ company.zip~' '~company.city }}<br>
+                    {{ 'Tél. : '~user.phone }}<br>
+                    {{ ' @ : '~user.email }}<br>
+                </div>
+                <div class='col-12 col-xl-5 mb-3' style="display:flex;flex-direction:column;padding-inline:1em;">
+                    <u>- Entreprise (T3P) :</u>
+                    {{ company.name }}<br>
+                    {{ 'SIREN : '~company.siren~' '~company.nic }}<br>
+                </div>
+            </div>
+        </div>
+        <!--  * CLIENT * -->
+        <div class='col-12 col-md-5 mb-2' style="display:flex;flex-direction:column;width:33%;font-weight:bolder;padding-inline:1em;">
+            <h3><u>Client :</u></h3><br>
+            {{ customer.user.firstname~' '~customer.user.lastname }}<br>
+            {{ customer.road }}<br>
+            {{ customer.zip~' '~customer.city }}<br>
+            {{ 'Tél. : '~customer.user.phone }}<br>
+            {{ ' @ : '~customer.user.email }}<br>
+        </div>
+    </div>
+
+    <!-- ** TITRE ** -->
+    <div style="margin:4em;">
+        <h2>Devis n° {{ "now"|date("Ym")~'/'~company.siren~'#'}}{{driver.tenders|length + 1 }},<br>
+            fait le {{ "now"|date('d/m/Y') }}
+        </h2>
+    </div>
+    
+    <!-- ** CORPS ** -->
+    <!--  * DEMANDE DE RESERVATION D'ORIGINE * -->
+    <h2 class="mt-4 mb-2"><u>Réservation :</u></h2>
+    <div class="d-flex flex-row align-items-center pl-3">Effectuée le :&emsp;<b>{{ claim.claimdatetime|date('d/m/Y') }}</b></div>
+    <div class="d-flex flex-row align-items-center pl-3">à :&emsp;<b>{{ claim.claimdatetime|date('H:i') }}</b></div>
+    <div class="pl-4"><i>Demande de course #{{ claim.id }}, faite à partir de l'Annuaire des motos-taxis de France (<a href="https://www.2Wheels4Motion.fr">2Wheels4Motion.fr</a>)</i></div>
+    
+    <!--  * PRISE EN CHARGE * -->
+    <h2 class="mt-4 mb-2"><u>Prise en charge :</u></h2>
+    <div class="d-flex flex-row align-items-center col-12 pl-3 my-1">le :&emsp;<b>{{ claim.journeydate|date('d/m/Y') }}</b></div>
+    <div class="d-flex flex-column my-1">
+        <div class="d-flex flex-row align-items-center col-12 pl-3">
+            à :&emsp;
+            <!-- utilisation TwigFilter date_modify : '+ 1 day 2 hours 3 mins' -->
+            {% if claim.prioritydeparture %}
+                {% if claim.departureattime %}
+                    {% set preview_departureattime=claim.departureattime|date('H:i') %}
+            <b>{{ claim.departureattime|date('H:i') }}</b>
+                {% else %}
+                    {% set preview_departureattime=claim.journeytime|date('H:i') %}
+            <b>{{ claim.journeytime|date('H:i') }}</b>
+                {% endif %}
+            {% else %}
+            <input type="time" class="form-control col-3" id="driver--departureattime" name="driver--departureattime"
+                {% if mapsResult is defined and mapsResult != null  %}
+                    {# juste au cas ou le Driver aurait modifié l heure proposée par Google Maps #}
+                    {% if driver_departureattime %}
+                        {% set departureattime = driver_departureattime %}
+                    {% elseif claim.arrivalattime %}
+                        {% set departureattime = claim.arrivalattime|date_modify('- ' ~ mapsResult.duration.text) %}
+                    {% elseif claim.journeytime %}
+                        {% set departureattime = claim.journeytime|date_modify('- ' ~ mapsResult.duration.text) %}
+                        {# ... mouais.... #}
+                    {% else %}
+                        {% set departureattime = claim.departureattime|date_modify('- ' ~ mapsResult.duration.text) %}
+                    {% endif %}
+                    {% set preview_departureattime=departureattime|date('H:i') %}
+                value="{{ preview_departureattime }}"
+                {% elseif driver_racetime is defined and driver_racetime != null %}
+                    {# juste au cas ou le Driver aurait modifié l heure proposée par Google Maps #}
+                    {% if driver_departureattime %}
+                        {% set departureattime = driver_departureattime %}
+                    {% elseif claim.arrivalattime %}
+                        {% set departureattime = claim.arrivalattime|date_modify('- ' ~ driver_racetime) %}
+                    {% elseif claim.journeytime %}
+                        {% set departureattime = claim.journeytime|date_modify('- ' ~ driver_racetime) %}
+                    {# ... mouais.... #}
+                    {% else %}
+                        {% set departureattime = claim.departureattime|date_modify('- ' ~ driver_racetime) %}
+                    {% endif %}
+                    {% set preview_departureattime=departureattime|date('H:i') %}
+                value="{{ preview_departureattime }}"
+                {% elseif driver_departureattime is defined and driver_departureattime != null %}
+                    {% set departureattime = driver_departureattime %}
+                    {% set preview_departureattime=departureattime|date('H:i') %}
+                value="{{ preview_departureattime }}"
+                {% endif %}
+            >
+            <b>&emsp;environ</b>
+            &emsp;(&ensp;
+                <img src="{{ asset(sImgPath ~'misc/warning.png') }}" alt="panneau d'avertissement"
+                    style="height:22px;width:22px;"
+                >&ensp;
+                Google Maps)
+            {% endif %}
+        </div>
+        {% if error_departureattime is defined and error_departureattime is not null and error_departureattime != false %}
+        <span class="d-block">
+            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+            <small class="form-error-message">Vous devez préciser un horaire de prise en charge.</small>
+        </span>
+        {% endif %}
+    </div>
+    <div class="d-flex flex-row align-items-center col-12 pl-3 my-1">
+        de/du :&emsp;
+        {% if claim.remarkableplacefrom != null %}
+        <b>{{ claim.remarkableplacefrom.label }}</b>
+        {% else %}
+        <b>{{ claim.fromroad~', '~claim.fromzip~' '~claim.fromcity }}</b>
+        {% endif %}
+    </div>
+    
+    <!--  * DESTINATION * -->
+    <h2 class="mt-4 mb-2"><u>Destination :</u></h2>
+    <div class="d-flex flex-row align-items-center col-12 pl-3">
+        vers :&emsp;
+        {% if claim.remarkableplaceto != null %}
+        <b>{{ claim.remarkableplaceto.label }}</b>
+        {% else %}
+        <b>{{ claim.toroad~', '~claim.tozip~' '~claim.tocity }}</b>
+        {% endif %}
+    </div>
+    <div class="d-flex flex-column">
+        <div class="d-flex flex-row flex-wrap align-items-center col-12">
+            {% if claim.prioritydeparture == true %}
+            <div class="d-flex flex-row col-sm-5 col-md-4 col-lg-3 col-xl-2 ml-0">
+            {% endif %}
+            <!--  -->
+                pour une arrivée à :&emsp;
+                {% if claim.prioritydeparture == false %}
+                    {% if claim.arrivalattime != null %}
+                        {% set preview_arrivalattime=claim.arrivalattime|date('H:i') %}
+                <b>{{ claim.arrivalattime|date('H:i') }}</b>
+                    {% else %}
+                        {% set preview_arrivalattime=claim.journeytime|date('H:i') %}
+                <b>{{ claim.journeytime|date('H:i') }}</b>
+                    {% endif %}
+                {% else %}
+            {% if claim.prioritydeparture == true %}
+            </div>
+            {% endif %}
+            <div class="d-flex flex-row flex-wrap align-items-center col-12 col-md-8 col-xl-8">
+                <div class="d-flex flex-row align-items-center col-8 col-sm-6 col-xl-4">
+                    <!-- Détermine si affiche le préfixe 'environ' (si Mise à dispo => non) -->
+                    <div class="d-flex flex-row col-6">
+                    {% if flatrate_selected and (flatrate_selected.label starts with 'Mise à dispo' == true) %}
+                    {% else %}
+                        <b>environ&emsp;</b>
+                    {% endif %}
+                    </div>
+                    <input type="time" class="form-control col-6" id="driver--arrivalattime" name="driver--arrivalattime"
+                        {% if flatrate_selected and (flatrate_selected.label starts with 'Mise à dispo' == true) %}
+                            {% set sHours=flatrate_selected|gethoursinlabel %}
+                            {% if claim.departureattime %}
+                                    {#
+                                        {% set preview_arrivalattime=claim.departureattime|date_modify("+ "~ sHours ~" hours")|date("H:i") %}
+                                    value='{{ claim.departureattime|date_modify("+ "~ sHours ~" hours")|date("H:i") }}'
+                                    #}
+                                {% set arrivalattime=claim.departureattime|date_modify("+ "~ sHours ~" hours")|date("H:i") %}
+                            {% elseif claim.journeytime %}
+                                    {#
+                                        {% set preview_arrivalattime=claim.journeytime|date_modify("+ "~ sHours ~" hours")|date("H:i") %}
+                                    value='{{ claim.journeytime|date_modify("+ "~ sHours ~" hours")|date("H:i") }}'
+                                    #}
+                                {% set arrivalattime=claim.journeytime|date_modify("+ "~ sHours ~" hours")|date("H:i") %}
+                            {% endif %}
+
+                            {% set preview_arrivalattime=arrivalattime|date('H:i') %}
+                        value="{{ preview_arrivalattime }}"
+
+
+                        {% elseif mapsResult is defined and mapsResult != null  %}
+                            {% if claim.departureattime %}
+                                {% set arrivalattime = claim.departureattime|date_modify('+ ' ~ mapsResult.duration.text) %}
+                            {% else %}
+                                {% set arrivalattime = claim.journeytime|date_modify('+ ' ~ mapsResult.duration.text) %}
+                            {% endif %}
+                            {% set preview_arrivalattime=arrivalattime|date('H:i') %}
+                        value="{{ arrivalattime|date('H:i') }}"
+
+
+                        {% elseif driver_arrivalattime is defined and driver_arrivalattime != null %}
+                            {% set arrivalattime = driver_arrivalattime %}
+                            {% set preview_arrivalattime=arrivalattime|date('H:i') %}
+                        value="{{ arrivalattime|date('H:i') }}"
+
+
+                        {% endif %}
+                    >
+                </div>
+                <div class="d-flex flex-row col-12 col-sm-6 col-lg-5">
+                    {% if flatrate_selected and (flatrate_selected.label starts with 'Mise à dispo' == true) %}
+                    &emsp;(Mise à disposition choisie)
+                    {% else %}
+                    &emsp;(&ensp;
+                    <img src="{{ asset(sImgPath ~'misc/warning.png') }}" alt="panneau d'avertissement"
+                        style="height:22px;width:22px;"
+                    >&ensp;
+                    Google Maps)
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% if error_arrivalattime is defined and error_arrivalattime is not null and error_arrivalattime != false %}
+        <span class="d-block">
+            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+            <small class="form-error-message">Vous devez préciser un horaire d'arrivée, approximatif...</small>
+        </span>
+        {% endif %}
+    </div>
+    
+    <!--  * DESTINATION * -->
+    {% if claim.comments != '' %}
+    <h2 class="mt-4 mb-2"><u>Commentaires du client :</u></h2>
+    <div class="d-flex flex-row align-items-center">
+        <img class="mx-3" src="{{ asset(sImgPath ~'misc/warning.png') }}" alt="panneau d'avertissement"
+            style="height:50px;width:50px;"
+        >
+        <span style="font-size:1.25em;font-weight:bold;font-style:italic;">{{ claim.comments }}</span>
+    </div>
+    {% endif %}
+
+    <!--  * FORFAIT * -->
+    <h2 class="mt-4 mb-2"><u>Forfait :</u></h2>
+    {% if claim.flatrate %}
+    <div class="d-flex flex-row flex-wrap align-items-center col-12">
+        Le client a(avait) opté pour le forfait :&emsp;
+        <b>{{ claim.flatrate.label }}</b>
+    </div>
+    {% endif %}
+    <!-- Zone des forfaits -->
+    <div class="d-flex flex-column justify-content-between">
+        <!-- bouton collapse/expand + Titre -->
+        <div class="d-flex flex-row align-items-center my-1" id="blk--FlatrateToggles">
+            <div class="d-flex flex-column justify-content-end m-1">
+                <!-- Img/Btn Plus -->
+                <div class="btn--circle" id="btn--expand">
+                    <img src="{{ asset(sImgPath ~'misc/plus.png') }}" alt="bouton de déroulement"
+                        class="imgbtn--plus-minus"
+                    >
+                </div>
+                <!-- Img/Btn Minus -->
+                <div class="btn--circle" id="btn--collapse">
+                    <img src="{{ asset(sImgPath ~'misc/minus.png') }}" alt="bouton d'enroulement"
+                        class="imgbtn--plus-minus"
+                    >
+                </div>
+            </div>
+            <label class='m-1 pt-1' id='lbl--FlatrateToggles' for="blk--FlatrateToggles">
+                { - défini par Javascript - }
+            </label>
+        </div>
+        <!-- Block Tableau des Flatrates (Forfaits) -->
+        {% if flatrates is defined and flatrates is not null %}
+        <table class="table table-striped" id="tbl--flatrates">
+            <thead class="thead--dark">
+                <tr class="TOUTES">
+                    <th></th>
+                    <th style="width:10%;">Choisir</th>
+                    <th style="width:15%;">Région</th>
+                    <th style="width:30%;">Libellé</th>
+                    <th style="width:15%;">Prix (euros)</th>
+                    <th style="width:30%;">Prise en charge incluse (forfait)</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for flatrate in flatrates %}
+                {% if (flatrate.label ends with "(hors forfait)") == false %}
+                <tr class="tr--filtered {{ 'select--region_'~flatrate.regioncode }}"
+                    parent_id="select--region"
+                >
+                    <td></td>
+                    <!-- Bouton(s) de radio -->
+                    <td>
+                        <label for="{{ flatrate.id }}">&emsp;
+                            <input type="radio" class="rb--flatrate" name="flatratechoosen" 
+                                value="{{ flatrate.id }}" id="{{ flatrate.id }}"
+                                label="{{ flatrate.label }}" price="{{ flatrate.price }}"
+                            {% if flatrate_selected==flatrate
+                                or (claim.flatrate == null and flatrate.pickupincluded == false)
+                            %}
+                                {% if flatrate_selected is not defined or flatrate_selected == false or 
+                                    (flatrate_selected is defined and flatrate_selected.pickupincluded == false)
+                                %}
+                                    {% set priceperkm=flatrate.price %}
+                                    {% set preview_priceperkm=priceperkm %}
+                                    {# ...si API Google Maps ne fonctionne pas, pour le PREVIEW... #}
+                                    {% if mapsResult == null %}
+                                        {% set preview_racedistance='??' %}
+                                    {% endif %}
+                                {% endif %}
+                                {% set preview_flatratelabel=flatrate.label %}
+                                checked='checked'
+                            {% endif %}
+                            >
+                        </label>
+                    </td>
+                    <!-- Région d'exercice associée au tarif -->
+                    <td>
+                        <label for="{{ flatrate.id }}">
+                        {% if flatrate.regioncode is defined and flatrate.regioncode is not null and flatrate.regioncode !='' %}
+                            {% set obRegion=getregionbycode(flatrate.regioncode) %}
+                            {{ obRegion.name }}
+                        {% else %}
+                            &emsp;&emsp;&emsp;-
+                        {% endif %}
+                        </label>
+                    </td>
+                    <!-- Decriptif du tarif -->
+                    <td>
+                        <label for="{{ flatrate.id }}">{{ flatrate.label }}</label>
+                    </td>
+                    <!-- Prix indicatif enregistré -->
+                    <td>
+                        <label for="{{ flatrate.id }}">&emsp;{{ flatrate.price }}</label>
+                    </td>
+                    <!-- Prise en charge -->
+                    <td>
+                        <div class="d-flex flex-row">
+                            <div class="col-4"></div>
+                            <div>
+                            {% if flatrate.pickupincluded %}
+                                <img class="img--boolean"
+                                    src="{{ asset(sImgPath ~'misc/true.png') }}"
+                                    alt="image pour booléen TRUE"
+                                >
+                            {% else %}
+                                <img class="img--boolean"
+                                    src="{{ asset(sImgPath ~'misc/false.png') }}"
+                                    alt="image pour booléen FALSE"
+                                >
+                            {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6"></td>
+                </tr>
+            </tfoot>
+        </table>
+        {% endif %}
+        <button class="btn btn-sm btn--red" type="reset" form="form--tender">
+            <i class="ri-arrow-go-back-line"></i>&ensp;Réinitialiser le formulaire
+        </button>
+    </div>
+
+    <!--  * CHIFFRAGE * -->
+    <h2 class="mt-5 mb-2"><u>Chiffrage de la course :</u></h2>
+    <div class="d-flex flex-column mt-2 mb-2 col-12 col-xl-6">
+        <!-- Description de la course -->
+        <div class="mb-1">
+            <label for="driver--comments">Description du tarif :</label>
+            <textarea class="form-control required" id="driver--comments" name="driver--comments" parent_id="rb--flatrate"
+                placeholder="Décrivez la prestation correspondant au tarif demandé"
+            >{% if driver_comments is defined and driver_comments != null and driver_comments != '' %}{% set preview_comments=driver_comments %}{{ driver_comments }}{% endif %}</textarea>
+            {% if error_label is defined and error_label is not null and error_label != false %}
+            <span class="d-block">
+                <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                <small class="form-error-message">Vous devez préciser au minimum le nombre de km évalué et le prix facturé au km...</small>
+            </span>
+            {% endif %}
+        </div>
+        <!-- Distance, Prix du kilomètre, et Coût prise en charge (masqués si FORFAIT) -->
+        <div id="div--multiplier-TotalPrice"
+            {% if priceperkm != null
+                or
+                (driver_flatratechoosen is defined and driver_flatratechoosen!=false and driver_flatratechoosen.label
+                    and (driver_flatratechoosen.label starts with 'par km' == true)
+                )
+                or
+                (claim.flatrate and claim.flatrate.label and (claim.flatrate.label starts with 'par km' == true))
+            %}
+            {% else %}
+            style="display:none;"
+            {% endif %}
+        >
+            <!-- "Evaluation" du kilométrage (API Google Maps) -->
+            <div class="d-flex flex-row flex-wrap align-items-center py-1">
+                <div class="col-12 col-sm-9 required">
+                    <label for="driver--racedistance">Nombre de kilomètres (selon Google Maps) :</label>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <input class="form-control input--multiplier-TotalPrice" type="number" name="driver--racedistance"
+                        id="driver--racedistance" multiplier_id="driver--priceperkm"
+                    {% if mapsResult is defined and mapsResult != null %}
+                        {% set preview_racedistance=(mapsResult.distance.value/1000)|round(0, 'ceil') %}
+                        value="{{ (mapsResult.distance.value/1000)|round(0, 'ceil') }}"
+                    {% elseif driver_racedistance is defined and driver_racedistance != null %}
+                        {% set preview_racedistance=driver_racedistance %}
+                        value="{{ driver_racedistance }}"
+                    {% elseif (driver_flatratechoosen is defined and driver_flatratechoosen!=false
+                                    and driver_flatratechoosen.label
+                                    and (driver_flatratechoosen.label starts with 'par km' == true)
+                                )
+                                or
+                                (claim.flatrate and claim.flatrate.label
+                                    and (claim.flatrate.label starts with 'par km' == true)
+                                )
+                    %}
+                        {% set preview_racedistance='??' %}
+                    {% endif %}
+                    >
+                </div>
+            </div>
+            {% if error_racedistance is defined and error_racedistance != false %}
+            <span class="d-block">
+                <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                <small class="form-error-message">Vous devez évaluer la distance.</small>
+            </span>
+            {% endif %}
+            <!-- Prix du kilomètre -->
+            <div class="d-flex flex-row flex-wrap align-items-center py-1">
+                <div class="col-12 col-sm-9 required">
+                    <label for="driver--priceperkm">Prix du kilomètre :</label>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <input class="form-control input--multiplier-TotalPrice" type="number" name="driver--priceperkm"
+                        id="driver--priceperkm" parent_id="rb--flatrate" multiplier_id="driver--racedistance"
+                    {% if driver_priceperkm is defined and driver_priceperkm != null and driver_priceperkm != '' %}
+                        value="{{ driver_priceperkm }}"
+                    {% elseif priceperkm is defined %}
+                        value={{ priceperkm }}
+                    {% endif %}
+                    >
+                </div>
+            </div>
+            <!-- Coût de la prise en charge -->
+            <div class="d-flex flex-row flex-wrap align-items-center py-1">
+                <div class="col-12 col-sm-9 required">
+                    <label for="driver--pickupcost">Coût de la prise en charge :</label>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <input class="form-control input--contributor-TotalPrice" type="number" name="driver--pickupcost"
+                        id="driver--pickupcost" parent_id="rb--flatrate" add2total_id="driver--raceprice"
+                    {% if driver_pickupcost is defined and driver_pickupcost != null and driver_pickupcost != '' %}
+                        {% set preview_pickupcost=driver_pickupcost %}
+                        value="{{ driver_pickupcost }}"
+                    {% elseif pickupcost is defined %}
+                        {% set driver_pickupcost=pickupcost.price %}
+                        {% set preview_pickupcost=driver_pickupcost %}
+                        value={{ pickupcost.price }}
+                    {% endif %}
+                    >
+                    {#<!-- value="{{ (driver_pickupcost/1000)|round(0, 'ceil') }}" -->#}
+                </div>
+            </div>
+        </div>
+        <!-- TVA -->
+        <div class="d-flex flex-row flex-wrap align-items-center py-1">
+            <div class="col-12 col-sm-3 required">
+                <label for="driver--racetva">TVA (incluse) :</label>
+            </div>
+            <div class="col-12 col-sm-9">
+                <select class="form-control" name="driver--racetva" id="driver--racetva">
+                {% for obTva in company.socialreason.tva %}
+                    {% if preview_tvalabel=='??' %}{% set preview_tvalabel=obTva.value~'% - '~obTva.comment %}{% endif %}
+                    <option value="{{ obTva.id }}" name="{{ obTva.value }}"
+                    {% if driver_racetva is defined and driver_racetva==obTva %}
+                        {% set preview_tvalabel=obTva.value~'% - '~obTva.comment %}
+                        selected
+                    {% endif %}
+                    >
+                    {{ obTva.value~'% - '~obTva.comment }}
+                    </option>
+                {% endfor %}
+                </select>
+            </div>
+        </div>
+        <!-- Prix (TOTAL) -->
+        <div class="d-flex flex-row flex-wrap align-items-center py-1">
+            <div class="col-12 col-sm-9 required">
+                <label for="driver--raceprice">Prix de la course :</label>
+            </div>
+            <div class="col-12 col-sm-3">
+                <input class="form-control" type="number" name="driver--raceprice"
+                    id="driver--raceprice" parent_id="rb--flatrate"
+                    parent_class="input--multiplier-TotalPrice"
+                    {% if driver_raceprice is defined and driver_raceprice != null and driver_raceprice != '' %}
+                        {% set preview_raceprice=driver_raceprice %}
+                    value="{{ driver_raceprice }}"
+                    {% elseif driver_flatratechoosen is defined and driver_flatratechoosen != null 
+                        and (driver_flatratechoosen.label starts with 'par km' == false)
+                    %}
+                        {% set preview_raceprice=driver_flatratechoosen.price %}
+                    value="{{ driver_flatratechoosen.price }}"
+                    {% elseif claim.flatrate is defined and claim.flatrate != null %}
+                        {% set preview_raceprice=claim.flatrate.price %}
+                    value="{{ claim.flatrate.price }}"
+                    {% elseif priceperkm and driver_pickupcost and mapsResult is defined and mapsResult != null %}
+                        {% set preview_raceprice=((mapsResult.distance.value/1000)|round(0, 'ceil') * priceperkm) + driver_pickupcost %}
+                    value="{{ ((mapsResult.distance.value/1000)|round(0, 'ceil') * priceperkm) + driver_pickupcost }}"
+                    {% endif %}
+                >
+            </div>
+        </div>
+        {% if error_raceprice is defined and error_raceprice!=false %}
+        <span class="d-block">
+            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+            <small class="form-error-message">Vous devez définir un prix pour la course.</small>
+        </span>
+        {% endif %}
+        <!--  -->
+        <div class="btns--row">
+            <!-- Bouton de visualisation -->
+            <a class="btn btn-sm btn--orange btn--showmodal"
+                id="showpreviewtender"
+                data_type="tender" data_id="current"
+            >
+                <i class="far fa-eye" title="Visualiser le devis"></i>&ensp;
+                Visualiser le devis
+            </a>
+            <!-- Bouton d'affichage d'une session Google Maps -->
+            <a class="btn btn-sm btn--green" target='_blank'
+                {% if help_directionurl is defined %}href="{{ help_directionurl }}"{% endif %}
+            >
+                <i class="fas fa-map-marked-alt"></i>&ensp;
+                Voir sur la carte Google Maps
+            </a>
+        </div>
+    </div>
+
+    <!-- * SUBMIT * -->
+    <div class="btns--row">
+        <!-- <button class="btn btn-sm btn--blue" type="submit" form="form--tender">
+            <i class="far fa-paper-plane"></i>&ensp;Envoyer le devis
+        </button> -->
+        <a class="btn btn-sm btn--secondary" href="{{ path('profile_driver') }}">
+            <i class="fas fa-times"></i>&ensp;Annuler
+        </a>
+    </div>
+</form>
+
+
+
+<!-- ***** MODALE DE PREVISUALISATION ***** -->
+<!-- ************************************** -->
+<div id="modal--tender--current" style="display:none;margin:3em;">
+    <!-- style="margin:3em;" -->
+    <!-- ** EN-TETE ** -->
+    <div style="width:100%;display:flex;flex-direction:row;flex-wrap:wrap;margin-top:1em;justify-content:space-evenly;">
+        <!--  * TRANSPORTEUR * -->
+        <div style="display:flex;flex-direction:column;width:60%;font-weight:bolder;padding-right:1em;">
+            <h3><u>Transporteur :</u></h3>
+            <div style="margin-bottom:3em;display:flex;flex-direction:row;flex-wrap:wrap;">
+                <div style="margin-bottom:1em;margin-right:2em;display:flex;flex-direction:column;padding-inline:1em;">
+                    <!-- <h3><u>Société de transport (T3P) :</u></h3><br> -->
+                    <u>- Chauffeur (VMDTR) :</u>
+                    {{ user.firstname~' '~user.lastname }}<br>
+                    {{ 'Carte pro. n° : '~driver.vmdtrnumber }}<br>
+                    {{ company.road }}<br>
+                    {{ company.zip~' '~company.city }}<br>
+                    {{ 'Tél. : '~user.phone }}<br>
+                    {{ ' @ : '~user.email }}<br>
+                </div>
+                <div style="margin-bottom:3em;display:flex;flex-direction:column;padding-inline:1em;">
+                    <u>- Entreprise (T3P) :</u>
+                    {{ company.name }}<br>
+                    {{ 'SIREN : '~company.siren~' '~company.nic }}<br>
+                </div>
+            </div>
+        </div>
+        <!--  * CLIENT * -->
+        <div style="display:flex;flex-direction:column;width:33%;font-weight:bolder;">
+            <h3><u>Client :</u></h3><br>
+            {{ customer.user.firstname~' '~customer.user.lastname }}<br>
+            {{ customer.road }}<br>
+            {{ customer.zip~' '~customer.city }}<br>
+            {{ 'Tél. : '~customer.user.phone }}<br>
+            {{ ' @ : '~customer.user.email }}<br>
+        </div>
+    </div>
+
+    <!-- ** TITRE ** -->
+    <div style="margin:2em;">
+        <h2>Devis n° {{ "now"|date("Ym")~'/'~company.siren~'#'}}{{driver.tenders|length + 1 }},<br>
+            fait le {{ "now"|date('d/m/Y') }}
+        </h2>
+    </div>
+    
+    <!-- ** CORPS ** -->
+    <!--  * DEMANDE DE RESERVATION D'ORIGINE * -->
+    <h2 style="margin-top:2em;margin-bottom:0.5em;"><u>Réservation :</u></h2>
+    <div style="display:flex;flex-direction:row;align-items:center;padding-left:2em;">Effectuée le :&emsp;<b>{{ claim.claimdatetime|date('d/m/Y') }}</b></div>
+    <div style="display:flex;flex-direction:row;align-items:center;padding-left:2em;">à :&emsp;<b>{{ claim.claimdatetime|date('H:i') }}</b></div>
+    <div style="padding-left:-4em;"><i>Demande de course #{{ claim.id }}, faite à partir de l'Annuaire des motos-taxis de France (<a href="https://www.2Wheels4Motion.fr">2Wheels4Motion.fr</a>)</i></div>
+    
+    <!--  * PRISE EN CHARGE * -->
+    <h2 style="margin-top:1em;margin-bottom:0.5em;"><u>Prise en charge :</u></h2>
+    <div style="display:flex;flex-direction:row;align-items:center;padding-left:2em;">le :&emsp;<b>{{ claim.journeydate|date('d/m/Y') }}</b></div>
+    <div style="display:flex;flex-direction:row;align-items:center;padding-left:2em;">
+        à :&emsp;
+        <b id="preview--departureattime" twin_id="driver--departureattime"
+            {% if preview_departureattime=='??' %}style="color:red;"{% endif %}>{{ preview_departureattime }}
+        </b>
+    </div>
+    <div style="display:flex;flex-direction:row;align-items:center;padding-left:2em;">
+        de/du :&emsp;
+        {% if claim.remarkableplacefrom != null %}
+        <b>{{ claim.remarkableplacefrom.label }}</b>
+        {% else %}
+        <b>{{ claim.fromroad~', '~claim.fromzip~' '~claim.fromcity }}</b>
+        {% endif %}
+    </div>
+
+    <!--  * DESTINATION * -->
+    <h2 style="margin-top:1em;margin-bottom:0.5em;"><u>Destination :</u></h2>
+    <div style="display:flex;flex-direction:row;align-items:center;padding-left:2em;">
+        vers :&emsp;
+        {% if claim.remarkableplaceto != null %}
+        <b>{{ claim.remarkableplaceto.label }}</b>
+        {% else %}
+        <b>{{ claim.toroad~', '~claim.tozip~' '~claim.tocity }}</b>
+        {% endif %}
+    </div>
+    <div style="display:flex;flex-direction:row;align-items:center;padding-left:2em;">
+        pour une arrivée à :&emsp;
+        <b id="preview--arrivalattime" twin_id="driver--arrivalattime"
+            {% if preview_arrivalattime=='??' %}style="color:red;"{% endif %}>{{ preview_arrivalattime }}
+        </b>
+    </div>
+
+    <!--  * CHIFFRAGE * -->
+    <h2 style="margin-top:1em;margin-bottom:0.5em;"><u>Chiffrage de la course :</u></h2>
+    <!-- Zone du forfait -->
+    <div style="display:flex;flex-direction:row;align-items:center;padding-left:2em;">
+    <!--  * FORFAIT * -->
+        <span id='preview--flatrate-title'>Forfait :&ensp;</span>
+        <b id="preview--flatrate" {% if preview_flatratelabel=='??' %}style="color:red;"{% endif %}>
+            {% if claim.flatrate %}
+                {{ claim.flatrate.label }}
+            {% elseif preview_flatratelabel %}
+                {{ preview_flatratelabel }}
+            {% endif %}
+        </b>
+    </div>
+    <div style="display:flex;flex-direction:row;align-items:center;padding-left:2em;margin-bottom:1em;">
+        <b id="preview--comments" twin_id="driver--comments">{{ preview_comments }}</b>
+    </div>
+    <div id="preview--flatrate-km"
+        {% if priceperkm != null
+            or
+            (driver_flatratechoosen is defined and driver_flatratechoosen!=false and driver_flatratechoosen.label
+                and (driver_flatratechoosen.label starts with 'par km' == true)
+            )
+            or
+            (claim.flatrate and claim.flatrate.label and (claim.flatrate.label starts with 'par km' == true))
+        %}
+        style="display:flex;flex-direction:column;padding-left:2em;"
+        {% else %}
+        style="display:flex;flex-direction:column;padding-left:2em;display:none;"
+        {% endif %}
+    >
+        <!-- "Evaluation" du kilométrage -->
+        <div style="display:flex;flex-direction:row;align-items:center;">
+            Nombre de kilomètres :&emsp;
+            <b id="preview--racedistance" twin_id="driver--racedistance"
+                {% if preview_racedistance=='??' %}style="color:red;"{% endif %}
+            >
+                {{ preview_racedistance }}
+            </b>
+        </div>
+        <!-- Prix du kilomètre -->
+        <div style="display:flex;flex-direction:row;align-items:center;">
+            Prix du kilomètre :&emsp;
+            <b id="preview--priceperkm" twin_id="driver--priceperkm">{{ preview_priceperkm }}</b><b>&ensp;&euro;</b>
+        </div>
+        <!-- Coût de la prise en charge -->
+        <div style="display:flex;flex-direction:row;align-items:center;">
+            Coût de la prise en charge :&emsp;
+            <b id="preview--pickupcost" twin_id="driver--pickupcost">{{ preview_pickupcost }}</b><b>&ensp;&euro;</b>
+        </div>
+    </div>
+    <!-- TVA -->
+    <div style="display:flex;flex-direction:row;align-items:center;">
+        TVA (incluse) :&emsp;
+        <b id="preview--tva" twin_id="driver--racetva"
+            {% if preview_tvalabel=='??' %}style="color:red;"{% endif %}
+        >
+            {{ preview_tvalabel }}
+        </b>
+    </div>
+    <hr>
+    <!-- Prix (TOTAL) -->
+    <div style="display:flex;flex-direction:row;align-items:center;font-size:1.5em;">
+        Prix de la course :&emsp;
+        <b id="preview--raceprice" twin_id="driver--raceprice"
+            {% if preview_raceprice=='??' %}style="color:red;"{% endif %}
+        >
+            {{ preview_raceprice }}
+        </b>
+        <b>&ensp;&euro;</b>
+    </div>
+    
+    <!-- * SUBMIT * -->
+    <div class="btns--row">
+        <button class="btn btn-sm btn--blue" type="submit" form="form--tender">
+            <i class="far fa-paper-plane"></i>&ensp;Envoyer le devis
+        </button>
+        <a class="btn btn-sm btn--secondary btn--hidemodal" parent_id="modal--tender--current">
+            <i class="fas fa-times"></i>&ensp;Revenir à l'éditeur
+        </a>
+    </div>
+</div>
+
+
+{% endblock %}

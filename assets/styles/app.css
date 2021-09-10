@@ -2,6 +2,13 @@
     height: 100%;
     border:2px solid yellow;
 }
+.bor1{border:1px solid red;}
+.bor2{border:1px solid yellow;}
+.bor3{border:1px solid green;}
+.bor4{border:1px solid cyan;}
+.bor5{border:1px solid blue;}
+.bor6{border:1px solid magenta;}
+.bor7{border:1px solid black;}
 
 
 @import url(https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900display=swap%27);
@@ -10,16 +17,20 @@
 }
 
 body{
-    background-color: lightgray;
+    width:100vw;
     /**/
-    position: relative;
+    position:relative;
     margin:0;
     padding:0;
     /**/
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    /* align-items: center; */
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+/* Accentue les textes des lignes de titres des Table */
+th{
+    font-size:1.2em;
+    font-weight:bolder;
 }
 
 
@@ -63,7 +74,7 @@ body{
  * ---------------------------------------------------------------
 */
 /*---- Class définies mais uniquement pour traitement Javascript ----
-#banner{}               
+#banner{}               ( plus bouton Uptotop )
 -
 #avatarpicture
 #vmdtrpicture
@@ -89,17 +100,41 @@ body{
 ---------------------------------------------------------------------
 */
 /* -- DIVERS -- */
+#section--header{
+    width:100%;
+    /* border:2px solid red; */
+    /* background-color: white; */
+    /**/
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    z-index:99;
+    /**/
+    background: linear-gradient(to top right,blue, 8%, white, 90%, red);
+    box-shadow: 0px 4px 8px black;
+}
+#banner{
+    width:100%;
+    box-shadow: 0px 6px 8px grey;
+}
 .btn--circle{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
     height: 20px;
     width: 20px;
     border-radius: 50%;
     box-shadow:2px 2px 4px black;
 }
-.btn--circle:hover{
+.btn--action{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    background-color:lightgrey;
+    box-shadow:2px 2px 4px black;
+}
+.btn--circle:hover,.btn--action:hover{
     cursor:pointer;
     font-weight: bold;
     text-justify: inter-cluster;
@@ -129,18 +164,6 @@ body{
     font-weight: bold;
     /* text-justify: inter-cluster; */
     text-align: center;
-}
-#section--header{
-    /* border:2px solid red; */
-    /* background-color: white; */
-    /**/
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-    z-index:99;
-    /**/
-    background: linear-gradient(to top right,blue, 8%, white, 90%, red);
-    box-shadow: 1px 5px 10px white;
 }
 .disabledelements{
     pointer-events:none;
@@ -196,7 +219,8 @@ body{
     /**/
     margin-left:15%;
     align-items:center;
-    justify-content: space-evenly;
+    justify-content: space-between;
+    /* justify-content: space-evenly; */
 }
 .nav--menu{
     display:flex;
@@ -216,15 +240,13 @@ body{
 .btn--ordering{
     /**/
     position: absolute;
-    bottom:100px;
+    top:250px;
     /**/
     color:white;
     font-weight: bold;
     background-color: rgba(255, 0, 0, 0.55);
     box-shadow: 2px 2px 0.25em blue;
-    /* background-color: rgba(0, 89, 255, 0.65);
-    box-shadow: 2px 2px 0.25em red; */
-    border-radius: 10px;
+    border-radius: 50px;
 }
 .btn--ordering:hover{
     color:white;
@@ -305,10 +327,7 @@ body{
     display:flex;
     flex-direction:column;
     flex-wrap:wrap;
-    /* justify-content:center; */
-    /* align-items: center; */
     /**/
-    /* overflow:hidden; */
     text-overflow:ellipsis;
     flex-shrink:2;
     /**/
@@ -319,6 +338,8 @@ body{
     0 0  0 1px rgb(255,255,255),
     0.3em 0.3em 1em rgba(0,0,0,0.3);
     border-radius:3px;
+    /**/
+    padding-bottom:3em;
 }
 .card--head{
     display:flex;
@@ -337,7 +358,6 @@ body{
     margin-bottom:1em;
 }
 .card--horizontal{
-    /* border:1px solid black; */
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -396,14 +416,12 @@ body{
     color:white;
 }
 .thead--light{
-    /* color: rgb(83, 22, 22); */
     background-color:white;
 }
 /* . class liées à la gestion de tableaux multi-onglets en Javascript . */
 .row--tabtype{
     display: flex;
     flex-direction: row;
-    /* border-bottom:0.5px solid black; */
 }
 .btn--tabtype{
     padding-left: 1em;
@@ -420,7 +438,7 @@ body{
     cursor:pointer;
 }
 /* - Liées à l'utilisation de Modals - */
-.modal--big{
+.modal--big-css{
     justify-self: center;
     align-self: center;
     /**/
@@ -429,16 +447,17 @@ body{
     align-items: center;
     /**/
     background:whitesmoke;
-    /* width:75vw;
-    height:75vh; */
-    width:97vw;
-    height:98vh;
     border-radius:10px;
     /**/
-    position: fixed;
-    left:1vw;
+    width:75vw;
+    /* height:75vh; */
+    /* width:97vw; */
+    /* height:98vh; */
+    position: center;
+    /* position: fixed; */
+    /* left:1vw; */
     /* left:2vw; */
-    bottom:1vh;
+    /* bottom:1vh; */
     /* bottom:11vh; */
     /**/
     filter: drop-shadow(0px 2px 5px black);
@@ -527,7 +546,7 @@ body{
     display: flex;
     flex-direction: column;
     /**/
-    /* background-image:url('../images/banner/honda_gl1800_2018_deux_models-750x410.jpg') ; */
+    /* background-image:url('../images/banner/homepage.jpg') ; */
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -571,6 +590,7 @@ body{
     flex-direction:row;
     flex-wrap:wrap;
     /**/
+    padding: 1em;
     justify-content:space-around;
     box-shadow:inset 3px 3px 8px grey;
     border-radius: 5px;
@@ -607,6 +627,9 @@ body{
     justify-self: center;
     align-self: center;
 }
+.img--H50{
+    height:50px;
+}
 
 
 /**
@@ -624,7 +647,7 @@ body{
     display: flex;
     flex-direction: column;
     /**/
-    /* background-image:url('../images/banner/pilotes-motogp-2020.png') ; */
+    /* background-image:url('../images/banner/driver.png') ; */
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -642,22 +665,32 @@ body{
 }
 /* -- CONTENEURS -- */
 .card--footer-horizontal{
-    background-color:whitesmoke;
+    color:white;
+    background-color: rgb(92, 89, 89);
+    /* background-color:white; */
+    /* background-color:whitesmoke; */
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     /**/
-    position:absolute;
-    bottom:0em;
-    left:-0.1em;
+    margin-left: -0.5em;
+    margin-right: -0.5em;
+    margin-bottom: -0.5em;
     /**/
-    width:101%;
+    position:absolute;
+    bottom:0.5em;
+    /* left:-0.1em; */
+    /**/
+    width:100%;
     height:3em;
     justify-content:center;
     align-items:center;
     /**/
-    border-bottom-left-radius:3px;
-    border-bottom-right-radius:3px;
+    border-bottom-left-radius:5px;
+    border-bottom-right-radius:5px;
+}
+.card--footer-horizontal>a{
+    color:black;
 }
 /* -- IMAGES -- */
 .card--imground-200{
@@ -688,7 +721,7 @@ body{
     display: flex;
     flex-direction: column;
     /**/
-    /* background-image:url('../images/banner/honda_gl1800_2018_deux_models-750x410.jpg') ; */
+    /* background-image:url('../images/banner/flatrate.jpg') ; */
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -800,25 +833,25 @@ body{
 .imgbtn--profile:hover,.imgbtn--vmdtr:hover{
     text-justify: inter-cluster;
     text-align: center;
-    box-shadow:inset 3px 3px 6px black;
+    box-shadow:inset 3px 3px 8px black;
 }
 
 
 /**
- * -----------------------------------------------------------
- * Class utilisées de la page "Programmer une course" (Claim)
- * -----------------------------------------------------------
+ * -------------------------------------------------------------------------
+ * Class utilisées dans les pages "Programmer une course" (Claim et Tender)
+ * -------------------------------------------------------------------------
 */
 /*---- Class définies mais uniquement pour traitement Javascript ----
-#btn--FlatrateToggle
-#btn--expand{}
-#btn--collapse{}
-#btn--FlatrateToggle
-.btn--filtre-region
-.btn--filtre-dept
-.row--flatrate
-#head--flatrate
-#foot--flatrate
+#blk--FlatrateToggles   => abandonnée
+#btn--expand{}          => abandonnée
+#btn--collapse{}        => abandonnée
+.btn--filtre-region     => abandonnée
+.btn--filtre-dept       => abandonnée
+.row--flatrate          => abandonnée
+#head--flatrate         => abandonnée
+#foot--flatrate         => abandonnée
+.rb--flatrate
 ---------------------------------------------------------------------
 */
 /* -- BANNIERES -- */
@@ -828,7 +861,7 @@ body{
     display: flex;
     flex-direction: column;
     /**/
-    /* background-image:url('../images/banner/honda_gl1800_2018_deux_models-750x410.jpg') ; */
+    /* background-image:url('../images/banner/claim.jpg') ; */
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -857,8 +890,8 @@ body{
     margin-left: 2px;
     margin-bottom: 5px;
 }
-/* -- "BLOCK" DES FORFAITS, OPTION DESACTIVEE -- */
-#blk--flatrates{
+/* -- "BLOCK" DES FORFAITS -- */
+#tbl--flatrates{
     align-items:center;
     justify-content:center;
     width:100%;
@@ -870,6 +903,29 @@ body{
  * Class utilisées sur la page Admin "Actions en attente"
  * -------------------------------------------------------
 */
+/* -- BANNIERES -- */
+.admin--banner{
+    position: relative;
+    /**/
+    display: flex;
+    flex-direction: column;
+    /**/
+    /* background-image:url('../images/banner/admin.jpg') ; */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /**/
+    min-height: 400px;
+    /**/
+    justify-content: center;
+    align-items: center;
+}
+.admin--banner>h1{
+    color:white;
+    font-weight: bolder;
+    text-shadow: 5px 5px 0.25em red;
+    justify-self: center;
+}
 /* -- BOUTONS -- */
 .btn--orange{
     display:flex;
@@ -921,6 +977,20 @@ body{
         justify-content: flex-start;
     }
 }
+@media screen and (max-width: 760px){
+    #nav--inpage{
+        flex-direction:column;
+    }
+    #banner>h1{
+        /* visibility:hidden; */
+        position:absolute;
+        top:0px;
+    }
+    .btn--ordering{
+        /* position:absolute; */
+        top:50px;
+    }
+}
 @media screen and (max-width: 700px){
     .block--date{
         flex-direction:column;
@@ -929,7 +999,8 @@ body{
 @media screen and (max-width: 650px){
 }
 @media screen and (max-width: 600px){
-    .block--datas-vertical,.block--datas-horizontal,.card--3D-vertical{
+    .card--3D-vertical{
+    /* .block--datas-vertical,.block--datas-horizontal,.card--3D-vertical{ */
         width:100%;
         /* margin:0%; */
         /* padding:0%; */

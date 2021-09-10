@@ -1,0 +1,25 @@
+
+    <!-- DEBUT Homepage banner -->
+    <section class="homepage--banner" id="banner" style="background-image:url({{ asset(sImgPath ~'banner/homepage.jpg') }});">
+        <H1>L'ANNUAIRE DES MOTOS-TAXIS DE FRANCE</H1>
+        <a class="btn btn--ordering" href="{{ path('claim_create') }}">
+            <i class="fas fa-motorcycle"></i>&nbsp;Commander une course
+        </a>
+        <!-- internal page menu, to navigate to ID -->
+        <div id="nav--inpage">
+            <a class="btn nav--btn--white" href="#section--banner">A votre service</a>
+            <a class="btn nav--btn--white" href="#section--services">Professionnalisme</a>
+            <a class="btn nav--btn--white" href="#section--pro">Les équipements passager</a>
+            <a class="btn nav--btn--white" href="#section--equipments">Les motos</a>
+            <a class="btn nav--btn--white" href="#section--bikes">Les bagages</a>
+            <a class="btn nav--btn--white" href="#section--luggages">L'avis des utilisateurs</a>
+            <!-- <a class="btn nav--btn--white" href="#section--services">A votre service</a>
+            <a class="btn nav--btn--white" href="#section--pro">Professionnalisme</a>
+            <a class="btn nav--btn--white" href="#section--equipments">Les équipements passager</a>
+            <a class="btn nav--btn--white" href="#section--bikes">Les motos</a>
+            <a class="btn nav--btn--white" href="#section--luggages">Les bagages</a>
+            <a class="btn nav--btn--white" href="#section--reviews">L'avis des utilisateurs</a> -->
+            <a class="btn nav--btn--blue" href="{{ path('homepage_manual') }}">Comment ça marche ?</a>
+        </div>
+    </section>
+    <!-- FIN Homepage banner -->

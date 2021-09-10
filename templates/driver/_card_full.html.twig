@@ -1,0 +1,74 @@
+{% if obUser is not defined %}
+    {% set obUser=app.user %}
+{% endif %}
+{% if obCompany is not defined %}
+    {% set obCompany=obUser.driver.company %}
+    {% set obDept=getdepartmentbycode(obCompany.zip|slice(0,2)) %}
+    {% set obRegion=getregionbycode(obDept.region_code) %}
+{% endif %}
+<div class="card--3D-vertical col-12" style="min-width:21em;max-width:23%;">
+    <div class="card--vertical">
+    <!-- <div class="card--vertical pb-5"> -->
+        <!-- 1ère rangée : chauffeur (photo + notation) -->
+        <div class="d-flex flex-row flex-wrap mb-1"
+            style="width:95%;justify-content:space-between;"
+        >
+            <!-- Bloc image portrait -->
+            <div class="mr-2">
+                {% set obPortrait=getuserportrait(obUser) %}
+                {% if obPortrait %}
+                <img class="img--profile" src="{{ asset(obPortrait.pathname) }}" alt="Photo de profil">
+                {% else %}                    
+                <img class="img--profile" src="{{ asset(sImgPath ~'misc/no-image.png') }}" alt="Photo de profil">
+                {% endif %}
+            </div>
+            <!-- Bloc notation + id user -->
+            <div>
+                <div class="row--stars">
+                    <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                    <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                    <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                    <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                    <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
+                </div>
+                <h5 class="mt-1" style='font-weight:bolder;'>{{ obUser.firstname~' '~obUser.lastname }}</h5>
+                <small>{{ 'Inscrit depuis le '~obUser.registrationdate|date('d-m-Y') }}</small>
+                <br>
+                <small>{{ 'Nb de courses effectuées : XXX' }}</small>
+            </div>
+        </div>
+        <!-- 2nde rangée : photo carte VMDTR -->
+        {% set obPicture_VMDTR=getdrivercard(obUser) %}
+        {% if obPicture_VMDTR %}
+        <img style='width:95%;' src="{{ asset(obPicture_VMDTR.pathname) }}" alt="Carte VMDTR">
+        {% else %}                    
+        <img style='width:95%;' src="{{ asset(sImgPath ~'misc/no-image.png') }}" alt="Carte VMDTR">
+        {% endif %}
+        <!-- 3ème rangée : Bloc Company -->
+        <div class="mt-2" style='width:95%;'>
+            <h5 class="mt-1" style='font-weight:bolder;'>{{ obCompany.name }}</h5>
+            <h6>{{ 'Région '~obRegion.name }}</h6>
+            <h6>{{ 'Domiciliation sur '~getcitybyzip(obCompany.zip).name~' ('~obCompany.zip~')' }}</h6>
+        </div>
+    </div>
+    <!-- Footer proposant les liens de contact -->
+    <div class="card--footer-horizontal">
+        Contacter le pilote :
+        <!-- &emsp;
+        <a href="{#{{ path('driver_profile', {'id': obDriver.id}) }}#}" title="Voir sa fiche" class="mr-2">
+            <i class="far fa-eye"></i>
+        </a> -->
+        &emsp;
+        <a href="{{ 'mailto:' ~ obUser.email }}" title="Lui envoyer un courriel">
+            <div class="btn--action" style="height:25px;width:35px">
+                <i class="fas fa-at"></i>
+            </div>
+        </a>
+        &ensp;
+        <a href="{{ 'tel:' ~ obUser.phone }}" title="Lui téléphoner" class="ml-2">
+            <div class="btn--action" style="height:25px;width:35px">
+                <i class="fas fa-phone-alt"></i>
+            </div>
+        </a>
+    </div>
+</div>

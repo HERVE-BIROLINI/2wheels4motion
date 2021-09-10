@@ -6,10 +6,10 @@
 {% block body %}
 
 <!-- Admin Controller banner -->
-{{ include('admin/banner.html.twig') }}
+{{ include('admin/_banner.html.twig') }}
 
 <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
-{{ include('flash.html.twig') }}
+{{ include('_flash.html.twig') }}
 
 
 <section class="paragraph--large">
@@ -36,7 +36,7 @@
                 <td>{{ typeplace.label }}</td>
                 <td class="d-flex flex-row">
                     <a class="btn btn-sm btn--blue" href="{{ path('admin_typeplace_update', {'typeplace': typeplace.id}) }}" title="Modifier" class="mr-2">
-                        <i class="ri-edit-2-line"></i>&ensp;Modifier
+                        <i class="fas fa-edit"></i>&ensp;Modifier
                     </a>
                     &emsp;
                     {{ include('typeplace/_delete_form.html.twig') }}

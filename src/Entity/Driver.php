@@ -70,8 +70,11 @@ class Driver
      */
     private $is_verified;
 
+    // /**
+    //  * @ORM\ManyToMany(targetEntity=Tender::class, inversedBy="drivers")
+    //  */
     /**
-     * @ORM\ManyToMany(targetEntity=Tender::class, inversedBy="drivers")
+     * @ORM\OneToMany(targetEntity=Tender::class, mappedBy="driver")
      */
     private $tenders;
     
@@ -190,15 +193,14 @@ class Driver
         return $this;
     }
 
+    //
     public function getIsVerified(): ?bool
     {
         return $this->is_verified;
     }
-
     public function setIsVerified(?bool $is_verified): self
     {
         $this->is_verified=$is_verified;
-
         return $this;
     }
 
@@ -209,20 +211,16 @@ class Driver
     {
         return $this->tenders;
     }
-
     public function addTender(Tender $tender): self
     {
         if (!$this->tenders->contains($tender)) {
             $this->tenders[]=$tender;
         }
-
         return $this;
     }
-
     public function removeTender(Tender $tender): self
     {
         $this->tenders->removeElement($tender);
-
         return $this;
     }
 

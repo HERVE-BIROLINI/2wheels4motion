@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/tarif", name="flatrate_")
+ * @Route("/rate", name="flatrate_")
  */
 class FlatrateController extends AbstractController
 {

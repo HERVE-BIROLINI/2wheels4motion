@@ -63,9 +63,9 @@
                 {% set drivercard=getdrivercard(app.user.id) %}
                 <label id="vmdtrpicture" for="browse">
                     {% if drivercard is defined and drivercard is not null and drivercard.pathname!='' %}
-                    <img class="imgbtn--vmdtr mb-2 w-100" src="{{ asset(drivercard.pathname) }}" alt="">
+                    <img class="imgbtn--vmdtr mb-2 w-100" src="{{ asset(drivercard.pathname) }}" alt="Carte VMDTR recto">
                     {% else %}
-                    <img class="imgbtn--profile mb-2" src="{{ asset(sImgPath ~'no-image.png') }}" alt="">
+                    <img class="imgbtn--profile mb-2" src="{{ asset(sImgPath ~'misc/no-image.png') }}" alt="En attente photo carte VMDTR recto">
                     {% endif %}
                 </label>
                 <input class="required" type="file" name="file" id="browse"

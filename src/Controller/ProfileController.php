@@ -4,9 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Picture;
 use App\Entity\User;
-// use App\Entity\Driver;
 use App\Entity\Company;
-use App\Entity\Driver;
+// use App\Entity\Driver;
 use App\Entity\Picturelabel;
 use App\Entity\Socialreason;
 use App\Form\ChangePwdFormType;
@@ -14,8 +13,9 @@ use App\Form\ChangePwdFormType;
 use App\Repository\UserRepository;
 use App\Tools\RegexTools;
 use App\Tools\UploadPictureTools;
+use App\Twig\DriverTwig;
 use App\Twig\PictureTwig;
-use Doctrine\ORM\EntityManagerInterface;
+// use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 // use App\Twig\PictureTwig;
 // use Doctrine\ORM\EntityManagerInterface;
@@ -43,7 +43,7 @@ class ProfileController extends AbstractController
     {
         // test si l'utilisateur N'est PAS encore identifié
         if(!$this->getUser() or $this->getUser()!==$user){
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         //
@@ -86,6 +86,8 @@ class ProfileController extends AbstractController
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($user);
                 $entityManager->flush();
+                //
+                $this->addFlash('success', "Vos modifications ont bien été enregistrées.");
             }
         }
         
@@ -112,7 +114,7 @@ class ProfileController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié,
         // et s'il n'y a pas d'erreur de Route dans la barre d'adresse (tricheur !)...
         if(!$this->getUser() or $this->getUser()!==$user){
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         // 'drapeau' de levée d'actions, selon l'analyse
@@ -217,6 +219,7 @@ class ProfileController extends AbstractController
         // *** Si ARRIVEE dans le formulaire, ou RETOUR suite erreur...
         return $this->render('profile/changepicture.html.twig', [
             'controller_name' => 'ProfileController',
+            'controller_func' => 'ChangePicture',
         ]);
     }
 
@@ -235,7 +238,7 @@ class ProfileController extends AbstractController
 
         // test si l'utilisateur N'est PAS encore identifié
         if(!$this->getUser() or $this->getUser()!==$user){
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
 
         $verify_password_error=false;
@@ -261,7 +264,7 @@ class ProfileController extends AbstractController
                 $entityManager->persist($user);
                 $entityManager->flush();
 
-                return $this->redirectToRoute('app_logout');
+                return $this->redirectToRoute('security_logout');
             }
             else{
                 $verify_password_error=true;
@@ -270,6 +273,7 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/changepwd.html.twig', [
             'changePwdForm'         => $form->createView(),
+            'controller_func'       => 'ChangePwd',
             'verify_password_error' => $verify_password_error
         ]);
     }
@@ -282,7 +286,7 @@ class ProfileController extends AbstractController
         // test si l'utilisateur N'est PAS encore identifié...
         if(!$user=$this->getUser()){
             // ... sinon redirige vers la page de Login
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
         // test si l'utilisateur a bien un compte pilote...
         elseif(!$driver=$user->getDriver() or !$driver->getCompany()){
@@ -310,12 +314,18 @@ class ProfileController extends AbstractController
         $error_file=null;
         // ... important pour ne pas "parasiter" l'affichage des données de la T3P
         $obCompany=null;
+        $bWithArchived=false;
 
         // ** SI RETOUR DANS LE CONTROLLER SUITE A UN "SUBMIT" **
         // ******************************************************
-        
+        // dd($_POST);
+        // * Si retour dans le Controller suite à demande d'affichage/masquage des archives *
+        if(isset($_POST['show-hide--archive'])){
+            $bWithArchived=$_POST['witharchived']==0;
+        }
+
         // * Si retour dans le Controller suite à sélection d'une entreprise T3P existante *
-        if(isset($_POST['companychoosen'])){
+        elseif(isset($_POST['companychoosen'])){
             // instancie une nouvelle valeur à l'objet Company,
             // TWIG réassignera les valeurs dans le formulaire...
             $obCompany=$companyRepository->findOneBy(['id'=>$_POST['companychoosen']]);
@@ -519,13 +529,15 @@ class ProfileController extends AbstractController
         
         // ** Affiche/Ré-affiche la page **
         // ********************************
+        $obDriverTwig = new DriverTwig($this->getDoctrine()->getManager());
+        // dd($obDriverTwig->getClaims4Driver($driver, $bWithArchived));
         return $this->render('profile/driver.html.twig', [
             'controller_name' => 'ProfileController',
             //
             'company'   => $obCompany,
             'driver'    => $driver,
             //
-            'allcompaniesknown'=>$entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>true]),
+            'allcompaniesknown' =>$entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>true]),
             //
             'error_name'            => $error_name,
             'error_siren'           => $error_siren,
@@ -536,6 +548,9 @@ class ProfileController extends AbstractController
             'error_vmdtrvalidity'   => $error_vmdtrvalidity,
             'error_motomodel'       => $error_motomodel,
             'error_file'            => $error_file,
+            //
+            'claims'        => $obDriverTwig->getClaims4Driver($driver, $bWithArchived),
+            'witharchived'  => $bWithArchived,
         ]);
         // ********************************
     }
@@ -547,7 +562,7 @@ class ProfileController extends AbstractController
     {
         // test si l'utilisateur N'est PAS encore identifié
         if(!$user=$this->getUser()){
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
         }
         
         // Défini les variables (pour défaut) à transmettre à TWIG

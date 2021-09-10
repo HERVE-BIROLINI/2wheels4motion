@@ -7,238 +7,308 @@
 
     <!-- ##### v DEBUT DES ELEMENTS PRINCIPAUX DE LA PAGE v ##### -->
 
-    {{ include('profile/banner.html.twig') }}
-    
-    <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
-    {{ include('flash.html.twig') }}
+    <div id="div--2hide-ifmodal">
+        {{ include('profile/_banner.html.twig') }}
+        
+        <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
+        {{ include('_flash.html.twig') }}
 
-    <!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
-    {{ include('geography/FromJSON4Javascript.html.twig') }}
-    
-    <div class="paragraph--large" id="div--2hide-ifmodal">
-    
-        <!-- L'adresse postale -->
-        <form class="card--3D-vertical my-4" method="post"><!--class="d-flex flex-row justify-content-center my-4">-->
-            <h2 class="h3 ml-4 mt-4 mb-3 font-weight-normal">Adresse personnelle :</h2>
-            <!-- Bloc adresse du Customer -->
-            <div class="block--datas-horizontal mx-3">
-                <div class="col-12 col-md-5">
-                    <label class="required" for="inputroad">N° et Voie :</label>
-                    <input type="text" class="form-control" id="inputroad"
-                        value="{{ app.user.customer.road }}"
-                        name="customer_road" required
-                    ><!-- autofocus> -->
-                    {% if error_customer_road is defined and error_customer_road is not null %}
-                    <span class="d-block">
-                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
-                        <small class="form-error-message">La voie doit comporter un numéro et un nom.</small>
-                    </span>
-                    {% endif %}
-                    <!-- &nbsp; -->
+        <!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
+        {{ include('geography/_FromJSON4Javascript.html.twig') }}
+        
+        <div class="paragraph--large" id="div--2hide-ifmodal">
+        
+            <!-- L'adresse postale -->
+            <form class="card--3D-vertical my-4" method="post"><!--class="d-flex flex-row justify-content-center my-4">-->
+                <h2 class="h3 ml-4 mt-4 mb-3 font-weight-normal">Adresse personnelle :</h2>
+                <!-- Bloc adresse du Customer -->
+                <div class="block--datas-horizontal mx-3">
+                    <div class="col-12 col-md-5">
+                        <label class="required" for="inputroad">N° et Voie :</label>
+                        <input type="text" class="form-control" id="inputroad"
+                            value="{{ app.user.customer.road }}"
+                            name="customer_road" required
+                        ><!-- autofocus> -->
+                        {% if error_customer_road is defined and error_customer_road is not null %}
+                        <span class="d-block">
+                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                            <small class="form-error-message">La voie doit comporter un numéro et un nom.</small>
+                        </span>
+                        {% endif %}
+                        <!-- &nbsp; -->
+                    </div>
+                    &nbsp;
+                    <div class="col-12 col-md-3">
+                        <label class="required" for="inputcity">Commune :</label>
+                        <input type="text" class="form-control inputcity" id="inputcity"
+                            value="{{ app.user.customer.city }}"
+                            name="customer_city"
+                        >
+                        <!-- required -->
+                        <select class="form-control cities" id="inputcities"
+                            name="cities" title="cities"
+                        >
+                            <option value="">-- Sélectionnez votre commune --</option>
+                        </select>
+                        {% if error_customer_city is defined and error_customer_city is not null %}
+                        <span class="d-block">
+                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                            <small class="form-error-message">La ville doit-être spécifiée.</small>
+                        </span>
+                        {% endif %}
+                    </div>
+                    &nbsp;
+                    <div class="col-12 col-md-3">
+                        <label class="required" for="inputzip">Code postal :</label>
+                        <input type="text" class="form-control" id="inputzip"
+                            value="{{ app.user.customer.zip }}"
+                            name="customer_zip" style="display:none;"
+                        >
+                        <!-- -->
+                        <input type="text" class="form-control inputzip" id="inputzip2"
+                            value="{{ app.user.customer.zip }}"
+                            name="customer_zip" disabled
+                        >
+                        {#{% if error_customer_zip %}#}
+                        <!-- <span class="d-block">
+                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                            <small class="form-error-message">La voie doit comporter un numéro et un nom.</small>
+                        </span> -->
+                        {#{% endif %}#}
+                    </div>
                 </div>
-                &nbsp;
-                <div class="col-12 col-md-3">
-                    <label class="required" for="inputcity">Commune :</label>
-                    <input type="text" class="form-control inputcity" id="inputcity"
-                        value="{{ app.user.customer.city }}"
-                        name="customer_city"
-                    >
-                    <!-- required -->
-                    <select class="form-control cities" id="inputcities"
-                        name="cities" title="cities"
-                    >
-                        <option value="">-- Sélectionnez votre commune --</option>
-                    </select>
-                    {% if error_customer_city is defined and error_customer_city is not null %}
-                    <span class="d-block">
-                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
-                        <small class="form-error-message">La ville doit-être spécifiée.</small>
-                    </span>
-                    {% endif %}
+                <br>
+                <!-- rangée de bouton(s) : Mise à jour adresse -->
+                <div class="btns--row">
+                    <button class="btn btn-sm btn--blue" type="submit">
+                        <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
+                    </button>
+                    {#<!-- <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
+                        <i class="fas fa-times"></i>&ensp;Annuler
+                    </a> -->#}
                 </div>
-                &nbsp;
-                <div class="col-12 col-md-3">
-                    <label class="required" for="inputzip">Code postal :</label>
-                    <input type="text" class="form-control" id="inputzip"
-                        value="{{ app.user.customer.zip }}"
-                        name="customer_zip" style="display:none;"
-                    >
-                    <!-- -->
-                    <input type="text" class="form-control inputzip" id="inputzip2"
-                        value="{{ app.user.customer.zip }}"
-                        name="customer_zip" disabled
-                    >
-                    {#{% if error_customer_zip %}#}
-                    <!-- <span class="d-block">
-                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
-                        <small class="form-error-message">La voie doit comporter un numéro et un nom.</small>
-                    </span> -->
-                    {#{% endif %}#}
-                </div>
-            </div>
-            <br>
-            <!-- rangée de bouton(s) : Mise à jour adresse -->
-            <div class="btns--row">
-                <button class="btn btn-sm btn--blue" type="submit">
-                    <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
+            </form>
+
+            <!-- L'historique des échanges -->
+            <div class="d-flex flex-row flex-wrap justify-content-between align-items-center mb-3">
+                <h2 class="h3 mt-4 mb-3 font-weight-normal">Historique des échanges :</h2>
+
+                <!-- Affiche dépendant de l'existance de données de plus d'un an -->
+                <button class="btn btn-sm btn--green" ><!--id="btn--show-hide--archive"-->
+                    <i class="far fa-eye"></i>&ensp;A DEVELOPPER
                 </button>
-                {#<!-- <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
-                    <i class="ri-close-fill"></i>&ensp;Annuler
-                </a> -->#}
+
             </div>
-        </form>
-
-        <!-- L'historique des échanges -->
-        <div class="d-flex flex-row flex-wrap justify-content-between align-items-center mb-3">
-            <h2 class="h3 mt-4 mb-3 font-weight-normal">Historique des échanges :</h2>
-
-            <!-- Affiche dépendant de l'existance de données de plus d'un an -->
-            <button class="btn btn-sm btn--green" id="btn--show-hide--archive">
-                <i class="ri-eye-line"></i>&ensp;Récents seulement
-            </button>
-
-        </div>
-        <div class="row--tabtype" id="row--tabtype--travel">
-            <div class="btn--tabtype" id="btn--tabtype--claim" parent_id="row--tabtype--travel" default>Demandes envoyées</div>
-            <div class="btn--tabtype" id="btn--tabtype--tender" parent_id="row--tabtype--travel">Devis reçus</div>
-            <div class="btn--tabtype" id="btn--tabtype--order" parent_id="row--tabtype--travel">Courses effectuées</div>
-        </div>
-        <!-- tableau des Demandes envoyées (Claims) -->
-        <table class="table table-striped table--tabtype" id="table--tabtype--claim" parent_id="btn--tabtype--claim">
-            <thead class="thead--dark">
-                <tr>
-                    <th></th>
-                    <th>#</th>
-                    <th>Demande du</th>
-                    <th>Course pour le</th>
-                    <th>Prise en charge</th>
-                    <th>Destination</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for claim in app.user.customer.getclaims %}
-                    {% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
-                <tr class="row--tab row--claim TOUTES" parent_id="btn--tabtype--claim">
-                    {% else %}
-                <tr class="row--tab row--claim ARCHIVE" parent_id="btn--tabtype--claim">
-                    {% endif %}
-                    <td></td>
-                    <td>{{ claim.id }}</td>
-                    <td>{{ claim.claimdatetime|date('d/m/Y') }}</td>
-                    <td>{{ claim.journeydate|date('d/m/Y') }}</td>
-                    <td>
-                        {% if claim.remarkableplacefrom %}
-                            {{ claim.remarkableplacefrom.label }}
-                        {% else %}
-                            {{ getcitybyzip(claim.fromzip).name }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if claim.remarkableplaceto %}
-                            {{ claim.remarkableplaceto.label }}
-                        {% else %}
-                            {{ getcitybyzip(claim.tozip).name }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        <div class="d-flex flex-row flex-wrap align-items-center">
-                            <button class="btn btn-sm btn--blue btn--showmodal" id="{{ 'btn--showmodal'~claim.id }}" data_id="{{ claim.id }}" data_type="claim">
-                                <i class="ri-eye-line"></i>&ensp;Détails
-                            </button>
-                            &ensp;
-                            {% if claim.tenders|length < 0 %}
-                            {#
-                            {% if claim.tenders|length > 0 %}
-                            <button class="btn btn-sm btn--blue" data_id="{{ claim.id }}" data_type="claim">
-                                <i class="ri-file-paper-2-line"></i>&ensp;{{ claim.tenders|length }}&ensp;Devis
-                            </button>
-                            <!-- id="btn--claim--viewtenders" -->
+            <div class="row--tabtype" id="row--tabtype--travel">
+                <div class="btn--tabtype" id="btn--tabtype--claim" parent_id="row--tabtype--travel" default>Demandes envoyées</div>
+                <div class="btn--tabtype" id="btn--tabtype--tender" parent_id="row--tabtype--travel">Devis reçus</div>
+                <div class="btn--tabtype" id="btn--tabtype--order" parent_id="row--tabtype--travel">Courses effectuées</div>
+            </div>
+            <!-- tableau des Demandes envoyées (Claims) -->
+            <table class="table table-striped table--tabtype" id="table--tabtype--claim" parent_id="btn--tabtype--claim">
+                <thead class="thead--dark--CANCELED">
+                    <tr>
+                        <th></th>
+                        <th>#</th>
+                        <th>Demande du</th>
+                        <th>Course pour le</th>
+                        <th>Prise en charge</th>
+                        <th>Destination</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Affiche les Demandes en commençant par les + récentes -->
+                    {% for claim in app.user.customer.getclaims|reverse %}
+                    <tr class="row--tab row--claim " parent_id="btn--tabtype--claim">
+                        <td></td>
+                        <td>{{ claim.id }}</td>
+                        <td>{{ claim.claimdatetime|date('d/m/Y') }}</td>
+                        <td>{{ claim.journeydate|date('d/m/Y') }}</td>
+                        <td>
+                            {% if claim.remarkableplacefrom %}
+                                {{ claim.remarkableplacefrom.label }}
                             {% else %}
-                            #}
-                            Aucun devis proposé
+                                {{ getcitybyzip(claim.fromzip).name }}
                             {% endif %}
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                {% if app.user.customer.getclaims|length == 0 %}
-                <tr>
-                    <td colspan="6">Vous n'avez fait encore aucune demande...</td>
-                </tr>
-                {% endif %}
-            </tfoot>
-        </table>
-        <!-- tableau des Devis reçus (Tenders) -->
-        <table class="table table-striped table--tabtype" id="table--tabtype--tender" parent_id="btn--tabtype--tender">
-            <thead class="thead--dark">
-                <tr>
-                    <th></th>
-                    <th>Devis du</th>
-                    <th>Proposé par</th>
-                    <th>Pour la demande du</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for claim in null %}
-                {#{% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
-                    
-                <tr class="row--tab row--tender ARCHIVE" parent_id="btn--tabtype--tender">
-                    {% else %}#}
-                <tr class="row--tab row--tender TOUTES" parent_id="btn--tabtype--tender">
-                    {#{% endif %}#}
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>                    
-                    <td> Accepter / Refuser </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                {% if null|length == 0 %}
-                <tr>
-                    <td colspan="5">Pas de devis reçu...</td>
-                </tr>
-                {% endif %}
-            </tfoot>
-        </table>
-        <!-- tableau des Courses effectuées (Orders) -->
-        <table class="table table-striped table--tabtype" id="table--tabtype--order" parent_id="btn--tabtype--order">
-            <thead class="thead--dark">
-                <tr>
-                    <th></th>
-                    <th>Demande du</th>
-                    <th>Course le</th>
-                    <th>Prise en charge</th>
-                    <th>Destination</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for claim in null %}
-                {#{% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
-                <tr class="row--tab row--order ARCHIVE" parent_id="btn--tabtype--order">
-                    {% else %}#}
-                <tr class="row--tab row--order TOUTES" parent_id="btn--tabtype--order">
-                    {#{% endif %}#}
-                    <td></td>
-                    
-                    <td> Les boutons !! </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                {% if null|length == 0 %}
-                <tr>
-                    <td colspan="4">Vous n'avez encore pas bénéficié des services des pilotes de l'Annuaire...</td>
-                </tr>
-                {% endif %}
-            </tfoot>
-        </table>
+                        </td>
+                        <td>
+                            {% if claim.remarkableplaceto %}
+                                {{ claim.remarkableplaceto.label }}
+                            {% else %}
+                                {{ getcitybyzip(claim.tozip).name }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex flex-row flex-wrap align-items-center">
+                                <!-- bouton VOIR DETAILS -->
+                                <button class="btn btn-sm btn--action btn--showmodal" id="{{ 'btn--showmodal'~claim.id }}" data_id="{{ claim.id }}" data_type="claim">
+                                    <i class="far fa-eye" title="Voir en détails"></i><!--&ensp;Détails-->
+                                </button>
+                            &ensp; + autre chose ???
+                                {% if claim.tenders|length < 0 %}
+                                &ensp;
+                                {#
+                                {% if claim.tenders|length > 0 %}
+                                <button class="btn btn-sm btn--blue" data_id="{{ claim.id }}" data_type="claim">
+                                    <i class="ri-file-paper-2-line"></i>&ensp;{{ claim.tenders|length }}&ensp;Devis
+                                </button>
+                                <!-- id="btn--claim--viewtenders" -->
+                                {% else %}
+                                #}
+                                Aucun devis proposé
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="7">
+                            {% if app.user.customer.getclaims|length == 0 %}
+                            Vous n'avez fait encore aucune demande...
+                            {% endif %}
+                            <a class="btn btn-sm btn--blue" href="{{ path('claim_create') }}">
+                                <i class="fas fa-motorcycle"></i>&nbsp;Commander une course
+                            </a>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+            <!-- tableau des Devis reçus (Tenders) -->
+            <table class="table table-striped--CANCELED table--tabtype" id="table--tabtype--tender" parent_id="btn--tabtype--tender">
+                <thead class="thead--dark--CANCELED">
+                    <tr>
+                        <th></th>
+                        <th>Devis n° / du</th>
+                        <th>Demande n° / du</th>
+                        <th>Prise en charge</th>
+                        <th>Destination</th>
+                        <th>Au tarif de (&euro;)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <!-- Affiche les Devis reçus en commençant par les + récents -->
+                <tbody>
+                    {% set claims=app.user.customer.getclaims|reverse %}
+                    {% set iCount=0 %}
+                    {% set bc4tr='white' %}
+                    {% for claim in claims %}
+                        {% if claim.tenders|length > 0 %}
+                            {% if bc4tr=='white' %}
+                                {% set bc4tr='whitesmoke' %}
+                            {% else %}
+                                {% set bc4tr='white' %}
+                            {% endif %}
+                            {% set iCount=iCount+1 %}
+                        {% endif %}
+                        <!--  -->
+                        {% for tender in claim.tenders|reverse %}
+                    <tr class="row--tab row--tender" style="{{ 'background-color:' ~ bc4tr ~ ';' }}" parent_id="btn--tabtype--tender">
+                        <td></td>
+                        <td>#{{ tender.id }} / {{ tender.tenderdatetime|date('d/m/Y') }}</td>
+                        <td>#{{ tender.claim.id }} / {{ tender.claim.claimdatetime|date('d/m/Y') }}</td>
+                        <td>
+                            {% if tender.claim.remarkableplacefrom != null %}
+                            {{ tender.claim.remarkableplacefrom.label }}
+                            {% else %}
+                            {{ tender.claim.fromroad~', '~tender.claim.fromzip~' '~tender.claim.fromcity }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.claim.remarkableplaceto != null %}
+                            {{ tender.claim.remarkableplaceto.label }}
+                            {% else %}
+                            {{ tender.claim.toroad~', '~tender.claim.tozip~' '~tender.claim.tocity }}
+                            {% endif %}
+                        </td>
+                        <td><b>{{ tender.price }}</b></td>
+                        <td>
+                            <div class="d-flex flex-row flex-wrap align-items-center">
+                                <!-- VOIR devis (Tender) -->
+                                <a class="btn btn-sm btn--action"
+                                    href="{{ path('tender_read', {'id':tender.id}) }}"
+                                >
+                                    <i class="far fa-eye" title="Voir le devis"></i>
+                                </a>
+                            &emsp;+ autre action ?
+                                {#
+                                &emsp;
+                                {% set obStatus=getstatus4claimanddriver(claim, driver) %}
+                                <!-- bouton LU/NON-LU -->
+                                {% if obStatus is defined and obStatus.status.value < 4 %}
+                                <a class="btn btn-sm btn--action"
+                                    href="{{ path('driver_switchclaimstatus_viewed', {'id':obStatus.id}) }}"
+                                >
+                                    {% if obStatus is defined and obStatus.status.value==0 %}
+                                    <i class="fas fa-envelope" style="color:red;" title="NON-LUE, marquer LUE"></i>
+                                    {% else %}
+                                    <i class="fas fa-envelope-open-text" style="color:green;" title="LUE, marquer Non-lue"></i>
+                                    {% endif %}
+                                </a>
+                                &emsp;
+                                {% endif %}
+                                <!-- Archivage/Réactualisation (seulement si réponse (Tender) envoyée) -->
+                                {% if obStatus is defined and obStatus.status.value >= 2 %}
+                                <button class="btn btn-sm btn--action">
+                                    {% if obStatus is defined and obStatus.status.value < 3 %}
+                                    <i class="fas fa-inbox" title="Actif => archiver"></i>
+                                    {% else %}
+                                    <i class="fas fa-file-archive" style="color:blue;" title="Archivé => réactualiser"></i>
+                                    {% endif %}
+                                </button>
+                                {% endif %}
+                                #}
+                            </div>
+                        </td>
+                    </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    {% if claims|length == 0 or iCount == 0 %}
+                    <tr><td colspan="7">Pas de devis reçu...</td></tr>
+                    {% endif %}
+                </tfoot>
+            </table>
+            <!-- tableau des Courses effectuées (Orders) -->
+            <table class="table table-striped--CANCELED table--tabtype" id="table--tabtype--order" parent_id="btn--tabtype--order">
+                <thead class="thead--dark--CANCELED">
+                    <tr>
+                        <th></th>
+                        <th>#</th>
+                        <th>Demande du</th>
+                        <th>Course le</th>
+                        <th>Prise en charge</th>
+                        <th>Destination</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Affiche les Courses en commençant par les + récentes -->
+                    {#<!-- {% for   in  |reverse %} -->#}
+                    {% for claim in null %}
+                    {#{% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
+                    <tr class="row--tab row--order ARCHIVE" parent_id="btn--tabtype--order">
+                        {% else %}#}
+                    <tr class="row--tab row--order TOUTES" parent_id="btn--tabtype--order">
+                        {#{% endif %}#}
+                        <td></td>
+                        
+                        <td> Les boutons !! </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    {% if null|length == 0 %}
+                    <tr>
+                        <td colspan="4">Vous n'avez encore pas bénéficié des services des pilotes de l'Annuaire...</td>
+                    </tr>
+                    {% endif %}
+                </tfoot>
+            </table>
+        </div>
     </div>
 
     <!-- ##### ^ FIN DES ELEMENTS PRINCIPAUX DE LA PAGE ^ ##### -->
@@ -247,31 +317,94 @@
     
     <!-- ##### v DEBUT DES MODALES v ##### -->
 
-    <!-- Modal d'affichage des détails de la demande -->
+    <!-- Modal d'affichage des détails de la DEMANDE -->
     {% for claim in app.user.customer.getclaims %}
-    <div class="modal--big p-5" id="{{ 'modal--claim--'~claim.id }}" style="display:none;">
-        <!-- Les "détails" de la demande -->
-        {{ include('claim/card.html.twig') }}
-        <!-- Les "cartes" des utilisateurs destinataires de la demande... -->
-        {% if claim.drivers %}
-        <h3 class="pt-3">Envoyée à :</h3>
-        <!-- ... la rangée "cartes" des utilisateurs destinataires de la demande... -->
-        <div class="d-flex flex-column align-items-center">
-        <!-- <div class="d-flex flex-row flex-wrap"> -->
-            {% for driver in claim.drivers %}
-                <!-- ... LA "carte utilisateur" à itérer... -->
-                {{ include('driver/card.html.twig', {obDriver: driver}) }}
-            {% endfor %}
-        </div>
-        {% endif %}
+    <div class="m-5" id="{{ 'modal--claim--'~claim.id }}" style="display:none;">
+    <!-- <div class="modal--big-css p-5" id="{{ 'modal--claim--'~claim.id }}" style="display:none;"> -->
 
-        <button class="btn btn-sm btn--secondary mt-5 btn--hidemodal"
-            parent_id="{{ 'modal--claim--'~claim.id }}"
-        >
-            <i class="ri-close-fill"></i>&ensp;Fermer
-        </button>
+        <!-- Bouton "fixe" à afficher en même temps que toute Modale, pour fermeture de celle-ci -->
+        <div class="btn--circle btn--hidemodal modal--closing" parent_id="{{ 'modal--claim--'~claim.id }}">X</div>
+        
+        <h2><U>DEMANDE DE COURSE ENVOYEE</U></h2>
+
+        <!-- Les "détails" de la demande et des pilotes destinataires -->
+        <div class="d-flex flex-row flex-wrap w-100 my-3">
+            <!-- Les "détails" de la demande -->
+            {% if claim.drivers and claim.drivers|length == 1 %}
+            <div class="d-flex flex-column col-md-12 col-xl-7">
+            {% else %}
+            <div class="d-flex flex-column col-12">
+            {% endif %}
+                {{ include('claim/_card.html.twig') }}
+            </div>
+            <!-- Les "cartes" des pilotes destinataires de la demande... -->
+            {% if claim.drivers %}
+                {% if claim.drivers|length == 1 %}
+            <div class="d-flex flex-column col-md-12 col-xl-5">
+                {% else %}
+            <div class="d-flex flex-column col-12">
+                {% endif %}
+                <h3>Envoyée à :</h3>
+                <!-- ... la rangée "cartes" des utilisateurs destinataires de la demande... -->
+                <!-- <div class="d-flex flex-row flex-wrap align-items-center"> -->
+                <div class="d-flex flex-column align-items-center">
+                    {% for driver in claim.drivers %}
+                    <!-- ... LA "carte utilisateur" à itérer... -->
+                    {{ include('driver/_card_mid.html.twig', {obDriver: driver, obClaim: claim}) }}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+
+        <!-- Les boutons d'actions -->
+        <!--{#
+        <div class="d-flex flex-row flex-wrap w-100">
+            <h3>Traitement de la demande :</h3>
+            &emsp;
+            <!- - bouton du drapeau de lecture de la demande - ->
+        {#{% set obStatus=getstatus4claimanddriver(claim, driver) %}# }
+            <button class="btn btn-sm btn--secondary btn--hidemodal mb-1"
+                style="background-color:lightgrey;color:black;"
+            >
+            {% if obStatus is defined and obStatus.status.value==0 %}
+            <i class="fas fa-envelope-open-text" style="color:green;"></i>&ensp;Marquer LUE (A DEVELOPPER)
+            {% else %}
+            <i class="fas fa-envelope" style="color:red;"></i>&ensp;Marquer NON LUE (A DEVELOPPER)
+            {% endif %}
+            </button>
+            &emsp;
+            <!- - bouton d'envoi d'un Tender en réponse à la Claim - ->
+            <a class="btn btn-sm btn--blue mb-1" id="btn--send-tender" data_id="{{ claim.id }}"
+                href="{{ path('tender_create', {'claim': claim.id}) }}"
+            >
+                <i class="far fa-paper-plane"></i>&ensp;Retourner un devis (A DEVELOPPER)
+            </a>
+            &emsp;
+            <!- - Archivage/Réactulaisation - ->
+            <button class="btn btn-sm btn--secondary btn--hidemodal mb-1"
+                style="background-color:lightgrey;color:black;"
+            >
+            {% if obStatus is defined and obStatus.status.value < 3 %}
+            <i class="fas fa-inbox" style="color:orange;"></i>&ensp;Archiver (A DEVELOPPER)
+            {% else %}
+            <i class="fas fa-file-archive" style="color:blue;"></i>&ensp;Réactualiser (A DEVELOPPER)
+            {% endif %}
+            </button>
+        </div>
+        #}-->
+
+        <div class="btns--row">
+            <button class="btn btn-sm btn--secondary mt-5 btn--hidemodal"
+                parent_id="{{ 'modal--claim--'~claim.id }}"
+            >
+                <i class="fas fa-times"></i>&ensp;Retour
+            </button>
+        </div>
     </div>
     {% endfor %}
+    <!-- Fin Modal d'affichage des détails de la DEMANDE -->
 
     <!-- ##### v FIN DES MODALES v ##### -->
 

@@ -49,7 +49,8 @@
 
 <!-- Si le "ARRAY" d'association {regioncode, oRemarkableplace} a bien été créé... -->
 {% if arRemarkableplaces is defined %}
-<select class="form-control my-1" size="1" position="absolute"
+<select size="1" position="absolute"
+    {% if class is defined %}class="{{ 'form-control my-1 '~class }}"{% else %}class="form-control my-1"{% endif %}
     {% if suffix is defined %}id="{{ 'select--remarkableplace--'~suffix }}"{% else %}id="select--remarkableplace"{% endif %}
     {% if suffix is defined %}name="{{ 'remarkableplace--'~suffix }}"{% else %}name="remarkableplace"{% endif %}
 >

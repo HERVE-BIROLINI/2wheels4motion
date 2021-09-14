@@ -68,12 +68,7 @@ class AdminController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('admin_pending', [
-            'controller_name' => 'AdminController',
-            //
-            'allcompaniesunknown'=>$entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>null]),
-            'alldriversunverified'=>$entityManager->getRepository(Driver::class)->findBy(['is_verified'=>null]),
-        ]);
+        return $this->redirectToRoute('admin_pending');
     }
 
     /**
@@ -93,12 +88,7 @@ class AdminController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('admin_pending', [
-            'controller_name' => 'AdminController',
-            //
-            'allcompaniesunknown'=>$entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>null]),
-            'alldriversunverified'=>$entityManager->getRepository(Driver::class)->findBy(['is_verified'=>null]),
-        ]);
+        return $this->redirectToRoute('admin_pending');
     }
 
 
@@ -140,9 +130,7 @@ class AdminController extends AbstractController
             // message de confirmation de la création
             $this->addFlash('success', "La création du nouveau \"type de lieu\" a bien été enregistrée...");
             //
-            return $this->redirectToRoute('admin_typeplace_read', [
-                'typeplaces'  => $typeplaceRepository->findAll(),
-            ]);
+            return $this->redirectToRoute('admin_typeplace_read');
         }
         elseif(isset($obTypeplace)){
             $this->addFlash('danger', "Un \"type de lieu\" avec ce libellé existe déjà...");
@@ -214,10 +202,7 @@ class AdminController extends AbstractController
             // message de confirmation de la création
             $this->addFlash('success', "La modification du \"type de lieu\" a bien été enregistrée...");
             //
-            return $this->redirectToRoute('admin_typeplace_read', [
-                // 'controller_name' => 'AdminController',
-                'typeplaces'  => $typeplaceRepository->findAll(),
-            ]);
+            return $this->redirectToRoute('admin_typeplace_read');
         }
         elseif(isset($obTypeplacefounded)){
             $this->addFlash('danger', "Un \"type de lieu\" avec ce libellé existe déjà...");
@@ -256,10 +241,7 @@ class AdminController extends AbstractController
         // message de confirmation de la création
         $this->addFlash('success', "La supression du \"type de lieu\" a bien été effectuée...");
         //
-        return $this->redirectToRoute('admin_typeplace_read', [
-            // 'controller_name' => 'AdminController',
-            'typeplaces'  => $typeplaceRepository->findAll(),
-        ]);
+        return $this->redirectToRoute('admin_typeplace_read');
     }
 
 
@@ -309,9 +291,7 @@ class AdminController extends AbstractController
             // message de confirmation de la création
             $this->addFlash('success', "La création du nouveau \"lieu\" a bien été enregistrée...");
             //
-            return $this->redirectToRoute('admin_remarkableplace_read', [
-                'remarkableplaces'  => $remarkableplaceRepository->findAll(),
-            ]);
+            return $this->redirectToRoute('admin_remarkableplace_read');
         }
         elseif(isset($obRemarkableplace)){
             $this->addFlash('danger', "Un \"lieu\" avec ce libellé existe déjà...");
@@ -397,10 +377,7 @@ class AdminController extends AbstractController
             // message de confirmation de la création
             $this->addFlash('success', "La modification du \"type de lieu\" a bien été enregistrée...");
             //
-            return $this->redirectToRoute('admin_remarkableplace_read', [
-                // 'controller_name' => 'AdminController',
-                'remarkableplaces'  => $remarkableplaceRepository->findAll(),
-            ]);
+            return $this->redirectToRoute('admin_remarkableplace_read');
         }
         elseif(isset($obRemarkableplacefounded)){
             $this->addFlash('danger', "Un \"lieu\" avec ce libellé existe déjà...");
@@ -441,10 +418,7 @@ class AdminController extends AbstractController
         // message de confirmation de la création
         $this->addFlash('success', "La supression du \"lieu\" a bien été effectuée...");
         //
-        return $this->redirectToRoute('admin_remarkableplace_read', [
-            // 'controller_name' => 'AdminController',
-            'remarkableplaces'  => $remarkableplaceRepository->findAll(),
-        ]);
+        return $this->redirectToRoute('admin_remarkableplace_read');
     }
 
 
@@ -499,13 +473,12 @@ class AdminController extends AbstractController
             // message de confirmation de la création
             $this->addFlash('success', "La création du nouveau tarif a bien été enregistrée...");
             //
-            return $this->redirectToRoute('admin_flatrate_read', [
-                'flatrates'  => $flatrateRepository->findAll(),
-            ]);
+            return $this->redirectToRoute('admin_flatrate_read');
         }
         elseif(isset($obTypeplace)){
             $this->addFlash('danger', "Un tarif avec ce libellé existe déjà...");
         }
+
         //
         if(isset($label) and $label==''){$error_label=true;$label=null;}
         if(isset($price) and ($price=='' or !is_numeric($price) or intval($price)==0)){$error_price=true;$price=null;}
@@ -589,14 +562,15 @@ class AdminController extends AbstractController
             // message de confirmation de la création
             $this->addFlash('success', "La modification du tarif a bien été enregistrée...");
             //
-            return $this->redirectToRoute('admin_flatrate_read', [
-                // 'controller_name' => 'AdminController',
-                'flatrates'  => $flatrateRepository->findAll(),
-            ]);
+            return $this->redirectToRoute('admin_flatrate_read');
         }
-        elseif(isset($obTypeplacefounded)){
-            $this->addFlash('danger', "Un tarif avec ce libellé existe déjà...");
-        }
+
+        // /!\ Hors de propos dans UPDATE /!\
+        //------------------------------------
+        // elseif(isset($obTypeplace)){
+        //     $this->addFlash('danger', "Un tarif avec ce libellé existe déjà...");
+        // }
+
         //
         if(isset($label) and $label==''){$error_label=true;$label=null;}
         if(isset($price) and ($price=='' or !is_numeric($price) or intval($price)==0)){$error_price=true;$price=null;}
@@ -634,10 +608,7 @@ class AdminController extends AbstractController
         // message de confirmation de la création
         $this->addFlash('success', "La supression du tarif a bien été effectuée...");
         //
-        return $this->redirectToRoute('admin_flatrate_read', [
-            // 'controller_name' => 'AdminController',
-            'flatrates'  => $flatrateRepository->findAll(),
-        ]);
+        return $this->redirectToRoute('admin_flatrate_read');
     }
 
 

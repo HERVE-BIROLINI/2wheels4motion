@@ -22,7 +22,7 @@ class FrenchGeographyTwig extends AbstractExtension
     //
     private $entityManager;
     //
-    static public $GoogleAPI_key='ici ta key API Google Maps';
+    static public $GoogleAPI_key='AIzaSyAmIEoTvCXk8eoyG2mtVVhL_9x25xCNX9k';
     // private $logger;
     // private $api_gmaps_key;
 

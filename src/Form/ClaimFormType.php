@@ -36,8 +36,11 @@ class ClaimFormType extends AbstractType
                 //
                 'years' => range(date('Y'), date('Y')+1),
                 // liste des contraintes...
+                'required' => true,
+                'empty_data' => '',
                 'constraints'   =>  [
                     new NotBlank(['message'=>"La date de la course est obligatoire"]),
+                    new NotNull(['message'=>"La date de la course est obligatoire"]),
                     // new GreaterThan(['value'  => new DateTime('2008-08-03 14:52:10'),
                     //                 'message' => "Vous devez préciser une date 'correcte'..."
                     //             ]),

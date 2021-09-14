@@ -7,9 +7,9 @@
 <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
 {{ include('_flash.html.twig') }}
 
-<form class="container-fluid mt-5 w-75" method="post"> 
+<form class="container-fluid mt-3 mb-3 w-75" method="post"> 
     <div class="card--3D-vertical">
-        <h1 class="h3 mb-3 font-weight-normal">Enregistrez-vous : <small class="small-title-message">(* champs obligatoire)</small></h1>
+        <h1 class="h3 mb-3 font-weight-normal">Enregistrez-vous :</h1>
 
         {{ form_start(registrationForm,{attr:{novalidate:"novalidate"}}) }}
         {{ form_end(registrationForm) }}
@@ -30,7 +30,7 @@
             </div>
             {% endif %}
         </div>
-
+        <small style="color:red;">(* champs obligatoire)</small>
     </div><!-- FIN de la Carte3D -->
 </form><!-- </div> FIN du Container Bootstrap -->
 {% endblock %}

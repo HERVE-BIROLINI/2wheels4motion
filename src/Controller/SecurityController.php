@@ -46,13 +46,26 @@ class SecurityController extends AbstractController
                 return $this->redirectToRoute('mailer_register');
 
             }
-            // ... si au contraire est déjà validé, affiche le tableau de bord de l'utilisateur
+
+            // astuce de l'argument passé dans le RedirecToRoute qui nous a amené ici..
+            elseif(isset($_GET['goto'])){
+                $this->addFlash('success', "Content de vous voir ".$user->getFirstname().". Quel trajet auriez-vous besoin d'effectuer ?");
+                return $this->redirectToRoute($_GET['goto']);
+            }
+
+            // ... si est déjà validé, et a un compte Pilote...
+            elseif($user->getDriver()){
+                return $this->redirectToRoute('profile_driver');
+                // return $this->redirectToRoute('homepage');
+            }
+            // ... si est déjà validé, et a un compte Client...
+            elseif($user->getCustomer()){
+                return $this->redirectToRoute('profile_customer');
+                // return $this->redirectToRoute('homepage');
+            }
+            // ... si est déjà validé, et a un compte Client...
             else{
-                return $this->render('profile/user.html.twig', [
-                    'error_firstname'   => null,
-                    'error_lastname'    => null,
-                    'error_phone'       => null,
-                ]);
+                return $this->redirectToRoute('profile_user', ['id'=>$user->getID(),]);
                 // return $this->redirectToRoute('homepage');
             }
         }

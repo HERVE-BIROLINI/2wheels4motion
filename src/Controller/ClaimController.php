@@ -38,7 +38,7 @@ class ClaimController extends AbstractController
         if(!$user=$this->getUser()){
             // ... si non, lui propose de se connecter
             $this->addFlash('warning', "Vous devez être connecté pour formuler une Commande de course. Si vous n'en avez pas encore, prenez 1 minute pour créer votre compte...");
-            return $this->redirectToRoute('security_login');
+            return $this->redirectToRoute('security_login',['goto'=>'claim_create']);
         }
         // ... si connecté, vérifie que son profil est complet (adresse => compte customer)
         elseif(!$customer=$this->getUser()->getCustomer()){
@@ -138,6 +138,7 @@ class ClaimController extends AbstractController
                     )
             )
         {
+            // dd($_POST);
             // * Si tout est bien renseigner => enregistre, envoi email au chauffeurs, etc... *
             $diffDate=$now->diff($date);
             if((($diffDate->d==0 && $diffDate->m==0 and $diffDate->y==0)
@@ -239,8 +240,12 @@ class ClaimController extends AbstractController
                     //
                     $entityManager->persist($claim);
 
+                    // -- /!\ Plus utilisé /!\ --
+                    // --------------------------
                     // Associe la Demande et tous les pilotes à qui elle sera envoyée
-                    $obStatus=$entityManager->getRepository(Status::class)->findOneBy(['value'=>0]);
+                    // $obStatus=$entityManager->getRepository(Status::class)->findOneBy(['value'=>0]);
+                    // --------------------------
+                    
                     // mais aussi, initialise Status pour le suivi par chaque destinataire
                     foreach($arDrivers as $obDriver){
                         $claim->addDriver($obDriver);
@@ -248,7 +253,12 @@ class ClaimController extends AbstractController
                         $claimStatus=new ClaimStatus();
                         $claimStatus->setClaim($claim);
                         $claimStatus->setDriver($obDriver);
-                        $claimStatus->setStatus($obStatus);
+
+                        // -- /!\ Plus utilisé /!\ --
+                        // --------------------------
+                        // $claimStatus->setStatus($obStatus);
+                        // --------------------------
+
                         //
                         $entityManager->persist($claimStatus);
                     }
@@ -286,11 +296,21 @@ class ClaimController extends AbstractController
             if(isset($_POST['customer_road']) and $_POST['customer_road']==''){$error_customer_road=true;}
             if(isset($_POST['customer_city']) and $_POST['customer_city']==''){$error_customer_city=true;}
             // Problème(s) avec l'adresse de prise en charge
-            if((!isset($remarkableplace_from) || $remarkableplace_from=='')
+            if((!isset($_POST['remarkableplace--from'])
+                ||  (isset($_POST['remarkableplace--from'])
+                        && ($remarkableplace_from=$_POST['remarkableplace--from'] or true)
+                        && $remarkableplace_from==''
+                    )
+                )
                 && !$claim->getFromZip()
             ){
                 $error_fromzip=true;
             }
+            // if((!isset($remarkableplace_from) || $remarkableplace_from=='')
+            //     && !$claim->getFromZip()
+            // ){
+            //     $error_fromzip=true;
+            // }
             // Problème(s) avec l'adresse destination
             if((!isset($_POST['remarkableplace--to'])
                 ||  (isset($_POST['remarkableplace--to'])

@@ -1,10 +1,18 @@
 <!-- DEBUT Driver Controller TEMPLATES banner -->
-<section class="driverspresentation--banner" id="banner" style="background-image:url({{ asset(sImgPath ~'banner/driver.png') }});">
+<section class="banner" id="driverspresentation--banner" style="background-image:url({{ asset(sImgPath ~'banner/driver.png') }});">
     <H1>LE PADDOCK</H1>
-    
+    <!--  -->
+    {% if app.user is defined and app.user != null and
+        (app.user.driver is not defined or app.user.driver==null)
+    %}
+    <a class="btn btn--ordering" href="{{ path('registration_driver', {'id': app.user.id}) }}">
+        <i class="fab fa-angellist"></i>
+        Créer un compte pilote VMDTR
+    </a>
+    {% else %}
     <a class="btn btn--ordering" href="{{ path('claim_create') }}">
         <i class="fas fa-motorcycle"></i>&nbsp;Commander une course
     </a>
-    
+    {% endif %}
 </section>
 <!-- FIN Profile banner -->

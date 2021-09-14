@@ -7,24 +7,29 @@
 
     {{ include('profile/_banner.html.twig') }}
 
-    <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
-    {{ include('_flash.html.twig') }}
+    <!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
+    {{ include('geography/_FromJSON4Javascript.html.twig') }}
     
     {% if app.user %}
     <div class="paragraph--large" id="">
-        <form class="card--3D-vertical" method="post">
-            <!-- Rangée titre + photo Avatar-->
-            <div class="d-flex flew-row flex-wrap justify-content-between align-items-center w-100">
-                <!-- Titre + date d'inscription -->
-                <div class="ml-2">
-                    <h2 class="h3 mb-3 font-weight-normal">Données personnelles :</h2>
-                    <p>Inscrit depuis le {{ app.user.registrationdate|date('d-m-Y') }}</p>
-                </div>
+        <div class="row--tabtype" id="row--tabtype--datas">
+            <div class="btn--tabtype" id="btn--tabtype--datapersonal" parent_id="row--tabtype--datas" default>Données Personnelles</div>
+            
+            <div class="btn--tabtype" id="btn--tabtype--dataprofessional" parent_id="row--tabtype--datas"
+            {% if app.user.driver==null %}hidden{% endif %}
+            >Données Professionnelles</div>
+        </div>
+
+        <!-- *** Block Données Personnelles *** -->
+        <form class="block--datas-vertical block--tabtype" id="form_datapersonal" parent_id="btn--tabtype--datapersonal" method="post" novalidate>
+            
+            <!-- Rangée titre + photo Avatar + nom + prénom -->
+            <div class="d-flex flex-row flex-wrap align-items-center justify-content-around m-2 w-100">
                 <!-- Photo -->
-                <div class="card--profile">
+                <div class="card--profile col-12 col-md-3">
                     <a href="{{ path('profile_changepicture', {'id': app.user.id }) }}">
                         {% set obUserportrait=getuserportrait(app.user) %}
-                        {% if obUserportrait is defined and obUserportrait is not null %}
+                        {% if obUserportrait is defined and obUserportrait!= null %}
                         <img class="imgbtn--profile" src="{{ asset(obUserportrait.pathname) }}" alt="Photo de profil">
                         {% else %}                    
                         <img class="imgbtn--profile" src="{{ asset(sImgPath ~'misc/no-image.png') }}" alt="Photo de profil">
@@ -35,31 +40,44 @@
                         <i class="fas fa-upload"></i>&ensp;Modifier
                     </a>
                 </div>
+                <!-- Identité -->
+                <div class="d-flex flex-column col-12 col-md-8 m-1">
+                    <!-- Nom de famille -->
+                    <div class="d-flex flex-column">
+                        <div class="d-flex flex-row flex-wrap align-items-center m-1">
+                            <label class="required col-12 col-sm-4" for="inputLastname">Nom :</label>
+                            <input class="form-control col-12 col-sm-8" type="text" value="{{ app.user.lastname }}" name="lastname" id="inputLastname" required ><!-- autofocus> -->
+                        </div>
+                        {% if  error_lastname is defined and error_lastname != null %}
+                        <span class="d-block">
+                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                            <small class="form-error-message">Le nom ne peut contenir que des lettres.</small>
+                        </span>
+                        {% endif %}
+                    </div>
+                    <!-- Prénom -->
+                    <div class="d-flex flex-column">
+                        <div class="d-flex flex-row flex-wrap align-items-center m-1">
+                            <label class="required col-12 col-sm-4" for="inputFirstname">Prénom :</label>
+                            <input class="form-control col-12 col-sm-8" type="text" value="{{ app.user.firstname }}" name="firstname" id="inputFirstname" required ><!-- autofocus> -->
+                        </div>
+                        {% if error_firstname is defined and error_firstname != null %}
+                        <span class="d-block">
+                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                            <small class="form-error-message">Le prénom ne peut contenir que des lettres, un espace ou un tiret.</small>
+                        </span>
+                        {% endif %}
+                    </div>
+                    <!-- Titre + date d'inscription -->
+                    <div class="m-1 ml-3">
+                        <!-- <h2 class="h3 ml-3 mb-3 font-weight-normal">Données personnelles :</h2> -->
+                        <p>Inscrit depuis le {{ app.user.registrationdate|date('d-m-Y') }}</p>
+                    </div>
+                </div>
             </div>
+
             <!-- Rangée de case d'édition -->
-            <div class="d-flex flew-row flex-wrap">
-                <!-- Nom de famille -->
-                <div class="col-12 col-md-6 mb-2">
-                    <label class="required" for="inputLastname">Nom :</label>
-                    <input type="text" value="{{ app.user.lastname }}" name="lastname" id="inputLastname" class="form-control" required ><!-- autofocus> -->
-                    {% if error_lastname %}
-                    <span class="d-block">
-                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
-                        <small class="form-error-message">Le nom ne peut contenir que des lettres.</small>
-                    </span>
-                    {% endif %}
-                </div>
-                <!-- Prénom -->
-                <div class="col-12 col-md-6 mb-2">
-                    <label class="required" for="inputFirstname">Prénom :</label>
-                    <input type="text" value="{{ app.user.firstname }}" name="firstname" id="inputFirstname" class="form-control" required ><!-- autofocus> -->
-                    {% if error_firstname %}
-                    <span class="d-block">
-                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
-                        <small class="form-error-message">Le prénom ne peut contenir que des lettres, un espace ou un tiret.</small>
-                    </span>
-                    {% endif %}
-                </div>
+            <div class="d-flex flex-row flex-wrap w-100">
                 <!-- Courriel -->
                 <div class="col-12 col-md-6 mb-2">
                     <label class="required" for="inputEmail">Adresse électronique :</label>
@@ -70,7 +88,7 @@
                 <div class="col-12 col-md-6 mb-2">
                     <label class="required" for="inputPhone">Téléphone :</label>
                     <input type="text" value="{{ app.user.phone }}" name="phone" id="inputPhone" class="form-control" required ><!-- pattern="@^0+[\d]{9}@" autofocus> -->
-                    {% if error_phone %}
+                    {% if error_phone is defined and error_phone != null %}
                     <span class="d-block">
                         <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
                         <small class="form-error-message">... doit commencer par 0 et comporter 10 chiffres.</small>
@@ -80,18 +98,110 @@
             </div>
             <br>
 
+            <!-- Anciennement partie du Controller Customer -->
+            <!-- ------------------------------------------ -->
+            <!-- <h2 class="h3 ml-4 mb-3 font-weight-normal">Adresse postale :</h2> -->
+            <!-- Bloc adresse du Customer -->
+            <div class="d-flex flex-row flex-wrap justify-content-between w-100"><!-- class="block--datas-horizontal mx-3" -->
+                <div class="col-12 col-md-5">
+                    <label class="required" for="inputroad">N° et Voie :</label>
+                    <input type="text" class="form-control" id="inputroad"
+                        {% if app.user.customer %}
+                        value="{{ app.user.customer.road }}"
+                        {% endif %}
+                        name="customer_road" required
+                    ><!-- autofocus> -->
+                    {% if error_customer_road is defined and error_customer_road!= null %}
+                    <span class="d-block">
+                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                        <small class="form-error-message">La voie doit comporter un numéro et un nom.</small>
+                    </span>
+                    {% endif %}
+                    <!-- &nbsp; -->
+                </div>
+                &nbsp;
+                <div class="col-12 col-md-3">
+                    <label class="required" for="inputcity">Commune :</label>
+                    <input type="text" class="form-control inputcity" id="inputcity"
+                        {% if app.user.customer %}
+                        value="{{ app.user.customer.city }}"
+                        {% endif %}
+                        name="customer_city"
+                    >
+                    <!-- required -->
+                    <select class="form-control cities" id="inputcities"
+                        name="cities" title="cities"
+                    >
+                        <option value="">-- Sélectionnez votre commune --</option>
+                    </select>
+                    {% if error_customer_city is defined and error_customer_city!= null %}
+                    <span class="d-block">
+                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                        <small class="form-error-message">La ville doit-être spécifiée.</small>
+                    </span>
+                    {% endif %}
+                </div>
+                &nbsp;
+                <div class="col-12 col-md-3">
+                    <label class="required" for="inputzip">Code postal :</label>
+                    <input type="text" class="form-control" id="inputzip"
+                        {% if app.user.customer %}
+                        value="{{ app.user.customer.zip }}"
+                        {% endif %}
+                        name="customer_zip" style="display:none;"
+                    >
+                    <!-- -->
+                    <input type="text" class="form-control inputzip" id="inputzip2"
+                        {% if app.user.customer %}
+                        value="{{ app.user.customer.zip }}"
+                        {% endif %}
+                        name="customer_zip" disabled
+                    >
+                    {#{% if error_customer_zip %}#}
+                    <!-- <span class="d-block">
+                        <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
+                        <small class="form-error-message">La voie doit comporter un numéro et un nom.</small>
+                    </span> -->
+                    {#{% endif %}#}
+                </div>
+            </div>
             <!-- rangée de boutons : Mise à jour / Modification MdP / Création compte Driver -->
             <div class="btns--row">
-                <button class="btn btn-sm btn--blue mb-3" type="submit">
+                <button class="btn btn-sm btn--blue" type="submit" form="form_datapersonal">
                     <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
                 </button>
-                <a class="btn btn-sm btn--secondary mb-3" href="{{ path('profile_pwd', {'id': app.user.id}) }}">
+                <a class="btn btn-sm btn--secondary" href="{{ path('profile_pwd', {'id': app.user.id}) }}">
                     <i class="ri-find-replace-line"></i>&ensp;<small>Modifier le mot de passe</small>
                 </a>
             </div>
-
         </form>
 
+
+
+        <!-- *** Block Données Professionnelles *** -->
+        {% if app.user.driver %}
+        <form class="block--datas-vertical block--tabtype" id="form_dataprofessional" parent_id="btn--tabtype--dataprofessional" method="post" novalidate>
+            <!-- Les informations professionnelles : T3P & Pilote VMDTR -->
+            <div class="card--horizontal mb-2">
+                <!-- BlockS de données de l'entreprise T3P + données propres au pilote -->
+                <div class="d-flex flex-row flex-wrap justify-content-between">
+                    <!-- Block de données de la company T3P -->
+                    {{ include('company/_form-company.html.twig') }}
+                    <!-- Block de données propres au pilote -->
+                    {{ include('driver/_form.html.twig') }}
+                </div>
+            </div>
+            <!-- rangée de bouton(s) : Mise à jour -->
+            <div class="btns--row">
+                <button class="btn btn-sm btn--blue" type="submit" form="form_dataprofessional">
+                    <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
+                </button>
+                {#<!-- <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
+                    <i class="fas fa-times"></i>&ensp;Annuler
+                </a> -->#}
+            </div>
+        </form>
+        {% endif %}
     </div>
     {% endif %}
 

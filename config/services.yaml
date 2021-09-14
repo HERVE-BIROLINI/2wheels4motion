@@ -55,4 +55,5 @@ services:
 
     # BIROLINI : NE marche pas !!
     # App\Twig\FrenchGeographyTwig:
-    #     arguments: [$logger: '@logger', $api_gmaps_key: '%api_gmaps_key%']
+    #     arguments: [$logger: '@logger']
+    #   arguments: [$logger: '@logger', $api_gmaps_key: '%api_gmaps_key%']

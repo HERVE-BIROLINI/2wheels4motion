@@ -1,22 +1,32 @@
 <!-- DEBUT Driver Controller TEMPLATES banner -->
-<section class="admin--banner" id="banner" style="background-image:url({{ asset(sImgPath ~'banner/admin.jpg') }});">
+<section class="banner" id="admin--banner" style="background-image:url({{ asset(sImgPath ~'banner/admin.jpg') }});">
     <H1>ADMINISTRATION</H1>
-
-    <!-- internal page menu, to navigate to ID -->
-    <div id="nav--inpage">
-        <a class="btn nav--btn--blue" href="{{ path('admin_pending') }}">Actions en attente</a>
-        <a class="btn nav--btn--blue" href="{{ path('admin_typeplace_read') }}">Les types de lieu</a>
-        <a class="btn nav--btn--blue" href="{{ path('admin_remarkableplace_read') }}">Les lieux remarquables</a>
-        <a class="btn nav--btn--blue" href="{{ path('admin_flatrate_read') }}">Les tarifs</a>
-        <a class="btn nav--btn--blue" href="{{ path('admin_socialreason_settings') }}">Raisons sociales & TVA</a>
-        <a class="btn nav--btn--blue" href="{{ path('admin_registered') }}">Les inscrits</a>
-        
-        <!-- <a class="btn nav--btn--blue" href="#section--customers">Les clients</a> -->
-        <!-- <a class="btn nav--btn--blue" href="#section--drivers">Les pilotes</a> -->
-        {#<!-- <a class="btn nav--btn--blue" href="{{ path('company_read') }}">Les T3P</a> -->#}
-    </div>
-    
 </section>
+
+<!-- Menu de navigation 'interne' -->
+<div class="navbar navbar-expand-lg navbar-light bg-light w-100" id="nav--inpage">
+    <!-- DEBUT bouton "Burger" -->
+    <button class="navbar-toggler" type="button" title="BurgerButton"
+        data-toggle="collapse" data-target="#navbar-collapse-inpage"
+    >
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <!-- FIN bouton "Burger" -->
+    <div class="collapse navbar-collapse nav--inpage" id="navbar-collapse-inpage">
+        <!-- Menus 'permanents' -->
+        <ul class="navbar-nav">
+            <a class="btn nav--btn--blue" href="{{ path('admin_pending') }}">Actions en attente</a>
+            <a class="btn nav--btn--blue" href="{{ path('admin_typeplace_read') }}">Les types de lieu</a>
+            <a class="btn nav--btn--blue" href="{{ path('admin_remarkableplace_read') }}">Les lieux remarquables</a>
+            <a class="btn nav--btn--blue" href="{{ path('admin_flatrate_read') }}">Les tarifs</a>
+            <a class="btn nav--btn--blue" href="{{ path('admin_socialreason_settings') }}">Raisons sociales & TVA</a>
+            <a class="btn nav--btn--white" href="{{ path('admin_registered') }}">Les inscrits</a>
+            <!-- <a class="btn nav--btn--blue" href="#section--customers">Les clients</a> -->
+            <!-- <a class="btn nav--btn--blue" href="#section--drivers">Les pilotes</a> -->
+            {#<!-- <a class="btn nav--btn--blue" href="{{ path('company_read') }}">Les T3P</a> -->#}
+        </ul>
+    </div>
+</div>
 <!-- FIN Profile banner -->
 
 <!-- Zone d'affichage des messages "FLASH" venant du Controller -->

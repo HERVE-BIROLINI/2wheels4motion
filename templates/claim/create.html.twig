@@ -8,15 +8,12 @@
 <!-- Claim Controller banner -->
 {{ include('claim/_banner.html.twig') }}
 
-<!-- Zone d'affichage des messages "FLASH" venant du Controller -->
-{{ include('_flash.html.twig') }}
-
 <!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
 {{ include('geography/_FromJSON4Javascript.html.twig') }}
 
 <div class="paragraph--large" method="post">
 
-    <h1 class="title--h2">Précisez votre besoin : <small class="small-title-message">(* champs obligatoire)</small></h1>
+    <h1 class="title--h2">Précisez votre besoin :</h1>
     <div class="card--3D-vertical px-4">
         {{ form_start(claimForm,{attr:{novalidate:"novalidate"}}) }}
         
@@ -114,8 +111,10 @@
                         <!-- Priorité -->
                         <label class="required" for="claim_form_priority_departure_0">Priorité à l'horaire :</label>
                         {{ form_widget(claimForm.priority_departure.0,
-                            {attr:{class:'switcher--checked', parent_id:'cb--flatrate'}}
+                            {attr:{class:'switcher--checked', parent_id:'select--flatrate'}}
                         )}}
+                        {#{attr:{class:'switcher--checked', parent_id:'cb--flatrate'}}#}
+                        
                         {{ form_widget(claimForm.priority_departure.1) }}
                         {#<!-- {% if error_priority is defined %}
                         <span class="d-block">
@@ -153,29 +152,35 @@
                         
                     <!-- Forfait mise à disposition -->
                     &nbsp;
-                    <div class="d-flex flex-row col-12">
-                        <div class="d-flex flex-row col-6 align-items-center">
-                            <input class='cb--switcher' id="cb--flatrate" type="checkbox"
+                    
+                    <div class="d-flex flex-column">
+                        <div class="d-flex flex-row">
+                    <!-- <div class="d-flex flex-row col-12"> -->
+                        <!-- <div class="d-flex flex-row col-6 align-items-center"> -->
+
+                            {#<!-- <input class='cb--switcher' id="cb--flatrate" type="checkbox"
                             {% if claim is defined and claim.flatrate is not null %}
                             checked
                             {% endif %}
                             >
-                            &ensp;
-                            <label class='mt-2' for="cb--flatrate">Mise à disposition</label>
+                            &ensp; -->#}
+                            <label class='mt-2' for="cb--flatrate">Mise à disposition :</label>
                         </div>
                         <!-- <div> -->
-                        <select class="form-control switcher--disabled col-6" parent_id="cb--flatrate"
+                        <!-- <select class="form-control switcher--disabled col-6" parent_id="cb--flatrate" -->
+                            <select class="form-control switcher--disabled" parent_id="cb--flatrate"
                             id="select--flatrate" size="1" position="absolute" name="flatrate"
                         >
+                            <option value="">-- Choisissez une durée --</option>
                         {% for obFlatrate in flatrates %}
                             {% if obFlatrate.label starts with 'Mise à disposition' %}
-                        <option value="{{ obFlatrate.id }}"
-                            {% if claim is defined and claim.flatrate is not null and claim.flatrate.id==obFlatrate.id %}
-                            selected='selected'
-                            {% endif %}
-                        >
+                            <option value="{{ obFlatrate.id }}"
+                                {% if claim is defined and claim.flatrate is not null and claim.flatrate.id==obFlatrate.id %}
+                                selected='selected'
+                                {% endif %}
+                            >
                             {{ obFlatrate.label }}
-                        </option>
+                            </option>
                             {% endif %}
                         {% endfor %}
                         </select>
@@ -199,7 +204,7 @@
                         </div>
                     </div>
                     <!-- block 'adressfrom' -->
-                    <div class="block--datas-vertical table--tabtype" parent_id="btn--tabtype--adressfrom">
+                    <div class="block--datas-vertical block--tabtype" parent_id="btn--tabtype--adressfrom">
                         <div class="d-flex flex-column justify-content-center w-100">
                             <!-- Road -->
                             <div class="d-flex flex-column justify-content-center w-100">
@@ -217,7 +222,7 @@
                                         <!-- <label class="required" for="claim_form_from_city">Ville :</label> -->
                                         {{ form_widget(claimForm.from_city) }}
                                         <select class="form-control cities" id="claim_form_from_cities"
-                                            name="cities" title="cities"
+                                            name="from_cities" title="from_cities"
                                         >
                                             <option value="">-- Sélectionnez votre commune --</option>
                                         </select>
@@ -241,7 +246,7 @@
                         </div>
                     </div>
                     <!-- block 'remarkableplacefrom' -->
-                    <div class="block--datas-vertical table--tabtype" parent_id="btn--tabtype--remarkableplacefrom">
+                    <div class="block--datas-vertical block--tabtype" parent_id="btn--tabtype--remarkableplacefrom">
                         {{ include('geography/_selectregion.html.twig', {id:'select--region--from'})}}
                         <br>
                         {{ include('remarkableplace/_selectremarkableplace.html.twig',
@@ -266,15 +271,15 @@
                     <div class="row--tabtype" id="row--tabtype--claimto">
                         <div class="btn--tabtype" id="btn--tabtype--adressto" parent_id="row--tabtype--claimto" default>Adresse</div>
                         <div class="btn--tabtype" id="btn--tabtype--remarkableplaceto" parent_id="row--tabtype--claimto"
-                        {% if remarkableplace_to is defined and remarkableplace_to is not null and remarkableplace_to!='' %}
-                        default
-                        {% endif %}
-                    >
+                            {% if remarkableplace_to is defined and remarkableplace_to is not null and remarkableplace_to!='' %}
+                            default
+                            {% endif %}
+                        >
                         Lieu particulier&emsp;<i class="fas fa-plane-departure"></i>&nbsp;<i class="fas fa-train"></i>
                     </div>
                     </div>
                     <!-- block 'adressto' -->
-                    <div class="block--datas-vertical table--tabtype" parent_id="btn--tabtype--adressto">
+                    <div class="block--datas-vertical block--tabtype" parent_id="btn--tabtype--adressto">
                         <!-- Road -->
                         <div class="d-flex flex-column justify-content-center w-100">
                             <!-- <label class="required" for="claim_form_to_road">N° et Voie :</label> -->
@@ -292,7 +297,7 @@
                                     <!-- <label class="required" for="claim_form_to_city">Ville :</label> -->
                                     {{ form_widget(claimForm.to_city) }}
                                     <select class="form-control cities" id="claim_form_to_cities"
-                                        name="cities" title="cities"
+                                        name="to_cities" title="to_cities"
                                     >
                                         <option value="">-- Sélectionnez votre commune --</option>
                                     </select>
@@ -315,7 +320,7 @@
                         </div>
                     </div>
                     <!-- block 'remarkableplacefrom' -->
-                    <div class="block--datas-vertical table--tabtype" parent_id="btn--tabtype--remarkableplaceto">
+                    <div class="block--datas-vertical block--tabtype" parent_id="btn--tabtype--remarkableplaceto">
                         {{ include('geography/_selectregion.html.twig', {id:'select--region--to'}) }}
                         <br>
                         {{ include('remarkableplace/_selectremarkableplace.html.twig',
@@ -349,14 +354,17 @@
             <button class="btn btn-sm btn--blue" type="submit">
                 <i class="far fa-paper-plane"></i>&ensp;Envoyer la demande
             </button>
-            <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
+            <!-- la route security_login permet, puisque déjà connecté, de renvoyer vers la page du tableau de bord la plus appropriée -->
+            <!-- <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}"> -->
+            <a class="btn btn-sm btn--secondary" href="{{ path('security_login',{'id': app.user.id}) }}">
                 <i class="fas fa-times"></i>&ensp;Annuler
             </a>
         </div>
         
         {{ form_end(claimForm) }}
+        
+        <small style="color:red;">(* champs obligatoire)</small>
     </div>
-
 </div>
 
 {% endblock %}

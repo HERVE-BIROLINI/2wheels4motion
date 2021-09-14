@@ -8,18 +8,20 @@
 {{ include('_flash.html.twig') }}
 
 {% if app.user %}
-    <div class="p-3 mb-2 bg-success text-white">
+    <div class="alert alert-warning mx-3 my-1">
         Vous êtes connecté en tant que ' {{ app.user.firstname }} {{ app.user.lastname }} ',
-        avec l'adresse électronique ' {{ app.user.username }} '. <a href="{{ path('security_logout') }}" class="text-danger">- Logout -</a>
+        avec l'adresse électronique ' {{ app.user.username }} '.
+        &emsp;
+        <a class="btn-sm btn-danger" href="{{ path('security_logout') }}">Se déconnecter</a>
     </div>
 {% endif %}
 
-<form class="container-fluid mt-5 w-75" method="post">
+<form class="container-fluid mt-3 mb-3 w-75" method="post">
     <div class="card--3D-vertical">
 
         <div class="d-flex flex-row justify-content-between w-100">
             <!---->
-            <h1 class="h3 mb-3 font-weight-normal">Identifiez-vous : <small class="small-title-message">(* champs obligatoire)</small></h1>
+            <h1 class="h3 mb-3 font-weight-normal">Identifiez-vous :</h1>
             <!---->
             {% if app.user is null %}
             <div class="d-flex flex-row justify-content-between align-items-center">
@@ -69,7 +71,7 @@
             </div>
             {% endif %}
         </div>
-        
+        <small style="color:red;">(* champs obligatoire)</small>
     </div>
 </form>
 {% endblock %}

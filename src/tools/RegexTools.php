@@ -5,7 +5,7 @@ namespace App\Tools;
 class RegexTools{
     
     private static $pattern_default="/[a-zA-Z\d\s\'\,\-àáâãäåçèéêëìíîïðòóôõöùúûüýÿ]/";
-    private static $pattern_name="/[a-zA-Z\- ]/";
+    private static $pattern_name="/[a-zA-Z\- àáâãäåçèéêëìíîïðòóôõöùúûüýÿ]/";
     private static $pattern_email="/[a-zA-Z]{1}+[a-zA-Z\s\-\_\.]+\@{1}[A-Za-z\d\-\_\.]+\.{1}+[A-Za-z]{2}/";
     private static $pattern_password="/[a-zA-Z\d\s\-\@\$\£\_]/";
     private static $pattern_phone="/0+[\d]{9}/";

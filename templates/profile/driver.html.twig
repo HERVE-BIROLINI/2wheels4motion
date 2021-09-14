@@ -10,9 +10,6 @@
     <div id="div--2hide-ifmodal">
         {{ include('profile/_banner.html.twig') }}
 
-        <!-- Zone d'affichage des messages "FLASH" venant du Controller -->
-        {{ include('_flash.html.twig') }}
-
         <!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
         {{ include('geography/_FromJSON4Javascript.html.twig') }}
 
@@ -24,34 +21,10 @@
         
         <!-- Block par défaut -->
         <div class="paragraph--large" id="blk--company2create">
-        
-            <!-- Les informations professionnelles : T3P & Pilote VMDTR -->
-            <form class="card--3D-vertical" id="formprofiledriver" method="post" enctype="multipart/form-data" novalidate>
-                <div class="card--horizontal mb-2">
-                    <!-- BlockS de données de l'entreprise T3P + données propres au pilote -->
-                    <div class="d-flex flex-row flex-wrap justify-content-between">
-                        <!-- Block de données de la company T3P -->
-                        {{ include('company/_form-company.html.twig') }}
-                        <!-- Block de données propres au pilote -->
-                        {{ include('driver/_form.html.twig') }}
-                    </div>
-                </div>
-
-                <!-- rangée de bouton(s) : Mise à jour / Modification MdP / Création compte Driver -->
-                <div class="btns--row">
-                    <button class="btn btn-sm btn--blue" type="submit" form="formprofiledriver">
-                        <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
-                    </button>
-                    {#<!-- <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
-                        <i class="fas fa-times"></i>&ensp;Annuler
-                    </a> -->#}
-                </div>
-    
-            </form>
     
             <!-- L'historique des échanges -->
             <div class="d-flex flex-row flex-wrap justify-content-between align-items-center mt-5">
-                <h2 class="h3 mb-3 font-weight-normal">Historique des échanges :</h2>
+                <h2 class="title--h2 mb-3">Echanges avec les clients :</h2>
                 <form id="formtable" method="post">
                     <input type="hidden" name="witharchived" value="{{ witharchived }}">
                     <button class="btn btn-sm btn--green" name='show-hide--archive' type='submit' form="formtable">
@@ -64,13 +37,14 @@
                     </button>
                 </form>
             </div>
+            <!-- * Les onglets de sélection du block affiché * -->
             <div class="row--tabtype" id="row--tabtype--travel">
                 <div class="btn--tabtype" id="btn--tabtype--claim" parent_id="row--tabtype--travel" default>Demandes reçues</div>
                 <div class="btn--tabtype" id="btn--tabtype--tender" parent_id="row--tabtype--travel">Devis envoyés</div>
                 <div class="btn--tabtype" id="btn--tabtype--order" parent_id="row--tabtype--travel">Courses effectuées</div>
             </div>
             <!-- tableau des Demandes reçues (Claims) -->
-            <table class="table table-striped--CANCELED table--tabtype" id="table--tabtype--claim" parent_id="btn--tabtype--claim">
+            <table class="table table-striped--CANCELED block--tabtype" id="block--tabtype--claim" parent_id="btn--tabtype--claim">
                 <thead class="thead--dark--CANCELED">
                     <tr>
                         <th></th>
@@ -149,16 +123,15 @@
                 </tfoot>
             </table>
             <!-- tableau des Devis envoyés (Tenders) -->
-            <table class="table table-striped--CANCELED table--tabtype" id="table--tabtype--tender" parent_id="btn--tabtype--tender">
+            <table class="table table-striped--CANCELED block--tabtype" id="block--tabtype--tender" parent_id="btn--tabtype--tender">
                 <thead class="thead--dark--CANCELED">
                     <tr>
                         <th></th>
-                        <th>#</th>
-                        <th>Devis du</th>
-                        <th>Pour la demande du</th>
+                        <th>Devis n° / du</th>
+                        <th>Demande n° / du</th>
                         <th>Prise en charge</th>
                         <th>Destination</th>
-                        <th>Soit une distance de (km)</th>
+                        <th>Distance (km)</th>
                         <th>Au tarif de (&euro;)</th>
                         <th>Actions</th>
                     </tr>
@@ -168,21 +141,22 @@
                     {% for tender in app.user.driver.gettenders|reverse %}
                     <tr class="row--tab row--tender" parent_id="btn--tabtype--tender">
                         <td></td>
-                        <td>{{ tender.id }}</td>
-                        <td>{{ tender.tenderdatetime|date('d/m/Y') }}</td>
-                        <td>{{ tender.claim.claimdatetime|date('d/m/Y') }}</td>
+                        <td>{{ tender.id~' / '~tender.tenderdatetime|date('d/m/Y') }}</td>
+                        <td>{{ tender.claim.id~' / '~tender.claim.claimdatetime|date('d/m/Y') }}</td>
                         <td>
                             {% if tender.claim.remarkableplacefrom != null %}
                             {{ tender.claim.remarkableplacefrom.label }}
                             {% else %}
-                            {{ tender.claim.fromroad~', '~tender.claim.fromzip~' '~tender.claim.fromcity }}
+                            {{ tender.claim.fromcity }}
+                            {#<!-- {{ tender.claim.fromroad~', '~tender.claim.fromzip~' '~tender.claim.fromcity }} -->#}
                             {% endif %}
                         </td>
                         <td>
                             {% if tender.claim.remarkableplaceto != null %}
                             {{ tender.claim.remarkableplaceto.label }}
                             {% else %}
-                            {{ tender.claim.toroad~', '~tender.claim.tozip~' '~tender.claim.tocity }}
+                            {{ tender.claim.tocity }}
+                            {#<!-- {{ tender.claim.toroad~', '~tender.claim.tozip~' '~tender.claim.tocity }} -->#}
                             {% endif %}
                         </td>
                         <td>{% if tender.distance==0 %}Forfait{% else %}{{ tender.distance }}{% endif %}</td>
@@ -237,7 +211,7 @@
                 </tfoot>
             </table>
             <!-- tableau des Courses effectuées (Orders) -->
-            <table class="table table-striped--CANCELED table--tabtype" id="table--tabtype--order" parent_id="btn--tabtype--order">
+            <table class="table table-striped--CANCELED block--tabtype" id="block--tabtype--order" parent_id="btn--tabtype--order">
                 <tdead class="thead--dark--CANCELED">
                     <tr>
                         <th></th>
@@ -273,6 +247,38 @@
                     {#{% endif %}#}
                 </tfoot>
             </table>
+
+
+
+
+
+
+            
+        {#
+            <!-- Les informations professionnelles : T3P & Pilote VMDTR -->
+            <form class="card--3D-vertical" id="formprofiledriver" method="post" enctype="multipart/form-data" novalidate>
+                <div class="card--horizontal mb-2">
+                    <!-- BlockS de données de l'entreprise T3P + données propres au pilote -->
+                    <div class="d-flex flex-row flex-wrap justify-content-between">
+                        <!-- Block de données de la company T3P -->
+                        {{ include('company/_form-company.html.twig') }}
+                        <!-- Block de données propres au pilote -->
+                        {{ include('driver/_form.html.twig') }}
+                    </div>
+                </div>
+
+                <!-- rangée de bouton(s) : Mise à jour -->
+                <div class="btns--row">
+                    <button class="btn btn-sm btn--blue" type="submit" form="formprofiledriver">
+                        <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
+                    </button>
+                    {#<!-- <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
+                        <i class="fas fa-times"></i>&ensp;Annuler
+                    </a> -->#}
+                </div>
+    
+            </form>
+        #}
         </div>
     </div>
 

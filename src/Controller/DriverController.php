@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\ClaimStatus;
-use App\Entity\Driver;
-use App\Entity\Status;
+// use App\Entity\Driver;
+// use App\Entity\Status;
 // use App\Entity\User;
 use App\Repository\DriverRepository;
 use App\Twig\FrenchGeographyTwig;

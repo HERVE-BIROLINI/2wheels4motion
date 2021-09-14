@@ -14,6 +14,7 @@
 @import url(https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900display=swap%27);
 *{
     font-family: "Poppins", sans-serif;
+    /* border:1px solid red; */
 }
 
 body{
@@ -74,7 +75,6 @@ th{
  * ---------------------------------------------------------------
 */
 /*---- Class définies mais uniquement pour traitement Javascript ----
-#banner{}               ( plus bouton Uptotop )
 -
 #avatarpicture
 #vmdtrpicture
@@ -87,7 +87,7 @@ th{
 #dropdownMenuOffset--Region{}
 #dropdownMenuOffset--Department{}
     V gestion des Table multi-onglets V
-.table--tabtype{}
+.block--tabtype{}
 .row--tab{}
     V Modale de selection d'une entreprise T3P existante V
 #blk--company2create{}
@@ -107,13 +107,14 @@ th{
     /**/
     display:flex;
     flex-direction:column;
+    padding-right:0.75em;
     align-items:center;
     z-index:99;
     /**/
     background: linear-gradient(to top right,blue, 8%, white, 90%, red);
     box-shadow: 0px 4px 8px black;
 }
-#banner{
+.banner{
     width:100%;
     box-shadow: 0px 6px 8px grey;
 }
@@ -141,14 +142,30 @@ th{
     text-align: center;
     box-shadow:inset 3px 3px 6px black;
 }
-#uptotop{
+#uptotop1{
     position:fixed;
+    height: 40px;
+    width: 40px;
     bottom:2em;
     right:2em;
     /**/
     color:blue;
+    font-size:1.5em;
     font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.55);
+    background-color: rgba(255, 255, 255, 0.85);
+    box-shadow: 2px 2px 0.25em red;
+}
+#uptotop2{
+    position:fixed;
+    height: 40px;
+    width: 40px;
+    bottom:2em;
+    left:2em;
+    /**/
+    color:blue;
+    font-size:1.5em;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.85);
     box-shadow: 2px 2px 0.25em red;
 }
 .modal--closing{
@@ -184,13 +201,7 @@ th{
     pointer-events:none;
     opacity:0.2;
 }
-/* -- MENU PRINCIPAL DE NAVIGATION -- */
-.nav--bar{
-    /* border:3px solid magenta; */
-    /**/
-    display: flex;
-    flex-direction: row;
-}
+/* -- MENUS DE NAVIGATION -- */
 .container--nav{
     /* border:3px solid yellow; */
     /**/
@@ -203,12 +214,7 @@ th{
     flex-direction: row;
 }
 .nav--logo{
-    /* background-color:white; */
-    margin-left:1em;
-    /* margin:10px; */
-    width:75px;
-    /* min-width:110px; */
-    max-height:75px;
+    width:60px;
 }
 .nav--words{
     /* border:3px solid blue; */
@@ -217,22 +223,22 @@ th{
     flex-direction:row;
     flex-wrap:wrap;
     /**/
-    margin-left:15%;
+    /* margin-left:15%; */
     align-items:center;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     /* justify-content: space-evenly; */
 }
 .nav--menu{
     display:flex;
-    flex-direction: row;
+    flex-direction:row;
+    padding-right:1em;
     /**/
+    /* align-items: center; */
     justify-content: flex-end;
 }
-.nav--menu>ul>li{
-    margin-top:2.5px;
-    margin-right:10px;
-    margin-left:5px;
-    /**/
+.nav-item{
+    /* font-size:.75em; */
+    color:black;
     font-weight: bold;
 }
 /* -- BANNIERES --
@@ -240,11 +246,12 @@ th{
 .btn--ordering{
     /**/
     position: absolute;
-    top:250px;
+    top:300px;
     /**/
     color:white;
     font-weight: bold;
-    background-color: rgba(255, 0, 0, 0.55);
+    font-size: 1.5em;
+    background-color: rgba(255, 0, 0, 0.85);
     box-shadow: 2px 2px 0.25em blue;
     border-radius: 50px;
 }
@@ -253,16 +260,34 @@ th{
     background-color: rgba(255, 0, 0, 1);
     box-shadow:inset 3px 3px 8px black;
 }
+#app--footer{
+    display:flex;
+    flex:row;
+    height:75px;
+    width:100%;
+    font-weight:bolder;
+    background-color:rgb(92, 89, 89);
+    color:white;
+    justify-content: center;
+    align-items:center;
+}
 /* - Menus secondaires... - */
-#nav--inpage{
+.nav--inpage{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
+    justify-content:center;
+    align-items:center;
+}
+#nav--inpage{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
     /**/
-    position: absolute;
-    bottom:0px;
+    justify-content:center;
+    align-items:center;
+    /**/
+    box-shadow:0px 6px 8px grey;
 }
 /* -- POUR LES FORMULAIRES -- */
 .required::after{
@@ -339,7 +364,8 @@ th{
     0.3em 0.3em 1em rgba(0,0,0,0.3);
     border-radius:3px;
     /**/
-    padding-bottom:3em;
+    /* /!\ Nécessaire uniquement pour les cartes de pilote */
+    /* padding-bottom:3em; */
 }
 .card--head{
     display:flex;
@@ -540,7 +566,7 @@ th{
 #section--luggages{}
 */
 /* -- BANNIERES -- */
-.homepage--banner{
+#homepage--banner{
     position: relative;
     /**/
     display: flex;
@@ -556,7 +582,7 @@ th{
     justify-content: center;
     align-items: center;
 }
-.homepage--banner>h1{
+#homepage--banner>h1{
     color:white;
     font-weight: bolder;
     text-shadow: 5px 5px 0.25em blue;
@@ -574,7 +600,7 @@ th{
     font-weight: bold;
     /**/
     color:blue;
-    background-color: rgba(255, 255, 255, 0.55);
+    background-color: rgba(255, 255, 255, 0.75);
     box-shadow: 2px 2px 0.25em red;
     /**/
     border-radius: 10px;
@@ -641,7 +667,7 @@ th{
 
 */
 /* -- BANNIERES -- */
-.driverspresentation--banner{
+#driverspresentation--banner{
     position: relative;
     /**/
     display: flex;
@@ -657,13 +683,14 @@ th{
     justify-content: center;
     align-items: center;
 }
-.driverspresentation--banner>h1{
+#driverspresentation--banner>h1{
     color:white;
     font-weight: bolder;
     text-shadow: 5px 5px 0.25em red;
     justify-self: center;
 }
 /* -- CONTENEURS -- */
+/*  - footer de la carte 'Pilote' - */
 .card--footer-horizontal{
     color:white;
     background-color: rgb(92, 89, 89);
@@ -715,7 +742,7 @@ th{
 
 */
 /* -- BANNIERES -- */
-.flatrate--banner{
+#flatrate--banner{
     position: relative;
     /**/
     display: flex;
@@ -731,7 +758,7 @@ th{
     justify-content: center;
     align-items: center;
 }
-.flatrate--banner>h1{
+#flatrate--banner>h1{
     color:white;
     font-weight: bolder;
     text-shadow: 5px 5px 0.25em red;
@@ -748,7 +775,7 @@ th{
 
 */
 /* -- BANNIERES -- */
-.profile--banner{
+#profile--banner{
     position: relative;
     /**/
     display: flex;
@@ -764,7 +791,7 @@ th{
     justify-content: center;
     align-items: center;
 }
-.profile--banner>h1{
+#profile--banner>h1{
     color:blue;
     font-weight: bolder;
     text-shadow: 5px 5px 0.25em red;
@@ -855,7 +882,7 @@ th{
 ---------------------------------------------------------------------
 */
 /* -- BANNIERES -- */
-.claim--banner{
+#claim--banner{
     position: relative;
     /**/
     display: flex;
@@ -871,7 +898,7 @@ th{
     justify-content: center;
     align-items: center;
 }
-.claim--banner>h1{
+#claim--banner>h1{
     color:white;
     font-weight: bolder;
     text-shadow: 5px 5px 0.25em blue;
@@ -904,7 +931,7 @@ th{
  * -------------------------------------------------------
 */
 /* -- BANNIERES -- */
-.admin--banner{
+#admin--banner{
     position: relative;
     /**/
     display: flex;
@@ -920,7 +947,7 @@ th{
     justify-content: center;
     align-items: center;
 }
-.admin--banner>h1{
+#admin--banner>h1{
     color:white;
     font-weight: bolder;
     text-shadow: 5px 5px 0.25em red;
@@ -976,20 +1003,23 @@ th{
     .nav--menu{
         justify-content: flex-start;
     }
+    /* #nav--inpage{
+        justify-content: flex-end;
+    } */
 }
 @media screen and (max-width: 760px){
-    #nav--inpage{
+    /* #nav--inpage{
         flex-direction:column;
-    }
+    } */
     #banner>h1{
         /* visibility:hidden; */
         position:absolute;
         top:0px;
     }
-    .btn--ordering{
-        /* position:absolute; */
+    /* .btn--ordering{
+        / * position:absolute; * /
         top:50px;
-    }
+    } */
 }
 @media screen and (max-width: 700px){
     .block--date{
@@ -1002,9 +1032,6 @@ th{
     .card--3D-vertical{
     /* .block--datas-vertical,.block--datas-horizontal,.card--3D-vertical{ */
         width:100%;
-        /* margin:0%; */
-        /* padding:0%; */
-        /* padding-top:1em; */
         /**/
         border:none;
         box-shadow:none;

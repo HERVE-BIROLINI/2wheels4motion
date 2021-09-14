@@ -26,6 +26,9 @@ class Claim
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\Type("\DateTimeInterface")
+     * @Assert\DateTime
+     * @Assert\NotNull
      */
     private $journey_date;
 

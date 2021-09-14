@@ -6,7 +6,7 @@
     {% set obDept=getdepartmentbycode(obCompany.zip|slice(0,2)) %}
     {% set obRegion=getregionbycode(obDept.region_code) %}
 {% endif %}
-<div class="card--3D-vertical col-12" style="min-width:21em;max-width:23%;">
+<div class="card--3D-vertical col-12 pb-5" style="min-width:21em;max-width:23%;">
     <div class="card--vertical">
     <!-- <div class="card--vertical pb-5"> -->
         <!-- 1ère rangée : chauffeur (photo + notation) -->
@@ -14,7 +14,7 @@
             style="width:95%;justify-content:space-between;"
         >
             <!-- Bloc image portrait -->
-            <div class="mr-2">
+            <div class="d-flex flex-column mr-2">
                 {% set obPortrait=getuserportrait(obUser) %}
                 {% if obPortrait %}
                 <img class="img--profile" src="{{ asset(obPortrait.pathname) }}" alt="Photo de profil">

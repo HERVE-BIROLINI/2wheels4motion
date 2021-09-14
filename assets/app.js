@@ -21,7 +21,7 @@ import { identifierForContextKey } from 'stimulus/webpack-helpers';
 
 
 document.addEventListener("DOMContentLoaded", function(event){
-    
+    /*
     // !!! NE SERT A RIEN !!!
     //------------------------
     // document.addEventListener('keyup keypress', function(e) {
@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function(event){
     //     }
     // });
     //------------------------
+    */
     
     // ** Vérifie l'existance d'une section (HTML) "masquée"
     //    contenant le fichier JSON transmis par PHP...
@@ -88,10 +89,13 @@ document.addEventListener("DOMContentLoaded", function(event){
     var lastScrollTop=0;
     // - ... Récupère la hauteur par l'appel d'une fonction, besoin d'être dynamique...
     function getHeight(){return document.documentElement.scrollHeight;};
+    function getBodyHeight(){return document.body.scrollHeight;};
+    // - ... Récupère la hauteur 'interne' de la fenêtre de l'explorateur...
     function getInnerHeight(){return window.innerHeight?window.innerHeight:document.documentElement.clientHeight;};
     function getScrollTop(){return Math.max(document.body.scrollTop,document.documentElement.scrollTop);};
     // - Fonction d'analyse de la progression du scroll et de création des nouveaux éléments
     function scrollActing() {
+
         // * si le header venait à disparaître, le "fixe" en haut de page *
         let htmlHeader=document.querySelector("#section--header");
         let iHeaderHeight=Math.round(htmlHeader.offsetHeight);
@@ -99,34 +103,72 @@ document.addEventListener("DOMContentLoaded", function(event){
         if(Math.round(getScrollTop())>=iHeaderHeight * 0.66
             && (getHeight()-getInnerHeight())>Math.round(getScrollTop())+iHeaderHeight
         ){
-            htmlHeader.setAttribute("style","width:100%;position:fixed;top:0;z-index: 99;opacity:0.95");
+            htmlHeader.setAttribute("style","position:fixed;top:0;z-index:99;padding-right:0em;");//opacity:0.95;
         }
         else if(Math.round(getScrollTop())<iHeaderHeight * 0.66){
             htmlHeader.removeAttribute("style");
         }
+
+        // * si le bandeau "thématique" contient un "sous-menu"
+        let htmlNavInPage=document.querySelector("#nav--inpage");
+        if(htmlNavInPage){
+            let htmlBanner=document.querySelector('.banner');
+            if(htmlBanner){
+                let iBannerHeight=htmlBanner.offsetHeight;
+                if(getScrollTop()>=iBannerHeight-145){
+                    htmlNavInPage.setAttribute("style","position:fixed;top:"+(htmlHeader.offsetHeight)+"px;z-index:9;padding-top:15px;padding-bottom:5px;");
+                }else{
+                    htmlNavInPage.removeAttribute("style");
+                }
+            }
+        }
+
         // lorsque le slider arrive en bas...
         // if(Math.round(getScrollTop()+getInnerHeight())===Math.round(getHeight())){}
         // else{}
 
         // * analyse le sens de déroulement du scroll pour la gestion de l'affichage du bouton Uptotop *
         let currentScrollTop=window.pageYOffset //|| document.documentElement.scrollTop;
-        if (currentScrollTop > lastScrollTop){
-            document.querySelector('#uptotop').style.display=''
+        let arUptotop=document.querySelectorAll('.uptotop');
+        if (currentScrollTop > lastScrollTop && arUptotop){
+            arUptotop.forEach(element => {
+                element.style.display='';
+            });
         } else {
-            document.querySelector('#uptotop').style.display='none'
+            arUptotop.forEach(element => {
+                element.style.display='none';
+            });
         }
         lastScrollTop=currentScrollTop <= 0 ? 0 : currentScrollTop; // For Mobile or negative scrolling
 
     };
     // * Pose de l'espion du mouvement de scrolling *
-    // (exception faite si absence de #Banner)
-    let htmlBanner=document.querySelector('#banner');
+    // (exception faite si absence de .Banner)
+    let htmlBanner=document.querySelector('.banner');
     if(htmlBanner !== null){
         window.addEventListener('scroll',scrollActing);
     }
     //---------------------------------
     // *** FIN - Gestion du scroll ***
     //---------------------------------
+
+
+    //--------------------------------------------------
+    // *** DEBUT - Gestion de la position du footer ***
+    //--------------------------------------------------
+    if(getHeight()>getBodyHeight()){
+        console.log('cherche....');
+        let htmlFooter=document.querySelector('#app--footer');
+        if(htmlFooter){
+            htmlFooter.setAttribute("style","position:fixed;bottom:0;padding-right:0em;");
+        }
+        else if(Math.round(getScrollTop())<iHeaderHeight * 0.66){
+            htmlFooter.removeAttribute("style");
+        }
+    }
+    //------------------------------------------------
+    // *** FIN - Gestion de la position du footer ***
+    //------------------------------------------------
 
     
     //----------------------------------------------------------------------------------
@@ -751,7 +793,7 @@ document.addEventListener("DOMContentLoaded", function(event){
         function showhideArchive(){
             // recherche les 'lignes' de Class ARCHIVE, pour la Table affichée
             let btnTabTypeVisible=document.querySelector('.btn--tabtype[shown="Y"]');
-            let trTabTypeVisible=document.querySelectorAll('.table--tabtype[parent_id="'+btnTabTypeVisible.id+'"] tbody tr.ARCHIVE');
+            let trTabTypeVisible=document.querySelectorAll('.block--tabtype[parent_id="'+btnTabTypeVisible.id+'"] tbody tr.ARCHIVE');
             // observe l'état actuel
             let btnSwitch=document.querySelector('#btn--show-hide--archive');
             if(btnSwitch.innerHTML.includes('Afficher')){
@@ -772,24 +814,25 @@ document.addEventListener("DOMContentLoaded", function(event){
         }
         */
     
-        // ** Pour chaque Block multi-tab **
+        // ** Pour chaque "Block" (Table... container Div...) multi-tab **
         arRowTabtype.forEach(rowTabtype => {
             // "colle" un espion à chaque élément associé
             let arBtnTabtype=document.querySelectorAll('.btn--tabtype[parent_id="'+rowTabtype.id+'"]');
             arBtnTabtype.forEach(btnTabType => {
-                btnTabType.onclick=showhideTable;
+                btnTabType.onclick=showhideBlockForSelectedTab;
                 //
+                // initialisation à l'ouverture de la page...
                 if(btnTabType.getAttribute('default')!=null){
-                    activeTab(btnTabType);
+                    activeTabAndBlockOfSelectedTab(btnTabType);
                 }
             });
         });
 
         // Gère l'affichage de la table et l'effet visuel de l'onglet
-        function showhideTable(){
-            activeTab(this);
+        function showhideBlockForSelectedTab(){
+            activeTabAndBlockOfSelectedTab(this);
         }
-        function activeTab(btnTab2Activate){
+        function activeTabAndBlockOfSelectedTab(btnTab2Activate){
             // récupère tous les onglets "voisins"...
             let arBtnTabtype=document.querySelectorAll('.btn--tabtype[parent_id="'+btnTab2Activate.getAttribute('parent_id')+'"]');
             // ... gère les effets visuels des onglets
@@ -804,7 +847,7 @@ document.addEventListener("DOMContentLoaded", function(event){
                         btnTabType.style.borderBottom='0';
                         btnTabType.style.boxShadow='0 0 0 0, 0 -4px 4px 0 rgb(140, 140, 140)';
                         // ... en profite pour gérer l'affichage des tables associées
-                        let tblChild=document.querySelector('.table--tabtype[parent_id="'+btnTab2Activate.id+'"]')
+                        let tblChild=document.querySelector('.block--tabtype[parent_id="'+btnTab2Activate.id+'"]')
                         if(tblChild){
                             tblChild.style.display="";
                         }
@@ -831,7 +874,7 @@ document.addEventListener("DOMContentLoaded", function(event){
                         btnTabType.style.borderBottom='0.5px solid black';
                         btnTabType.style.boxShadow='0 0 0 0';
                         // ... en profite pour gérer l'affichage des tables associées
-                        let tblChild=document.querySelector('.table--tabtype[parent_id="'+btnTabType.id+'"]');
+                        let tblChild=document.querySelector('.block--tabtype[parent_id="'+btnTabType.id+'"]');
                         if(tblChild){
                             tblChild.style.display="none";
                         }
@@ -906,7 +949,7 @@ document.addEventListener("DOMContentLoaded", function(event){
             if(htmHeader){
                 htmHeader.classList.add("disabledelements");
             }
-            let htmlBanner=document.querySelector('#banner');
+            let htmlBanner=document.querySelector('.banner');
             if(htmlBanner){
                 htmlBanner.classList.add("disabledelements");
             }
@@ -952,7 +995,7 @@ document.addEventListener("DOMContentLoaded", function(event){
             if(htmHeader){
                 htmHeader.classList.remove("disabledelements");
             }
-            let htmlBanner=document.querySelector('#banner');
+            let htmlBanner=document.querySelector('.banner');
             if(htmlBanner){
                 htmlBanner.classList.remove("disabledelements");
             }
@@ -1115,9 +1158,10 @@ document.addEventListener("DOMContentLoaded", function(event){
     //------------------------------------------------------
     // *** DEBUT - Gestion de l'activation par Checkbox ***
     //------------------------------------------------------
-    let htmlSwitcher=document.querySelectorAll('.cb--switcher');
-    if(htmlSwitcher){
-        htmlSwitcher.forEach(element => {
+    // -- /!\ Plus utilisé, mais reste un fonctionnement intéressant /!\ --
+    let arSwitchers=document.querySelectorAll('.cb--switcher');
+    if(arSwitchers){
+        arSwitchers.forEach(element => {
             element.addEventListener('click', switchStatus);
             switchStatusGO(element);
         })
@@ -1125,18 +1169,18 @@ document.addEventListener("DOMContentLoaded", function(event){
         function switchStatus(){
             switchStatusGO(this);
         }
-        function switchStatusGO(switcher){
+        function switchStatusGO(htmlCb_Switcher){
             // ... pour tous les "enfants" activables (propriété DISABLED)
-            let arChildren_disabled=document.querySelectorAll('.switcher--disabled[parent_id="'+switcher.id+'"]');
+            let arChildren_disabled=document.querySelectorAll('.switcher--disabled[parent_id="'+htmlCb_Switcher.id+'"]');
             arChildren_disabled.forEach(element => {
-                element.disabled=switcher.checked == false;
+                element.disabled=htmlCb_Switcher.checked == false;
             });
             // ... pour tous les "enfants" sélectionnables (propriété CHECKED)
-            let arChildren_checked=document.querySelectorAll('.switcher--checked[parent_id="'+switcher.id+'"]');
+            let arChildren_checked=document.querySelectorAll('.switcher--checked[parent_id="'+htmlCb_Switcher.id+'"]');
             if(arChildren_checked){
                 arChildren_checked.forEach(element => {
-                    if(switcher.checked || element.id.indexOf('_form_')<0){
-                        element.checked=switcher.checked;
+                    if(htmlCb_Switcher.checked || element.id.indexOf('_form_')<0){
+                        element.checked=htmlCb_Switcher.checked;
                     }
                 })
             }
@@ -1145,6 +1189,35 @@ document.addEventListener("DOMContentLoaded", function(event){
     //----------------------------------------------------
     // *** FIN - Gestion de l'activation par Checkbox ***
     //----------------------------------------------------
+
+
+    //-------------------------------------------------------------------------------------------
+    // *** DEBUT - Gestion du choix d'une mise à Disposition lors de la création d'une Claim ***
+    //-------------------------------------------------------------------------------------------
+    let htmlSelectFlatrate=document.querySelector('#select--flatrate');
+    if(htmlSelectFlatrate){
+        htmlSelectFlatrate.onchange=function(){
+            switchCheckedGO(this);
+        }
+        switchCheckedGO(htmlSelectFlatrate);
+
+        // 
+        function switchCheckedGO(htmlSelect_Switcher){
+            // ... pour tous les "enfants" sélectionnables (propriété CHECKED)
+            let arChildren_checked=document.querySelectorAll('.switcher--checked[parent_id="'+htmlSelect_Switcher.id+'"]');
+            //
+            if(arChildren_checked){
+                arChildren_checked.forEach(element => {
+                    if(htmlSelect_Switcher.selectedIndex !== 0){
+                        element.checked=true;
+                    }
+                })
+            }
+        }
+    }
+    //-----------------------------------------------------------------------------------------
+    // *** FIN - Gestion du choix d'une mise à Disposition lors de la création d'une Claim ***
+    //-----------------------------------------------------------------------------------------
 
 
 });

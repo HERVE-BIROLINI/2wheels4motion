@@ -16,19 +16,21 @@
     </div>
 {% endif %}
 
-<form class="container-fluid mt-3 mb-3 w-75" method="post">
-    <div class="card--3D-vertical">
-
-        <div class="d-flex flex-row justify-content-between w-100">
+<div class="container-fluid mt-3 mb-3 w-75">
+    <form class="card--3D-vertical blk--2hide-ifmodal" id="form_login" method="post" novalidate>
+        <div class="d-flex flex-row flex-wrap justify-content-between w-100 p-2">
             <!---->
-            <h1 class="h3 mb-3 font-weight-normal">Identifiez-vous :</h1>
+            <h1 class="h3 mb-3 font-weight-normal cl-md-3">Identifiez-vous :</h1>
             <!---->
             {% if app.user is null %}
-            <div class="d-flex flex-row justify-content-between align-items-center">
+            <div class="d-flex flex-row flex-wrap align-items-center justify-content-center cl-md-8">
                 Mot de passe oublié ?
                 &ensp;
-                <a class="btn btn-bg btn--secondary" href="{#{{ path('profile_pwd') }}#}">
-                    <i class="ri-key-2-line"></i>&ensp;Reinitialiser le mot de passe (RESTE A DEVELOPPER)
+                {#<!-- <button class="btn btn-sm btn--secondary btn--showmodal" data_type="reset" data_id="pwd">
+                    <i class="ri-lock-password-line"></i>&ensp;Réinitialiser le mot de passe
+                </button> -->#}
+                <a class="btn btn-bg btn--secondary" href="{{ path('security_forgottenpwd') }}">
+                    <i class="ri-key-2-line"></i>&ensp;Reinitialiser le mot de passe
                 </a>
             </div>
             {% endif %}
@@ -57,12 +59,12 @@
         
         <div class="btns--row">
         <!-- <div class="d-flex justify-content-around mb-3 w-100"> -->
-            <button class="btn btn-sm btn--blue" type="submit">
+            <button class="btn btn-sm btn--blue mb-3" type="submit" form="form_login">
             <!-- <button class="btn btn-lg btn-primary" type="submit"> -->
                 <i class="ri-login-box-line"></i>&ensp;Se connecter
             </button>
             {% if app.user is null %}
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-row flex-wrap align-items-center justify-content-center">
                 Pas encore de compte ?
                 &ensp;
                 <a class="btn btn-sm btn--orange" href="{{ path('registration_user') }}">
@@ -72,6 +74,7 @@
             {% endif %}
         </div>
         <small style="color:red;">(* champs obligatoire)</small>
-    </div>
-</form>
+    </form>
+    
+</div>
 {% endblock %}

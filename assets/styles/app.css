@@ -82,7 +82,7 @@ th{
 .btn--hidemodal{}       
 .btn--showmodal{}
 #btn--modal--closing{}  
-#div--2hide-ifmodal{}
+#blk--2hide-ifmodal{}
     V gestion de la sélection de la zone géographique V
 #dropdownMenuOffset--Region{}
 #dropdownMenuOffset--Department{}
@@ -172,6 +172,20 @@ th{
     position:fixed;
     right:2.5em;
     top:1.5em;
+    z-index:999;
+    /**/
+    background-color: rgba(80, 80, 80, .7);
+    box-shadow: 2px 2px 0.25em black;
+    /**/
+    color:white;
+    font-weight: bold;
+    /* text-justify: inter-cluster; */
+    text-align: center;
+}
+.card--closing{
+    position:absolute;
+    right:1em;
+    top:1em;
     z-index:999;
     /**/
     background-color: rgba(80, 80, 80, .7);
@@ -1027,6 +1041,11 @@ th{
     }
 }
 @media screen and (max-width: 650px){
+    .block--datas-horizontal{
+        border:none;
+        margin:0;
+        padding:0;
+    }
 }
 @media screen and (max-width: 600px){
     .card--3D-vertical{

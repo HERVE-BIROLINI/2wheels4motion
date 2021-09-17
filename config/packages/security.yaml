@@ -22,9 +22,10 @@ security:
                 authenticators:
                     - App\Security\LoginFormAuthenticator
             logout:
+                # BIROLINI
                 # path: pour la ROUTE demandée...
                 path: security_logout
-                # ... la ROUTE suivie (BIROLINI)
+                # ... la ROUTE suivie
                 target: security_login
 
             # activate different ways to authenticate

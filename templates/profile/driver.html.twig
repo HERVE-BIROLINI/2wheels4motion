@@ -5,9 +5,16 @@
 
 {% block body %}
 
+    {% if driver is not defined or driver==null %}
+        {% set driver=app.user.driver %}
+    {% endif %}
+    {% if claims4me is not defined or claims4me==null %}
+        {% set claims4me=getclaims4driver(driver, witharchived) %}
+    {% endif %}
+    
     <!-- ##### v DEBUT DES ELEMENTS PRINCIPAUX DE LA PAGE v ##### -->
 
-    <div id="div--2hide-ifmodal">
+    <div id="blk--2hide-ifmodal">
         {{ include('profile/_banner.html.twig') }}
 
         <!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
@@ -43,6 +50,7 @@
                 <div class="btn--tabtype" id="btn--tabtype--tender" parent_id="row--tabtype--travel">Devis envoyés</div>
                 <div class="btn--tabtype" id="btn--tabtype--order" parent_id="row--tabtype--travel">Courses effectuées</div>
             </div>
+
             <!-- tableau des Demandes reçues (Claims) -->
             <table class="table table-striped--CANCELED block--tabtype" id="block--tabtype--claim" parent_id="btn--tabtype--claim">
                 <thead class="thead--dark--CANCELED">
@@ -56,10 +64,9 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <!-- Affiche les Demandes en commençant par les + récentes -->
+                <!-- Affiche les Demandes (en commençant par les + récentes) -->
                 <tbody>
-                    {% for claim in claims|reverse %}
-                    
+                    {% for claim in claims4me|reverse %}                    
                     <tr class="row--tab row--claim align-items-center justify-content-center" parent_id="btn--tabtype--claim">
                         <td></td>
                         <td>{{ claim.id }}</td>
@@ -88,7 +95,7 @@
                                 &emsp;
                                 {% set obStatus=getstatus4claimanddriver(claim, driver) %}
                                 <!-- bouton LU/NON-LU -->
-                                {% if obStatus is defined and obStatus.isarchived==false %}
+                                {% if obStatus is defined and obStatus.isarchivedbydriver==false %}
                                 <a class="btn btn-sm btn--action"
                                     href="{{ path('driver_switchclaimstatus_viewed', {'id':obStatus.id}) }}"
                                 >
@@ -102,7 +109,7 @@
                                 {% endif %}
                                 <!-- Archivage/Réactualisation (seulement si réponse (Tender) envoyée)-->
                                 <a class="btn btn-sm btn--action" href="{{ path('driver_switchclaimstatus_archived', {'id':obStatus.id}) }}">
-                                    {% if obStatus is defined and obStatus.isarchived==false %}
+                                    {% if obStatus is defined and obStatus.isarchivedbydriver==false %}
                                     <i class="fas fa-inbox" style="color:blue;" title="En cours => Archiver"></i>
                                     {% else %}
                                     <i class="fas fa-file-archive" style="color:orange;" title="Archivé => Réactualiser"></i>
@@ -115,13 +122,15 @@
                     {% endfor %}
                 </tbody>
                 <tfoot>
-                    {% if not app.user.driver or app.user.driver.getclaims|length == 0 %}
+                    {% if not driver or claims4me|length == 0 %}
+                    {#<!-- {% if not app.user.driver or app.user.driver.getclaims|length == 0 %} -->#}
                     <tr>
                         <td colspan="6">Vous n'avez reçu encore aucune demande...</td>
                     </tr>
                     {% endif %}
                 </tfoot>
             </table>
+
             <!-- tableau des Devis envoyés (Tenders) -->
             <table class="table table-striped--CANCELED block--tabtype" id="block--tabtype--tender" parent_id="btn--tabtype--tender">
                 <thead class="thead--dark--CANCELED">
@@ -170,33 +179,6 @@
                                     <i class="far fa-eye" title="Voir le devis"></i>
                                 </a>
                             &emsp;+ autre action ?
-                                {#
-                                &emsp;
-                                {% set obStatus=getstatus4claimanddriver(claim, driver) %}
-                                <!- - bouton LU/NON-LU - ->
-                                {% if obStatus is defined and obStatus.status.value < 4 %}
-                                <a class="btn btn-sm btn--action"
-                                    href="{{ path('driver_switchclaimstatus_viewed', {'id':obStatus.id}) }}"
-                                >
-                                    {% if obStatus is defined and obStatus.status.value==0 %}
-                                    <i class="fas fa-envelope" style="color:red;" title="NON-LUE, marquer LUE"></i>
-                                    {% else %}
-                                    <i class="fas fa-envelope-open-text" style="color:green;" title="LUE, marquer Non-lue"></i>
-                                    {% endif %}
-                                </a>
-                                &emsp;
-                                {% endif %}
-                                <!- - Archivage/Réactualisation (seulement si réponse (Tender) envoyée) - ->
-                                {% if obStatus is defined and obStatus.status.value >= 2 %}
-                                <button class="btn btn-sm btn--action">
-                                    {% if obStatus is defined and obStatus.status.value < 3 %}
-                                    <i class="fas fa-inbox" title="Actif => archiver"></i>
-                                    {% else %}
-                                    <i class="fas fa-file-archive" style="color:blue;" title="Archivé => réactualiser"></i>
-                                    {% endif %}
-                                </button>
-                                {% endif %}
-                                #}
                             </div>
                         </td>
                     </tr>
@@ -210,9 +192,10 @@
                     {% endif %}
                 </tfoot>
             </table>
+
             <!-- tableau des Courses effectuées (Orders) -->
             <table class="table table-striped--CANCELED block--tabtype" id="block--tabtype--order" parent_id="btn--tabtype--order">
-                <tdead class="thead--dark--CANCELED">
+                <thead class="thead--dark--CANCELED">
                     <tr>
                         <th></th>
                         <th>#</th>
@@ -225,19 +208,6 @@
                 </thead>
                 <tbody>
                     <!-- Affiche les Courses en commençant par les + récentes -->
-                    {#<!-- {% for   in  |reverse %} -->
-                    {% if app.user.customer %}
-                        {% for claim in app.user.customer.getclaims %}#}
-                            {#{% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
-                    <tr class="row--tab row--order ARCHIVE" parent_id="btn--tabtype--order">
-                        {% else %}#}
-                    <tr class="row--tab row--order TOUTES" parent_id="btn--tabtype--order">
-                        {#{% endif %}#}
-                        <td colspan="6">A DEVELOPPER</td>
-                        <td> Les boutons !! </td>
-                    </tr>
-                        {#{% endfor %}
-                    {% endif %}#}
                 </tbody>
                 <tfoot>
                     {#{% if app.user.customer and app.user.customer.getclaims|length == 0 %}#}
@@ -247,38 +217,6 @@
                     {#{% endif %}#}
                 </tfoot>
             </table>
-
-
-
-
-
-
-            
-        {#
-            <!-- Les informations professionnelles : T3P & Pilote VMDTR -->
-            <form class="card--3D-vertical" id="formprofiledriver" method="post" enctype="multipart/form-data" novalidate>
-                <div class="card--horizontal mb-2">
-                    <!-- BlockS de données de l'entreprise T3P + données propres au pilote -->
-                    <div class="d-flex flex-row flex-wrap justify-content-between">
-                        <!-- Block de données de la company T3P -->
-                        {{ include('company/_form-company.html.twig') }}
-                        <!-- Block de données propres au pilote -->
-                        {{ include('driver/_form.html.twig') }}
-                    </div>
-                </div>
-
-                <!-- rangée de bouton(s) : Mise à jour -->
-                <div class="btns--row">
-                    <button class="btn btn-sm btn--blue" type="submit" form="formprofiledriver">
-                        <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
-                    </button>
-                    {#<!-- <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
-                        <i class="fas fa-times"></i>&ensp;Annuler
-                    </a> -->#}
-                </div>
-    
-            </form>
-        #}
         </div>
     </div>
 
@@ -289,7 +227,7 @@
     <!-- ##### v DEBUT DES MODALES v ##### -->
 
     <!-- Modal d'affichage des détails de la demande -->
-    {% for claim in claims %}
+    {% for claim in claims4me %}
     <!-- {#{% for claim in app.user.driver.getclaims %}#} -->
     <div class="modal--big-css_CANCELLED m-5 p-3" id="{{ 'modal--claim--'~claim.id }}" style="display:none;">
 
@@ -323,20 +261,6 @@
             &emsp;
             <!-- bouton du drapeau des status de la demande -->
             {% set obStatus=getstatus4claimanddriver(claim, driver) %}
-
-            <!--{#
-            <a class="btn btn-sm btn--secondary" style="background-color:lightgrey;color:black;"
-                href="{{ path('driver_switchclaimstatus_viewed', {'id':obStatus.id}) }}"
-            >
-            {% if obStatus is defined and obStatus.status.value==0 %}
-                <i class="fas fa-envelope-open-text" style="color:green;"></i>&ensp;Marquer LUE (A DEVELOPPER)
-            {% else %}
-                <i class="fas fa-envelope" style="color:red;"></i>&ensp;Marquer NON LUE (A DEVELOPPER)
-            {% endif %}
-            </a>
-            &emsp;
-            #}-->
-
             <!-- Etat du devis de réponse -->
             {% if obStatus and obStatus.tender %}
             <h4 style='font-style:italic;'>Devis envoyé le {{ obStatus.tender.tenderdatetime|date('d/m/Y') }}</h4>
@@ -356,7 +280,7 @@
                 style="background-color:lightgrey;color:black;"
                 href="{{ path('driver_switchclaimstatus_archived', {'id':obStatus.id}) }}"
             >
-                {% if obStatus.isarchived %}
+                {% if obStatus.isarchivedbydriver %}
                 <i class="fas fa-file-archive" style="color:orange;"></i>&ensp;Réactualiser
                 {% else %}
                 <i class="fas fa-inbox" style="color:blue;"></i>&ensp;Archiver

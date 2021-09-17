@@ -27,24 +27,9 @@ class DriverTwig extends AbstractExtension
     // private $passwordEncoder;
     // private $csrfTokenManager;
 
-    public function __construct(EntityManagerInterface $entityManager
-                                // , UrlGeneratorInterface $urlGenerator
-                                // , UserPasswordEncoderInterface $passwordEncoder
-                                // , CsrfTokenManagerInterface $csrfTokenManager
-                                )
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        // $this->csrfTokenManager = $csrfTokenManager;
-        // $this->urlGenerator = $urlGenerator;
-        // $this->passwordEncoder = $passwordEncoder;
         $this->entityManager = $entityManager;
-        // // private $drivers;
-        // // private $companies;
-        // // public function __construct(DriverRepository $drivers
-        // //                             , CompanyRepository $companies
-        // //                             )
-        // // {
-        // //     $this->drivers=$drivers;
-        // //     $this->companies=$companies;
     }
 
     // Déclaration des extensions de functions TWIG
@@ -55,9 +40,6 @@ class DriverTwig extends AbstractExtension
             new TwigFunction('getdriverbyid', [$this, 'getDriverById']),
             new TwigFunction('getdriversbyregionorzip', [$this, 'getDriversByRegionOrZip']),
             new TwigFunction('getdriversbycompany', [$this, 'getDriversByCompany']),
-            // fonctions de manipulations des objets Claim et Claim_Status
-            new TwigFunction('getclaims4driver', [$this, 'getClaims4Driver']),
-            new TwigFunction('getstatus4claimanddriver', [$this, 'getStatus4ClaimAndDriver']),
             // fonctions de manipulations de l'objet Company
             new TwigFunction('getallcompanies', [$this, 'getAllCompanies']),
             new TwigFunction('getcompanybyid', [$this, 'getCompanyById']),
@@ -104,24 +86,7 @@ class DriverTwig extends AbstractExtension
     public function getDriversByCompany($id){
         return $this->entityManager->getRepository(Driver::class)->findBy(['company'=>$id]);
     }
-    // fonctions de manipulations des Class Claim, Claim_Status
-    public function getClaims4Driver($driver, $bWithArchived){
-        $arAllClaims=$this->entityManager->getRepository(ClaimStatus::class)->findBy(['driver'=>$driver]);
-        $arResult=[];
-        foreach($arAllClaims as $claimStatus){
-            
-            if($bWithArchived || !$claimStatus->getIsarchived() || $claimStatus->getIsarchived()==false || $claimStatus->getIsarchived()==0){
-            // $obStatus=$claimStatus->getStatus();
-            // $statusValue=$obStatus->getValue();
-            // if($bWithArchived || ($statusValue<4 && !$bWithArchived)){
-                array_push($arResult, $claimStatus->getClaim());
-            }
-        }
-        return $arResult;
-    }
-    public function getStatus4ClaimAndDriver($claim, $driver){
-        return $this->entityManager->getRepository(ClaimStatus::class)->findOneBy(['claim'=>$claim,'driver'=>$driver]);
-    }
+    
     // fonctions de manipulations de l'objet Company
     public function getAllCompanies(){
         return $this->entityManager->getRepository(Company::class)->findAll();

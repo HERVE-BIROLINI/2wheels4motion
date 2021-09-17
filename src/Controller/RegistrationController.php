@@ -83,7 +83,7 @@ class RegistrationController extends AbstractController
             $entityManager->flush();
 
             // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('registration_app_verify_email', $user,
+            $this->emailVerifier->sendEmailConfirmation('registration_verify_email', $user,
                 (new TemplatedEmail())
                     ->from(new Address('twowheelsformotion@gmail.com', '2Wheels4Motion - Annuaire Moto-taxi'))
                     ->to($user->getEmail())
@@ -187,10 +187,16 @@ class RegistrationController extends AbstractController
             //  (d'abord vérifie l'existance de la T3P,
             //      ...
             //    )
-            if(!$obCompany=$entityManager->getRepository(Company::class)
-                    ->findOneBy(['name'=>$name,'siren'=>$siren,'nic'=>$nic])
+            $obCompany=$entityManager->getRepository(Company::class)
+                                    ->findOneBy(['name'=>$name, 'siren'=>$siren, 'nic'=>$nic])
+            ;
+            if(!$obCompany && $nic=='' &&
+                (!$obCompany=$entityManager->getRepository(Company::class)
+                                        ->findOneBy(['name'=>$name, 'siren'=>$siren])
+                    or
+                    $obCompany->getNic()!==null
                 )
-            {
+            ){
                 //  ... si n'est pas une entreprise choisie parmi celles déjà référencées
                 //  ... ET est en conflit avec une déjà existante
                 if($entityManager->getRepository(Company::class)->findOneBy(['name'=>$name])){
@@ -445,7 +451,7 @@ class RegistrationController extends AbstractController
     // Invoquée lors de la vérification de l'adresse email,
     // via le lien d'authentification contenu dans l'email
     /**
-     * @Route("/verify_email", name="app_verify_email")
+     * @Route("/verify_email", name="verify_email")
      */
     public function verifyUserEmail(Request $request): Response
     {
@@ -455,7 +461,8 @@ class RegistrationController extends AbstractController
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());
         } catch (VerifyEmailExceptionInterface $exception) {
-            $this->addFlash('verify_email_error', $exception->getReason());
+            $this->addFlash('danger', $exception->getReason());
+            // $this->addFlash('verify_email_error', $exception->getReason());
 
             return $this->redirectToRoute('registration_user');
             // return $this->redirectToRoute('app_register');
@@ -469,14 +476,14 @@ class RegistrationController extends AbstractController
     }
 
 
-    static function getIp(){
-        if(!empty($_SERVER['HTTP_CLIENT_IP'])){
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        }elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }else{
-            $ip = $_SERVER['REMOTE_ADDR'];
-        }
-        return $ip;
-    }
+    // static function getIp(){
+    //     if(!empty($_SERVER['HTTP_CLIENT_IP'])){
+    //         $ip = $_SERVER['HTTP_CLIENT_IP'];
+    //     }elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
+    //         $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    //     }else{
+    //         $ip = $_SERVER['REMOTE_ADDR'];
+    //     }
+    //     return $ip;
+    // }
 }

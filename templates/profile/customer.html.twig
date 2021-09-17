@@ -5,31 +5,45 @@
 
 {% block body %}
 
+    {% if customer is not defined or customer==null %}
+        {% set customer=app.user.customer %}
+    {% endif %}
+    {% if myclaims is not defined or myclaims==null %}
+        {% set myclaims=getclaims4customer(customer, witharchived) %}
+        {#{% set myclaims=customer.claims %}#}
+    {% endif %}
+    
     <!-- ##### v DEBUT DES ELEMENTS PRINCIPAUX DE LA PAGE v ##### -->
 
-    <div id="div--2hide-ifmodal">
+    <div id="blk--2hide-ifmodal">
         {{ include('profile/_banner.html.twig') }}
 
         <!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
         {{ include('geography/_FromJSON4Javascript.html.twig') }}
         
-        <div class="paragraph--large" id="div--2hide-ifmodal">
+        <div class="paragraph--large" id="blk--2hide-ifmodal">
 
             <!-- L'historique des échanges -->
             <div class="d-flex flex-row flex-wrap justify-content-between align-items-center mb-3">
                 <h2 class="title--h2 mb-3">Echanges avec les pilotes :</h2>
-
-                <!-- Affiche dépendant de l'existance de données de plus d'un an -->
-                <button class="btn btn-sm btn--green" style="color:red;"><!--id="btn--show-hide--archive"-->
-                    <i class="far fa-eye"></i>&ensp;A DEVELOPPER
-                </button>
-
+                <form id="formtable" method="post">
+                    <input type="hidden" name="witharchived" value="{{ witharchived }}">
+                    <button class="btn btn-sm btn--green" name='show-hide--archive' type='submit' form="formtable">
+                        <i class="far fa-eye"></i>&ensp;
+                        {% if witharchived %}
+                        Masquer les archives
+                        {% else %}
+                        Montrer les archives
+                        {% endif %}
+                    </button>
+                </form>
             </div>
             <div class="row--tabtype" id="row--tabtype--travel">
                 <div class="btn--tabtype" id="btn--tabtype--claim" parent_id="row--tabtype--travel" default>Demandes envoyées</div>
                 <div class="btn--tabtype" id="btn--tabtype--tender" parent_id="row--tabtype--travel">Devis reçus</div>
                 <div class="btn--tabtype" id="btn--tabtype--order" parent_id="row--tabtype--travel">Courses effectuées</div>
             </div>
+
             <!-- tableau des Demandes envoyées (Claims) -->
             <table class="table table-striped block--tabtype" id="block--tabtype--claim" parent_id="btn--tabtype--claim">
                 <thead class="thead--dark--CANCELED">
@@ -44,15 +58,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Affiche les Demandes en commençant par les + récentes -->
-                    {% for claim in app.user.customer.getclaims|reverse %}
+                    <!-- Affiche les Demandes (en commençant par les + récentes) -->
+                    {% for claim in myclaims|reverse %}
+                    {#<!-- {% for claim in app.user.customer.getclaims|reverse %} -->#}
                     <tr class="row--tab row--claim " parent_id="btn--tabtype--claim">
                         <td></td>
                         <td>{{ claim.id }}</td>
                         <td>{{ claim.claimdatetime|date('d/m/Y') }}</td>
                         <td>{{ claim.journeydate|date('d/m/Y') }}</td>
-                        <td>
-                            {% if claim.remarkableplacefrom %}
+                        <td>{% if claim.remarkableplacefrom %}
                                 {{ claim.remarkableplacefrom.label }}
                             {% else %}
                                 {{ getcitybyzip(claim.fromzip).name }}
@@ -67,20 +81,33 @@
                         </td>
                         <td style="align-items:center;">
                             <div class="d-flex flex-row flex-wrap align-items-center">
+                                <!-- indication sur le nombre de pilote(s) destinataire(s) -->
                                 <div style="align-items:center;">
                                     <i class="ri-mail-send-line" title="Nb. de pilote(s) destinataire(s)"></i> {{ claim.drivers|length }}
-                                    {#<!-- <i class="far fa-paper-plane"> {{ claim.drivers|length }}</i> -->#}
                                 </div>
+                                <!-- indication sur le nombre de devis reçu en réponse -->
                                 &ensp;
                                 <div {% if claim.tenders|length == 0 %}style="color:red;"{% else %}style="color:green;"{% endif %}>
-                                    <i class="fas fa-inbox" title="Nb. de devis(s) reçu(s) en retour"></i> {{ claim.tenders|length }}
+                                    <i class="fas fa-inbox" title="Nb. de devis(s) reçu(s) en retour"></i> {#{{ claim.tenders|length }}#}
                                 </div>
                                 {#<!-- <i class="ri-folder-received-line"> {{ claim.tenders|length }}</i> -->#}
+                                <!-- bouton d'affiche des détails de la demande (Claim) dans une MODAL -->
                                 &emsp;
-                                <!-- bouton VOIR DETAILS -->
                                 <button class="btn btn-sm btn--action btn--showmodal" id="{{ 'btn--showmodal'~claim.id }}" data_id="{{ claim.id }}" data_type="claim">
                                     <i class="far fa-eye" title="Voir en détails"></i><!--&ensp;Détails-->
                                 </button>
+                                &emsp;
+                                <!-- Archivage/Réactualisation (seulement si réponse (Tender) envoyée)-->
+                                {% set obStatus=getstatus4claimofcustomer(claim, customer) %}
+                                {% if obStatus is defined %}
+                                <a class="btn btn-sm btn--action" href="{{ path('customer_switchclaimstatus_archived', {'id':claim.id}) }}">
+                                    {% if obStatus[0].isarchivedbycustomer==false %}
+                                    <i class="fas fa-inbox" style="color:blue;" title="En cours => Archiver"></i>
+                                    {% else %}
+                                    <i class="fas fa-file-archive" style="color:orange;" title="Archivé => Réactualiser"></i>
+                                    {% endif %}
+                                </a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
@@ -99,6 +126,7 @@
                     </tr>
                 </tfoot>
             </table>
+
             <!-- tableau des Devis reçus (Tenders) -->
             <table class="table table-striped--CANCELED block--tabtype" id="block--tabtype--tender" parent_id="btn--tabtype--tender">
                 <thead class="thead--dark--CANCELED">
@@ -169,6 +197,7 @@
                     {% endif %}
                 </tfoot>
             </table>
+            
             <!-- tableau des Courses effectuées (Orders) -->
             <table class="table table-striped--CANCELED block--tabtype" id="block--tabtype--order" parent_id="btn--tabtype--order">
                 <thead class="thead--dark--CANCELED">
@@ -184,18 +213,6 @@
                 </thead>
                 <tbody>
                     <!-- Affiche les Courses en commençant par les + récentes -->
-                    {#<!-- {% for   in  |reverse %} -->#}
-                    {% for claim in null %}
-                    {#{% if "now" | date("U") - claim.claimdatetime|date('U') < 31536000 %}
-                    <tr class="row--tab row--order ARCHIVE" parent_id="btn--tabtype--order">
-                        {% else %}#}
-                    <tr class="row--tab row--order TOUTES" parent_id="btn--tabtype--order">
-                        {#{% endif %}#}
-                        <td></td>
-                        
-                        <td> Les boutons !! </td>
-                    </tr>
-                    {% endfor %}
                 </tbody>
                 <tfoot>
                     {% if null|length == 0 %}
@@ -205,89 +222,6 @@
                     {% endif %}
                 </tfoot>
             </table>
-
-
-
-
-
-
-
-
-        
-            <!-- L'adresse postale -->
-            {#<!--
-            <form class="card--3D-vertical my-4" method="post"><!- -class="d-flex flex-row justify-content-center my-4">- ->
-                <h2 class="h3 ml-4 mt-4 mb-3 font-weight-normal">Adresse personnelle :</h2>
-                <!- - Bloc adresse du Customer - ->
-                <div class="block--datas-horizontal mx-3">
-                    <div class="col-12 col-md-5">
-                        <label class="required" for="inputroad">N° et Voie :</label>
-                        <input type="text" class="form-control" id="inputroad"
-                            value="{{ app.user.customer.road }}"
-                            name="customer_road" required
-                        ><!- - autofocus> - ->
-                        {% if error_customer_road is defined and error_customer_road is not null %}
-                        <span class="d-block">
-                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
-                            <small class="form-error-message">La voie doit comporter un numéro et un nom.</small>
-                        </span>
-                        {% endif %}
-                        <!- - &nbsp; - ->
-                    </div>
-                    &nbsp;
-                    <div class="col-12 col-md-3">
-                        <label class="required" for="inputcity">Commune :</label>
-                        <input type="text" class="form-control inputcity" id="inputcity"
-                            value="{{ app.user.customer.city }}"
-                            name="customer_city"
-                        >
-                        <!- - required - ->
-                        <select class="form-control cities" id="inputcities"
-                            name="cities" title="cities"
-                        >
-                            <option value="">-- Sélectionnez votre commune --</option>
-                        </select>
-                        {% if error_customer_city is defined and error_customer_city is not null %}
-                        <span class="d-block">
-                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
-                            <small class="form-error-message">La ville doit-être spécifiée.</small>
-                        </span>
-                        {% endif %}
-                    </div>
-                    &nbsp;
-                    <div class="col-12 col-md-3">
-                        <label class="required" for="inputzip">Code postal :</label>
-                        <input type="text" class="form-control" id="inputzip"
-                            value="{{ app.user.customer.zip }}"
-                            name="customer_zip" style="display:none;"
-                        >
-                        <!- - - ->
-                        <input type="text" class="form-control inputzip" id="inputzip2"
-                            value="{{ app.user.customer.zip }}"
-                            name="customer_zip" disabled
-                        >
-                        { #{% if error_customer_zip %}# }
-                        <!- - <span class="d-block">
-                            <small class="form-error-icon badge badge-danger text-uppercase">Error</small>
-                            <small class="form-error-message">La voie doit comporter un numéro et un nom.</small>
-                        </span> - ->
-                        { #{% endif %}# }
-                    </div>
-                </div>
-                <br>
-                <!- - rangée de bouton(s) : Mise à jour adresse - ->
-                <div class="btns--row">
-                    <button class="btn btn-sm btn--blue" type="submit">
-                        <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
-                    </button>
-                    { #<!- - <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
-                        <i class="fas fa-times"></i>&ensp;Annuler
-                    </a> - -># }
-                </div>
-            </form>
-            -->#}
-
-
         </div>
     </div>
 
@@ -336,44 +270,6 @@
             </div>
             {% endif %}
         </div>
-
-
-        <!-- Les boutons d'actions -->
-        <!--{#
-        <div class="d-flex flex-row flex-wrap w-100">
-            <h3>Traitement de la demande :</h3>
-            &emsp;
-            <!- - bouton du drapeau de lecture de la demande - ->
-        {#{% set obStatus=getstatus4claimanddriver(claim, driver) %}# }
-            <button class="btn btn-sm btn--secondary btn--hidemodal mb-1"
-                style="background-color:lightgrey;color:black;"
-            >
-            {% if obStatus is defined and obStatus.status.value==0 %}
-            <i class="fas fa-envelope-open-text" style="color:green;"></i>&ensp;Marquer LUE (A DEVELOPPER)
-            {% else %}
-            <i class="fas fa-envelope" style="color:red;"></i>&ensp;Marquer NON LUE (A DEVELOPPER)
-            {% endif %}
-            </button>
-            &emsp;
-            <!- - bouton d'envoi d'un Tender en réponse à la Claim - ->
-            <a class="btn btn-sm btn--blue mb-1" id="btn--send-tender" data_id="{{ claim.id }}"
-                href="{{ path('tender_create', {'claim': claim.id}) }}"
-            >
-                <i class="far fa-paper-plane"></i>&ensp;Retourner un devis (A DEVELOPPER)
-            </a>
-            &emsp;
-            <!- - Archivage/Réactulaisation - ->
-            <button class="btn btn-sm btn--secondary btn--hidemodal mb-1"
-                style="background-color:lightgrey;color:black;"
-            >
-            {% if obStatus is defined and obStatus.status.value < 3 %}
-            <i class="fas fa-inbox" style="color:orange;"></i>&ensp;Archiver (A DEVELOPPER)
-            {% else %}
-            <i class="fas fa-file-archive" style="color:blue;"></i>&ensp;Réactualiser (A DEVELOPPER)
-            {% endif %}
-            </button>
-        </div>
-        #}-->
 
         <div class="btns--row">
             <button class="btn btn-sm btn--secondary mt-5 btn--hidemodal"

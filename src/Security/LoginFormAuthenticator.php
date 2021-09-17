@@ -46,7 +46,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     // ETAPE 1 du Submit (POST) du formulaire Login
     public function supports(Request $request)
     {
-        // dd('supports (44) => $request = '.$request);
+        // dd('supports (49) => $request = '.$request);
         return self::LOGIN_ROUTE === $request->attributes->get('_route')
             && $request->isMethod('POST');
     }
@@ -55,7 +55,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     // ... récupère les valeurs du formulaire (POST)
     public function getCredentials(Request $request)
     {
-        // dd('getCredentials (54) => $request = '.$request);
+        // dd('getCredentials (58) => $request = '.$request);
         $credentials = [
             'email' => $request->request->get('email'),
             'password' => $request->request->get('password'),
@@ -74,21 +74,21 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     // ... récupère l'enregistrement du User
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        // dd('getUser (73) => $credentials = '.$credentials.' / $userProvider ...');
+        // dd('getUser (77) => $credentials = '.$credentials.' / $userProvider ...');
         $token = new CsrfToken('authenticate', $credentials['csrf_token']);
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
         }
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
-        // dd('getUser (80) => $user = '.$user);
+        // dd('getUser (84) => $user = '.$user);
 
         if (!$user) {
-            // dd('getUser (83) => $user introuvable !');
+            // dd('getUser (87 => $user introuvable !');
             throw new UsernameNotFoundException('Adresse électronique introuvable.');
         }
 
-        // dd('getUser (87) => $user Trouvé !');
+        // dd('getUser (91) => $user Trouvé !');
         return $user;
     }
 
@@ -98,7 +98,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     //  $user = User enregistré pour l'adresse email saisie dans la Form (login)
     public function checkCredentials($credentials, UserInterface $user)
     {
-        // dd(/*'checkCredentials (97) => $credentials = '.*/$credentials);
+        // dd(/*'checkCredentials (101) => $credentials = '.*/$credentials);
         return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
     }
 
@@ -110,7 +110,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     public function getPassword($credentials): ?string
     {
         // Quand ? D'où ? Pour passer ici ?
-        // dd(/*'getPassword (109) => $credentials = '.*/$credentials);
+        // dd(/*'getPassword (113) => $credentials = '.*/$credentials);
         return $credentials['password'];
     }
 
@@ -122,14 +122,14 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             // ETAPE 1 : Authentification de l'adresse email, via lien du mail de confirmation
-            // dd('onAuthenticationSuccess (121) => $targetPath = '.$targetPath);
+            // dd('onAuthenticationSuccess (125) => $targetPath = '.$targetPath);
 
             return new RedirectResponse($targetPath);
         }
 
         // ETAPE 6 : Passage consécutif aussi bien à REGISTER qu'à LOGIN...
         // ... Mot de passe valide...
-        // dd('onAuthenticationSuccess (128) => En dehors du IF / $providerKey = '.$providerKey);
+        // dd('onAuthenticationSuccess (132) => En dehors du IF / $providerKey = '.$providerKey);
 
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
         // $this->urlGenerator->generate('homepage');
@@ -141,7 +141,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     //  => retourne à la page Login
     protected function getLoginUrl()
     {
-        // dd('getLoginUrl (140)');
+        // dd('getLoginUrl (144)');
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }
 }

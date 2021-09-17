@@ -7,30 +7,6 @@
 
     {{ include('homepage/_banner.html.twig') }}
 
-    <!-- Menu de navigation 'interne' -->
-    <div class="navbar navbar-expand-lg navbar-light bg-light w-100" id="nav--inpage">
-        <!-- DEBUT bouton "Burger" -->
-        <button class="navbar-toggler" type="button" title="BurgerButton"
-            data-toggle="collapse" data-target="#navbar-collapse-inpage"
-        >
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <!-- FIN bouton "Burger" -->
-        <div class="collapse navbar-collapse nav--inpage" id="navbar-collapse-inpage">
-            <!-- Menus 'permanents' -->
-            <ul class="navbar-nav">
-                <a class="btn nav--btn--white" href="#section--services">A votre service</a>
-                <a class="btn nav--btn--white" href="#section--pro">Professionnalisme</a>
-                <a class="btn nav--btn--white" href="#section--equipments">Les équipements passager</a>
-                <a class="btn nav--btn--white" href="#section--bikes">Les motos</a>
-                <a class="btn nav--btn--white" href="#section--luggages">Les bagages</a>
-                <a class="btn nav--btn--white" href="#section--reviews">L'avis des utilisateurs</a>
-                <!--  -->
-                <a class="nav-item nav--btn--blue" href="{{ path('homepage_manual') }}">Comment ça marche ?</a>
-            </ul>
-        </div>
-    </div>
-
     <!-- Job description -->
     <!--------------------->
     <section class="paragraph--large" id="section--services">

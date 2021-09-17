@@ -18,13 +18,13 @@
     <!-- FIN bouton "Burger" -->
     <div class="collapse navbar-collapse nav--inpage" id="navbar-collapse-inpage">
         <ul class="navbar-nav">
-            <!-- Accès à l'historique DU CLIENT -->
-            {% if app.user.customer %}
-            <a class="btn nav--btn--blue" href="{{ path('profile_customer') }}">Le client</a>
-            {% endif %}
             <!-- Accès à l'historique DU PILOTE -->
             {% if app.user.driver %}
             <a class="btn nav--btn--blue" href="{{ path('profile_driver') }}">Le professionnel</a>
+            {% endif %}
+            <!-- Accès à l'historique DU CLIENT -->
+            {% if app.user.customer %}
+            <a class="btn nav--btn--blue" href="{{ path('profile_customer') }}">Le client</a>
             {% endif %}
             <!--  -->
             {% if app.user %}

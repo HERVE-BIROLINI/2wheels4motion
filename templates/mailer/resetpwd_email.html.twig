@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- -->
+        <meta name="description" content="Annuaire moto-taxi taxi-moto toute la France"/>
+        <meta name="author" content="BIROLINI Herve"/>
+    </head>
+
+    <body>
+
+        <h3>Bonjour {{ firstname }},</h3>
+
+        <p>
+            Une demande de réinitialisation de mot de passe a été faite pour votre adresse électronique.
+            Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer ce courriel...
+            <br><br>
+            
+            <div style="width:fit-content;background-color:grey;border:2px solid black;border-radius:2em;padding:1em;">
+                <a style="color:white;font-weight:bold;" href="{{ url }}">Redéfinir mon mot de passe</a>
+            </div>
+        </p>
+
+        <p>
+            A tout de suite !
+        </p>
+    </body>
+</html>

@@ -82,16 +82,16 @@ class DriverController extends AbstractController
         // Pour les lectures et enregistrements dans la BdD
         $entityManager=$this->getDoctrine()->getManager();
 
-        if($claimStatus->getIsarchived()){
-            $claimStatus->setIsarchived(false);
+        if($claimStatus->getIsarchivedbydriver()){
+            $claimStatus->setIsarchivedbydriver(false);
         }else{
-            $claimStatus->setIsarchived(true);
+            $claimStatus->setIsarchivedbydriver(true);
         }
         //
         $entityManager->persist($claimStatus);
         // "remplissage" de la BdD
         $entityManager->flush();
-        // retour à la page
+        // retour à la page précédente
         return $this->redirect($_SERVER['HTTP_REFERER']);
     }
 

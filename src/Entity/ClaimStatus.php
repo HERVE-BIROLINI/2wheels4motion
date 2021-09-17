@@ -53,7 +53,12 @@ class ClaimStatus
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isarchived;
+    private $isarchivedbydriver;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isarchivedbycustomer;
 
     public function getId(): ?int
     {
@@ -105,13 +110,24 @@ class ClaimStatus
     }
 
     //
-    public function getIsarchived(): ?bool
+    public function getIsarchivedbydriver(): ?bool
     {
-        return $this->isarchived;
+        return $this->isarchivedbydriver;
     }
-    public function setIsarchived(?bool $isarchived): self
+    public function setIsarchivedbydriver(?bool $isarchivedbydriver): self
     {
-        $this->isarchived = $isarchived;
+        $this->isarchivedbydriver = $isarchivedbydriver;
+        return $this;
+    }
+    
+    //
+    public function getIsarchivedbycustomer(): ?bool
+    {
+        return $this->isarchivedbycustomer;
+    }
+    public function setIsarchivedbycustomer(?bool $isarchivedbycustomer): self
+    {
+        $this->isarchivedbycustomer = $isarchivedbycustomer;
         return $this;
     }
 }

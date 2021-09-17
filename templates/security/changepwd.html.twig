@@ -6,7 +6,7 @@
 
     {#<!-- {{ include('profile/_banner.html.twig') }} -->#}
 	
-    <form class="container-fluid modal--big-css" method="post" enctype="multipart/form-data">
+    <form class="container-fluid modal--big-css" method="post" ><!-- enctype="multipart/form-data"> -->
         
         <!-- Bouton "fixe" à afficher en même temps que toute Modale, pour fermeture de celle-ci -->
         <a class="btn--circle btn--hidemodal modal--closing" href="{{ path('profile_user',{'id': app.user.id}) }}">

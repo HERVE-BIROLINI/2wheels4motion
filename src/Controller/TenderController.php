@@ -37,7 +37,8 @@ class TenderController extends AbstractController
     {
         // ??? AJOUTE 1H ???
         // date_default_timezone_set('Europe/Paris');
-        
+        // var_dump($claim->getId());
+        // dd($this->getUser()->getDriver()->getClaims()->contains($claim));
         // * vérifie/crée un Customer pour l'utilisateur *
         // test si l'utilisateur est connecté...
         if(!$user=$this->getUser()){
@@ -46,13 +47,13 @@ class TenderController extends AbstractController
             return $this->redirectToRoute('security_login');
         }
         // ... si connecté, vérifie que son profil est bien Driver
-        elseif(!$driver=$this->getUser()->getDriver()){
+        elseif(!$driver=$user->getDriver()){
             // ... si non, lui propose de se connecter
             $this->addFlash('warning', "Si vous détenteur d'une carte Pro. VMDTR et n'avez pas encore créer de compte 'pilote', prenez 5 minutes pour le faire...");
             return $this->redirectToRoute('security_login');
         }
         // ... si Driver connecté, vérifie que la Claim lui était bien destinée
-        elseif($driver->getClaims()->contains($claim)){
+        elseif(!$driver->getClaims()->contains($claim)){
             // ... si non, l'en informe avant de le renvoyer à SA page Profil Driver
             $this->addFlash('warning', "Erreur de Demande de course...");
             return $this->redirectToRoute('profile_driver');
@@ -199,34 +200,6 @@ class TenderController extends AbstractController
                 isset($_POST['driver--arrivalattime']) &&
                 // ... horaire d'arrivée => STRING
                 ($driver_arrivalattime=$_POST['driver--arrivalattime'] or true) &&
-                // strtotime($driver_arrivalattime) &&
-                // ... heures de différence avec départ
-                // ($diff=(strtotime($driver_arrivalattime)-strtotime($driver_departureattime->format('H:i')))/3600 or true) &&
-                // ... soit déjà = au forfait, soit doit-être recalculée
-                // (
-                    // (// si forfait "Dispo", le nombre d'heure apparait dans le label, sinon => 0
-                    //     ($dispo=intval($obFlatrateTwig->getHoursInLabel($driver_flatratechoosen)) or true) &&
-                    //     $dispo>0 &&
-                        // $diff == $dispo &&
-                        // $driver_arrivalattime=new DateTime($driver_arrivalattime)
-                        // &&(var_dump($driver_arrivalattime) or true ) &&
-                        // (var_dump("--------------------------------") or true) 
-                    // )
-                    // ||
-                    // (// si pas forfait "Dispo"
-                    //     (var_dump("--------------------------------") or true) &&
-                    //     (var_dump($driver_arrivalattime) or true ) &&
-                    //     (var_dump("--------------------------------") or true) &&
-                    //     // (($driver_arrivalattime=$driver_departureattime->format('H:i') or true) &&
-                    //         $driver_arrivalattime=new DateTime($driver_arrivalattime) 
-                    //     // )
-                    //     // Vilaine astuce pour contourner une erreur bizarre : 
-                    //     //      "Call to a member function add() on string"
-                    //     &&
-                    //     $driver_arrivalattime->add(new DateInterval('PT'.$dispo.'H'))
-                    // )
-
-                // ) &&
                 $driver_arrivalattime!=''
             ){
                 $error_arrivalattime=false;
@@ -410,6 +383,9 @@ class TenderController extends AbstractController
 
         // affichage de la page du formulaire de demande de course
         return $this->render('mailer/Tender2Customer_email.html.twig', [
+            'controller_name'   => 'TenderController',
+            'controller_func'   => 'readTender',
+            //
             'tender'  =>$obTender,
             'claim'   =>$obTender->getClaim(),
             'driver'  =>$obTender->getDriver(),
@@ -418,4 +394,25 @@ class TenderController extends AbstractController
             'customer'=>$obTender->getClaim()->getCustomer(),
         ]);
     }
+
+    /* *
+     * @Route("/{id}", name="accept", methods={"GET","POST"}, requirements={"id":"\d+"})
+     * /
+    public function accept(Tender $obTender)
+    {
+
+        // affichage de la page du formulaire de demande de course
+        return $this->render('mailer/Tender2Customer_email.html.twig', [
+            'controller_name'   => 'TenderController',
+            'controller_func'   => 'readTender',
+            //
+            'tender'  =>$obTender,
+            'claim'   =>$obTender->getClaim(),
+            'driver'  =>$obTender->getDriver(),
+            'company' =>$obTender->getDriver()->getCompany(),
+            'user'    =>$obTender->getClaim()->getCustomer()->getUser(),
+            'customer'=>$obTender->getClaim()->getCustomer(),
+        ]);
+    }
+    */
 }

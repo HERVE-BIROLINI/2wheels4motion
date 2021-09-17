@@ -1,0 +1,59 @@
+{#
+{% extends 'base.html.twig' %}
+{% set Title="Réinitialisation de Mot de Passe" %}
+{% block title %}{{ parent() }} - {{ Title }}{% endblock %}
+
+{% block body %}
+#}
+{% set sImgPath="build/images/" %}
+{% set sFaviconFullname=sImgPath ~ "banner/logo.png" %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- -->
+        <meta name="description" content="Annuaire moto-taxi taxi-moto motos-taxis taxis-motos France"/>
+        <meta name="author" content="BIROLINI Herve"/>
+        
+        <link rel="SHORTCUT ICON" type="image/png" href="{{ asset(sImgPath ~ 'banner/favicon.png') }}"/>
+        <!-- <link rel="icon" type="image/png" href="{{ asset(sFaviconFullname) }}"/> -->
+        <title>{% block title %}2 Wheels 4 Motion{% endblock %}</title>
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+    </head>
+
+    <body style="height:100vh;">
+		<form class="container-fluid modal--big-css tocenterinto" method="post" novalidate>
+			{{ form_start(changePwdForm) }}
+			<div class="d-flex flex-row flex-wrap">
+				<img class="nav--logo pt-2" src="{{ asset(sFaviconFullname) }}" alt="logo annuaire moto-taxi"></img>
+				&emsp;
+				<h1 class="h3 mt-3 mb-3 font-weight-normal">Réinitialisez votre mot de passe :</h1>
+			</div>
+			<br>
+
+			<div>
+				<label for="access_form_plainPassword_first required">Définir un nouveau mot de passe :</label>
+				{{ form_widget(changePwdForm.plainPassword
+								,{ label: 'Password' }
+							)
+				}}
+			</div>
+			<small>A l'issue de la redéfinition de votre mot de passe, il vous faudra vous reconnecter...</small>
+			<br>
+			<div class="btns--row">
+				<button class="btn btn-sm btn--blue" type="submit">Soumettre</button>
+				<a class="btn btn-sm btn--secondary" href="{{ path('homepage_index') }}"><i class="fas fa-times"></i>&ensp;Annuler</a>
+			</div>
+			{{ form_end(changePwdForm) }}
+		</form>
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+	</body>
+</html>

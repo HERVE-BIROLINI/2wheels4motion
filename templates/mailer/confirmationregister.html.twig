@@ -3,25 +3,17 @@
 {% block title %}Bienvenue, nouvel inscrit{% endblock %}
 
 {% block body %}
-<!-- <style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style> -->
 
-<div>
-<!-- <div class="modal--big-css pt-5"> -->
-    <!-- <div class="modal--content"> -->
-<!-- <div class="container example-wrapper mt-5"> -->
-        <h1 class="mt-5"> Courriel de validation de votre compte envoyé.</h1>
-        <br><br>
-        <h4>Merci de confirmer votre inscription en utilisant le lien contenu dans cet email.
-            <br>
-            Ce lien expirera dans 1 heure, vérifiez qu'il n'ait pas été dérouté vers vos SPAMS...
-        </h4>
+<div class="m-5">
+    <h1 class="mt-5"> Courriel de validation de votre compte envoyé.</h1>
+    <br><br>
+    <h4>Merci de confirmer votre inscription en utilisant le lien contenu dans cet email.
         <br>
-        <a href="{{ path('security_logout') }}" class="btn btn-sm btn--blue">
-            <i class="ri-home-2-line"></i>&ensp;Page de connexion
-        </a>
-    <!-- </div> -->
+        Ce lien expirera dans 1 heure, vérifiez qu'il n'ait pas été dérouté vers vos SPAMS...
+    </h4>
+    <br>
+    <a href="{{ path('security_logout') }}" class="btn btn-sm btn--blue">
+        <i class="ri-home-2-line"></i>&ensp;Page de connexion
+    </a>
 </div>
 {% endblock %}

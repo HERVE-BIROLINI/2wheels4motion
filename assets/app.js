@@ -906,11 +906,12 @@ document.addEventListener("DOMContentLoaded", function(event){
     //      attr:               data_id=
     // - la modale associée se doit d'être définie tel que :
     //      id:                 'modal--{data_type}--{data_id}'
+    //      style:              'display:none;'
     // - le bouton de masquage d'une modale... :
     //      class:              'btn--hidemodal'
     //      attr:               parent_id={modal_id}='modal--{data_type}--{data_id}'
     // - tous les containers à masquer... :
-    //      id et/ou class:     'div--2hide-ifmodal'
+    //      id et/ou class:     'blk--2hide-ifmodal'
     let arBtnShowModal=document.querySelectorAll('.btn--showmodal');
     if(arBtnShowModal.length>0){
         arBtnShowModal.forEach(btn => {
@@ -919,11 +920,11 @@ document.addEventListener("DOMContentLoaded", function(event){
 
         function showModal(){
             // Cache TOUS les containers pouvant exister
-            let htmlMainItem2Hide=document.querySelector('#div--2hide-ifmodal');
+            let htmlMainItem2Hide=document.querySelector('#blk--2hide-ifmodal');
             if(htmlMainItem2Hide){
                 htmlMainItem2Hide.style.display="none";
             }
-            let arMainItems=document.querySelectorAll('.div--2hide-ifmodal');
+            let arMainItems=document.querySelectorAll('.blk--2hide-ifmodal');
             if(arMainItems.length>0){
                 arMainItems.forEach(htmMainItem => {
                     htmMainItem.style.display="none";
@@ -964,11 +965,11 @@ document.addEventListener("DOMContentLoaded", function(event){
 
         function hideModal(){
             // RE-affiche TOUS les containers pouvant exister
-            let htmlMainItem2Hide=document.querySelector('#div--2hide-ifmodal');
+            let htmlMainItem2Hide=document.querySelector('#blk--2hide-ifmodal');
             if(htmlMainItem2Hide){
                 htmlMainItem2Hide.style.display="";
             }
-            let arMainItems=document.querySelectorAll('.div--2hide-ifmodal');
+            let arMainItems=document.querySelectorAll('.blk--2hide-ifmodal');
             if(arMainItems.length>0){
                 arMainItems.forEach(htmMainItem => {
                     htmMainItem.style.display="";
@@ -1220,4 +1221,19 @@ document.addEventListener("DOMContentLoaded", function(event){
     //-----------------------------------------------------------------------------------------
 
 
+    //------------------------------------------------------------------
+    // *** DEBUT - Gestion du centrage d'un élément dans son parent ***
+    //------------------------------------------------------------------
+    let arToCenterInto=document.querySelectorAll('.tocenterinto');
+    if(arToCenterInto){
+        arToCenterInto.forEach(htmlItem => {
+            htmlItem.parentNode.style.position='relative';
+            htmlItem.style.position='absolute';
+        })
+    }
+    //----------------------------------------------------------------
+    // *** FIN - Gestion du centrage d'un élément dans son parent ***
+    //----------------------------------------------------------------
+
+    
 });

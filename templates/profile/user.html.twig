@@ -12,9 +12,11 @@
     
     {% if app.user %}
     <div class="paragraph--large" id="">
+        <!-- *** La "barre" d'onglets de sélection du bloc à afficher *** -->
         <div class="row--tabtype" id="row--tabtype--datas">
+            <!--  ** onglet "Données Personnelles" ** -->
             <div class="btn--tabtype" id="btn--tabtype--datapersonal" parent_id="row--tabtype--datas" default>Données Personnelles</div>
-            
+            <!--  ** onglet "Données Professionnelles" ** -->
             <div class="btn--tabtype" id="btn--tabtype--dataprofessional" parent_id="row--tabtype--datas"
             {% if app.user.driver==null %}hidden{% endif %}
             >Données Professionnelles</div>
@@ -22,8 +24,7 @@
 
         <!-- *** Block Données Personnelles *** -->
         <form class="block--datas-vertical block--tabtype" id="form_datapersonal" parent_id="btn--tabtype--datapersonal" method="post" novalidate>
-            
-            <!-- Rangée titre + photo Avatar + nom + prénom -->
+            <!--  ** Rangée titre + photo Avatar + nom + prénom ** -->
             <div class="d-flex flex-row flex-wrap align-items-center justify-content-around m-2 w-100">
                 <!-- Photo -->
                 <div class="card--profile col-12 col-md-3">
@@ -75,16 +76,15 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Rangée de case d'édition -->
+            <!--  ** Rangée de case d'édition ** -->
             <div class="d-flex flex-row flex-wrap w-100">
-                <!-- Courriel -->
+                <!--   * Courriel * -->
                 <div class="col-12 col-md-6 mb-2">
                     <label class="required" for="inputEmail">Adresse électronique :</label>
                     <input type="email" value="{{ app.user.email }}" class="form-control" disabled />
                     <input type="hidden" value="{{ app.user.email }}" name="email" id="inputEmail">
                 </div>
-                <!-- Téléphone -->
+                <!--   * Téléphone * -->
                 <div class="col-12 col-md-6 mb-2">
                     <label class="required" for="inputPhone">Téléphone :</label>
                     <input type="text" value="{{ app.user.phone }}" name="phone" id="inputPhone" class="form-control" required ><!-- pattern="@^0+[\d]{9}@" autofocus> -->
@@ -97,11 +97,9 @@
                 </div>
             </div>
             <br>
-
-            <!-- Anciennement partie du Controller Customer -->
+            <!--  ** Anciennement partie du Controller Customer ** -->
             <!-- ------------------------------------------ -->
-            <!-- <h2 class="h3 ml-4 mb-3 font-weight-normal">Adresse postale :</h2> -->
-            <!-- Bloc adresse du Customer -->
+            <!--   * Bloc adresse du Customer * -->
             <div class="d-flex flex-row flex-wrap justify-content-between w-100"><!-- class="block--datas-horizontal mx-3" -->
                 <div class="col-12 col-md-5">
                     <label class="required" for="inputroad">N° et Voie :</label>
@@ -165,25 +163,26 @@
                     {#{% endif %}#}
                 </div>
             </div>
-            <!-- rangée de boutons : Mise à jour / Modification MdP / Création compte Driver -->
+            <!--   * rangée de boutons : Mise à jour / Modification MdP / Création compte Driver * -->
             <div class="btns--row">
                 <button class="btn btn-sm btn--blue" type="submit" form="form_datapersonal">
                     <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
                 </button>
-                <a class="btn btn-sm btn--secondary" href="{{ path('profile_pwd', {'id': app.user.id}) }}">
+                <a class="btn btn-sm btn--secondary" href="{{ path('security_pwd', {'id': app.user.id}) }}">
                     <i class="ri-find-replace-line"></i>&ensp;<small>Modifier le mot de passe</small>
                 </a>
             </div>
+            <div class="d-flex flex-row w-100">
+                <small style="color:red;">(* champs obligatoire)</small>
+            </div>
         </form>
-
-
 
         <!-- *** Block Données Professionnelles *** -->
         {% if app.user.driver %}
         <form class="block--datas-vertical block--tabtype" id="form_dataprofessional" parent_id="btn--tabtype--dataprofessional" method="post" novalidate>
-            <!-- Les informations professionnelles : T3P & Pilote VMDTR -->
+            <!--  ** Les informations professionnelles : T3P & Pilote VMDTR ** -->
             <div class="card--horizontal mb-2">
-                <!-- BlockS de données de l'entreprise T3P + données propres au pilote -->
+                <!--   * BlockS de données de l'entreprise T3P + données propres au pilote * -->
                 <div class="d-flex flex-row flex-wrap justify-content-between">
                     <!-- Block de données de la company T3P -->
                     {{ include('company/_form-company.html.twig') }}
@@ -191,15 +190,21 @@
                     {{ include('driver/_form.html.twig') }}
                 </div>
             </div>
-            <!-- rangée de bouton(s) : Mise à jour -->
+
+            {% if app.user.driver.isverified %}
+
+            <!--  ** rangée de bouton(s) : Mise à jour ** -->
             <div class="btns--row">
                 <button class="btn btn-sm btn--blue" type="submit" form="form_dataprofessional">
                     <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
                 </button>
-                {#<!-- <a class="btn btn-sm btn--secondary" href="{{ path('profile_user',{'id': app.user.id}) }}">
-                    <i class="fas fa-times"></i>&ensp;Annuler
-                </a> -->#}
             </div>
+            <div class="d-flex flex-row w-100">
+                <small style="color:red;">(* champs obligatoire)</small>
+            </div>
+            {% else %}
+            <h3 class="badge-danger p-3 rounded-pill tocenterinto">Votre compte PRO est en cours de vérification...</h3>
+            {% endif %}
         </form>
         {% endif %}
     </div>

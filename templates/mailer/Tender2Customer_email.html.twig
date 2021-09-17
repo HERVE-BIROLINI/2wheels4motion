@@ -98,8 +98,9 @@
         >
             {% else %}
         <div id="preview--flatrate-km"
-            style="display:flex;flex-direction:row;flex-wrap:wrap;padding-left:2em;display:none;"
+            style="display:flex;flex-direction:column;flex-wrap:wrap;padding-left:2em;"
         >
+        <!-- style="display:flex;flex-direction:row;flex-wrap:wrap;padding-left:2em;display:none;" -->
             {% endif %}
             <!-- "Evaluation" du kilométrage -->
             <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;width:100%;">
@@ -118,6 +119,7 @@
                 <b id="preview--pickupcost" twin_id="driver--pickupcost">{{ tender.pickupcost }}</b><b>&ensp;&euro;</b>
             </div>
         </div>
+        <br>
         <!-- TVA -->
         <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;width:100%;">
             TVA (incluse) :&emsp;
@@ -131,6 +133,13 @@
             Prix de la course :&emsp;
             <b id="preview--raceprice" twin_id="driver--raceprice">{{ tender.price }}</b>
             <b>&ensp;&euro;</b>
+            <!--  -->
+            {% if controller_func != 'readTender' or app.user == user %}
+            &emsp;&emsp;
+            <div style="width:fit-content;background-color:rgb(37, 104, 48);border:2px solid black;border-radius:2em;padding:1em;">
+                <a style="color:white;font-weight:bold;" href="http://zob.fr">Accepter ce devis</a>
+            </div>
+            {% endif %}
         </div>
     </div>
 </body>

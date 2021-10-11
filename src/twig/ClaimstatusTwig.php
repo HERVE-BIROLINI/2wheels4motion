@@ -2,30 +2,19 @@
 
 namespace App\Twig;
 
+use App\Entity\Claim;
 use App\Entity\ClaimStatus;
+use App\Entity\Customer;
 use App\Entity\Driver;
-use App\Entity\Company;
-use App\Entity\Socialreason;
-use App\Entity\Tva;
 use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
 use Twig\TwigFunction;
-// use App\Repository\DriverRepository;
-// use App\Repository\CompanyRepository;
-// use App\Repository\PicturelabelRepository;
-// use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-// use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-// use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-// use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Doctrine\Common\Collections\Criteria;
 
 class ClaimstatusTwig extends AbstractExtension
 {
 
     private $entityManager;
-    // private $urlGenerator;
-    // private $passwordEncoder;
-    // private $csrfTokenManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -37,10 +26,10 @@ class ClaimstatusTwig extends AbstractExtension
     public function getFunctions(){
         return [
             // fonctions des objets Claim et Claim_Status associées au Driver
-            new TwigFunction('getclaims4driver', [$this, 'getClaims4Driver']),
+            new TwigFunction('getclaimstatus4driver', [$this, 'getclaimstatus4driver']),
             new TwigFunction('getstatus4claimanddriver', [$this, 'getStatus4ClaimAndDriver']),
-            // fonctions des objets Claim et Claim_Status associées au Driver
-            new TwigFunction('getclaims4customer', [$this, 'getClaims4Customer']),
+            // fonctions des objets Claim et Claim_Status associées au Customer
+            new TwigFunction('getclaimstatus4customer', [$this, 'getclaimstatus4customer']),
             new TwigFunction('getstatus4claimofcustomer', [$this, 'getStatus4ClaimOfCustomer']),
         ];
     }
@@ -56,7 +45,7 @@ class ClaimstatusTwig extends AbstractExtension
 
     // ** Les méthodes liées aux extensions de fonctions **
     // fonctions des objets Claim et Claim_Status associées au Driver
-    public function getClaims4Driver($driver, $bWithArchived){
+    public function getclaimstatus4driver(Driver $driver, $bWithArchived){
         $arAllClaims=$this->entityManager->getRepository(ClaimStatus::class)->findBy(['driver'=>$driver]);
         $arResult=[];
         foreach($arAllClaims as $claimStatus){
@@ -66,46 +55,48 @@ class ClaimstatusTwig extends AbstractExtension
         }
         return $arResult;
     }
-    public function getStatus4ClaimAndDriver($claim, $driver){
+    public function getStatus4ClaimAndDriver(Claim $claim, $driver){
         return $this->entityManager->getRepository(ClaimStatus::class)->findOneBy(['claim'=>$claim,'driver'=>$driver]);
     }
     
     // fonctions des objets Claim et Claim_Status associées au Customer
-    public function getClaims4Customer($customer, $bWithArchived){
+    public function getclaimstatus4customer(Customer $customer, $bWithArchived){
         // commence par rechercher les ID de TOUTES les Claims créer par le Customer en demande
         $arAllClaims=$customer->getClaims();
         $arId=[];
         foreach($arAllClaims as $claimStatus){
             array_push($arId, $claimStatus->getId());
         }
+        
+        //
+        $arClaimStatus=$this->entityManager->getRepository(ClaimStatus::class)->findBy(['claim'=>$arId], array('id' => 'ASC'));
+        
         // selon la demande avec ou sans les "archives"...
-        if($bWithArchived){
-            $arClaimStatus=$this->entityManager->getRepository(ClaimStatus::class)->findBy(['claim'=>$arId]);
-        }else{
-            $arClaimStatus=array_merge(
-                                    $this->entityManager->getRepository(ClaimStatus::class)
-                                                        ->findBy(['claim'=>$arId, 'isarchivedbycustomer'=>null])
-                                    ,
-                                    $this->entityManager->getRepository(ClaimStatus::class)
-                                                        ->findBy(['claim'=>$arId, 'isarchivedbycustomer'=>false])
-            );
+        if(!$bWithArchived){
+            $arArchivedClaimStatus=$this->entityManager->getRepository(ClaimStatus::class)->findBy(['claim'=>$arId, 'isarchivedbycustomer'=>true], array('id' => 'ASC'));
+            //
+            foreach($arArchivedClaimStatus as $archivedClaimStatus){
+                unset($arClaimStatus[array_search($archivedClaimStatus, $arClaimStatus)]);
+            }
+            
         }
-        // 
+
+        // récupère les Claims à partir des ClaimStatus trouvé(s)
         $arResult=[];
         foreach($arClaimStatus as $claimStatus){
+            // supprime les doublons
             if(!in_array($claimStatus->getClaim(), $arResult)){
                 array_push($arResult, $claimStatus->getClaim());
             }
         }
+        //
         return $arResult;
     }
-    public function getStatus4ClaimOfCustomer($claim, $customer){
+    public function getStatus4ClaimOfCustomer(Claim $claim, Customer $customer){
         // commence par rechercher les ID de TOUTES les Claims créer par le Customer en demande
         $arAllClaims=$customer->getClaims();
-        if(in_array($claim, $arAllClaims->toArray())){
+        if($arAllClaims->contains($claim)){
             return $this->entityManager->getRepository(ClaimStatus::class)->findBy(['claim'=>$claim ]);
-        }else{
-            return null;
         }
     }
 

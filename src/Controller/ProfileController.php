@@ -2,33 +2,25 @@
 
 namespace App\Controller;
 
+use App\Entity\ClaimStatus;
 use App\Entity\Picture;
 use App\Entity\User;
 use App\Entity\Company;
 use App\Entity\Customer;
-// use App\Entity\Driver;
-// use App\Entity\Driver;
+use App\Entity\Booking;
 use App\Entity\Picturelabel;
 use App\Entity\Socialreason;
-// use App\Form\ChangePwdFormType;:
-// use App\Repository\PicturelabelRepository;
-// use App\Repository\UserRepository;
+use App\Entity\Tender;
+use App\Entity\TenderStatus;
 use App\Tools\RegexTools;
 use App\Tools\UploadPictureTools;
-// use App\Twig\DriverTwig;
 use App\Twig\PictureTwig;
-// use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-// use App\Twig\PictureTwig;
-// use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-// use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
-// use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-// use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 /**
  * @Route("/profile", name="profile_")
@@ -39,12 +31,8 @@ class ProfileController extends AbstractController
     /**
      * @Route("{id}", name="user", methods={"GET","POST"}, requirements={"id":"\d+"})
      */
-    public function profileuser(User $user
-                            , MailerInterface $mailer
-                            // , EntityManagerInterface $entityManager
-    ): Response
+    public function profileuser(User $user, MailerInterface $mailer): Response
     {
-        
         // test si l'utilisateur N'est PAS encore identifié
         if(!$this->getUser() or $this->getUser()!==$user){
             return $this->redirectToRoute('security_login');
@@ -52,7 +40,13 @@ class ProfileController extends AbstractController
         //
         $entityManager = $this->getDoctrine()->getManager();
 
-
+        // si retour, récupère "l'état" précédent pour réaffichage...
+        if(isset($_POST['default_item'])){
+            $default_item = $_POST['default_item'];
+        }else{
+            $default_item = null;
+        }
+        
         // *** Si retour après Submit ***
         // -----------------------------------
         //  ** Onglet Données Personnelles **
@@ -130,6 +124,7 @@ class ProfileController extends AbstractController
         ){
             $error_customer_city=true;
         }
+
         //   * ... Si sans erreur => sauvegarde les modifications *
         if(count($_POST)>0 && isset($_POST['firstname']) && !$error_firstname && !$error_lastname && !$error_phone && !$error_customer_road && !$error_customer_city){
             //
@@ -152,7 +147,7 @@ class ProfileController extends AbstractController
             //
             $entityManager->flush();
             //
-            $this->addFlash('success', "Vos modifications ont bien été enregistrées.");
+            // $this->addFlash('success', "Vos modifications ont bien été enregistrées.");
         }
         //  ** FIN - Onglet Données Personnelles **
         // -----------------------------------------
@@ -160,8 +155,6 @@ class ProfileController extends AbstractController
         // ---------------------------------------
         //  ** Onglet Données Professionnelles **
         $companyRepository=$entityManager->getRepository(Company::class);
-        // Défini les variables (pour défaut) à transmettre à TWIG
-        $bAllIsFine=true;
         //
         $error_name=null;
         $error_siren=null;
@@ -175,13 +168,29 @@ class ProfileController extends AbstractController
         $error_motomodel=null;
         $error_file=null;
         // ... important pour ne pas "parasiter" l'affichage des données de la T3P
-        $obCompany=null;
+        $company=null;
         // $bWithArchived=false;
         //   * Analyse... *
-        if(count($_POST)>1 && isset($_POST['siren'])){
+        // ... suite au choix d'une Company déjà "référencée"
+        if(isset($_POST['companychoosen'])){
+            // instancie une nouvelle valeur à l'objet Company,
+            // TWIG réassignera les valeurs dans le formulaire...
+            // $company=$companyRepository->findOneBy(['id'=>$_POST['companychoosen']]);
+            $company=$entityManager->getRepository(Company::class)->findOneBy(['id'=>$_POST['companychoosen']]);
+            //
+            $this->addFlash('information', "Données d'une entreprise T3P référencée récupérées. Pensez à enregistrer vos modifications pour confirmer...");
+            $bAllIsFine=false;
+        }
+        elseif(count($_POST)>1 && isset($_POST['siren'])){
+            //
+            // if(isset($_POST) && count($_POST)>0){
+                // Défini les variables (pour défaut) à transmettre à TWIG
+            $bAllIsFine=true;
+            // }else{$bAllIsFine=false;}
             // -- Test les valeurs contenues dans les champs --
             //  - Données de la T3P -
             //  ---------------------
+            //
             $driver=$user->getDriver();
             //  => NAME
             $name=$_POST['name'];
@@ -205,8 +214,8 @@ class ProfileController extends AbstractController
                 }
                 // ... si tout est OK, création nouvelle T3P et envoi du mail
                 else{
-                    $obCompany=new Company;
-                    $obCompany->setSiren($siren);
+                    $company=new Company;
+                    $company->setSiren($siren);
 
                     // envoi d'un courriel à l'administrateur pour validation du compte Driver
                     $email=(new TemplatedEmail());
@@ -241,35 +250,36 @@ class ProfileController extends AbstractController
                     and $companyAllreadyExist!=$driver->getCompany()
                 )
             {
-                $obCompany=$companyAllreadyExist;
+                $company=$companyAllreadyExist;
                 $this->addFlash('information', "Affiliation à une entreprise T3P déjà référencée prise en compte...");
             }
             //  ... si aucune modification en lien avec la T3P
             else{
                 // $NoChangeAcceptable4T3P=true;
                 $NoChangeDone4T3P=true;
-                $obCompany=$driver->getCompany();
+                $company=$driver->getCompany();
             }
-            // ... Si pas de "soucis" avec les données T3P, enregistre le reste des données T3P
+            
+            // Si pas de "soucis" avec les données T3P, enregistre le reste des données T3P
             if(!isset($NoChangeAcceptable4T3P)){
                 //  => NAME
-                $obCompany->setName($name);
+                $company->setName($name);
                 //  => NIC (nombre à 5 chiffres)
                 $nic=$_POST['nic'];
                 if($nic and (!is_numeric($_POST['nic']) || strlen($_POST['nic'])!=5)){
                     $error_nic=true;
                 }
                 elseif($nic){
-                    $obCompany->setNic($_POST['nic']);
+                    $company->setNic($_POST['nic']);
                 }
                 //  => SOCIALREASON
-                $obCompany->setSocialreason($entityManager->getRepository(Socialreason::class)->findOneBy(['id'=>$_POST['socialreason']]));
+                $company->setSocialreason($entityManager->getRepository(Socialreason::class)->findOneBy(['id'=>$_POST['socialreason']]));
                 //  => ADRESSE
-                $obCompany->setRoad($_POST['road']);
-                $obCompany->setZip($_POST['zip']);
-                $obCompany->setCity($_POST['city']);
+                $company->setRoad($_POST['road']);
+                $company->setZip($_POST['zip']);
+                $company->setCity($_POST['city']);
                 //
-                $entityManager->persist($obCompany);
+                $entityManager->persist($company);
             }
             elseif(!isset($NoChangeDone4T3P)){
                 $bAllIsFine=null;
@@ -280,11 +290,15 @@ class ProfileController extends AbstractController
             }
             //  - Données du pilote VMDTR -
             //  ---------------------------
-            //  => Sélection d'un fichier pour carte VMDTR --
+            //  instanciation de l'objet image pour la carte VMDTR du pilote,
             $obPictureTwig=new PictureTwig($entityManager);
-            $obPicture=$obPictureTwig->getPictureOfDriverCard($user);
+            //  si n'existe pas (??), instancie un nouvel
+            if(!$obPicture=$obPictureTwig->getPictureOfDriverCard($user)){
+                // ... Instancie un nouvel objet Picture
+                $obPicture=new Picture;
+            }
             // ... bon format, bonne taille...
-            if(isset($_FILES['file']) and $_FILES['file']['name']!=='' and $_FILES['file']['error']==0){
+            if($obPicture && isset($_FILES['file']) && $_FILES['file']['name']!=='' && $_FILES['file']['error']==0){
                 // ... tente de l'UPLOADer...
                 $obUploadPicture = new UploadPictureTools;
                 $obPicturelabel_VMDTR=$entityManager->getRepository(Picturelabel::class)->findOneBy(['label'=>'Carte pro. VMDTR - Face']);
@@ -314,7 +328,13 @@ class ProfileController extends AbstractController
                         $obUploadPicture->UploadPicture($user, $obPicturelabel_VMDTR, $this->getParameter('asset_path_dev'));
                         $this->addFlash('success', "L'ancienne image a été effacée au profit de la nouvelle...");
                     }
+                    // modifie le chemin (devrait toujours être le même, puisque nomme le fichier)
                     $obPicture->setPathname($obUploadPicture->getPathname());
+                    // Et au cas où nouvel objet image (???)...
+                    //  ... précise le sujet de l'image
+                    $obPicture->setPicturelabel($obPicturelabel_VMDTR);
+                    //  ... précise le User propriétaire de l'image
+                    $obPicture->setUser($user);
                     //
                     $entityManager->persist($obPicture);
                 }
@@ -326,11 +346,11 @@ class ProfileController extends AbstractController
             // ... mauvais format ou trop "GROS" fichier...
             elseif(isset($_FILES['file']) and $_FILES['file']['name']!=='' and $_FILES['file']['error']!==0){
                 $this->addFlash('danger', "Vous devez télécharger une copie de votre carte VMDTR, au format attendu, et ne \"pesant\" pas plus de 2MB.");
-                $bAllIsFine=false;
+                $bAllIsFine=null;
             }
             //  => Associe la company au Driver
-            if($obCompany){
-                $driver->setCompany($obCompany);
+            if($company){
+                $driver->setCompany($company);
             }
 
             /*  INUTILE ICI CAR N'EST PAS MODIFIABLE DANS LE TABLEAU DE BORD (DISABLED)
@@ -361,37 +381,43 @@ class ProfileController extends AbstractController
             //
             $entityManager->flush();
 
-            // Message de confirmation à afficher
-            if($bAllIsFine){
-                $this->addFlash('success', "Vos modifications ont bien été enregistrées.");
-            }
         }
         //   * ... Si sans erreur => sauvegarde les modifications *
 
         //  ** FIN - Onglet Données Professionnelles **
         // ---------------------------------------------
+        else{$bAllIsFine=false;}
+
+        // Message de confirmation à afficher
+        if($bAllIsFine){
+            $this->addFlash('success', "Vos modifications ont bien été enregistrées.");
+        }
         
-        // ?? $obPictureLabel_Portrait=$entityManager->getRepository(Picturelabel::class)->findOneBy(['label'=>'Avatar']);
-        
+        //
         return $this->render('profile/user.html.twig', [
-            // 'picture_portrait'  => $entityManager->getRepository(Picture::class)->findOneBy(['picturelabel'=>$obPictureLabel_Portrait,'user'=>$user]),
-            'controller_name'   => 'ProfileController',
+            // 'picture_portrait' => $entityManager->getRepository(Picture::class)->findOneBy(['picturelabel'=>$obPictureLabel_Portrait,'user'=>$user]),
+            'controller_name' => 'ProfileController',
+            //
+            'default_item' => $default_item,
             // * Données Personnelles
-            'error_firstname'       => $error_firstname,
-            'error_lastname'        => $error_lastname,
-            'error_phone'           => $error_phone,
-            'error_customer_road'   => $error_customer_road,
-            'error_customer_city'   => $error_customer_city,
+            'error_firstname'     => $error_firstname,
+            'error_lastname'      => $error_lastname,
+            'error_phone'         => $error_phone,
+            'error_customer_road' => $error_customer_road,
+            'error_customer_city' => $error_customer_city,
             // * Données Professionnelles
-            'error_name'            => $error_name,
-            'error_siren'           => $error_siren,
-            'error_nic'             => $error_nic,
-            'error_road'            => $error_road,
-            'error_city'            => $error_city,
-            'error_vmdtrnumber'     => $error_vmdtrnumber,
-            'error_vmdtrvalidity'   => $error_vmdtrvalidity,
-            'error_motomodel'       => $error_motomodel,
-            'error_file'            => $error_file,
+            'company'             => $company,
+            'error_name'          => $error_name,
+            'error_siren'         => $error_siren,
+            'error_nic'           => $error_nic,
+            'error_road'          => $error_road,
+            'error_city'          => $error_city,
+            'error_vmdtrnumber'   => $error_vmdtrnumber,
+            'error_vmdtrvalidity' => $error_vmdtrvalidity,
+            'error_motomodel'     => $error_motomodel,
+            'error_file'          => $error_file,
+            //
+            'allcompaniesknown' => $entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>true]),
         ]);
     }
     
@@ -515,64 +541,406 @@ class ProfileController extends AbstractController
             'controller_func' => 'ChangePicture',
         ]);
     }
+
     /**
      * @Route("/driver", name="driver")
      */
-    public function profiledriver(MailerInterface $mailer): Response
+    public function profiledriver(): Response
     {
         // test si l'utilisateur N'est PAS encore identifié
-        if(!isset($user) && !($user=$this->getUser() and true)){
-            return $this->redirectToRoute('security_login');
-        }
-        if(!($driver=$user->getDriver() and true) || !$driver->getCompany()){
+        $user=$this->getUser();
+        if($this->container->get('security.authorization_checker')
+                                ->isGranted('ROLE_DRIVER')
+            == false
+            ||
+            $user->getDriver()==null
+            ||
+            $user->getDriver()->getCompany()==null
+        ){
             return $this->redirectToRoute('registration_driver', ['id' => $user->getId()]);
         }
+        elseif(!$user){return $this->redirectToRoute('security_login');}
 
-        $bWithArchived=false;
-        // * Si retour dans le Controller suite à demande d'affichage/masquage des archives *
-        if(isset($_POST['show-hide--archive'])){
-            $bWithArchived=$_POST['witharchived']==0;
-        }
+        // initialisation d' "ENTREE" des variables
+        if(isset($_GET['controller_func'])){
+            $controller_func = $_GET['controller_func'];
+        }else{$controller_func = null;}
+        if(isset($_GET['witharchived'])){
+            $bWithArchived = $_GET['witharchived'];
+        }else{$bWithArchived=false;}
+        if(isset($_GET['default_item'])){
+            $default_item  = $_GET['default_item'];
+        }else{$default_item=null;}
         
+        //
+        $entityManager = $this->getDoctrine()->getManager();    
+
+        // ** Si retour dans le Controller **
+        if(isset($_POST) and count($_POST)>0){
+            // - récupère le nom de l'onglet 'affiché' pour prochaine affichage -
+            // ------------------------------------------------------------------
+            if(isset($_POST['default_item'])){
+                $default_item=$_POST['default_item'];
+            }else{$default_item=null;}
+            //
+            // - suite à demande d'affichage/masquage des archives -
+            // -----------------------------------------------------
+            if(isset($_POST['show-hide--archive'])){
+                $bWithArchived=$_POST['witharchived']==0;
+            }elseif(isset($_POST['witharchived'])){
+                $bWithArchived=$_POST['witharchived'];
+            }else{
+                $bWithArchived=null;
+            }
+            
+            //
+            // - Onglet "Demandes reçues" -
+            // ------------------------------
+            // ... suite à action sur un bouton "switch" marqueur de demande LUE
+            if(isset($_POST['driver_switchclaimstatus_viewed'])){
+                $this->driver_switchclaimstatus_viewed($_POST['driver_switchclaimstatus_viewed']);
+            }
+            // ... suite à action sur un bouton "switch" d'ARCHIVAGE de Claim
+            if(isset($_POST['driver_switchclaimstatus_archived'])){
+                $this->driver_switchclaimstatus_archived($_POST['driver_switchclaimstatus_archived']);
+            }
+            // ... suite à action sur un bouton d'envoi d'un Tender
+            if(isset($_POST['driver_tender_create'])){
+                return $this->redirectToRoute('tender_create', [
+                    'claim'=> $_POST['driver_tender_create'],
+                    //
+                    'witharchived'=> $bWithArchived,
+                    'default_item'=> $default_item,
+                ]);
+            }
+            // - Onglet "Devis envoyés" -
+            // ------------------------
+            // ... suite à action sur un bouton "switch" d'ARCHIVAGE de Tender
+            if(isset($_POST['driver_switchtenderstatus_archived'])){
+                $this->driver_switchtenderstatus_archived($_POST['driver_switchtenderstatus_archived']);
+            }
+            // - Onglet "Courses confirmées" -
+            // -------------------------------
+            // ... suite à action sur un bouton "switch" d'ARCHIVAGE de Booking
+            if(isset($_POST['driver_switchBookingStatus_archived'])){
+                $this->driver_switchBookingStatus_archived($_POST['driver_switchBookingStatus_archived']);
+            }
+
+            // - ... bouton partagé... -
+            // ... suite à action sur un bouton "voir le devis" (colonne Détails)
+            if(isset($_POST['driver_viewingtender'])
+                &&
+                $tender=$entityManager->getRepository(Tender::class)->findOneBy(['id'=>$_POST['driver_viewingtender']])
+            ){
+                return $this->redirectToRoute('tender_read', [
+                    'controller_name' => 'ProfileController',
+                    'controller_func' => 'profile_driver',
+                    // 'function_name'   => 'ProfileCustomer',
+                    //
+                    'witharchived' => $bWithArchived,
+                    'default_item' => $default_item,
+                    //
+                    'tender'   => $tender->getId(),
+                    'driver'   => $tender->getDriver()->getId(),
+                    'company'  => $tender->getDriver()->getCompany()->getId(),
+                    'customer' => $tender->getClaim()->getCustomer()->getId(),
+                    'claim'    => $tender->getClaim()->getId(),
+                    'user'     => $user->getId(),
+                ]);
+            }
+            elseif(isset($_POST['driver_viewingtender'])){
+                $this->addFlash('danger', "Bizarre !! Le devis semble avoir disparu de la BdD...");
+            }
+        }else{
+            // Contrôle d'intégrité de la base et correction si nécessaire
+            if($driver=$user->getDriver()){
+                $claims=$driver->getClaims();
+                foreach($claims as $claim){
+                    if(!$entityManager->getRepository(ClaimStatus::class)->findOneBy(['claim'=>$claim->getId(),'driver'=>$driver->getId()])){
+                        $claimStatus=new ClaimStatus;
+                        $claimStatus->setClaim($claim);
+                        $claimStatus->setDriver($driver);
+                        //
+                        $entityManager->persist($claimStatus);
+                        $entityManager->flush();
+                    }
+                }
+            }
+        }
+
         // ** Affiche/Ré-affiche la page **
         // ********************************
         return $this->render('profile/driver.html.twig', [
-            'controller_name'   => 'ProfileController',
-            'function_name'     => 'ProfileDriver',
+            'controller_name' => 'ProfileController',
+            'controller_func' => $controller_func,
+            'function_name'   => 'ProfileDriver',
             //
-            'witharchived'  => $bWithArchived,
+            'witharchived' => $bWithArchived,
+            'default_item' => $default_item,
         ]);
         // ********************************
     }
+    
+    public function driver_switchClaimStatus_viewed($claimStatus_ID){
+        // Pour les lectures et enregistrements dans la BdD
+        $entityManager=$this->getDoctrine()->getManager();
+        //
+        if($claimStatus=$entityManager->getRepository(ClaimStatus::class)->findOneBy(['id'=>$claimStatus_ID])){
+            if($claimStatus->getIsread()){
+                $claimStatus->setIsread(false);
+            }else{
+                $claimStatus->setIsread(true);
+            }
+            //
+            $entityManager->persist($claimStatus);
+            // "remplissage" de la BdD
+            $entityManager->flush();
+        }
+    }
+    public function driver_switchClaimStatus_archived($claimStatus_ID){
+        // Pour les lectures et enregistrements dans la BdD
+        $entityManager=$this->getDoctrine()->getManager();
+        //
+        if($claimStatus=$entityManager->getRepository(ClaimStatus::class)->findOneBy(['id'=>$claimStatus_ID])){
+            if($claimStatus->getIsarchivedbydriver()){
+                $claimStatus->setIsarchivedbydriver(false);
+            }else{
+                $claimStatus->setIsarchivedbydriver(true);
+            }
+            //
+            $entityManager->persist($claimStatus);
+            // "remplissage" de la BdD
+            $entityManager->flush();
+        }
+    }
+    public function driver_switchTenderStatus_archived($tenderStatus_ID){
+        // Pour les lectures et enregistrements dans la BdD
+        $entityManager=$this->getDoctrine()->getManager();
+        //
+        if($tenderStatus=$entityManager->getRepository(TenderStatus::class)->findOneBy(['id'=>$tenderStatus_ID])){
+            if($tenderStatus->getIsarchivedbydriver()){
+                $tenderStatus->setIsarchivedbydriver(false);
+            }else{
+                $tenderStatus->setIsarchivedbydriver(true);
+            }
+        }
+        //
+        $entityManager->persist($tenderStatus);
+        // "remplissage" de la BdD
+        $entityManager->flush();
+    }
+    public function driver_switchBookingStatus_archived($booking_ID){
+        // Pour les lectures et enregistrements dans la BdD
+        $entityManager=$this->getDoctrine()->getManager();
+        $booking=$entityManager->getRepository(Booking::class)->findOneBy(['id'=>$booking_ID]);
+        //
+        if($booking->getIsarchivedbydriver()){
+            $booking->setIsarchivedbydriver(false);
+        }else{
+            $booking->setIsarchivedbydriver(true);
+        }
+        //
+        $entityManager->persist($booking);
+        // "remplissage" de la BdD
+        $entityManager->flush();
+    }
+/*
+    public function driver_confirm($tender_ID){
+        // Pour les lectures et enregistrements dans la BdD
+        $entityManager=$this->getDoctrine()->getManager();
+        // lève le drapeau dans la table TenderStatus
+        if($tenderStatus=$entityManager->getRepository(TenderStatus::class)->findOneBy(['tender'=>$tender_ID])){
+            $tenderStatus->setIsbookingconfirmedbydriver(true);
+            //
+            $entityManager->persist($tenderStatus);
+        }
+        // crée un nouvel enregistrement dans la table Booking
+        $booking=new Booking;
+        $booking->setTender($entityManager->getRepository(Tender::class)->findOneBy(['id'=>$tender_ID]));
+        //
+        $entityManager->persist($booking);
+
+        // "remplissage" de la BdD
+        $entityManager->flush();
+
+
+
+
+
+        // EMAIL ?!?!?!?
+
+    }
+*/
 
     /**
      * @Route("/customer", name="customer")
      */
     public function profilecustomer(): Response
     {
-        // test si l'utilisateur N'est PAS encore identifié
-        if(!isset($user) && !($user=$this->getUser() and true)){
+        // ** test si l'utilisateur N'est PAS encore identifié **
+        $user=$this->getUser();
+        if($user==null){
             return $this->redirectToRoute('security_login');
-        }
-        if(!($driver=$user->getCustomer() and true)){
+        }elseif($this->container ->get('security.authorization_checker')
+                                ->isGranted('ROLE_CUSTOMER')
+                == false
+        ){
             return $this->redirectToRoute('profile_user', ['id' => $user->getId()]);
         }
 
-        $bWithArchived=false;
-        // * Si retour dans le Controller suite à demande d'affichage/masquage des archives *
-        if(isset($_POST['show-hide--archive'])){
-            $bWithArchived=$_POST['witharchived']==0;
+        // initialisation d' "ENTREE" des variables
+        if(isset($_GET['controller_func'])){
+            $controller_func = $_GET['controller_func'];
+        }else{$controller_func = null;}
+        if(isset($_GET['witharchived'])){
+            $bWithArchived = $_GET['witharchived'];
+        }else{$bWithArchived=false;}
+        if(isset($_GET['default_item'])){
+            $default_item  = $_GET['default_item'];
+        }else{$default_item=null;}
+
+        //
+        $entityManager = $this->getDoctrine()->getManager();    
+
+        // ** Si retour dans le Controller **
+        if(isset($_POST) and count($_POST)>0){
+
+            // - récupère le nom de l'onglet 'affiché' pour prochaine affichage -
+            // ------------------------------------------------------------------
+            if(isset($_POST['default_item'])){
+                $default_item=$_POST['default_item'];
+            }else{$default_item=null;}
+            //
+            // - suite à demande d'affichage/masquage des archives -
+            // -----------------------------------------------------
+            if(isset($_POST['show-hide--archive'])){
+                $bWithArchived=$_POST['witharchived']==0;
+            }elseif(isset($_POST['witharchived'])){
+                $bWithArchived=$_POST['witharchived'];
+            }else{
+                $bWithArchived=null;
+            }
+
+            //
+            // - Onglet "Demandes envoyées" -
+            // ------------------------------
+            // ... suite à action sur un bouton "switch" d'ARCHIVAGE de Claim
+            if(isset($_POST['customer_switchclaimstatus_archived'])){
+                $this->customer_switchclaimstatus_archived($_POST['customer_switchclaimstatus_archived']);
+            }
+            // - Onglet "Devis reçus" -
+            // ------------------------
+            // ... suite à action sur un bouton "switch" d'ARCHIVAGE de Tender
+            if(isset($_POST['customer_switchtenderstatus_archived'])){
+                $this->customer_switchtenderstatus_archived($_POST['customer_switchtenderstatus_archived']);
+            }
+            // - Onglet "Courses confirmées" -
+            // -------------------------------
+            // ... suite à action sur un bouton "switch" d'ARCHIVAGE de Booking
+            if(isset($_POST['customer_switchBookingStatus_archived'])){
+                $this->customer_switchBookingStatus_archived($_POST['customer_switchBookingStatus_archived']);
+            }
+
+            // - ... bouton partagé... -
+            // ... suite à action sur un bouton "voir le devis" (colonne Détails)
+            if(isset($_POST['customer_viewingtender'])){
+                $tender=$entityManager->getRepository(Tender::class)->findOneBy(['id'=>$_POST['customer_viewingtender']]);
+                return $this->redirectToRoute('tender_read', [
+                    // 'controller_name' => 'ProfileController',
+                    'controller_func' => 'profile_customer',
+                    // 'function_name'   => 'ProfileCustomer',
+                    //
+                    // 'comefrom'     => "profile_customer",
+                    'witharchived' => $bWithArchived,
+                    'default_item' => $default_item,
+                    //
+                    'tender'   => $tender->getId(),
+                    'driver'   => $tender->getDriver()->getId(),
+                    'company'  => $tender->getDriver()->getCompany()->getId(),
+                    'customer' => $tender->getClaim()->getCustomer()->getId(),
+                    'claim'    => $tender->getClaim()->getId(),
+                    'user'     => $tender->getClaim()->getCustomer()->getUser()->getId(),
+                ]);
+            }
+        }
+        // ... si non, invoqué par le Driver à partir du courriel de Claim
+        else{
+            //
+            // // Contrôle d'intégrité de la base et correction si nécessaire (??)
+            // if($customer=$user->getCustomer()){
+            //     $claims=$customer->getClaims();
+            //     foreach($claims as $claim){
+            //         if(!$entityManager->getRepository(ClaimStatus::class)->findOneBy(['claim'=>$claim->getId(),'driver'=>$driver->getId()])){
+            //             $claimStatus=new ClaimStatus;
+            //             $claimStatus->setClaim($claim);
+            //             $claimStatus->setDriver($driver);
+            //             //
+            //             $entityManager->persist($claimStatus);
+            //             $entityManager->flush();
+            //         }
+            //     }
+            // }
         }
         
         // ** Affiche/Ré-affiche la page **
         // ********************************
         return $this->render('profile/customer.html.twig', [
-            'controller_name'   => 'ProfileController',
-            'function_name'     => 'ProfileCustomer',
+            'controller_name' => 'ProfileController',
+            'controller_func' => $controller_func,
+            'function_name'   => 'ProfileCustomer',
             //
-            'witharchived'      => $bWithArchived,
+            'witharchived' => $bWithArchived,
+            'default_item' => $default_item,
         ]);
         // ********************************
+    }
+
+    public function customer_switchClaimStatus_archived($claim_ID){
+        // Pour les lectures et enregistrements dans la BdD
+        $entityManager=$this->getDoctrine()->getManager();
+        // Récupère les ClaimStatus relatifs à la Claim demandée
+        $arClaimStatus=$entityManager->getRepository(ClaimStatus::class)->findBy(['claim'=>$claim_ID]);
+        // Fonctionnement type interrupteur : observe l'état actuel du 1er enregistrement
+        $Isarchivedbycustomer=$arClaimStatus[0]->getIsarchivedbycustomer()==false;
+        // Itère sur chaque enregistrement 
+        foreach($arClaimStatus as $claimStatus){
+            $claimStatus->setIsarchivedbycustomer($Isarchivedbycustomer);
+            //
+            $entityManager->persist($claimStatus);
+        }
+        // "remplissage" de la BdD
+        $entityManager->flush();
+    }
+    public function customer_switchTenderStatus_archived($status_ID){
+        
+        // Pour les lectures et enregistrements dans la BdD
+        $entityManager=$this->getDoctrine()->getManager();
+        $status=$entityManager->getRepository(TenderStatus::class)->findOneBy(['id'=>$status_ID]);
+
+        if($status->getIsarchivedbycustomer()){
+            $status->setIsarchivedbycustomer(false);
+        }else{
+            $status->setIsarchivedbycustomer(true);
+        }
+        //
+        $entityManager->persist($status);
+        // "remplissage" de la BdD
+        $entityManager->flush();
+    }
+    public function customer_switchBookingStatus_archived($booking_ID){
+        // Pour les lectures et enregistrements dans la BdD
+        $entityManager=$this->getDoctrine()->getManager();
+        $booking=$entityManager->getRepository(Booking::class)->findOneBy(['id'=>$booking_ID]);
+
+        if($booking->getIsarchivedbycustomer()){
+            $booking->setIsarchivedbycustomer(false);
+        }else{
+            $booking->setIsarchivedbycustomer(true);
+        }
+        //
+        $entityManager->persist($booking);
+        // "remplissage" de la BdD
+        $entityManager->flush();
     }
     
 }

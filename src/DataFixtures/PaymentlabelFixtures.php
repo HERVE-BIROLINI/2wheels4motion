@@ -2,16 +2,16 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Paiementlabel;
+use App\Entity\Paymentlabel;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class PaiementlabelFixtures
+class PaymentlabelFixtures
     // extends Fixture implements OrderedFixtureInterface
 {
     
-    const PAIEMANTLABEL = [
+    const PAYMANTLABEL = [
         ['label'    => "Espèces"],
         ['label'    => "CB"],
         ['label'    => "Chèque"],
@@ -24,18 +24,18 @@ class PaiementlabelFixtures
     {
 
         ////---------------------------
-        foreach (self::PAIEMANTLABEL as $Paiementlabel) {
-            $obPaiementlabel = new Paiementlabel();
-            $obPaiementlabel->setLabel($Paiementlabel['label']);
+        foreach (self::PAYMANTLABEL as $Paymentlabel) {
+            $obPaymentlabel = new Paymentlabel();
+            $obPaymentlabel->setLabel($Paymentlabel['label']);
 
             // utiliser AVANT Persist le setReference, 
             // afin de stocker en mémoire les instances des objets 
             // qui dans un second temps (chargement de Article),
             // récupèrera la donnée...
-            // $this->setReference($Paiementlabel['label'],$obPaiementlabel);
-            // $this->setReference($Paiementlabel['key'],$obPaiementlabel);
+            // $this->setReference($Paymentlabel['label'],$obPaymentlabel);
+            // $this->setReference($Paymentlabel['key'],$obPaymentlabel);
 
-            $manager->persist($obPaiementlabel);
+            $manager->persist($obPaymentlabel);
         }
         //
         $manager->flush();

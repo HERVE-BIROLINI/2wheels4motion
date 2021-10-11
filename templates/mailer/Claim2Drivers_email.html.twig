@@ -1,10 +1,5 @@
-{# ??????
-{% if flatrate is defined and flatrate is not null %}
-{{ flatrate }}
-{% endif %}
-#}
 
-<div style='display:flex;flex-direction:row;justify-content:space-between'>
+<div style='display:flex;flex-direction:row;flex-wrap:wrap;justify-content:space-between'>
     <div>
         <div>{{ lastname~'  '~firstname }}</div>
         <div>{{ road }}</div>
@@ -75,9 +70,14 @@
     </b></p>
     <p>Cordialement</p>
     
-    <p>
+    <div style="width:fit-content;background-color:rgb(0, 89, 255);border:2px solid black;border-radius:2em;padding:1em;">
+        <a style="color:white;font-weight:bold;" href="{{ url }}">Répondre à la demande par un devis</a>
+    </div>
+
+    <p></p>
+    {#<!-- <p>
         NB : Cher(e) {{ driver_firstname }}, pour répondre à cette demande,
         rendez-vous dans votre compte de l'Annuaire 2Wheels4Motion,
         et retournez-lui un devis d'un simple clique !...
-    </p>
+    </p> -->#}
 </div>

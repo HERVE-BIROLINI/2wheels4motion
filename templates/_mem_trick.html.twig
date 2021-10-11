@@ -1,0 +1,11 @@
+<div id="blk--mem-trick">
+    <!-- astuce pour réinitialiser à DEFAULT le tableau actif au moment de la requête (traitement Javascript) -->
+    <input type="hidden" name="witharchived"
+        {% if witharchived is defined and witharchived != null %}value="{{ witharchived }}"{% endif %}
+    >
+    <!-- "Mémorisation" du nom du tableau actif pour récupération dans le Controller -->
+    <!-- (ID est indispensable pour Javascript, lors de l'initialisation de la page...) -->
+    <input type="hidden" id="default_item" name="default_item" 
+        {% if default_item is defined and default_item != null %}value="{{ default_item }}"{% endif %}
+    >
+</div>

@@ -194,13 +194,24 @@
                 <fieldset class="my-1">
                     <legend>Lieu de prise en charge :</legend>
                     <div class="row--tabtype" id="row--tabtype--claimfrom">
-                        <div class="btn--tabtype" id="btn--tabtype--adressfrom" parent_id="row--tabtype--claimfrom" default>Adresse</div>
+                        <!-- Domicile du demandeur -->
+                        {#<!-- <div class="btn--tabtype" id="btn--tabtype--adressfrom" utility="addressfrom" parent_id="row--tabtype--claimfrom">
+                            <i class="fas fa-home"></i>
+                            &ensp;Mon domicile
+                        </div> -->#}
+                        <!-- Adresse quelconque -->
+                        <div class="btn--tabtype" id="btn--tabtype--adressfrom" parent_id="row--tabtype--claimfrom" default>
+                            <i class="fas fa-city"></i>
+                            &ensp;Adresse
+                        </div>
+                        <!-- Lieu particulier (gare, aéroport, ...) -->
                         <div class="btn--tabtype" id="btn--tabtype--remarkableplacefrom" parent_id="row--tabtype--claimfrom"
                             {% if remarkableplace_from is defined and remarkableplace_from is not null and remarkableplace_from!='' %}
                             default
                             {% endif %}
                         >
-                            Lieu particulier&emsp;<i class="fas fa-plane-arrival"></i>&nbsp;<i class="fas fa-train"></i>
+                            <i class="fas fa-plane-arrival"></i>&nbsp;<i class="fas fa-train"></i>
+                            &emsp;Lieu particulier
                         </div>
                     </div>
                     <!-- block 'adressfrom' -->
@@ -269,13 +280,24 @@
                 <fieldset class="my-1">
                     <legend>Destination :</legend>
                     <div class="row--tabtype" id="row--tabtype--claimto">
-                        <div class="btn--tabtype" id="btn--tabtype--adressto" parent_id="row--tabtype--claimto" default>Adresse</div>
+                        <!-- Domicile du demandeur -->
+                        {#<!-- <div class="btn--tabtype" id="btn--tabtype--adressfrom" utility="addressfrom" parent_id="row--tabtype--claimfrom">
+                            <i class="fas fa-home"></i>
+                            &ensp;Mon domicile
+                        </div> -->#}
+                        <!-- Adresse quelconque -->
+                        <div class="btn--tabtype" id="btn--tabtype--adressto" parent_id="row--tabtype--claimto" default>
+                            <i class="fas fa-city"></i> &ensp;
+                            Adresse
+                        </div>
+                        <!-- Lieu particulier (gare, aéroport, ...) -->
                         <div class="btn--tabtype" id="btn--tabtype--remarkableplaceto" parent_id="row--tabtype--claimto"
                             {% if remarkableplace_to is defined and remarkableplace_to is not null and remarkableplace_to!='' %}
                             default
                             {% endif %}
                         >
-                        Lieu particulier&emsp;<i class="fas fa-plane-departure"></i>&nbsp;<i class="fas fa-train"></i>
+                        <i class="fas fa-plane-departure"></i>&nbsp;<i class="fas fa-train"></i>
+                        &emsp;Lieu particulier
                     </div>
                     </div>
                     <!-- block 'adressto' -->

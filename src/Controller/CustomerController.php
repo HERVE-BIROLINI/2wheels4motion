@@ -2,15 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\Claim;
-use App\Entity\ClaimStatus;
+// use App\Entity\Claim;
+// use App\Entity\ClaimStatus;
+// use App\Entity\TenderStatus;
 // use App\Entity\Driver;
 // use App\Entity\Status;
 // use App\Entity\User;
-use App\Repository\DriverRepository;
-use App\Twig\FrenchGeographyTwig;
+// use App\Repository\DriverRepository;
+// use App\Twig\FrenchGeographyTwig;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
+// use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -40,9 +41,11 @@ class CustomerController extends AbstractController
         return $this->redirect($_SERVER['HTTP_REFERER']);
     }
 */
-    /**
+
+/*
+    / **
      * @Route("/switchclaimstatusarchived{id}", name="switchclaimstatus_archived")
-     */
+     * /
     public function switchClaimStatus_archived(Claim $claim){
         // Pour les lectures et enregistrements dans la BdD
         $entityManager=$this->getDoctrine()->getManager();
@@ -61,4 +64,51 @@ class CustomerController extends AbstractController
         // retour à la page précédente
         return $this->redirect($_SERVER['HTTP_REFERER']);
     }
+*/
+
+/*
+    / **
+     * @Route("/switchtenderstatusviewed{id}", name="switchtenderstatus_viewed")
+     * /
+    public function switchTenderStatus_viewed(TenderStatus $tenderStatus){
+        
+        // Pour les lectures et enregistrements dans la BdD
+        $entityManager=$this->getDoctrine()->getManager();
+
+        if($tenderStatus->getIsread()){
+            $tenderStatus->setIsread(false);
+        }else{
+            $tenderStatus->setIsread(true);
+        }
+        //
+        $entityManager->persist($tenderStatus);
+        // "remplissage" de la BdD
+        $entityManager->flush();
+        // retour à la page
+        return $this->redirect($_SERVER['HTTP_REFERER']);
+    }
+*/
+
+/*
+    / **
+     * @Route("/switchtendertatusarchived{id}", name="switchtenderstatus_archived")
+     * /
+    public function switchTenderStatus_archived(TenderStatus $tenderStatus){
+        
+        // Pour les lectures et enregistrements dans la BdD
+        $entityManager=$this->getDoctrine()->getManager();
+
+        if($tenderStatus->getIsarchivedbycustomer()){
+            $tenderStatus->setIsarchivedbycustomer(false);
+        }else{
+            $tenderStatus->setIsarchivedbycustomer(true);
+        }
+        //
+        $entityManager->persist($tenderStatus);
+        // "remplissage" de la BdD
+        $entityManager->flush();
+        // retour à la page précédente
+        return $this->redirect($_SERVER['HTTP_REFERER']);
+    }
+*/
 }

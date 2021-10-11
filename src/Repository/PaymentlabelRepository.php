@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\Paiementlabel;
+use App\Entity\Paymentlabel;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Paiementlabel|null find($id, $lockMode = null, $lockVersion = null)
- * @method Paiementlabel|null findOneBy(array $criteria, array $orderBy = null)
- * @method Paiementlabel[]    findAll()
- * @method Paiementlabel[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Paymentlabel|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Paymentlabel|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Paymentlabel[]    findAll()
+ * @method Paymentlabel[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PaiementlabelRepository extends ServiceEntityRepository
+class PaymentlabelRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Paiementlabel::class);
+        parent::__construct($registry, Paymentlabel::class);
     }
 
     // /**
-    //  * @return Paiementlabel[] Returns an array of Paiementlabel objects
+    //  * @return Paymentlabel[] Returns an array of Paymentlabel objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class PaiementlabelRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Paiementlabel
+    public function findOneBySomeField($value): ?Paymentlabel
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.exampleField = :val')

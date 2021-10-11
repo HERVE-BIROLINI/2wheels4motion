@@ -15,6 +15,7 @@
         <!-- <div class="block--datas-vertical"> -->
         <div class="block--datas-horizontal">
             <div class="d-flex flex-column col-12">
+                <!-- VMDTR Number -->
                 <label class="required" for="inputvmdtrnumber">Numéro :</label>
                 <input type="text" class="form-control" id="inputvmdtrnumber" name="vmdtr_number" size="11" placeholder="11 chiffres..." pattern="[\d]{11}"
                     {% if controller_name is defined and controller_name=='ProfileController' %}
@@ -31,7 +32,7 @@
                 </span>
                 {% endif %}
                 <br>
-
+                <!-- VMDTR validity -->
                 <label class="required" for="inputvmdtrvalidity">Date de fin de validité :</label>
                 <input type="date" class="form-control" id="inputvmdtrvalidity" name="vmdtr_validity" required
                     {% if vmdtr_validity is defined and vmdtr_validity is not null %}value="{{ vmdtr_validity }}"{% endif %}
@@ -43,7 +44,7 @@
                 </span>
                 {% endif %}
                 <br>
-
+                <!-- Motomodel -->
                 <label class="required" for="inputmotomodel">Modèle de moto :</label>
                 <input type="text" name="motomodel" id="inputmotomodel" class="form-control"
                     {% if motomodel is defined and motomodel is not null %}value="{{ motomodel }}"{% endif %}

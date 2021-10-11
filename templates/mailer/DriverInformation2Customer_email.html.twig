@@ -1,0 +1,21 @@
+
+{% set company=driver.company %}
+{% set claim=tender.claim %}
+{% set customer=claim.customer %}
+{% set booking=tender.booking %}
+
+<body>
+    <div>
+        <h3>
+            Cher(e) {{ customer.user.firstname }},
+            <br>Merci de la confiance que vous avez accordée à l'Annuaire des motos-taxis de France et ses partenaires.
+            Nous espérons que nos services ont répondus à vos attentes, et que vous continuerez à nous porter cette confiance, en faisant de nouveau appel nous.
+            <br>En attendant de vous revoir, votre pilote, {{ driver.user.firstname }}, a mis votre facture à disposition dans votre tableau de bord.
+            <br>Suivez le lien ci-dessous pour le consulter, et l’imprimer ci besoin (selon votre matériel, vous devriez pouvoir demander une impression au format PDF).
+            
+        </h3>
+        <div style="display:flex;flex-direction:row;width:fit-content;background-color:rgb(37, 104, 48);border:2px solid black;border-radius:2em;padding:1em;align-items:center;">
+            <a style="color:white;font-weight:bold;" href="{{ url }}">Consulter votre facture</a>
+        </div>
+    </div>
+</body>

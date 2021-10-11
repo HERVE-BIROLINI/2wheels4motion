@@ -1,7 +1,8 @@
 <!-- DEBUT Homepage banner -->
-<section class="banner" id="homepage--banner" style="background-image:url({{ asset(sImgPath ~'banner/homepage.jpg') }});">
+{% set bannerimg='banner/homepage.jpg' %}
+<section class="banner" id="homepage--banner" style="background-image:url('{{ asset(sImgPath ~ bannerimg) }}');">
     <H1>L'ANNUAIRE DES MOTOS-TAXIS DE FRANCE</H1>
-    <a class="btn btn--ordering" href="{{ path('claim_create') }}">
+    <a class="btn btn--booking" href="{{ path('claim_create') }}">
         <i class="fas fa-motorcycle"></i>&nbsp;Commander une course
     </a>
 </section>
@@ -15,17 +16,33 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <!-- FIN bouton "Burger" -->
-    <div class="collapse navbar-collapse nav--inpage" id="navbar-collapse-inpage">
+    <div class="collapse navbar-collapse nav--inpage-items" id="navbar-collapse-inpage">
         <!-- Menus 'permanents' -->
         <ul class="navbar-nav">
-            <a class="btn nav--btn--white" href="#section--services">A votre service</a>
-            <a class="btn nav--btn--white" href="#section--pro">Professionnalisme</a>
-            <a class="btn nav--btn--white" href="#section--equipments">Les équipements passager</a>
-            <a class="btn nav--btn--white" href="#section--bikes">Les motos</a>
-            <a class="btn nav--btn--white" href="#section--luggages">Les bagages</a>
-            <a class="btn nav--btn--white" href="#section--reviews">L'avis des utilisateurs</a>
+            <a class="nav-item nav--btn--white" href="#section--services">A votre service</a>
+            <a class="nav-item nav--btn--white" href="#section--pro">Professionnalisme</a>
+            <a class="nav-item nav--btn--white" href="#section--equipments">Les équipements passager</a>
+            <a class="nav-item nav--btn--white" href="#section--bikes">Les motos</a>
+            <a class="nav-item nav--btn--white" href="#section--luggages">Les bagages</a>
+            <!-- <a class="nav-item nav--btn--white" href="#section--reviews">L'avis des utilisateurs</a> -->
             <!--  -->
-            <a class="nav-item nav--btn--blue" href="{{ path('homepage_manual') }}">Comment ça marche ?</a>
+            {#<!-- <a class="nav-item nav--btn--blue" href="{{ path('homepage_manual') }}">Comment ça marche ?</a> -->#}
+            <!--  -->
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <a class="nav-item nav--btn--blue"
+                {% if app.user.driver %}
+                href="{{ path('profile_driver') }}"
+                {% elseif app.user.customer %}
+                href="{{ path('profile_customer') }}"
+                {% else %}
+                href="{{ path('profile_user', {'id': app.user.id}) }}"
+                {% endif %}
+            >
+                <i class="fas fa-tachometer-alt"></i>
+                Tableau de bord
+                {#<!-- {{ app.user.firstname }} {{ app.user.lastname }} -->#}
+            </a>
+            {% endif %}
         </ul>
     </div>
 </div>

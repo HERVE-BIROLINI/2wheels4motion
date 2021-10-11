@@ -39,25 +39,26 @@
                             {% endif %}
                         </div>
                         <!-- indication du nombre de courses effectuées par l'Annuaire -->
-                        <div class="d-flex flex-row flax-wrap">
-                            <b> Courses :</b>
+                        <div class="d-flex flex-row flex-wrap">
+                            <b> Courses effectuées :</b>
                             &ensp;
-                            {% if obDriver.isverified %}
-                            x (total Driver)
+                            {% set nbbookingsdone=getbooking4driver(obDriver, true) %}
+                            {% if nbbookingsdone|length != 0 %}
+                            {{ nbbookingsdone|length }}
                             {% else %}
-                            x (total Driver)
+                            Aucune encore
                             {% endif %}
                         </div>
                         <!-- indication de la moyenne des notes reçues par les Customers -->
-                        <div><b>Notation :</b></div>
+                        {#<!-- <div><b>Notation :</b></div>
                         <div class="row--stars">
-                            <!-- class="d-flex flex-row justify-content-start" -->
+                            <! -- class="d-flex flex-row justify-content-start" -- >
                             <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
                             <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
                             <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
                             <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_1.png') }}" alt="Etoile notation">
                             <img style='height:15px;' src="{{ asset(sImgPath ~'misc/star_0.png') }}" alt="Etoile notation">
-                        </div>
+                        </div> -->#}
                     </div>
                 </div>
                 <!-- ... coordonnées -->
@@ -108,7 +109,9 @@
                     &ensp;
                     {#
                     <!-- bouton de suppression de la Claim -->
-                    <button class="btn btn-sm btn--blue mt-2" id="btn--send-tender" data_id="{{ claim.id }}" data_type="claim">
+                    <button class="btn btn-sm btn--blue mt-2" id="btn--send-tender"
+                        data_type="claim" data_id="{{ claim.id }}"
+                    >
                         <i class="ri-file-shred-line"></i>&ensp;Annuler la demande (A DEVELOPPER OU PAS)
                     </button>
                     #}
@@ -126,20 +129,22 @@
                                 {% if tender.driver==obDriver %}
                             &emsp;
                             <h4 style='font-style:italic;'>Devis envoyé le {{ tender.tenderdatetime|date('d/m/Y') }}</h4>
-                            &emsp;
-                            <a class="btn btn-sm btn--action"
-                                href="{{ path('tender_read', {'id':tender.id}) }}"
+
+                            <button class="btn btn-sm btn--action" type='input'
+                                name="customer_viewingtender" value={{ tender.id }}
+                                form="blk--2hide-ifmodal"
                             >
                                 <i class="far fa-eye" title="Voir le devis"></i>
-                            </a>
+                            </button>
+
                                 {% endif %}
                             {% endfor %}
                             {% else %}
                                 {% set obStatus=getstatus4claimanddriver(obClaim, driver) %}
                                 {% if obStatus and obStatus.isread %}
-                            A été lu
+                            A été lue
                                 {% else %}
-                            Non lu
+                            Non lue
                                 {% endif %}
                         {% endif %}
                     {% endif %}

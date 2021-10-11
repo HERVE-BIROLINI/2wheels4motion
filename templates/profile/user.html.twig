@@ -9,21 +9,57 @@
 
     <!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
     {{ include('geography/_FromJSON4Javascript.html.twig') }}
+
+    <!--  ** Block affiché SSI le pilote demande à choisir parmi les Company "déjà référencée" ** -->
+    {% if company is not defined or company == null %}
+        {% if driver is defined and company is not null and driver.company %}
+            {% set company = driver.company %}
+        {% elseif app.user.driver and app.user.driver.company %}
+            {% set company = app.user.driver.company %}
+        {% endif %}
+    {% endif %}
+
+    {% if company is defined and company is not null %}
+        {% set name = company.name %}
+        {% set siren = company.siren %}
+        {% set nic = company.nic %}
+        {% set socialreason = company.socialreason %}
+        {% set road = company.road %}
+        {% set city = company.city %}
+        {% set zip = company.zip %}
+    {% endif %}
+
+    {{ include('company/_form-companies.html.twig') }}
     
     {% if app.user %}
-    <div class="paragraph--large" id="">
+    <form class="mx-5" id="blk--company2create" method="post" enctype="multipart/form-data" novalidate>
+    <!-- <div class="paragraph--large mb-5" id="blk--company2create"> -->
+
+        <!-- astuce pour réinitialiser à DEFAULT le tableau actif au moment de la requête (traitement Javascript) -->
+        {% if default_item is not defined or default_item==null %}
+            {% set default_item="btn--tabtype--datapersonal" %}
+        {% endif %}
+        {{ include('_mem_trick.html.twig') }}
+
+        <div class="d-flex flex-row flex-wrap justify-content-between align-items-center mt-3 mb-3">
+            <h2 class="title--h2 mb-3">Infos personnelles :</h2>
+        </div>
+
         <!-- *** La "barre" d'onglets de sélection du bloc à afficher *** -->
         <div class="row--tabtype" id="row--tabtype--datas">
             <!--  ** onglet "Données Personnelles" ** -->
-            <div class="btn--tabtype" id="btn--tabtype--datapersonal" parent_id="row--tabtype--datas" default>Données Personnelles</div>
+            <div class="btn--tabtype" id="btn--tabtype--datapersonal" parent_id="row--tabtype--datas">Données Personnelles</div>
             <!--  ** onglet "Données Professionnelles" ** -->
             <div class="btn--tabtype" id="btn--tabtype--dataprofessional" parent_id="row--tabtype--datas"
-            {% if app.user.driver==null %}hidden{% endif %}
-            >Données Professionnelles</div>
+                {% if app.user.driver==null %}hidden{% endif %}
+            >
+                Données Professionnelles
+            </div>
         </div>
 
         <!-- *** Block Données Personnelles *** -->
-        <form class="block--datas-vertical block--tabtype" id="form_datapersonal" parent_id="btn--tabtype--datapersonal" method="post" novalidate>
+        <div class="block--datas-vertical block--tabtype" id="form_datapersonal" parent_id="btn--tabtype--datapersonal">
+        <!-- <form class="block--datas-vertical block--tabtype" id="form_datapersonal" parent_id="btn--tabtype--datapersonal" method="post" novalidate> -->
             <!--  ** Rangée titre + photo Avatar + nom + prénom ** -->
             <div class="d-flex flex-row flex-wrap align-items-center justify-content-around m-2 w-100">
                 <!-- Photo -->
@@ -165,9 +201,9 @@
             </div>
             <!--   * rangée de boutons : Mise à jour / Modification MdP / Création compte Driver * -->
             <div class="btns--row">
-                <button class="btn btn-sm btn--blue" type="submit" form="form_datapersonal">
+                <!-- <button class="btn btn-sm btn--blue" type="submit" form="form_datapersonal">
                     <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
-                </button>
+                </button> -->
                 <a class="btn btn-sm btn--secondary" href="{{ path('security_pwd', {'id': app.user.id}) }}">
                     <i class="ri-find-replace-line"></i>&ensp;<small>Modifier le mot de passe</small>
                 </a>
@@ -175,39 +211,50 @@
             <div class="d-flex flex-row w-100">
                 <small style="color:red;">(* champs obligatoire)</small>
             </div>
-        </form>
+        </div>
+        <!-- </form> -->
 
         <!-- *** Block Données Professionnelles *** -->
         {% if app.user.driver %}
-        <form class="block--datas-vertical block--tabtype" id="form_dataprofessional" parent_id="btn--tabtype--dataprofessional" method="post" novalidate>
+        <div class="block--datas-vertical block--tabtype" id="form_dataprofessional" parent_id="btn--tabtype--dataprofessional">
+        <!-- <form class="block--datas-vertical block--tabtype" id="form_dataprofessional" parent_id="btn--tabtype--dataprofessional" method="post" novalidate> -->
             <!--  ** Les informations professionnelles : T3P & Pilote VMDTR ** -->
             <div class="card--horizontal mb-2">
                 <!--   * BlockS de données de l'entreprise T3P + données propres au pilote * -->
                 <div class="d-flex flex-row flex-wrap justify-content-between">
                     <!-- Block de données de la company T3P -->
-                    {{ include('company/_form-company.html.twig') }}
+                    {{ include('company/_form-company.html.twig', {company: company}) }}
                     <!-- Block de données propres au pilote -->
-                    {{ include('driver/_form.html.twig') }}
+                    {{ include('driver/_form.html.twig', {company: company}) }}
                 </div>
             </div>
 
             {% if app.user.driver.isverified %}
-
             <!--  ** rangée de bouton(s) : Mise à jour ** -->
-            <div class="btns--row">
+            {#<!-- <div class="btns--row">
                 <button class="btn btn-sm btn--blue" type="submit" form="form_dataprofessional">
                     <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
                 </button>
-            </div>
+            </div> -->#}
             <div class="d-flex flex-row w-100">
                 <small style="color:red;">(* champs obligatoire)</small>
             </div>
             {% else %}
             <h3 class="badge-danger p-3 rounded-pill tocenterinto">Votre compte PRO est en cours de vérification...</h3>
             {% endif %}
-        </form>
+
+        </div>
+        <!-- </form> -->
         {% endif %}
-    </div>
+
+        <div class="btns--row">
+            <button class="btn btn-sm btn--blue" type="submit" ><!-- form="form_datapersonal"> -->
+                <i class="ri-record-circle-line"></i>&ensp;Enregistrer les modifications
+            </button>
+        </div>
+
+    </form>
+    <!-- </div> -->
     {% endif %}
 
 {% endblock %}

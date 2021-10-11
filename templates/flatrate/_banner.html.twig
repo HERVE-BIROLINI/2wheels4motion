@@ -1,8 +1,9 @@
 <!-- DEBUT Flatrate Controller TEMPLATES banner -->
-<section class="banner" id="flatrate--banner" style="background-image:url({{ asset(sImgPath ~ 'banner/flatrate.jpg') }});">
+{% set bannerimg='banner/flatrate.jpg' %}
+<section class="banner" id="flatrate--banner" style="background-image:url('{{ asset(sImgPath ~ bannerimg) }}');">
     <H1>TARIFS</H1>
     <!--  -->
-    <a class="btn btn--ordering" href="{{ path('claim_create') }}" style="top:165px;">
+    <a class="btn btn--booking" href="{{ path('claim_create') }}" style="top:165px;">
         <i class="fas fa-motorcycle"></i>&nbsp;Commander une course
     </a>
 </section>

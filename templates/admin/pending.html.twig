@@ -99,8 +99,8 @@
                             <input class='btn btn-sm btn--orange btn--showmodal'
                                 id="{{ 'btn--showmodal'~obDriver.id }}"
                                 value="{{ obDriver.vmdtrnumber }}"
-                                data_id="{{ obDriver.id }}"
                                 data_type="vmdtr"
+                                data_id="{{ obDriver.id }}"
                             />
                         </td>
                         <td>{{ obDriver.company.name }}</td>
@@ -161,7 +161,9 @@
                             {% set arDrivers=getdriversbycompany(obCompany) %}
                             {% if arDrivers|length > 0 %}
                             <div class="d-flex flex-row flex-wrap align-items-center">
-                                <button class="btn btn-sm btn--secondary btn--showmodal" data_id="{{ obCompany.id }}" data_type="t3p">
+                                <button class="btn btn-sm btn--secondary btn--showmodal"
+                                    data_type="t3p" data_id="{{ obCompany.id }}"
+                                >
                                     <i class="ri-file-paper-2-line"></i>&ensp;{{ arDrivers|length }}
                                 </button>
                             </div>

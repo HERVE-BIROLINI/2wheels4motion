@@ -1,7 +1,8 @@
 <!-- DEBUT Profile Controller TEMPLATES banner -->
-<section class="banner" id="profile--banner" style="background-image:url({{ asset(sImgPath ~ 'banner/Profile.png') }});">
+{% set bannerimg='banner/Profile.png' %}
+<section class="banner" id="profile--banner" style="background-image:url('{{ asset(sImgPath ~ bannerimg) }}');">
     <H1 id="banner">TABLEAU DE BORD</H1>
-    <a class="btn btn--ordering" href="{{ path('claim_create') }}">
+    <a class="btn btn--booking" href="{{ path('claim_create') }}">
         <i class="fas fa-motorcycle"></i>&nbsp;Commander une course
     </a>
 </section>
@@ -16,21 +17,27 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <!-- FIN bouton "Burger" -->
-    <div class="collapse navbar-collapse nav--inpage" id="navbar-collapse-inpage">
+    <div class="collapse navbar-collapse nav--inpage-items" id="navbar-collapse-inpage">
         <ul class="navbar-nav">
             <!-- Accès à l'historique DU PILOTE -->
             {% if app.user.driver %}
-            <a class="btn nav--btn--blue" href="{{ path('profile_driver') }}">Le professionnel</a>
+            <a class="btn nav--btn--blue" href="{{ path('profile_driver') }}">
+                <i class="fas fa-motorcycle"></i>&ensp;
+                ... du professionnel
+            </a>
             {% endif %}
             <!-- Accès à l'historique DU CLIENT -->
             {% if app.user.customer %}
-            <a class="btn nav--btn--blue" href="{{ path('profile_customer') }}">Le client</a>
+            <a class="btn nav--btn--blue" href="{{ path('profile_customer') }}">
+                <i class="fas fa-briefcase"></i>&ensp;
+                ... du client
+            </a>
             {% endif %}
             <!--  -->
             {% if app.user %}
             <a class="btn nav--btn--blue" href="{{ path('profile_user', {'id': app.user.id}) }}">
-                <i class="fas fa-user-cog"></i>
-                Infos personnelles
+                <i class="fas fa-user-cog"></i>&ensp;
+                Mon compte
             </a>
             {% endif %}
         </ul>

@@ -10,13 +10,7 @@ use App\Entity\Picturelabel;
 use App\Entity\Socialreason;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
-// use App\Twig\FrenchGeographyTwig;
 use App\Security\EmailVerifier;
-// use App\Security\LoginFormAuthenticator;
-// use App\Repository\DriverRepository;
-// use App\Repository\CompanyRepository;
-// use App\Repository\PicturelabelRepository;
-// use App\Tools\RegexTools;
 use App\Tools\UploadPictureTools;
 use App\Twig\PictureTwig;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -27,9 +21,6 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-// use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
-// use Symfony\Component\Validator\Constraints\Date;
-// use Symfony\Component\Validator\Validator\ValidatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 /**
@@ -47,7 +38,7 @@ class RegistrationController extends AbstractController
     /**
      * @Route("/", name="user", methods={"GET","POST"})
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder
+    public function registerUser(Request $request, UserPasswordEncoderInterface $passwordEncoder
                             // , GuardAuthenticatorHandler $guardHandler
                             // , LoginFormAuthenticator $authenticator
     ): Response
@@ -118,6 +109,9 @@ class RegistrationController extends AbstractController
             or $this->getUser()->getDriver()
         ){
             return $this->redirectToRoute('security_login');
+        }
+        elseif($this->getUser()->getDriver()){
+            return $this->redirectToRoute('profile_driver');
         }
 
         // Pour les accès à la BdD
@@ -202,8 +196,7 @@ class RegistrationController extends AbstractController
                 if($entityManager->getRepository(Company::class)->findOneBy(['name'=>$name])){
                     $error_name=true;
                     $this->addFlash('danger', "Une entreprise T3P du même existe déjà référencée sous un autre n° de SIREN.");
-                }
-                elseif($entityManager->getRepository(Company::class)->findOneBy(['siren'=>$siren])){
+                }elseif($entityManager->getRepository(Company::class)->findOneBy(['siren'=>$siren])){
                     $error_siren=true;
                     $this->addFlash('danger', "Une entreprise T3P référencée avec ce n° de SIREN existe déjà sous un autre nom.");
                 }
@@ -354,7 +347,7 @@ class RegistrationController extends AbstractController
                 $obDriver->setVmdtrNumber($vmdtr_number);
                 $obDriver->setVmdtrValidity(new \DateTime($vmdtr_validity));
                 $obDriver->setMotomodel($motomodel);
-        // reste à développer :
+        // -/!\- reste à développer (ou pas) :
         // $obDriver->setSubscriptionValidity($...);
                 $obDriver->setHasconfirmedgoodstanding($hasconfirmedgoodstanding);
                 $obDriver->setCompany($obCompany);
@@ -407,6 +400,10 @@ class RegistrationController extends AbstractController
 
                 $this->addFlash('information', "Votre demande a été signifiée à l'administrateur par courriel");
                 return $this->render('profile/user.html.twig', [
+                    //
+                    'witharchived' => $bWithArchived,
+                    'default_item' => $default_item,
+                    //
                     'error_firstname'   => false,
                     'error_lastname'    => false,
                     'error_phone'       => false,
@@ -416,20 +413,20 @@ class RegistrationController extends AbstractController
         }
         // 1er passage, ou retour après erreur de saisie
         return $this->render('registration/driver.html.twig', [
-            'controller_name'   => 'RegistrationController',
+            'controller_name' => 'RegistrationController',
             //
-            'error_name'            => $error_name,
-            'error_siren'           => $error_siren,
-            'error_nic'             => $error_nic,
-            'error_road'            => $error_road,
-            'error_city'            => $error_city,
-            'error_vmdtrnumber'     => $error_vmdtrnumber,
-            'error_vmdtrvalidity'   => $error_vmdtrvalidity,
-            'error_motomodel'       => $error_motomodel,
-            'error_file'            => $error_file,
-            'error_hasconfirmedgoodstanding'=>$error_hasconfirmedgoodstanding,
+            'error_name'                     => $error_name,
+            'error_siren'                    => $error_siren,
+            'error_nic'                      => $error_nic,
+            'error_road'                     => $error_road,
+            'error_city'                     => $error_city,
+            'error_vmdtrnumber'              => $error_vmdtrnumber,
+            'error_vmdtrvalidity'            => $error_vmdtrvalidity,
+            'error_motomodel'                => $error_motomodel,
+            'error_file'                     => $error_file,
+            'error_hasconfirmedgoodstanding' => $error_hasconfirmedgoodstanding,
             //
-            'company'   => $obCompany,
+            'company' => $obCompany,
             //
             'name'  => $name,
             'siren' => $siren,
@@ -438,13 +435,13 @@ class RegistrationController extends AbstractController
             'zip'   => $zip,
             'city'  => $city,
             //
-            'driver_existing'   => $driver_existing,
-            'vmdtr_number'      => $vmdtr_number,
-            'vmdtr_validity'    => $vmdtr_validity,
-            'motomodel'         => $motomodel,
-            'hasconfirmedgoodstanding'=>$hasconfirmedgoodstanding,
+            'driver_existing'         => $driver_existing,
+            'vmdtr_number'            => $vmdtr_number,
+            'vmdtr_validity'          => $vmdtr_validity,
+            'motomodel'               => $motomodel,
+            'hasconfirmedgoodstanding'=> $hasconfirmedgoodstanding,
             //
-            'allcompaniesknown' =>$entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>true]),
+            'allcompaniesknown' => $entityManager->getRepository(Company::class)->findBy(['isconfirmed'=>true]),
         ]);
     }
 
@@ -458,9 +455,9 @@ class RegistrationController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         // validate email confirmation link, sets User::isVerified=true and persists
-        try {
+        try{
             $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());
-        } catch (VerifyEmailExceptionInterface $exception) {
+        }catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('danger', $exception->getReason());
             // $this->addFlash('verify_email_error', $exception->getReason());
 

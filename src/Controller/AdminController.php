@@ -297,7 +297,6 @@ class AdminController extends AbstractController
             $this->addFlash('danger', "Un \"lieu\" avec ce libellé existe déjà...");
         }
         //
-        // dd($dept);
         if(isset($label) and $label==''){$error_label=true;$label=null;}
         if(isset($dept) and $dept==''){$error_dept=true;$dept=null;}
         if(isset($typeplace) and $typeplace==''){$error_typeplace=true;$typeplace=null;}

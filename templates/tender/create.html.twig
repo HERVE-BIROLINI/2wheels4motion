@@ -12,6 +12,10 @@
 <!-- **************************** -->
 <form class="paragraph--large blk--2hide-ifmodal" id="form--tender" name="form--tender" method="post" novalidate>
 
+
+    <!-- astuce pour réinitialiser à DEFAULT le tableau actif au moment de la requête (traitement Javascript) -->
+    {{ include('_mem_trick.html.twig') }}
+
     {% set customer=claim.customer %}
     <!-- Défini des variables de manipulation des données suite à retour dans le formulaire -->
     {% if driver_flatratechoosen is defined and driver_flatratechoosen!=null %}
@@ -92,10 +96,10 @@
             {% if claim.prioritydeparture %}
                 {% if claim.departureattime %}
                     {% set preview_departureattime=claim.departureattime|date('H:i') %}
-            <b>{{ claim.departureattime|date('H:i') }}</b>
+            <b id="text--departureattime">{{ claim.departureattime|date('H:i') }}</b>
                 {% else %}
                     {% set preview_departureattime=claim.journeytime|date('H:i') %}
-            <b>{{ claim.journeytime|date('H:i') }}</b>
+            <b id="text--departureattime">{{ claim.journeytime|date('H:i') }}</b>
                 {% endif %}
             {% else %}
             <input type="time" class="form-control col-3" id="driver--departureattime" name="driver--departureattime"
@@ -257,7 +261,7 @@
         {% endif %}
     </div>
     
-    <!--  * DESTINATION * -->
+    <!--  * COMMENTAIRES DU CLIENT * -->
     {% if claim.comments != '' %}
     <h2 class="mt-4 mb-2"><u>Commentaires du client :</u></h2>
     <div class="d-flex flex-row align-items-center">
@@ -387,7 +391,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="6"></td>
+                    <td colspan="666"></td>
                 </tr>
             </tfoot>
         </table>
@@ -552,15 +556,15 @@
             <small class="form-error-message">Vous devez définir un prix pour la course.</small>
         </span>
         {% endif %}
-        <!--  -->
+        <!-- Rangée de boutons d'ouverture des MODALS -->
         <div class="btns--row">
             <!-- Bouton de visualisation -->
             <a class="btn btn-sm btn--orange btn--showmodal"
                 id="showpreviewtender"
                 data_type="tender" data_id="current"
             >
-                <i class="far fa-eye" title="Visualiser le devis"></i>&ensp;
-                Visualiser le devis
+                <i class="far fa-eye" title="Prévisualiser le devis"></i>&ensp;
+                Prévisualiser le devis
             </a>
             <!-- Bouton d'affichage d'une session Google Maps -->
             <a class="btn btn-sm btn--green" target='_blank'
@@ -577,9 +581,10 @@
         <!-- <button class="btn btn-sm btn--blue" type="submit" form="form--tender">
             <i class="far fa-paper-plane"></i>&ensp;Envoyer le devis
         </button> -->
-        <a class="btn btn-sm btn--secondary" href="{{ path('profile_driver') }}">
-            <i class="fas fa-times"></i>&ensp;Annuler
-        </a>
+
+        <button class="btn btn-sm btn--blue" type="submit" name="cancel" value="true" form="form--tender">
+            <i class="ri-arrow-go-back-fill"></i>&ensp;Revenir au tableau de bord
+        </button>
     </div>
 </form>
 

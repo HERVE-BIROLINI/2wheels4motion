@@ -1,9 +1,35 @@
 
+
+{% if company is not defined or company == null %}
+    {% if driver is defined and company is not null and driver.company %}
+        {% set company = driver.company %}
+    {% elseif app.user.driver and app.user.driver.company %}
+        {% set company = app.user.driver.company %}
+    {% endif %}
+{% endif %}
+
+{% if company is defined and company is not null %}
+    {% set name = company.name %}
+    {% set siren = company.siren %}
+    {% set nic = company.nic %}
+    {% set socialreason = company.socialreason %}
+    {% set road = company.road %}
+    {% set city = company.city %}
+    {% set zip = company.zip %}
+{% endif %}
+
         <!-- ** Block de listes des entreprises existantes disponibles à la sélection ** -->
-        <div class="mt-1 mb-2 col-12" id="blk--companies2choice">
+        <div class="m-5" id="blk--companies2choice">
             <!-- <div class="mt-1 mb-2 col-lg-12 col-xl-5" id="blk--companies2choice"> -->
             {% if allcompaniesknown is defined %}
-            <form method="post" novalidate>
+            <form class="mb-5" id="blk--companies" method="post" novalidate>
+                
+                <!-- astuce pour réinitialiser à DEFAULT le tableau actif au moment de la requête (traitement Javascript) -->
+                {% if default_item is not defined or default_item==null %}
+                    {% set default_item="btn--tabtype--datapersonal" %}
+                {% endif %}
+                {{ include('_mem_trick.html.twig') }}
+                
                 <table class="table table-striped">
                     <thead class="thead--dark">
                         <tr>
@@ -17,35 +43,34 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {% for companyknown in allcompaniesknown %}
-                    <tr>
-                        {#{{ dump(companyknown) }}#}
-                        <td>&emsp;
-                            <input type="radio" class="companyknown" name="companychoosen" 
-                                value="{{ companyknown.id }}" id="{{ companyknown.id }}"
-                                {% if company is defined and company is not null and company==companyknown %}
-                                checked
-                                {% endif %}
-                            ><!-- onClick="showSubmitButton()" -->
-                        </td>
-                        <td><label for="{{ companyknown.id }}">{{ companyknown.name }}</label></td>
-                        <td><label for="{{ companyknown.id }}">{{ companyknown.siren }}</label></td>
-                        <td><label for="{{ companyknown.id }}">{{ companyknown.nic }}</label></td>
-                        <td><label for="{{ companyknown.id }}">{{ companyknown.road }}</label></td>
-                        <td><label for="{{ companyknown.id }}">{{ companyknown.zip }}</label></td>
-                        <td><label for="{{ companyknown.id }}">{{ companyknown.city }}</label></td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colsmall="7">Aucun article trouvé</td>
-                    </tr>
-                    {% endfor %}
+                        {% for companyknown in allcompaniesknown %}
+                        <tr>
+                            <td>&emsp;
+                                <input type="radio" class="companyknown" name="companychoosen" 
+                                    value="{{ companyknown.id }}" id="{{ companyknown.id }}"
+                                    {% if company is defined and company is not null and company==companyknown %}
+                                    checked
+                                    {% endif %}
+                                ><!-- onClick="showSubmitButton()" -->
+                            </td>
+                            <td><label for="{{ companyknown.id }}">{{ companyknown.name }}</label></td>
+                            <td><label for="{{ companyknown.id }}">{{ companyknown.siren }}</label></td>
+                            <td><label for="{{ companyknown.id }}">{{ companyknown.nic }}</label></td>
+                            <td><label for="{{ companyknown.id }}">{{ companyknown.road }}</label></td>
+                            <td><label for="{{ companyknown.id }}">{{ companyknown.zip }}</label></td>
+                            <td><label for="{{ companyknown.id }}">{{ companyknown.city }}</label></td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colsmall="7">Aucune compagnie n'a encore été référencée...</td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
 
                 <!-- Boutons de sortie -->
                 <div class="btns--row">
-                    <button class="btn btn-sm btn--blue" id='btn--associate-company' type="submit">
+                    <button class="btn btn-sm btn--blue" id='btn--associate-company' type="submit" form="blk--companies">
                         <i class="ri-record-circle-line"></i>&ensp;Associer la société choisie
                     </button>
                     {% if controller_name is defined and controller_name=='RegistrationController' %}
@@ -53,6 +78,7 @@
                     {% elseif controller_name is defined and controller_name=='ProfileController' %}
                     <a class="btn btn-sm btn--secondary" id="btn--companies-exit">
                     {% else %}
+                    {# ... #}
                     {% endif %}
                         <i class="fas fa-times"></i>&ensp;Retourner déclarer une nouvelle société
                     </a>

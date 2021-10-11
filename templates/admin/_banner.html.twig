@@ -1,5 +1,6 @@
 <!-- DEBUT Driver Controller TEMPLATES banner -->
-<section class="banner" id="admin--banner" style="background-image:url({{ asset(sImgPath ~'banner/admin.jpg') }});">
+{% set bannerimg='banner/admin.jpg' %}
+<section class="banner" id="admin--banner" style="background-image:url('{{ asset(sImgPath ~ bannerimg) }}');">
     <H1>ADMINISTRATION</H1>
 </section>
 
@@ -12,7 +13,7 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <!-- FIN bouton "Burger" -->
-    <div class="collapse navbar-collapse nav--inpage" id="navbar-collapse-inpage">
+    <div class="collapse navbar-collapse nav--inpage-items" id="navbar-collapse-inpage">
         <!-- Menus 'permanents' -->
         <ul class="navbar-nav">
             <a class="btn nav--btn--blue" href="{{ path('admin_pending') }}">Actions en attente</a>

@@ -17,10 +17,13 @@ import 'popper.js';
 import 'bootstrap';
 // start the Stimulus application
 import { identifierForContextKey } from 'stimulus/webpack-helpers';
+import { each } from 'jquery';
+import { Alert } from 'bootstrap';
 // import '@fortawesome/fontawesome-free/js/all.js';
 
 
 document.addEventListener("DOMContentLoaded", function(event){
+
     /*
     // !!! NE SERT A RIEN !!!
     //------------------------
@@ -99,28 +102,12 @@ document.addEventListener("DOMContentLoaded", function(event){
         // * si le header venait à disparaître, le "fixe" en haut de page *
         let htmlHeader=document.querySelector("#section--header");
         let iHeaderHeight=Math.round(htmlHeader.offsetHeight);
-        //
-        if(Math.round(getScrollTop())>=iHeaderHeight * 0.66
-            && (getHeight()-getInnerHeight())>Math.round(getScrollTop())+iHeaderHeight
-        ){
-            htmlHeader.setAttribute("style","position:fixed;top:0;z-index:99;padding-right:0em;");//opacity:0.95;
-        }
-        else if(Math.round(getScrollTop())<iHeaderHeight * 0.66){
-            htmlHeader.removeAttribute("style");
-        }
-
         // * si le bandeau "thématique" contient un "sous-menu"
         let htmlNavInPage=document.querySelector("#nav--inpage");
         if(htmlNavInPage){
-            let htmlBanner=document.querySelector('.banner');
-            if(htmlBanner){
-                let iBannerHeight=htmlBanner.offsetHeight;
-                if(getScrollTop()>=iBannerHeight-145){
-                    htmlNavInPage.setAttribute("style","position:fixed;top:"+(htmlHeader.offsetHeight)+"px;z-index:9;padding-top:15px;padding-bottom:5px;");
-                }else{
-                    htmlNavInPage.removeAttribute("style");
-                }
-            }
+            // /!\ NE FONCTIONNE PAS /!\
+            // htmlNavInPage.style.top='"'+iHeaderHeight+'px"';
+            htmlNavInPage.setAttribute("style","top:"+iHeaderHeight+"px;");
         }
 
         // lorsque le slider arrive en bas...
@@ -130,16 +117,32 @@ document.addEventListener("DOMContentLoaded", function(event){
         // * analyse le sens de déroulement du scroll pour la gestion de l'affichage du bouton Uptotop *
         let currentScrollTop=window.pageYOffset //|| document.documentElement.scrollTop;
         let arUptotop=document.querySelectorAll('.uptotop');
-        if (currentScrollTop > lastScrollTop && arUptotop){
+        if(currentScrollTop > lastScrollTop && arUptotop){
             arUptotop.forEach(element => {
                 element.style.display='';
             });
-        } else {
+        }else{
             arUptotop.forEach(element => {
                 element.style.display='none';
             });
         }
         lastScrollTop=currentScrollTop <= 0 ? 0 : currentScrollTop; // For Mobile or negative scrolling
+
+        // * Pour dynamiser le Footer *
+        var htmlIShortCuts=document.getElementsByClassName("ShortCuts");
+        var htmlImgCV=document.getElementById("ImgCV");
+        if(Math.round(currentScrollTop+getInnerHeight())===Math.round(getHeight())){
+            for(var htmlItem of htmlIShortCuts){
+                htmlItem.style.fontSize="2.5em";
+            }
+            htmlImgCV.style.height="36px";
+        }
+        else{
+            for(var htmlItem of htmlIShortCuts){
+                htmlItem.style.fontSize="1em";
+            }
+            htmlImgCV.style.height="16px";
+        }
 
     };
     // * Pose de l'espion du mouvement de scrolling *
@@ -157,12 +160,11 @@ document.addEventListener("DOMContentLoaded", function(event){
     // *** DEBUT - Gestion de la position du footer ***
     //--------------------------------------------------
     if(getHeight()>getBodyHeight()){
-        console.log('cherche....');
-        let htmlFooter=document.querySelector('#app--footer');
+        let htmlFooter=document.querySelector('#section--footer');
         if(htmlFooter){
             htmlFooter.setAttribute("style","position:fixed;bottom:0;padding-right:0em;");
         }
-        else if(Math.round(getScrollTop())<iHeaderHeight * 0.66){
+        else if(Math.round(getScrollTop()) < Math.round(document.querySelector("#section--header").offsetHeight) * 0.66){
             htmlFooter.removeAttribute("style");
         }
     }
@@ -359,7 +361,6 @@ document.addEventListener("DOMContentLoaded", function(event){
             //
             let htmlZip=document.querySelector("#"+this.getAttribute('id').replace('cities','zip'));
             let htmlZips=document.querySelectorAll("."+this.getAttribute('id').replace('cities','zip'));
-            // console.log(htmlZips);
             // ... (RE)masque la liste des communes
             this.style.display='none';
             // ... affiche le Nom de la Commune choisie dans le Input TEXT
@@ -462,7 +463,6 @@ document.addEventListener("DOMContentLoaded", function(event){
         function showhideByRegions(){
             // let btnFiltreRegion= document.getElementsByClassName("dropdownMenuOffset--region");
             // btnFiltreRegion.innerText=btnFiltreRegion.textContent="Région ("+this.innerHTML+")";
-            // console.log(btnFiltreRegion);
             let bOneMinimum=false;
             arRowFlatrate.forEach(element => {
                 if(this.innerHTML=='TOUTES'){
@@ -522,8 +522,6 @@ document.addEventListener("DOMContentLoaded", function(event){
 
         /*
         // ** gestion liste des départements suite à sélection d'une région **
-    // console.log(arDpts);
-    // console.log(document.querySelectorAll('.btn--filtre-region'));
         // document.querySelectorAll('.btn--filtre-region').forEach(element => {
         //     element.addEventListener('click', applyRegionFilterOnDpts);
         // });
@@ -583,7 +581,6 @@ document.addEventListener("DOMContentLoaded", function(event){
                     }
                     // les éléments spécifiques au calcul par km sont affichés
                     let htmlDivPreviewFlatrate=document.querySelector('#preview--flatrate-km');
-                    console.log(htmlDivPreviewFlatrate);
                     if(htmlDivPreviewFlatrate){
                         htmlDivPreviewFlatrate.style.display="";
                     }
@@ -619,10 +616,13 @@ document.addEventListener("DOMContentLoaded", function(event){
                         htmlFlatrateTitle.style.display="";
                     }
                 }
+                // si choix du prix au kilomètre...
+                if(flatrate.getAttribute('label').indexOf("disposition") >= 0){
+                    // alert("devrait adapter l'heure d'arrivée, mais nécessiterait de convertir un texte en Time avant l'addition...");
+                }
                 // adapte le texte correspondant au Forfait choisi dans le tableau
                 let htmlPreviewFlatrate=document.querySelector('#preview--flatrate');
                 if(htmlPreviewFlatrate){
-                    console.log(htmlPreviewFlatrate);
                     htmlPreviewFlatrate.innerHTML=flatrate.getAttribute('label');
                 }
             }
@@ -657,7 +657,6 @@ document.addEventListener("DOMContentLoaded", function(event){
     if(arInput_2AddAtTotalPrice){
         arInput_2AddAtTotalPrice.forEach(htmlInput_2AddAtTotalPrice => {
             htmlInput_2AddAtTotalPrice.onchange=function(){
-                console.log('--- chgt +');
                 calculTotal();
                 let arInput_2AddAtTotalPrice_twin=document.querySelectorAll('[twin_id="'+this.id+'"]');
                 if(arInput_2AddAtTotalPrice_twin){
@@ -778,43 +777,12 @@ document.addEventListener("DOMContentLoaded", function(event){
     //------------------------------------------------------------------------
     // *** DEBUT - Gestion de l'affichage des pages relatives aux onglets ***
     //------------------------------------------------------------------------
-    // action sur le bouton de choix d'une entreprise existante
+    // si au moins une rangée d'onglet est trouvée
     let arRowTabtype=document.querySelectorAll('.row--tabtype');
     if(arRowTabtype.length>0){
-
-        /*
-        -- || ABANDONNEE (archivage dans la base) || --
-        // ** Gestion du filtrage sur l'onglet courant **
-        let htmlBtnSwitchArchive=document.querySelector('#btn--show-hide--archive');
-        if(htmlBtnSwitchArchive){
-            htmlBtnSwitchArchive.onclick=showhideArchive;
-        }
-        // * ne peut-être dans le IF ci-dessus (???) *
-        function showhideArchive(){
-            // recherche les 'lignes' de Class ARCHIVE, pour la Table affichée
-            let btnTabTypeVisible=document.querySelector('.btn--tabtype[shown="Y"]');
-            let trTabTypeVisible=document.querySelectorAll('.block--tabtype[parent_id="'+btnTabTypeVisible.id+'"] tbody tr.ARCHIVE');
-            // observe l'état actuel
-            let btnSwitch=document.querySelector('#btn--show-hide--archive');
-            if(btnSwitch.innerHTML.includes('Afficher')){
-            // if(this.innerHTML.endswith('toutes')){
-                btnSwitch.innerHTML='<i class="far fa-eye"></i>&ensp;Récents seulement';
-                //
-                trTabTypeVisible.forEach(tr => {
-                    tr.style.display="";
-                })
-            }
-            else{
-                btnSwitch.innerHTML='<i class="far fa-eye"></i>&ensp;Afficher tout';
-                //
-                trTabTypeVisible.forEach(tr => {
-                    tr.style.display="none";
-                })
-            }
-        }
-        */
-    
-        // ** Pour chaque "Block" (Table... container Div...) multi-tab **
+        // ** recherche de l'existance d'un "drapeau" de mémorisation de l'onglet par défaut
+        let htmlByDefault=document.querySelector('#default_item');
+        // ** Pour chaque "Block" (Table..., Div...) multi-tab **
         arRowTabtype.forEach(rowTabtype => {
             // "colle" un espion à chaque élément associé
             let arBtnTabtype=document.querySelectorAll('.btn--tabtype[parent_id="'+rowTabtype.id+'"]');
@@ -822,7 +790,10 @@ document.addEventListener("DOMContentLoaded", function(event){
                 btnTabType.onclick=showhideBlockForSelectedTab;
                 //
                 // initialisation à l'ouverture de la page...
-                if(btnTabType.getAttribute('default')!=null){
+                if(htmlByDefault!=null && htmlByDefault.value===btnTabType.id){
+                    activeTabAndBlockOfSelectedTab(btnTabType);
+                }
+                else if(btnTabType.getAttribute('default')!=null){
                     activeTabAndBlockOfSelectedTab(btnTabType);
                 }
             });
@@ -833,62 +804,57 @@ document.addEventListener("DOMContentLoaded", function(event){
             activeTabAndBlockOfSelectedTab(this);
         }
         function activeTabAndBlockOfSelectedTab(btnTab2Activate){
-            // récupère tous les onglets "voisins"...
+            // get all "neighbors" tabs ...
             let arBtnTabtype=document.querySelectorAll('.btn--tabtype[parent_id="'+btnTab2Activate.getAttribute('parent_id')+'"]');
-            // ... gère les effets visuels des onglets
+            // ... manage visual effects on tabs
             if(arBtnTabtype){
                 arBtnTabtype.forEach(btnTabType => {
                     if(btnTabType==btnTab2Activate){
-                        // test & background
+                        // l'onglet...
+                        // ... text & background
                         btnTabType.style.color='black';
                         btnTabType.style.fontWeight ='bold';
                         btnTabType.style.backgroundColor='white';
-                        // borders
+                        // ... borders
                         btnTabType.style.borderBottom='0';
                         btnTabType.style.boxShadow='0 0 0 0, 0 -4px 4px 0 rgb(140, 140, 140)';
-                        // ... en profite pour gérer l'affichage des tables associées
-                        let tblChild=document.querySelector('.block--tabtype[parent_id="'+btnTab2Activate.id+'"]')
-                        if(tblChild){
-                            tblChild.style.display="";
-                        }
-                        btnTabType.setAttribute('shown','Y');
-                        /* -- || ABANDONNEE (archivage dans la base) || --
-                        // ... et l'affichage du bouton de filtrage, si données de plus d'1 an
-                        if(typeof htmlBtnSwitchArchive !== 'undefined'){
-                            let arRowArchive=document.querySelectorAll('.row--tab.ARCHIVE[parent_id="'+btnTab2Activate.id+'"]');
-                            if(arRowArchive.length>0){
-                                htmlBtnSwitchArchive.style.display="";
-                            }
-                            else{
-                                htmlBtnSwitchArchive.style.display="none";
-                            }
-                        }
-                        */
+                        // le bloc associé au TabType
+                        let arChildren=document.querySelectorAll('.block--tabtype[parent_id="'+btnTab2Activate.id+'"]')
+                        arChildren.forEach(blkChild => {
+                            blkChild.style.display="";
+                        });
                     }
                     else{
-                        // test & background
+                        // l'onglet...
+                        // ... text & background
                         btnTabType.style.color='black';
                         btnTabType.style.fontWeight ='normal';
                         btnTabType.style.backgroundColor="rgb(233, 236, 239)";
-                        // borders
+                        // ... borders
                         btnTabType.style.borderBottom='0.5px solid black';
                         btnTabType.style.boxShadow='0 0 0 0';
-                        // ... en profite pour gérer l'affichage des tables associées
-                        let tblChild=document.querySelector('.block--tabtype[parent_id="'+btnTabType.id+'"]');
-                        if(tblChild){
-                            tblChild.style.display="none";
+                        // le bloc associé au TabType
+                        if(btnTabType.id==btnTab2Activate.id){
+                            let arChildren=document.querySelectorAll('.block--tabtype[parent_id="'+btnTab2Activate.id+'"]')
+                            arChildren.forEach(blkChild => {
+                                blkChild.style.display="";
+                            });
+                            /*
+                             * POURSUIVRE LE DEVELOPPEMENT SI DECISION D'AJOUTER L'ONGLET "MON DOMICILE"...
+                            */
+                        }else{
+                            let arChildren=document.querySelectorAll('.block--tabtype[parent_id="'+btnTabType.id+'"]');
+                            arChildren.forEach(blkChild => {
+                                blkChild.style.display="none";
+                            });
                         }
-                        btnTabType.setAttribute('shown','N');
                     }
                 })
             }
-            /* -- || ABANDONNEE (archivage dans la base) || --
-            if(htmlBtnSwitchArchive){
-                htmlBtnSwitchArchive.innerHTML='<i class="far fa-eye"></i>&ensp;Récents seulement';
-                // document.querySelector('#btn--show-hide--archive').innerHTML='<i class="far fa-eye"></i>&ensp;Récents seulement';
-                showhideArchive();
+            // "mémorise" l'onglet activé
+            if(htmlByDefault){
+                htmlByDefault.value=btnTab2Activate.id;
             }
-            */
         }
     }
     //----------------------------------------------------------------------
@@ -945,7 +911,7 @@ document.addEventListener("DOMContentLoaded", function(event){
             if(htmlBtnClosing){
                 htmlBtnClosing.style.display="";
             }
-            // Désactive le HEADER et le BANNER, pour interdire les actions qu'ils proposent
+            // Désactive le HEADER, le BANNER et le FOOTER, pour interdire les actions qu'ils proposent
             let htmHeader=document.querySelector('#section--header');
             if(htmHeader){
                 htmHeader.classList.add("disabledelements");
@@ -953,6 +919,10 @@ document.addEventListener("DOMContentLoaded", function(event){
             let htmlBanner=document.querySelector('.banner');
             if(htmlBanner){
                 htmlBanner.classList.add("disabledelements");
+            }
+            let htmlFooter=document.querySelector('#section--footer');
+            if(htmlFooter){
+                htmlFooter.classList.add("disabledelements");
             }
         }
     }
@@ -1000,6 +970,10 @@ document.addEventListener("DOMContentLoaded", function(event){
             if(htmlBanner){
                 htmlBanner.classList.remove("disabledelements");
             }
+            let htmlFooter=document.querySelector('#section--footer');
+            if(htmlFooter){
+                htmlFooter.classList.remove("disabledelements");
+            }
         }
     }
     //--------------------------------------------------
@@ -1034,10 +1008,10 @@ document.addEventListener("DOMContentLoaded", function(event){
     //--------------------------------------------------------------
 
 
-    //-----------------------------------------------------------------
-    // *** DEBUT - Gestion de la gestion d'affichage du bouton de  ***
-    // *** création d'une association Raison Sociale / Taux de TVA ***
-    //-----------------------------------------------------------------
+    //--------------------------------------------------------------
+    // *** DEBUT - Gestion de l'affichage du bouton de création ***
+    // ***  d'une association Raison Sociale / Taux de TVA      ***
+    //--------------------------------------------------------------
     let html_SubmitBtn4Association=document.querySelector('#btn--associate--socialreason-tva');
     if(html_SubmitBtn4Association){
 
@@ -1058,10 +1032,10 @@ document.addEventListener("DOMContentLoaded", function(event){
             html_SubmitBtn4Association.style.opacity='initial';
         }
     }
-    //-----------------------------------------------------------------
-    // *** FIN - Gestion de la gestion d'affichage du bouton de    ***
-    // *** création d'une association Raison Sociale / Taux de TVA ***
-    //-----------------------------------------------------------------
+    //------------------------------------------------------------
+    // *** FIN - Gestion de l'affichage du bouton de création ***
+    // ***  d'une association Raison Sociale / Taux de TVA    ***
+    //------------------------------------------------------------
 
 
     //---------------------------------------------------------
@@ -1234,6 +1208,48 @@ document.addEventListener("DOMContentLoaded", function(event){
     //----------------------------------------------------------------
     // *** FIN - Gestion du centrage d'un élément dans son parent ***
     //----------------------------------------------------------------
+
+
+    //--------------------------------------------------------
+    // *** DEBUT - Gestion du libellé du mode de paiement ***
+    //--------------------------------------------------------
+    let htmlSelectPayment=document.querySelector('#select--paymentlabel');
+    let htmlEditPayment=document.querySelector('#edit--paymentlabel');
+    if(htmlSelectPayment && htmlEditPayment){
+        // Définit sélectionné par défaut l'option insélectionnable (titre colonne)
+        if(htmlSelectPayment.selectedIndex==1){
+            htmlSelectPayment.selectedIndex=htmlSelectPayment.options[0];
+            // Désactive par défaut le champs de saisie d'un autre paiement
+            htmlEditPayment.disabled=true;
+        }else{
+            htmlEditPayment.focus();
+        }
+
+        //
+        htmlSelectPayment.onchange=goSelectPaymentlabel;
+
+        function goSelectPaymentlabel(){
+            funSelectPaymentlabel(this);
+        }
+
+        function funSelectPaymentlabel(htmlSelect){
+            let sPayementlabel=htmlSelect.options[htmlSelect.selectedIndex].text;
+            if(sPayementlabel.search('Autre...')>-1){
+                htmlEditPayment.disabled=false;
+                //
+                // htmlEditPayment.value='';
+                //
+                htmlEditPayment.focus();
+            }else{
+                htmlEditPayment.disabled=true;
+                //
+                htmlEditPayment.value=sPayementlabel;
+            }
+        }
+    }
+    //------------------------------------------------------
+    // *** FIN - Gestion du libellé du mode de paiement ***
+    //------------------------------------------------------
 
     
 });

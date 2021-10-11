@@ -40,7 +40,7 @@ class Tender
     private $comments;
 
     /**
-     * @ORM\Column(type="decimal", precision=5, scale=1)
+     * @ORM\Column(type="decimal", precision=7, scale=1)
      */
     private $price;
 
@@ -87,6 +87,16 @@ class Tender
      * @ORM\JoinColumn(nullable=false)
      */
     private $flatrate;
+
+    /**
+     * @ORM\OneToOne(targetEntity=TenderStatus::class, mappedBy="tender", cascade={"persist", "remove"})
+     */
+    private $tenderStatus;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Booking::class, mappedBy="tender", cascade={"persist", "remove"})
+     */
+    private $booking;
 
     //
     public function __construct()
@@ -241,6 +251,40 @@ class Tender
     public function setFlatrate(?Flatrate $flatrate): self
     {
         $this->flatrate = $flatrate;
+        return $this;
+    }
+
+    public function getTenderStatus(): ?TenderStatus
+    {
+        return $this->tenderStatus;
+    }
+
+    public function setTenderStatus(TenderStatus $tenderStatus): self
+    {
+        // set the owning side of the relation if necessary
+        if ($tenderStatus->getTender() !== $this) {
+            $tenderStatus->setTender($this);
+        }
+
+        $this->tenderStatus = $tenderStatus;
+
+        return $this;
+    }
+
+    public function getBooking(): ?Booking
+    {
+        return $this->booking;
+    }
+
+    public function setBooking(Booking $booking): self
+    {
+        // set the owning side of the relation if necessary
+        if ($booking->getTender() !== $this) {
+            $booking->setTender($this);
+        }
+
+        $this->booking = $booking;
+
         return $this;
     }
 }

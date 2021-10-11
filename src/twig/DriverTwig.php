@@ -102,7 +102,6 @@ class DriverTwig extends AbstractExtension
         //
         $arCompanies=[];
         foreach($this->getAllCompanies() as $obCompany){
-            // dd($obCompany);
             $obCompanyRegion=$obFGTwig->getRegionByZip($obCompany->getZip());
             if($obCompanyRegion==$obRegion){
                 array_push($arCompanies,$obCompany);
@@ -128,7 +127,6 @@ class DriverTwig extends AbstractExtension
         // boucle sur le nombre d'enregistrements de la table
         foreach($socialreasons as $socialreason){
             foreach($socialreason->getTva() as $tva){
-                // dd($tva);
                 $echo[]=array('socialreason_label'=>$socialreason->getLabel(),
                                 'tva_value'=>$tva->getValue(),
                                 'tva_comment'=>$tva->getComment(),

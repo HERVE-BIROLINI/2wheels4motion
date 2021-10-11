@@ -7,7 +7,6 @@ use App\Entity\ClaimStatus;
 use App\Entity\Customer;
 use App\Entity\Flatrate;
 use App\Entity\Remarkableplace;
-use App\Entity\Status;
 use App\Form\ClaimFormType;
 use App\Twig\DriverTwig;
 use App\Twig\FrenchGeographyTwig;
@@ -29,7 +28,6 @@ class ClaimController extends AbstractController
      */
     public function create(Request $request): Response
     {
-
         date_default_timezone_set('Europe/Paris');
         // définition de l'état initial des variables de type booléen (drapeaux)
         $customer2Create=false;
@@ -51,25 +49,31 @@ class ClaimController extends AbstractController
             $customer_zip=$customer->getZip();
         }
 
+        //
+        if((!isset($_POST) || count($_POST) < 1) && isset($_GET['comefrom']) && $_GET['comefrom']=='login'){
+        // if(isset($_GET['comefrom']) && $_GET['comefrom']=='claim_create'){
+            $this->addFlash('success', "Content de vous voir ".$user->getFirstname().". Quel trajet auriez-vous besoin d'effectuer ?");
+            // $_GET['comefrom']=null; // NE PERMET PAS D'EVITER LE DOUBLON DU MESSAGE
+        }
+
         // Pour les lectures et enregistrements dans la BdD
         $entityManager=$this->getDoctrine()->getManager();
 
         // Dans le cas du besoin de créer un nouveau compte Customer
         if(isset($_POST["customer_road"])){
             $customer_road=($_POST["customer_road"]);
-        }
-        else{$customer_road=false;}
+        }else{$customer_road=false;}
+        //
         if(isset($_POST["customer_city"])){
             $customer_city=($_POST["customer_city"]);
-        }
-        else{$customer_city=false;}
+        }else{$customer_city=false;}
+        //
         if(isset($_POST["customer_zip"])){
             $customer_zip=($_POST["customer_zip"]);
-        }
-        else{$customer_zip=false;}
+        }else{$customer_zip=false;}
+        //
         $error_customer_road=false;
         $error_customer_city=false;
-        // $error_customer_zip=false;
 
         // Instancie un nouvel objet pour la demande, et son formulaire
         $claim=new Claim();
@@ -138,7 +142,6 @@ class ClaimController extends AbstractController
                     )
             )
         {
-            // dd($_POST);
             // * Si tout est bien renseigner => enregistre, envoi email au chauffeurs, etc... *
             $diffDate=$now->diff($date);
             if((($diffDate->d==0 && $diffDate->m==0 and $diffDate->y==0)
@@ -178,8 +181,7 @@ class ClaimController extends AbstractController
                     $oRemarkable=$entityManager->getRepository(Remarkableplace::class)->findOneBy(['id'=>$remarkableplace_from]);
                     $arZip[]=$oRemarkable->getDeptCode()."000";
                     $claim->setRemarkableplaceFrom($oRemarkable);
-                }
-                elseif($claim->getFromZip()){
+                }elseif($claim->getFromZip()){
                     $arZip[]=$claim->getFromZip();
                 }
                 // ... une adresse particulière a été choisi comme lieu de Destination
@@ -187,8 +189,7 @@ class ClaimController extends AbstractController
                     $oRemarkable=$entityManager->getRepository(Remarkableplace::class)->findOneBy(['id'=>$remarkableplace_to]);
                     $arZip[]=$oRemarkable->getDeptCode()."000";
                     $claim->setRemarkableplaceTo($oRemarkable);
-                }
-                elseif($claim->getToZip()){
+                }elseif($claim->getToZip()){
                     $arZip[]=$claim->getToZip();
                 }
                 // crée la liste des régions concernées par les Zip
@@ -253,12 +254,6 @@ class ClaimController extends AbstractController
                         $claimStatus=new ClaimStatus();
                         $claimStatus->setClaim($claim);
                         $claimStatus->setDriver($obDriver);
-
-                        // -- /!\ Plus utilisé /!\ --
-                        // --------------------------
-                        // $claimStatus->setStatus($obStatus);
-                        // --------------------------
-
                         //
                         $entityManager->persist($claimStatus);
                     }
@@ -268,10 +263,6 @@ class ClaimController extends AbstractController
                     
                     // envoi des emails aux chauffeurs de la région du demandeur
                     return $this->redirectToRoute('mailer_claim', ['id' => $claim->getId()]);
-                    // $this->sendClaimEmails($claim);
-                    // // puis, renvoi à la page du tableau de bord du Customer
-                    // $this->addFlash('success', "Votre demande a bien été transmise à ".$claim->getDrivers()->count()." pilote(s) référencé(s) dans la région de votre demande...");
-                    // return $this->redirectToRoute('profile_customer');
                 }
                 //... si aucun pilote référencé... en informe le client
                 else{$this->addFlash('danger', "Actuellement aucun pilote et/ou entreprise T3P n'opérant dans la région de votre demande n'est encore référencé dans notre communauté. Malheureusement votre demande ne peut être satisfaite...");}
@@ -323,7 +314,7 @@ class ClaimController extends AbstractController
                 $error_tozip=true;
             }
         }
-
+        
         // affichage de la page du formulaire de demande de course
         return $this->render('claim/create.html.twig', [
             'controller_name'   => 'ClaimController',
@@ -358,17 +349,17 @@ class ClaimController extends AbstractController
         ]);
     }
 
-
-    /**
+/*
+    / **
      * @Route("/test", name="test")
-     */
+     * /
     /// Test pour affichage du template du mail, dans le navigateur...
     public function test(){
         $now=new DateTime('now');
         $now_7d=new DateTime('+7 days');
         date_default_timezone_set('Europe/Paris');
         return $this->render('claim/Claim2Drivers_email.html.twig', [
-            'driver_firstname'=>"Mr PILOTE",
+            // 'driver_firstname'=>"Mr PILOTE",
             'lastname'=>"Birolini",
             'firstname'=>"Hervé",
             'user_email'=>"Birolini.Herve@gmail.com",
@@ -392,4 +383,5 @@ class ClaimController extends AbstractController
             'comments'=>"Blabli blabla\nBagage cabine et petit chien..."
         ]);
     }
+*/
 }

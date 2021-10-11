@@ -1,6 +1,14 @@
 <!-- Zone de stockage des données issues de JSON, à l'attention de Javascript -->
 {{ include('geography/_FromJSON4Javascript.html.twig') }}
 
+{% if company is not defined or company == null %}
+    {% if driver is defined and company is not null and driver.company %}
+        {% set company = driver.company %}
+    {% elseif app.user.driver and app.user.driver.company %}
+        {% set company = app.user.driver.company %}
+    {% endif %}
+{% endif %}
+
 {% if company is defined and company is not null %}
     {% set name = company.name %}
     {% set siren = company.siren %}
@@ -9,22 +17,6 @@
     {% set road = company.road %}
     {% set city = company.city %}
     {% set zip = company.zip %}
-{% elseif driver is defined and company is not null and driver.company %}
-    {% set name = driver.company.name %}
-    {% set siren = driver.company.siren %}
-    {% set nic = driver.company.nic %}
-    {% set socialreason = driver.company.socialreason %}
-    {% set road = driver.company.road %}
-    {% set city = driver.company.city %}
-    {% set zip = driver.company.zip %}
-{% elseif app.user.driver and app.user.driver.company %}
-    {% set name = app.user.driver.company.name %}
-    {% set siren = app.user.driver.company.siren %}
-    {% set nic = app.user.driver.company.nic %}
-    {% set socialreason = app.user.driver.company.socialreason %}
-    {% set road = app.user.driver.company.road %}
-    {% set city = app.user.driver.company.city %}
-    {% set zip = app.user.driver.company.zip %}
 {% endif %}
 
 <!-- Block de données de l'entreprise T3P -->

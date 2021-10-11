@@ -36,9 +36,9 @@ class SecurityController extends AbstractController
     {
         // Si "RETOUR" après connexion...
         $user=$this->getUser();
-        if ($user) {
+        if($user){
             // ... pour un compte qui n'a pas été vérifié, renvoi un nouvel email
-            if ($user->isVerified()==null) {
+            if($user->isVerified()==null) {
                 // generate a signed url and email it to the user
                 $this->emailVerifier->sendEmailConfirmation('registration_verify_email',
                                         $user,
@@ -54,27 +54,50 @@ class SecurityController extends AbstractController
                 return $this->redirectToRoute('mailer_register');
 
             }
-
             // astuce de l'argument passé dans le RedirecToRoute qui nous a amené ici..
             elseif(isset($_GET['goto']) && $user->isVerified()){
-                $this->addFlash('success', "Content de vous voir ".$user->getFirstname().". Quel trajet auriez-vous besoin d'effectuer ?");
-                return $this->redirectToRoute($_GET['goto']);
+                if($_GET['goto'] == 'claim_create'){
+                    return $this->redirectToRoute($_GET['goto'], [
+                        'comefrom' => 'login',
+                    ]);
+                }elseif($_GET["goto"] == "tender_create"){
+                    return $this->redirectToRoute($_GET['goto'], [
+                        'claim' => $_GET['claim'],
+                        'user'  => $_GET['user'],
+                        'goto'  => $_GET['goto'],
+                    ]);
+                }elseif($_GET['goto'] == 'tender_read'){
+                    if(isset($_GET['controller_func'])){
+                        $controller_func=$_GET['controller_func'];
+                    }else{
+                        $controller_func=null;
+                    }
+                    if(isset($_GET['default_item'])){
+                        $default_item=$_GET['default_item'];
+                    }else{
+                        $default_item=null;
+                    }
+                    return $this->redirectToRoute($_GET['goto'], [
+                        'tender'   => $_GET['tender'],
+                        'user'     => $_GET['user'],
+                        'comefrom' => 'login',
+                        //
+                        'controller_func' => $controller_func,
+                        'default_item'    => $default_item,
+                    ]);
+                }
             }
-
             // ... si est déjà validé, et a un compte Pilote...
             elseif($user->getDriver()){
                 return $this->redirectToRoute('profile_driver');
-                // return $this->redirectToRoute('homepage');
             }
             // ... si est déjà validé, et a un compte Client...
             elseif($user->getCustomer()){
                 return $this->redirectToRoute('profile_customer');
-                // return $this->redirectToRoute('homepage');
             }
             // ... si est déjà validé, et a un compte Client...
             else{
                 return $this->redirectToRoute('profile_user', ['id'=>$user->getID(),]);
-                // return $this->redirectToRoute('homepage');
             }
         }
         // get the login error if there is one
@@ -82,8 +105,7 @@ class SecurityController extends AbstractController
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        // lance la page login,
-        // ce qu'il se passe à la sortie du formulaire... ????
+        // lance la page login
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
@@ -160,8 +182,8 @@ class SecurityController extends AbstractController
     /**
      * @Route("/forgottenpwd", name="forgottenpwd")
      */
-    public function forgotten_password(AuthenticationUtils $authenticationUtils, MailerInterface $mailer){
-
+    public function forgotten_password(AuthenticationUtils $authenticationUtils, MailerInterface $mailer)
+    {
         if(isset($_POST['email']) && $_POST['email']!==''){
             $entityManager = $this->getDoctrine()->getManager();
             $user=$entityManager->getRepository(User::class)->findOneBy(['email'=>$_POST['email']]);
@@ -175,8 +197,8 @@ class SecurityController extends AbstractController
             // S'il existe bien...
             // ... génère l'adresse URL de redéfinition du Mot de passe
             $url = $this->generateUrl('security_resetpwd',
-                                        array('token' => $user->getPassword(),
-                                            'user' => $user->getId(),
+                                        array('token'  => $user->getPassword(),
+                                                'user' => $user->getId(),
                                         ),
                                         UrlGeneratorInterface::ABSOLUTE_URL
                                     )

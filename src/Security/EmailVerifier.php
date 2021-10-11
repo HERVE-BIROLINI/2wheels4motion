@@ -26,6 +26,7 @@ class EmailVerifier
     public function sendEmailConfirmation(string $verifyEmailRouteName, UserInterface $user, TemplatedEmail $email): void
     {
 
+        // Effectivement, passe par ici lors de l'envoi du formulaire REGISTER_USER (Etape 1  de l'inscription)
         // dd("passe dans sendEmailConfirmation (security/emailverifier.php !");
 
         $signatureComponents = $this->verifyEmailHelper->generateSignature(
@@ -50,6 +51,7 @@ class EmailVerifier
     public function handleEmailConfirmation(Request $request, UserInterface $user): void
     {
 
+        // Effectivement, passe par ici lors de la confirmation du courriel à l'inscription (Etape 2...)
         // dd("passe dans handleEmailConfirmation (security/emailverifier.php !");
 
         $this->verifyEmailHelper->validateEmailConfirmation($request->getUri(), $user->getId(), $user->getEmail());

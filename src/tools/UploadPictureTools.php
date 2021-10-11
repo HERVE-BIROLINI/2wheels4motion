@@ -18,8 +18,7 @@ class UploadPictureTools
         
         // ----------v- A analyser lors de l'hébergement -v----------
         $arFolder=array_merge([$root],
-            $Picturelabel->getArray_imgfiles_user_path(),
-            [$user->getId()]
+            $Picturelabel->getArray_imgfiles_user_path(),[$user->getId()]
         );
         // $arFolder=[$root,'images/','uploads/','user/',$user->getId()];
         // ----------^- A analyser lors de l'hébergement -^----------

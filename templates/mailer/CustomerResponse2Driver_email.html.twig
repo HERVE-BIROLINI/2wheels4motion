@@ -1,0 +1,18 @@
+
+<body>
+    {% if tenderacceptation == 1 and tender.tenderstatus.isbookingconfirmedbydriver!=true %}
+    <div>
+        <h3>Félicitation ! Le client a accepté votre devis. Confirmer lui sa réservation, et vous n'aurez plus qu'à effectuer la course...</h3>
+        <div style="display:flex;flex-direction:row;width:fit-content;background-color:rgb(37, 104, 48);border:2px solid black;border-radius:2em;padding:1em;align-items:center;">
+            <a style="color:white;font-weight:bold;" href="{{ url }}">Confirmer la réservation</a>
+        </div>
+    </div>
+    {% elseif tenderacceptation == -1 %}
+    <div>
+        <h3>Le client a malheureusement refusé votre devis.</h3>
+        <div style="display:flex;flex-direction:row;width:fit-content;background-color:grey;border:2px solid black;border-radius:2em;padding:1em;align-items:center;">
+            <a style="color:white;font-weight:bold;" href="{{ url }}">Visualiser le devis</a>
+        </div>
+    </div>
+    {% endif %}
+</body>

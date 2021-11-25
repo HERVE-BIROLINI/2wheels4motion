@@ -42,7 +42,7 @@
                         <div class="d-flex flex-row flex-wrap">
                             <b> Courses effectuées :</b>
                             &ensp;
-                            {% set nbbookingsdone=getbooking4driver(obDriver, true) %}
+                            {% set nbbookingsdone=getbookings4driver(obDriver, true) %}
                             {% if nbbookingsdone|length != 0 %}
                             {{ nbbookingsdone|length }}
                             {% else %}

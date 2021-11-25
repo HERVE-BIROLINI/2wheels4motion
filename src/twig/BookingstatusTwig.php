@@ -5,8 +5,6 @@ namespace App\Twig;
 use App\Entity\Booking;
 use App\Entity\Customer;
 use App\Entity\Driver;
-use App\Entity\Tender;
-use App\Entity\TenderStatus;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,10 +24,10 @@ class BookingstatusTwig extends AbstractExtension
     public function getFunctions(){
         return [
             // fonctions des objets Booking associées au Driver
-            new TwigFunction('getbooking4driver', [$this, 'getBooking4Driver']),
+            new TwigFunction('getbookings4driver', [$this, 'getBookings4Driver']),
             // new TwigFunction('gettenders4driver', [$this, 'getTenders4Driver']),
             // fonctions des objets Booking associées au Customer
-            new TwigFunction('getbookingofcustomer', [$this, 'getBookingOfCustomer']),
+            new TwigFunction('getbookingsofcustomer', [$this, 'getBookingsOfCustomer']),
             // new TwigFunction('gettenderstatus4customer', [$this, 'getTenderStatus4Customer']),
             // new TwigFunction('getstatus4tenderofcustomer', [$this, 'getStatus4TenderOfCustomer']),
             // fonctions des objets Booking "communes" à tous les rôles
@@ -48,7 +46,7 @@ class BookingstatusTwig extends AbstractExtension
     // ** Les méthodes liées aux extensions de fonctions **
     // fonctions des objets Booking associées au Driver
 
-    public function getBooking4Driver(Driver $driver, $bWithArchived){
+    public function getBookings4Driver(Driver $driver, $bWithArchived){
         $arAllTenders=$driver->getTenders();
         //
         $arId=[];
@@ -77,7 +75,7 @@ class BookingstatusTwig extends AbstractExtension
         return $arResult;
     }
 
-    public function getBookingOfCustomer(Customer $customer, $bWithArchived){
+    public function getBookingsOfCustomer(Customer $customer, $bWithArchived){
         // commence par rechercher les ID de TOUS les Tenders en réponses aux Claims créées par le Customer
         $arAllClaims=$customer->getClaims();
         $arId=[];

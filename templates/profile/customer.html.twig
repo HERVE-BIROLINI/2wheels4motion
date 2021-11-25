@@ -20,7 +20,7 @@
         {% set tenders4me=gettenderstatus4customer(customer, witharchived) %}
     {% endif %}
     {% if myorders is not defined or myorders==null %}
-        {% set myorders=getbookingofcustomer(customer, witharchived) %}
+        {% set myorders=getbookingsofcustomer(customer, witharchived) %}
     {% endif %}
 
     <!-- ##### v DEBUT DES ELEMENTS PRINCIPAUX DE LA PAGE v ##### -->
@@ -37,11 +37,11 @@
         
         <div class="paragraph--large mb-5">
 
-            <!-- L'historique des échanges -->
+            <!-- ** L'historique des échanges ** -->
             <div class="d-flex flex-row flex-wrap justify-content-between align-items-center mt-5 mb-3">
                 <h2 class="title--h2 mb-3">Echanges avec les pilotes :</h2>
+                <!-- * bouton "switch" pour l'affichage des données archivées * -->
                 <button class="btn btn-sm btn--green" name='show-hide--archive' type='submit'>
-                    <!-- <i class="far fa-eye"></i>&ensp; -->
                     {% if witharchived %}
                     <i class="fas fa-toggle-on"></i>&ensp;Masquer les archives
                     {% else %}
@@ -64,8 +64,8 @@
                     Courses confirmées
                 </div>
             </div>
-            <!-- tableau des Demandes envoyées (Claims) -->
-            <table class="table table-striped block--tabtype" id="block--tabtype--claim" parent_id="btn--tabtype--claim">
+            <!-- * tableau des Demandes envoyées (Claims) * -->
+            <table class="table table-hover table-striped block--tabtype" id="block--tabtype--claim" parent_id="btn--tabtype--claim">
                 <thead>
                     <tr>
                         <th></th>
@@ -170,15 +170,15 @@
                             Toutes vos demandes envoyées sont archivées. Cliquez sur "Montrer les archives" pour les consulter...
                             {% endif %}
                             <a class="btn btn-sm btn--red mt-1" href="{{ path('claim_create') }}">
-                                <i class="fas fa-motorcycle"></i>&nbsp;Commander une course
+                                <i class="fas fa-motorcycle"></i>&nbsp;Formuler une nouvelle demande
                             </a>
                         </td>
                     </tr>
                 </tfoot>
             </table>
 
-            <!-- tableau des Devis reçus (Tenders) -->
-            <table class="table block--tabtype" id="block--tabtype--tender" parent_id="btn--tabtype--tender">
+            <!-- * tableau des Devis reçus (Tenders) * -->
+            <table class="table table-hover block--tabtype" id="block--tabtype--tender" parent_id="btn--tabtype--tender">
                 <thead>
                     <tr>
                         <th></th>
@@ -203,6 +203,7 @@
                 <!-- Affiche les Devis reçus en commençant par les + récents -->
                 <tbody>
                     <!-- analyse pour gestion de la couleur de fond par regroupement des lignes d'une même Claim -->
+                    {#<!-- {% set claims=app.user.customer.getclaims %} -->#}
                     {% set claims=app.user.customer.getclaims|reverse %}
                     {% set iCount=0 %}
                     {% set bc4tr='white' %}
@@ -219,7 +220,8 @@
                         {% endif %}
 
                         <!--  -->
-                        {% for tender in claim.tenders|reverse %}
+                        {% for tender in claim.tenders %}
+                        {#<!-- {% for tender in claim.tenders|reverse %} -->#}
                         
                             {% if tender in tenders4me %}
 
@@ -309,8 +311,8 @@
                 </tfoot>
             </table>
             
-            <!-- tableau des Courses confirmées (Orders) -->
-            <table class="table block--tabtype" id="block--tabtype--booking" parent_id="btn--tabtype--booking">
+            <!-- * tableau des Courses confirmées (Orders) * -->
+            <table class="table table-hover block--tabtype" id="block--tabtype--booking" parent_id="btn--tabtype--booking">
                 <thead>
                     <tr>
                         <th></th>
@@ -383,7 +385,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="99">
-                            {% if getbookingofcustomer(customer, true)|length == 0 %}
+                            {% if getbookingsofcustomer(customer, true)|length == 0 %}
                             Vous n'avez encore pas effectué de course grâce à l'annuaire...
                             {% elseif myorders|length == 0 %}
                             Toutes vos courses sont archivées, ou vous n'avez encore pas bénéficié des services des pilotes de l'Annuaire...
@@ -398,6 +400,7 @@
                     </tr>
                 </tfoot>
             </table>
+            
         </div>
     </form>
 

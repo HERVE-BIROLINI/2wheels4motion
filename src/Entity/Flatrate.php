@@ -23,7 +23,7 @@ class Flatrate
     private $label;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="decimal", precision=6, scale=2)
      */
     private $price;
 
@@ -54,12 +54,12 @@ class Flatrate
         return $this;
     }
 
-    public function getPrice(): ?int
+    public function getPrice(): ?string
     {
         return $this->price;
     }
 
-    public function setPrice(int $price): self
+    public function setPrice(string $price): self
     {
         $this->price = $price;
 

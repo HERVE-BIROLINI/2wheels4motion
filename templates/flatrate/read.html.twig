@@ -10,13 +10,16 @@
 
 
 <section class="paragraph--large">
-    <div class="d-flex flex-row flex-wrap justify-content-between">
-        <h2 class="title--h2">Les tarifs...</h2>
+    <h2 class="title--h2">Les tarifs...</h2>
+    <div class="d-flex flex-row flex-wrap align-items-center justify-content-between mb-3">
+        <!-- <p> -->
+            Tarifs de jours, typiquement entre 7h et 20h, peuvent varier sur les devis.
+        <!-- </p> -->
         <a class="btn btn-sm btn--green" href="{{ path('admin_flatrate_create') }}">
             <i class="ri-add-circle-line"></i>&ensp;Ajouter un nouveau tarif
         </a>
     </div>
-    <table class="table table-striped">
+    <table class="table table-hover table-striped">
         <thead class="thead--dark">
             <tr>
                 <th style="width:5%;"></th>

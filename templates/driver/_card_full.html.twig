@@ -34,7 +34,15 @@
                 <h5 class="mt-1" style='font-weight:bolder;'>{{ obUser.firstname~' '~obUser.lastname }}</h5>
                 <small>{{ 'Inscrit depuis le '~obUser.registrationdate|date('d-m-Y') }}</small>
                 <br>
-                <small>{{ 'Nb de courses effectuées : XXX' }}</small>
+                <small>Nb de courses effectuées :                    
+                    &ensp;
+                    {% set nbbookingsdone=getbookings4driver(obUser.driver, true) %}
+                    {% if nbbookingsdone|length != 0 %}
+                    {{ nbbookingsdone|length }}
+                    {% else %}
+                    Aucune encore
+                    {% endif %}
+                </small>
             </div>
         </div>
         <!-- 2nde rangée : photo carte VMDTR -->

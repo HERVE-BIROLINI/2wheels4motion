@@ -104,13 +104,11 @@ class TenderController extends AbstractController
             $default_item  = null;
         }
 
-        $obFGTwig = new FrenchGeographyTwig($entityManager);
         // ... la Company T3P
         $company=$driver->getCompany();
         //
         $errorEncountered = false;
         // $driver_comments        = false;
-        // *** API Google Maps ***
         // récupération de l'adresse de Prise en charge...
         if($claim->getRemarkableplaceFrom() != null){
             $addressFrom=$claim->getRemarkableplaceFrom()->getLabel();
@@ -378,13 +376,17 @@ class TenderController extends AbstractController
 
         // interrogation de l'API Google Maps pour Distance et Temps de la course
         //  (au dernier moment, SSI affichage du formulaire, par soucis d'économie...)
+        $obFGTwig = new FrenchGeographyTwig($entityManager);
         if($addressFrom && $addressTo){
             // ... pour afficher la direction sur une carte Google Maps
             $help_directionurl='https://www.google.com/maps/dir/?api=1&origin='.str_replace(" ", "+", $addressFrom).'&destination='.str_replace(" ", "+", $addressTo).'&travelmode=driving';
+            
             // ... pour re-rooter à partir de PHP
-            // attention ! à remettre en place
-            $mapsResult=$obFGTwig->mapsDistancematrix($addressFrom, $addressTo);
-            // $mapsResult= null;
+            // attention !
+            // à remettre en place avec la déclaration de la clé API dans la Class FrenchGeographyTwig
+            // $mapsResult=$obFGTwig->mapsDistancematrix($addressFrom, $addressTo);
+            $mapsResult= null;
+
         }else{$mapsResult=null;}
 
         // recherche la liste des régions concernées pour filtrer les "forfaits" (Flatrate)

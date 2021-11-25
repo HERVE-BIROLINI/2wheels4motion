@@ -777,40 +777,47 @@ document.addEventListener("DOMContentLoaded", function(event){
     //------------------------------------------------------------------------
     // *** DEBUT - Gestion de l'affichage des pages relatives aux onglets ***
     //------------------------------------------------------------------------
-    // si au moins une rangée d'onglet est trouvée
+    // ** Analyse le template et récupère toutes les rangées de Class "imitation classeur Excel" **
     let arRowTabtype=document.querySelectorAll('.row--tabtype');
+    // ** Si au moins une rangée a été trouvée dans le Template **
     if(arRowTabtype.length>0){
-        // ** recherche de l'existance d'un "drapeau" de mémorisation de l'onglet par défaut
+        // * recherche l'existance d'un "drapeau" de mémorisation de l'onglet par défaut s'il existe *
+        //     (usage "couplé" avec des traitement par requête(s) vers le serveur PHP)
         let htmlByDefault=document.querySelector('#default_item');
-        // ** Pour chaque "Block" (Table..., Div...) multi-tab **
+        // * Pour chaque "Block" multi-tab (rangée d'onglets) trouvé dans le Template... *
         arRowTabtype.forEach(rowTabtype => {
-            // "colle" un espion à chaque élément associé
+            // ... recherche le "jeu" d'onglets qui lui est associé
             let arBtnTabtype=document.querySelectorAll('.btn--tabtype[parent_id="'+rowTabtype.id+'"]');
+            // pour chaque onglet trouvé...
             arBtnTabtype.forEach(btnTabType => {
+                // ... lui "colle" une fonction de réaction (callback) associée à l'évènement Click
                 btnTabType.onclick=showhideBlockForSelectedTab;
                 //
-                // initialisation à l'ouverture de la page...
+                // pour initialisation à l'ouverture de la page...
+                // ... selon qu'il existe un "drapeau" de mémorisation de l'état précédent
+                //     (si retour après requête vers le serveur PHP)
                 if(htmlByDefault!=null && htmlByDefault.value===btnTabType.id){
                     activeTabAndBlockOfSelectedTab(btnTabType);
                 }
+                // ... ou que l'onglet en cours de traitement est défini par défaut dans le Template
                 else if(btnTabType.getAttribute('default')!=null){
                     activeTabAndBlockOfSelectedTab(btnTabType);
                 }
             });
         });
 
-        // Gère l'affichage de la table et l'effet visuel de l'onglet
+        // * Gère l'affichage de la table et l'effet visuel de l'onglet *
         function showhideBlockForSelectedTab(){
             activeTabAndBlockOfSelectedTab(this);
         }
         function activeTabAndBlockOfSelectedTab(btnTab2Activate){
-            // get all "neighbors" tabs ...
+            // récupère tous les onglets ‘voisins’ ...
             let arBtnTabtype=document.querySelectorAll('.btn--tabtype[parent_id="'+btnTab2Activate.getAttribute('parent_id')+'"]');
-            // ... manage visual effects on tabs
+            // ... gestion des effets visuels sur les onglets
             if(arBtnTabtype){
                 arBtnTabtype.forEach(btnTabType => {
+                    // si l’itération courante est l'onglet « cliqué » => à mettre en évidence...    
                     if(btnTabType==btnTab2Activate){
-                        // l'onglet...
                         // ... text & background
                         btnTabType.style.color='black';
                         btnTabType.style.fontWeight ='bold';
@@ -818,14 +825,14 @@ document.addEventListener("DOMContentLoaded", function(event){
                         // ... borders
                         btnTabType.style.borderBottom='0';
                         btnTabType.style.boxShadow='0 0 0 0, 0 -4px 4px 0 rgb(140, 140, 140)';
-                        // le bloc associé au TabType
+                        // affiche le « bloc » de données associé à l’onglet « cliqué »
                         let arChildren=document.querySelectorAll('.block--tabtype[parent_id="'+btnTab2Activate.id+'"]')
                         arChildren.forEach(blkChild => {
                             blkChild.style.display="";
                         });
                     }
+                    // si l’itération courante N’est PAS l'onglet « cliqué » => à « banaliser »...    
                     else{
-                        // l'onglet...
                         // ... text & background
                         btnTabType.style.color='black';
                         btnTabType.style.fontWeight ='normal';
@@ -833,7 +840,7 @@ document.addEventListener("DOMContentLoaded", function(event){
                         // ... borders
                         btnTabType.style.borderBottom='0.5px solid black';
                         btnTabType.style.boxShadow='0 0 0 0';
-                        // le bloc associé au TabType
+                        // ????????????
                         if(btnTabType.id==btnTab2Activate.id){
                             let arChildren=document.querySelectorAll('.block--tabtype[parent_id="'+btnTab2Activate.id+'"]')
                             arChildren.forEach(blkChild => {
@@ -842,6 +849,7 @@ document.addEventListener("DOMContentLoaded", function(event){
                             /*
                              * POURSUIVRE LE DEVELOPPEMENT SI DECISION D'AJOUTER L'ONGLET "MON DOMICILE"...
                             */
+                        // cache le « bloc » associé à l’onglet de l’itération courante (n’étant pas celui « cliqué »)
                         }else{
                             let arChildren=document.querySelectorAll('.block--tabtype[parent_id="'+btnTabType.id+'"]');
                             arChildren.forEach(blkChild => {
@@ -851,7 +859,7 @@ document.addEventListener("DOMContentLoaded", function(event){
                     }
                 })
             }
-            // "mémorise" l'onglet activé
+            // "mémorise" l'onglet activé, pour le cas d'un aller/retour avec le serveur PHP
             if(htmlByDefault){
                 htmlByDefault.value=btnTab2Activate.id;
             }

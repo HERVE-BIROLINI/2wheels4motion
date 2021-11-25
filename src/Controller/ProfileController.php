@@ -912,19 +912,21 @@ class ProfileController extends AbstractController
         $entityManager->flush();
     }
     public function customer_switchTenderStatus_archived($status_ID){
-        
-        // Pour les lectures et enregistrements dans la BdD
+        // Instancie un objet Manager de Doctrine, pour les lectures et enregistrements dans la BdD
         $entityManager=$this->getDoctrine()->getManager();
+        // Extraction de l'enregistrement "Statut du devis" pour le devis passé en argument
         $status=$entityManager->getRepository(TenderStatus::class)->findOneBy(['id'=>$status_ID]);
-
+        // Si son état actuel est "déjà archivé"...
         if($status->getIsarchivedbycustomer()){
+            // ... "switch" pour l'état "non-archivé"
             $status->setIsarchivedbycustomer(false);
+        // Dans le cas contraire...
         }else{
+            // ... "switch" pour l'état "archivé"
             $status->setIsarchivedbycustomer(true);
         }
-        //
-        $entityManager->persist($status);
         // "remplissage" de la BdD
+        $entityManager->persist($status);
         $entityManager->flush();
     }
     public function customer_switchBookingStatus_archived($booking_ID){

@@ -78,13 +78,13 @@
                             <i class="fas fa-home"></i>
                             Accueil
                         </a></li>
-                        <li><a class="nav-item btn-sm" href="{{ path('driver_presentation') }}">
-                            <i class="fas fa-motorcycle"></i>
-                            Les pilotes
-                        </a></li>
                         <li><a class="nav-item btn-sm" href="{{ path('flatrate_index') }}">
                             <i class="fas fa-calculator"></i>
                             Tarification/Paiement
+                        </a></li>
+                        <li><a class="nav-item btn-sm" href="{{ path('driver_presentation') }}">
+                            <i class="fas fa-motorcycle"></i>
+                            Les pilotes
                         </a></li>
                         <!-- Menus 'contextuels' -->
                         {# Si l'utilisateur EST DEJA identifié #}
@@ -145,33 +145,51 @@
         </div>
     </body>
 
-    <footer class="d-flex flex-column mt-5 p-1" id="section--footer">        
-        <div id="Div-ShortCuts_Row">
-            <a href="mailto:twowheelsformotion@gmail.com" title="Ecrire à l'administrateur (développeur)">
-                <i class="fas fa-envelope ShortCuts"></i>
-            </a>
-            <a href="tel:0671100299" title="Téléphoner à l'administrateur (développeur)">
-                <i class="fas fa-mobile-alt ShortCuts"></i>
-            </a>
-            <a href="{{ asset('build/images/footer/CGU.html') }}" title="CGU" target="_blank">
-                <i class="ri-bookmark-fill ShortCuts"></i>
-            </a>
-            <a href="{{ asset('build/images/footer/mentions_legales.html') }}" title="Mentions légales" target="_blank">
-                <i class="ri-flag-2-fill ShortCuts"></i>
-            </a>
-            <a href="https://github.com/herve-birolini" title="Visiter le Github du développeur" target="blank">
-                <i class="fab fa-github-square ShortCuts"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/herv%C3%A9-birolini-a09281148/" title="Visiter le LinkedIn du développeur" target="blank">
-                <i class="fab fa-linkedin ShortCuts"></i>
-            </a>
-            <a href="{{ asset('build/images/footer/cv/index.php') }}" title="Voir le CV du développeur" target="blank">
-                <img class="ShortCuts" id="ImgCV" src="{{ asset('build/images/footer/cv/SRC/curriculum vitae.png') }}"></i>
-            </a>
+    <footer class="d-flex flex-column mt-5 p-1" id="section--footer">
+        <div class="d-flex flex-row col-12">
+            <div class="col-2"></div>
+            <div class="d-flex flex-row flex-wrap col-10">
+                <div class="d-flex flex-column col-12 col-sm-4" style="text-align:left;">
+                    <a href="{{ asset('build/images/footer/CGU.html') }}" style="color:black;"
+                        title="CGU" target="_blank"
+                    >
+                        CGU
+                    </a>
+                    <a href="{{ asset('build/images/footer/mentions_legales.html') }}" style="color:black;"
+                        title="Mentions légales" target="_blank"
+                    >
+                        Mentions légales
+                    </a>
+                </div>
+                <div class=" col-12 col-sm-8"  style="text-align:left;"><!--id="Div-ShortCuts_Row">-->
+                    <a href="mailto:twowheelsformotion@gmail.com" title="Ecrire à l'administrateur (développeur)">
+                        <i class="fas fa-envelope ShortCuts"></i>
+                    </a>
+                    <a href="tel:0671100299" title="Téléphoner à l'administrateur (développeur)">
+                        <i class="fas fa-mobile-alt ShortCuts"></i>
+                    </a>
+                    <!-- <a href="{{ asset('build/images/footer/CGU.html') }}" title="CGU" target="_blank">
+                        <i class="ri-bookmark-fill ShortCuts">CGU</i>
+                    </a>
+                    <a href="{{ asset('build/images/footer/mentions_legales.html') }}" title="Mentions légales" target="_blank">
+                        <i class="ri-flag-2-fill ShortCuts"></i>
+                    </a> -->
+                    <a href="https://github.com/herve-birolini" title="Visiter le Github du développeur" target="blank">
+                        <i class="fab fa-github-square ShortCuts"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/herv%C3%A9-birolini-a09281148/" title="Visiter le LinkedIn du développeur" target="blank">
+                        <i class="fab fa-linkedin ShortCuts"></i>
+                    </a>
+                    <a href="http://birolini-herve-cv.infinityfreeapp.com" title="Voir le CV du développeur" target="blank">
+                        <img class="ShortCuts" id="ImgCV" src="{{ asset('build/images/footer/curriculum vitae.png') }}"></i>
+                    </a>
+                </div>
+            </div>
         </div>
-        <p>
-            © octobre 2021 - Ce site a été créé comme projet de soutenance sous
-            Symfony 5, par Hervé BIROLINI
-        </p>
+        <small>
+            L'Annuaire des taxis-motos de France - 2Wheels4Motion © novembre 2021
+            <br>
+            Ce site a été créé comme projet de soutenance sous Symfony 5, par Hervé BIROLINI
+        </small>
     </footer>
 </html>

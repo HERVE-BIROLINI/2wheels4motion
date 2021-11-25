@@ -20,7 +20,7 @@
         {% set mytenders=gettenderstatusofdriver(driver, witharchived) %}
     {% endif %}
     {% if orders4me is not defined or orders4me==null %}
-        {% set orders4me=getbooking4driver(driver, witharchived) %}
+        {% set orders4me=getbookings4driver(driver, witharchived) %}
     {% endif %}
 
     <!-- ##### v DEBUT DES ELEMENTS PRINCIPAUX DE LA PAGE v ##### -->
@@ -66,7 +66,7 @@
             </div>
 
             <!-- * tableau des Demandes reçues (Claims) * -->
-            <table class="table block--tabtype" id="block--tabtype--claim" parent_id="btn--tabtype--claim">
+            <table class="table table-hover block--tabtype" id="block--tabtype--claim" parent_id="btn--tabtype--claim">
                 <thead>
                     <tr>
                         <th></th>
@@ -165,7 +165,7 @@
             </table>
 
             <!-- * tableau des Devis envoyés (Tenders) * -->
-            <table class="table block--tabtype" id="block--tabtype--tender" parent_id="btn--tabtype--tender">
+            <table class="table table-hover block--tabtype" id="block--tabtype--tender" parent_id="btn--tabtype--tender">
                 <thead>
                     <tr>
                         <th></th>
@@ -270,7 +270,7 @@
             </table>
 
             <!-- * tableau des Courses confirmées (Orders) * -->
-            <table class="table block--tabtype" id="block--tabtype--booking" parent_id="btn--tabtype--booking">
+            <table class="table table-hover block--tabtype" id="block--tabtype--booking" parent_id="btn--tabtype--booking">
                 <thead>
                     <tr>
                         <th></th>
@@ -343,7 +343,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="99">
-                        {% if getbooking4driver(driver, true)|length == 0 %}
+                        {% if getbookings4driver(driver, true)|length == 0 %}
                         Vous n'avez encore pas effectué de course grâce à l'annuaire...
                         {% elseif orders4me|length == 0 %}
                         Toutes vos courses effectuées sont archivées. Cliquez sur "Montrer les archives" pour les consulter...

@@ -523,8 +523,8 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('security_login');
         }
         //
-        if(!$obTypeplace=$flatrateRepository->findOneBy(['id'=>$flatrate])){
-            $obTypeplace=null;
+        if(!$obFlatrate=$flatrateRepository->findOneBy(['id'=>$flatrate])){
+            $obFlatrate=null;
         }
 
         //
@@ -537,25 +537,25 @@ class AdminController extends AbstractController
 
         if(isset($_POST['label']) and ($label=$_POST['label'] or true)
             and ($price=$_POST['price'] or true)
-            and (!$obTypeplacefounded=$entityManager->getRepository(Flatrate::class)->findOneBy(['label'=>$label])
-                    or $obTypeplacefounded==$flatrate
+            and (!$obFlatratefounded=$entityManager->getRepository(Flatrate::class)->findOneBy(['label'=>$label])
+                    or $obFlatratefounded==$flatrate
                 )
             and $label!='' and $price!='' and is_numeric($price) and intval($price)!==0
             )
         {
-            $obTypeplace->setLabel($_POST['label']);
-            $obTypeplace->setPrice($_POST['price']);
+            $obFlatrate->setLabel($_POST['label']);
+            $obFlatrate->setPrice($_POST['price']);
             //
             if(isset($_POST['pickupincluded'])){
-                $obTypeplace->setPickupIncluded(true);
+                $obFlatrate->setPickupIncluded(true);
             }
             else{
-                $obTypeplace->setPickupIncluded(false);
+                $obFlatrate->setPickupIncluded(false);
             }
             //
-            $obTypeplace->setRegionCode($_POST['region']);
+            $obFlatrate->setRegionCode($_POST['region']);
 
-            $entityManager->persist($obTypeplace);
+            $entityManager->persist($obFlatrate);
             $entityManager->flush();
 
             // message de confirmation de la création
@@ -566,7 +566,7 @@ class AdminController extends AbstractController
 
         // /!\ Hors de propos dans UPDATE /!\
         //------------------------------------
-        // elseif(isset($obTypeplace)){
+        // elseif(isset($obFlatrate)){
         //     $this->addFlash('danger', "Un tarif avec ce libellé existe déjà...");
         // }
 
@@ -578,7 +578,7 @@ class AdminController extends AbstractController
             // 'controller_name' => 'FlatrateController',
             'route'     => 'flatrate_update',
             //
-            'flatrate'  => $obTypeplace,
+            'flatrate'  => $obFlatrate,
             'label'     => $label,
             'price'     => $price,
             //

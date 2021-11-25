@@ -128,11 +128,7 @@ class SecurityController extends AbstractController
      */
     public function changePwd(Request $request
                             , User $user
-                            // , UserRepository $repository
                             , UserPasswordEncoderInterface $passwordEncoder
-                            // , GuardAuthenticatorHandler $guardHandler
-                            // , LoginFormAuthenticator $authenticator
-                            // , AuthenticationUtils $authenticationUtils
     ): Response
     {
 

@@ -56,7 +56,7 @@ class RegistrationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Défini les propriétés de l'objet "nouvel utilisateur"
-            // (pour les propriétés non disponibles dans le formaulaire)
+            // (pour les propriétés non disponibles dans le formulaire)
             // (encode the plain password)
             $user->setPassword(
                 $passwordEncoder->encodePassword(

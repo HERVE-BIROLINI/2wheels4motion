@@ -40,6 +40,15 @@
                 Mon compte
             </a>
             {% endif %}
+            <!--  -->
+            {% if app.user is defined and app.user != null and
+                (app.user.driver is not defined or app.user.driver==null)
+            %}
+            <a class="btn nav--btn--white" href="{{ path('registration_driver', {'id': app.user.id}) }}">
+                <i class="fab fa-angellist"></i>
+                Créer un compte pilote VMDTR
+            </a>
+            {% endif %}
         </ul>
     </div>
 </div>

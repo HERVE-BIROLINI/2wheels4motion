@@ -17,6 +17,10 @@ class HomepageController extends AbstractController
      */
     public function index(): Response
     {
+        // echo'<pre>';
+        // var_dump($_ENV);
+        // echo'</pre>';
+        // 
         return $this->render('homepage/index.html.twig', [
             'controller_name' => 'HomepageController',
         ]);

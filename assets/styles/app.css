@@ -1,7 +1,3 @@
-.test{
-    height: 100%;
-    border:2px solid yellow;
-}
 .bor1{border:1px solid red;}
 .bor2{border:1px solid yellow;}
 .bor3{border:1px solid green;}
@@ -490,10 +486,23 @@ a:link{
 .thead--light{
     background-color:white;
 }
-/* . class liées à la gestion de tableaux multi-onglets en Javascript . */
+/* - class liées à la gestion de tableaux multi-onglets en Javascript - */
 .row--tabtype{
     display: flex;
     flex-direction: row;
+}
+.btn--tabtype{
+    padding-left: 1em;
+    padding-right: 1em;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    /**/
+    border:0.25px solid grey;
+    border-bottom:0;
+    box-shadow: 0 0 0 0, 0 -4px 4px 0 rgb(140, 140, 140);
+}
+.btn--tabtype:hover{
+    cursor:pointer;
 }
 .border--success{
     box-shadow:inset 0px 0px 0px 5px rgb(70, 230, 70);
@@ -510,20 +519,6 @@ a:link{
 .row--danger{
     background-color: rgb(240, 105, 105);
     /* background-color: rgb(250, 180, 180); */
-}
-.btn--tabtype{
-    padding-left: 1em;
-    padding-right: 1em;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    /**/
-    border:0.25px solid grey;
-    border-bottom:0;
-    box-shadow: 0 0 0 0, 0 -4px 4px 0 rgb(140, 140, 140);
-}
-.btn--tabtype:hover{
-    font-weight: bold;
-    cursor:pointer;
 }
 /* - Liées à l'utilisation de Modals - */
 .modal--big-css{
